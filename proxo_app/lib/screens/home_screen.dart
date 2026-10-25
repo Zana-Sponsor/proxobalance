@@ -12,63 +12,13 @@ import '../widgets/ad_feedback.dart';
 import '../widgets/proxo_popup.dart';
 import '../widgets/best_metrics_home_section.dart';
 import '../widgets/home_quick_actions.dart';
-import '../widgets/ad_form_components.dart';
+import '../theme/proxo_ui.dart';
+import 'home_statistics_screen.dart';
 import '../main.dart' show supabase, navigatorKey;
 import 'package:proxo_app/widgets/proxo_text.dart';
 
 String? _sCachedUserName;
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Design tokens
-// ─────────────────────────────────────────────────────────────────────────────
-
-const Color kProxoBlue   = AppColors.accent;
-const Color _kBannerTop  = AppColors.accent;
-const Color _kBannerBot  = AppColors.accent;
-const Color _kDeltaUp    = Color(0xFF74F96E);
-const Color _kDeltaDown  = Color(0xFFFFC0B4);
-const Color _kBannerInk  = AppColors.ink;
-
-const Color _kPageBg = Colors.white;
-
-const double _kRefContentW = 398.0;
-
-double _scaleFor(double contentWidth) =>
-    (contentWidth / _kRefContentW).clamp(0.86, 1.06);
-
-const TextStyle _kBase =
-    TextStyle(fontFamily: kAppFont, decoration: TextDecoration.none);
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Formatting helpers
-// ─────────────────────────────────────────────────────────────────────────────
-
-num? _asNum(dynamic v) {
-  if (v == null) return null;
-  if (v is num) return v;
-  if (v is String) return num.tryParse(v.trim());
-  return null;
-}
-
-String _grouped(int n) {
-  final s = n.abs().toString();
-  final b = StringBuffer();
-  for (var i = 0; i < s.length; i++) {
-    if (i > 0 && (s.length - i) % 3 == 0) b.write(',');
-    b.write(s[i]);
-  }
-  return '${n < 0 ? '-' : ''}$b';
-}
-
-String _money(double v) {
-  final cents = (v.abs() * 100).round();
-  final frac = (cents % 100).toString().padLeft(2, '0');
-  return '${v < 0 ? '-' : ''}\$${_grouped(cents ~/ 100)}.$frac';
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// HomeScreen
-// ─────────────────────────────────────────────────────────────────────────────
+String? _sCachedUserId;
 
 class HomeScreen extends StatefulWidget {
   final bool isActive;
@@ -110,15 +60,9 @@ class _HomeScreenState extends State<HomeScreen>
       'tiktok_ad_id,created_at,start_date,end_date,'
       'thumbnail_url,feedback_rating,feedback_at';
 
-  static const List<String> kRanges = <String>[
-    'Today',
-    'Last 7 days',
-    'Last 30 days',
-    'All time',
-  ];
-
   String _userName = '—';
-  String _range = 'Last 7 days';
+  Object? _dashboardError;
+  bool _statisticsOpen = false;
 
   List<Map<String, dynamic>> _ads = const [];
   bool _feedbackDialogOpen = false;
@@ -169,7 +113,8 @@ class _HomeScreenState extends State<HomeScreen>
     _startFeedbackRealtime();
     _startPopupRealtime();
     unawaited(_maybeShowAdminPopup());
-    WidgetsBinding.instance.addPostFrameCallback((_) => _maybeAskNotifPermission());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => _maybeAskNotifPermission());
   }
 
   @override
@@ -310,8 +255,9 @@ class _HomeScreenState extends State<HomeScreen>
       } else {
         final s = await FirebaseMessaging.instance.getNotificationSettings();
         final isDenied = s.authorizationStatus == AuthorizationStatus.denied;
-        final isGranted = s.authorizationStatus == AuthorizationStatus.authorized ||
-                          s.authorizationStatus == AuthorizationStatus.provisional;
+        final isGranted =
+            s.authorizationStatus == AuthorizationStatus.authorized ||
+                s.authorizationStatus == AuthorizationStatus.provisional;
         if (isDenied) return;
         if (isGranted) return;
       }
@@ -348,20 +294,22 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Future<void> _loadUser() async {
-    if (_sCachedUserName != null) {
+    final user = supabase.auth.currentUser;
+    if (user == null) return;
+    if (_sCachedUserId == user.id && _sCachedUserName != null) {
       if (mounted) setState(() => _userName = _sCachedUserName!);
       return;
     }
     try {
-      final user = supabase.auth.currentUser;
-      if (user == null) return;
       final profile = await supabase
           .from('profiles')
           .select('full_name')
           .eq('id', user.id)
           .maybeSingle();
       final name = profile?['full_name']?.toString() ??
-          user.email?.split('@').first ?? '—';
+          user.email?.split('@').first ??
+          '—';
+      _sCachedUserId = user.id;
       _sCachedUserName = name;
       if (mounted) setState(() => _userName = name);
     } catch (_) {}
@@ -370,7 +318,7 @@ class _HomeScreenState extends State<HomeScreen>
   Future<void> _loadAds() async {
     try {
       final user = supabase.auth.currentUser;
-      if (user == null) return;
+      if (user == null) throw StateError('Sign in required');
       final res = await supabase
           .from('pa_ads')
           .select(_kDashColumns)
@@ -381,9 +329,11 @@ class _HomeScreenState extends State<HomeScreen>
           List<Map<String, dynamic>>.from(res as List? ?? const []);
       setState(() {
         _ads = rows;
+        _dashboardError = null;
       });
       if (widget.isActive) unawaited(_maybePromptForFeedback(rows));
     } catch (e) {
+      if (mounted) setState(() => _dashboardError = e);
       debugPrint('HomeScreen: dashboard fetch failed: $e');
     }
   }
@@ -439,8 +389,8 @@ class _HomeScreenState extends State<HomeScreen>
 
       // Feedback does not affect any visible dashboard total. Patch the warm
       // list without rebuilding the whole Home screen.
-      final int index = _ads.indexWhere((Map<String, dynamic> ad) =>
-          (ad['id'] ?? '').toString() == adId);
+      final int index = _ads.indexWhere(
+          (Map<String, dynamic> ad) => (ad['id'] ?? '').toString() == adId);
       if (index >= 0) {
         _ads = List<Map<String, dynamic>>.from(_ads)
           ..[index] = <String, dynamic>{
@@ -454,43 +404,6 @@ class _HomeScreenState extends State<HomeScreen>
     }
   }
 
-  Duration? _rangeSpan() {
-    switch (_range) {
-      case 'Today':        return const Duration(days: 1);
-      case 'Last 7 days':  return const Duration(days: 7);
-      case 'Last 30 days': return const Duration(days: 30);
-      default:             return null;
-    }
-  }
-
-  DateTime? _createdAt(Map<String, dynamic> ad) =>
-      DateTime.tryParse(ad['created_at']?.toString() ?? '')?.toLocal();
-
-  _Totals _totalsIn(DateTime? from, DateTime? to) {
-    var spend = 0.0;
-    var clicks = 0, impressions = 0, conversions = 0;
-    for (final ad in _ads) {
-      if (from != null || to != null) {
-        final at = _createdAt(ad);
-        if (at == null) continue;
-        if (from != null && at.isBefore(from)) continue;
-        if (to != null && !at.isBefore(to)) continue;
-      }
-      spend += (_asNum(ad['prev_spend'])?.toDouble() ?? 0) +
-               (_asNum(ad['spend'])?.toDouble() ?? 0);
-      clicks += _asNum(ad['clicks'])?.toInt() ?? 0;
-      impressions += (_asNum(ad['prev_impressions'])?.toInt() ?? 0) +
-                     (_asNum(ad['impressions'])?.toInt() ?? 0);
-      conversions += _asNum(ad['conversions'])?.toInt() ?? 0;
-    }
-    return _Totals(
-      spend: spend,
-      clicks: clicks,
-      impressions: impressions,
-      conversions: conversions,
-    );
-  }
-
   Future<void> _refresh() async {
     await Future.wait(<Future<void>>[
       _loadUser(),
@@ -499,28 +412,28 @@ class _HomeScreenState extends State<HomeScreen>
     ]);
   }
 
-  void _onRangeChanged(String r) {
-    if (r == _range) return;
-    setState(() => _range = r);
+  void _openStatistics() {
+    if (widget.onReportsTap != null) {
+      widget.onReportsTap!();
+      return;
+    }
+    if (_statisticsOpen) return;
+    _statisticsOpen = true;
+    Navigator.of(context).push(ProxoPageRoute<void>(
+      builder: (_) => HomeStatisticsScreen(loadAds: () async {
+        await _loadAds();
+        if (_dashboardError != null) throw _dashboardError!;
+        return List<Map<String, dynamic>>.unmodifiable(_ads);
+      }),
+    )).whenComplete(() => _statisticsOpen = false);
   }
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width;
-    final s = _scaleFor(width - 32);
-
-    final span = _rangeSpan();
-    final now = DateTime.now();
-    final from = span == null ? null : now.subtract(span);
-    final current = _totalsIn(from, null);
-    final previous = span == null
-        ? const _Totals.zero()
-        : _totalsIn(now.subtract(span * 2), from);
-
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: _kPageBg,
+        backgroundColor: ProxoUi.background,
         appBar: ProxoTopBar(
           topPadding: MediaQuery.of(context).padding.top,
           onMenuTap: widget.onMenuTap,
@@ -542,50 +455,16 @@ class _HomeScreenState extends State<HomeScreen>
                 physics: const AlwaysScrollableScrollPhysics(
                     parent: BouncingScrollPhysics()),
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _Reveal(
-                      animation: _aBanner,
-                      child: RepaintBoundary(
-                        child: ProxoOverviewBanner(
-                          scale: s,
-                          range: _range,
-                          ranges: kRanges,
-                          onRangeChanged: _onRangeChanged,
-                          spend: current.spend,
-                          clicks: current.clicks,
-                          conversions: current.conversions,
-                          ctr: current.ctr,
-                          spendDelta: current.deltaOf(previous.spend, current.spend),
-                          clicksDelta: current.deltaOf(
-                              previous.clicks.toDouble(), current.clicks.toDouble()),
-                          conversionsDelta: current.deltaOf(
-                              previous.conversions.toDouble(),
-                              current.conversions.toDouble()),
-                          ctrDelta: current.deltaOf(previous.ctr, current.ctr),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AdUi.sectionGap),
-                    _Reveal(
-                      animation: _aActions,
-                      child: RepaintBoundary(
-                        child: HomeQuickActions(
-                          onCreateTap: widget.onCreateTap,
-                          onToolsTap: widget.onToolsTap,
-                          onFaqTap: widget.onFaqTap,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AdUi.sectionGap),
-                    _Reveal(
-                      animation: _aWeekly,
-                      child: RepaintBoundary(
-                        child: BestMetricsHomeSection(key: _bestMetricsKey),
-                      ),
-                    ),
-                  ],
+                child: HomeContent(
+                  userName: _userName,
+                  onCreateTap: widget.onCreateTap,
+                  onToolsTap: widget.onToolsTap,
+                  onFaqTap: widget.onFaqTap,
+                  onStatisticsTap: _openStatistics,
+                  resultsKey: _bestMetricsKey,
+                  headerAnimation: _aBanner,
+                  actionsAnimation: _aActions,
+                  resultsAnimation: _aWeekly,
                 ),
               ),
             ),
@@ -596,443 +475,91 @@ class _HomeScreenState extends State<HomeScreen>
   }
 }
 
-class _Totals {
-  final double spend;
-  final int clicks;
-  final int impressions;
-  final int conversions;
+/// The actual Home content, independent of authentication and network setup.
+/// This keeps presentation testable while HomeScreen owns lifecycle/data.
+class HomeContent extends StatelessWidget {
+  final String userName;
+  final VoidCallback? onCreateTap, onToolsTap, onFaqTap, onStatisticsTap;
+  final GlobalKey<BestMetricsHomeSectionState>? resultsKey;
+  final HomeResultsLoader? loadResults;
+  final Animation<double> headerAnimation, actionsAnimation, resultsAnimation;
 
-  const _Totals({
-    required this.spend,
-    required this.clicks,
-    required this.impressions,
-    required this.conversions,
-  });
+  const HomeContent(
+      {super.key,
+      this.userName = '',
+      this.onCreateTap,
+      this.onToolsTap,
+      this.onFaqTap,
+      this.onStatisticsTap,
+      this.resultsKey,
+      this.loadResults,
+      this.headerAnimation = const AlwaysStoppedAnimation(1),
+      this.actionsAnimation = const AlwaysStoppedAnimation(1),
+      this.resultsAnimation = const AlwaysStoppedAnimation(1)});
 
-  const _Totals.zero()
-      : spend = 0,
-        clicks = 0,
-        impressions = 0,
-        conversions = 0;
-
-  double get ctr => impressions > 0 ? clicks / impressions * 100 : 0;
-
-  double? deltaOf(double before, double after) {
-    if (before <= 0) return after > 0 ? null : 0;
-    return (after - before) / before * 100;
-  }
+  @override
+  Widget build(BuildContext context) => Directionality(
+        textDirection: TextDirection.rtl,
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 600),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _Reveal(
+                    animation: headerAnimation,
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          ProxoText(
+                              userName.isEmpty || userName == '—'
+                                  ? 'بەخێربێیت بۆ پڕۆکسۆ'
+                                  : 'بەخێربێیت، $userName',
+                              style: ProxoUi.title),
+                          const SizedBox(height: ProxoUi.gap4),
+                          const ProxoText('کەمپەینەکانت بە ئاسانی بەڕێوە ببە.',
+                              style: ProxoUi.secondary),
+                          Align(
+                              alignment: AlignmentDirectional.centerStart,
+                              child: TextButton(
+                                key: const ValueKey('home-view-statistics'),
+                                onPressed: onStatisticsTap,
+                                style: TextButton.styleFrom(
+                                    minimumSize: const Size(48, 48),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 0, vertical: 8)),
+                                child: ProxoText('بینینی ئامارەکان',
+                                    style: ProxoUi.label
+                                        .copyWith(color: ProxoUi.primary)),
+                              )),
+                        ])),
+                const SizedBox(height: ProxoUi.gap16),
+                _Reveal(
+                    animation: actionsAnimation,
+                    child: RepaintBoundary(
+                        child: HomeQuickActions(
+                            onCreateTap: onCreateTap,
+                            onToolsTap: onToolsTap,
+                            onFaqTap: onFaqTap))),
+                const SizedBox(height: ProxoUi.gap24),
+                _Reveal(
+                    animation: resultsAnimation,
+                    child: RepaintBoundary(
+                        child: BestMetricsHomeSection(
+                            key: resultsKey, loadPreview: loadResults))),
+              ],
+            ),
+          ),
+        ),
+      );
 }
 
 class _Reveal extends StatelessWidget {
   final Animation<double> animation;
   final Widget child;
   const _Reveal({required this.animation, required this.child});
-
-  static final Animatable<Offset> _slide =
-      Tween<Offset>(begin: const Offset(0, 0.06), end: Offset.zero);
-
   @override
-  Widget build(BuildContext context) => FadeTransition(
-        opacity: animation,
-        child: SlideTransition(
-          position: animation.drive(_slide),
-          child: child,
-        ),
-      );
-}
-
-class ProxoOverviewBanner extends StatelessWidget {
-  final double scale;
-  final String range;
-  final List<String> ranges;
-  final ValueChanged<String> onRangeChanged;
-  final double spend;
-  final int clicks;
-  final int conversions;
-  final double ctr;
-  final double? spendDelta;
-  final double? clicksDelta;
-  final double? conversionsDelta;
-  final double? ctrDelta;
-
-  const ProxoOverviewBanner({
-    super.key,
-    required this.scale,
-    required this.range,
-    required this.ranges,
-    required this.onRangeChanged,
-    required this.spend,
-    required this.clicks,
-    required this.conversions,
-    required this.ctr,
-    this.spendDelta,
-    this.clicksDelta,
-    this.conversionsDelta,
-    this.ctrDelta,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final s = scale;
-
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18 * s),
-        gradient: const LinearGradient(
-          begin: Alignment(-0.28, -1),
-          end: Alignment(0.28, 1),
-          colors: [_kBannerTop, _kBannerBot],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: _kBannerBot.withOpacity(0.26),
-            blurRadius: 26 * s,
-            spreadRadius: -6 * s,
-            offset: Offset(0, 12 * s),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: EdgeInsets.fromLTRB(18 * s, 19 * s, 18 * s, 0),
-            child: SizedBox(
-              height: 28 * s,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: ProxoText(
-                      'Overview',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: _kBase.copyWith(
-                        color: Colors.white,
-                        fontSize: 15 * s,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.2 * s,
-                        height: 1.2,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 12 * s),
-                  _RangePill(
-                    scale: s,
-                    label: range,
-                    ranges: ranges,
-                    onSelected: onRangeChanged,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 32 * s),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: _StatColumn(
-                  scale: s,
-                  icon: Icons.monetization_on_outlined,
-                  label: 'Spend',
-                  value: _money(spend),
-                  delta: spendDelta,
-                ),
-              ),
-              _StatDivider(scale: s),
-              Expanded(
-                child: _StatColumn(
-                  scale: s,
-                  painter: const _CursorPainter(),
-                  label: 'Clicks',
-                  value: _grouped(clicks),
-                  delta: clicksDelta,
-                ),
-              ),
-              _StatDivider(scale: s),
-              Expanded(
-                child: _StatColumn(
-                  scale: s,
-                  icon: Icons.task_alt,
-                  label: 'Conversions',
-                  value: _grouped(conversions),
-                  delta: conversionsDelta,
-                ),
-              ),
-              _StatDivider(scale: s),
-              Expanded(
-                child: _StatColumn(
-                  scale: s,
-                  icon: Icons.percent,
-                  label: 'CTR',
-                  value: '${ctr.toStringAsFixed(2)}%',
-                  delta: ctrDelta,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 23 * s),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatDivider extends StatelessWidget {
-  final double scale;
-  const _StatDivider({required this.scale});
-
-  @override
-  Widget build(BuildContext context) => Container(
-        width: 1,
-        height: 104 * scale,
-        color: Colors.white.withOpacity(0.14),
-      );
-}
-
-class _StatColumn extends StatelessWidget {
-  final double scale;
-  final IconData? icon;
-  final CustomPainter? painter;
-  final String label;
-  final String value;
-  final double? delta;
-
-  const _StatColumn({
-    required this.scale,
-    this.icon,
-    this.painter,
-    required this.label,
-    required this.value,
-    required this.delta,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final s = scale;
-    final d = delta;
-    final positive = d == null ? null : d >= 0;
-
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 6 * s),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            height: 26 * s,
-            width: 26 * s,
-            child: painter != null
-                ? CustomPaint(painter: painter)
-                : Icon(icon, size: 26 * s, color: Colors.white),
-          ),
-          SizedBox(height: 13 * s),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: ProxoText(
-              label,
-              maxLines: 1,
-              style: _kBase.copyWith(
-                color: Colors.white,
-                fontSize: 10.5 * s,
-                fontWeight: FontWeight.w600,
-                height: 1.25,
-              ),
-            ),
-          ),
-          SizedBox(height: 10 * s),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: ProxoText(
-              value,
-              maxLines: 1,
-              style: _kBase.copyWith(
-                color: Colors.white,
-                fontSize: 15 * s,
-                fontWeight: FontWeight.w700,
-                letterSpacing: -0.2 * s,
-                height: 1.2,
-              ),
-            ),
-          ),
-          SizedBox(height: 12 * s),
-          SizedBox(
-            height: 13.2 * s,
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    positive == null
-                        ? Icons.trending_flat_rounded
-                        : (positive
-                            ? Icons.arrow_upward_rounded
-                            : Icons.arrow_downward_rounded),
-                    size: 12 * s,
-                    color: positive == null
-                        ? Colors.white.withOpacity(0.55)
-                        : (positive ? _kDeltaUp : _kDeltaDown),
-                  ),
-                  SizedBox(width: 4 * s),
-                  ProxoText(
-                    d == null ? '—' : '${d.abs().round()}%',
-                    maxLines: 1,
-                    style: _kBase.copyWith(
-                      color: positive == null
-                          ? Colors.white.withOpacity(0.55)
-                          : (positive ? _kDeltaUp : _kDeltaDown),
-                      fontSize: 11 * s,
-                      fontWeight: FontWeight.w600,
-                      height: 1.2,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _RangePill extends StatelessWidget {
-  final double scale;
-  final String label;
-  final List<String> ranges;
-  final ValueChanged<String> onSelected;
-
-  const _RangePill({
-    required this.scale,
-    required this.label,
-    required this.ranges,
-    required this.onSelected,
-  });
-
-  Future<void> _open(BuildContext context) async {
-    final box = context.findRenderObject() as RenderBox?;
-    final overlay =
-        Overlay.of(context).context.findRenderObject() as RenderBox?;
-    if (box == null || overlay == null) return;
-
-    final origin = box.localToGlobal(Offset(0, box.size.height + 6),
-        ancestor: overlay);
-    final picked = await showMenu<String>(
-      context: context,
-      color: Colors.white,
-      surfaceTintColor: Colors.white,
-      elevation: 8,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14 * scale),
-      ),
-      position: RelativeRect.fromLTRB(
-        origin.dx,
-        origin.dy,
-        overlay.size.width - origin.dx - box.size.width,
-        0,
-      ),
-      items: [
-        for (final r in ranges)
-          PopupMenuItem<String>(
-            value: r,
-            height: 42 * scale,
-            child: Row(
-              children: [
-                Expanded(
-                  child: ProxoText(
-                    r,
-                    style: _kBase.copyWith(
-                      fontSize: 12.5 * scale,
-                      fontWeight:
-                          r == label ? FontWeight.w700 : FontWeight.w600,
-                      color: r == label ? kProxoBlue : _kBannerInk,
-                    ),
-                  ),
-                ),
-                if (r == label)
-                  Icon(Icons.check_rounded,
-                      size: 16 * scale, color: kProxoBlue),
-              ],
-            ),
-          ),
-      ],
-    );
-    if (picked != null) onSelected(picked);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final s = scale;
-    return Material(
-      color: Colors.white.withOpacity(0.88),
-      borderRadius: BorderRadius.circular(14 * s),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () => _open(context),
-        child: Padding(
-          padding: EdgeInsets.only(left: 12 * s, right: 9 * s),
-          child: SizedBox(
-            height: 28 * s,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.calendar_today_outlined,
-                    size: 14 * s, color: kProxoBlue),
-                SizedBox(width: 3 * s),
-                ProxoText(
-                  label,
-                  maxLines: 1,
-                  style: _kBase.copyWith(
-                    color: kProxoBlue,
-                    fontSize: 10.5 * s,
-                    fontWeight: FontWeight.w600,
-                    height: 1.2,
-                  ),
-                ),
-                SizedBox(width: 5 * s),
-                Icon(Icons.keyboard_arrow_down_rounded,
-                    size: 16 * s, color: kProxoBlue),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _CursorPainter extends CustomPainter {
-  const _CursorPainter();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final k = size.width / 24.0;
-    canvas.save();
-    canvas.scale(k);
-
-    final path = Path()
-      ..moveTo(4.2, 2.0)
-      ..lineTo(18.8, 13.4)
-      ..lineTo(11.7, 14.0)
-      ..lineTo(14.8, 20.9)
-      ..lineTo(12.0, 22.1)
-      ..lineTo(8.9, 15.2)
-      ..lineTo(4.2, 19.8)
-      ..close();
-
-    canvas.drawPath(
-      path,
-      Paint()
-        ..color = Colors.white
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.9
-        ..strokeJoin = StrokeJoin.round
-        ..strokeCap = StrokeCap.round,
-    );
-    canvas.restore();
-  }
-
-  @override
-  bool shouldRepaint(covariant _CursorPainter oldDelegate) => false;
+  Widget build(BuildContext context) =>
+      FadeTransition(opacity: animation, child: child);
 }

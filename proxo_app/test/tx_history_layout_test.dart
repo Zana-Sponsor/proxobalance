@@ -103,7 +103,9 @@ void main() {
         await tester.pumpWidget(historyHost(scale: scale));
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
-        expect(tester.widget<Scaffold>(find.byType(Scaffold)).bottomNavigationBar, isNull);
+        expect(
+            tester.widget<Scaffold>(find.byType(Scaffold)).bottomNavigationBar,
+            isNull);
         final l = TxStrings.of(const Locale('ckb'));
         final title = find.text(l.historyTitle);
         final back = find.byTooltip(l.back);
@@ -113,8 +115,8 @@ void main() {
         expect(tester.getCenter(back).dx, lessThan(width / 2));
         expect(tester.getCenter(refresh).dx, greaterThan(width / 2));
         expect(tester.getCenter(title).dx, closeTo(width / 2, 0.01));
-        expect(tester.getSize(back), const Size(44, 44));
-        expect(tester.getSize(refresh), const Size(44, 44));
+        expect(tester.getSize(back), const Size(48, 48));
+        expect(tester.getSize(refresh), const Size(48, 48));
         expect(tester.widget<Scaffold>(find.byType(Scaffold)).backgroundColor,
             ReceiptTokens.page);
         final card = find.byKey(firstCardKey);

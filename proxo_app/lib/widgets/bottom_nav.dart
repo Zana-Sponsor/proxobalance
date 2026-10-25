@@ -1,6 +1,7 @@
 import 'dart:ui' show lerpDouble;
 
 import 'package:flutter/material.dart';
+import 'package:solar_iconkit/solar_iconkit.dart';
 
 import '../theme/app_theme.dart';
 import '../theme/app_locale.dart';
@@ -45,25 +46,25 @@ import 'package:proxo_app/widgets/proxo_text.dart';
 //            بوو (لە #A8B0BE سووکتر)، تەنها ئەم دێڕەی خوارەوە بگۆڕە —
 //            هیچ شوێنێکی تر ڕەنگی نەچالاکی نەخشاند ناکات.
 class _C {
-  static const active   = AppColors.navActive;
-  static const inactive = AppColors.navIdle;   // ← تاکە خاڵی گۆڕینی ڕەنگی نەچالاک
-  static const barBg    = AppColors.navBg;
-  static const line     = AppColors.navLine;
-  static const shadow   = Color(0x0D000000);   // 5% — تەنها لێوارێکی نەرم
+  static const active = AppColors.navActive;
+  static const inactive = AppColors.navIdle; // ← تاکە خاڵی گۆڕینی ڕەنگی نەچالاک
+  static const barBg = AppColors.navBg;
+  static const line = AppColors.navLine;
+  static const shadow = Color(0x0D000000); // 5% — تەنها لێوارێکی نەرم
 }
 
 // ── Sizing tokens (dp) — یەک سەرچاوە بۆ هەموو ئەم فایلە ────────────────────
 class _S {
-  static const double pillH     = 74;    // بەرزایی پیلەکە
-  static const double hPad      = 6;     // پەدینگی ناوەوەی ئاسۆیی
-  static const double glyphBox  = 24;    // بۆکسی ئایکۆن — هەردوو دۆخ وەک یەک
-  static const double gap       = 6;     // ئایکۆن → لەیبڵ
+  static const double pillH = 74; // بەرزایی پیلەکە
+  static const double hPad = 6; // پەدینگی ناوەوەی ئاسۆیی
+  static const double glyphBox = 24; // بۆکسی ئایکۆن — هەردوو دۆخ وەک یەک
+  static const double gap = 6; // ئایکۆن → لەیبڵ
   static const double labelSize = 11.5;
   static const double labelLead = 1.2;
-  static const double labelBoxH = 14;    // = ceil(11.5 × 1.2) — نەگۆڕ
-  static const double minTap    = 48;    // کەمترین ناوچەی دەستلێدان
-  static const double fabSz     = 48;
-  static const double fabRise   = 0;
+  static const double labelBoxH = 14; // = ceil(11.5 × 1.2) — نەگۆڕ
+  static const double minTap = 48; // کەمترین ناوچەی دەستلێدان
+  static const double fabSz = 48;
+  static const double fabRise = 0;
 
   // ── One-shot press pill ──────────────────────────────────────────────────
   // Sits BEHIND the glyph only — never behind the label. It is 64×34 around a
@@ -82,8 +83,8 @@ class _S {
   // NAMED pressPill*, not pill*: `_S.pillH` already means the height of the
   // BAR itself (74dp). Two different concepts under one name is how this got
   // shadowed the first time.
-  static const double pressPillW      = 64;
-  static const double pressPillH      = 34;
+  static const double pressPillW = 64;
+  static const double pressPillH = 34;
   static const double pressPillRadius = 17;
 
   // ── Top sliding indicator ────────────────────────────────────────────────
@@ -92,8 +93,8 @@ class _S {
   // clamps to height/2, so 1.5 here — the shape is a stadium either way).
   // The supplied reference measures about 131 physical pixels on a 2.75 DPR
   // handset: 131 / 2.75 = 47.6dp. Rounded to 48dp so it stays crisp.
-  static const double indW      = 48;
-  static const double indH      = 3;
+  static const double indW = 48;
+  static const double indH = 3;
   static const double indRadius = 999;
 }
 
@@ -108,8 +109,8 @@ class _M {
 
   // outline→filled cross-fade + colour lerp. One driver for both so the glyph
   // never solidifies ahead of, or behind, the colour.
-  static const Duration stateFade  = Duration(milliseconds: 140);
-  static const Curve    stateCurve = Curves.easeOutCubic;
+  static const Duration stateFade = Duration(milliseconds: 140);
+  static const Curve stateCurve = Curves.easeOutCubic;
 
   // One-shot press pill measured from the reference: 0 → 9% black → 0 over
   // about 520ms, with a ~100ms attack and a long, calm ~420ms fade-out.
@@ -120,17 +121,17 @@ class _M {
   // invisible on the white bar. Animating the colour's own alpha is
   // the same visual target with none of that trap.
   static const Duration pillPulse = Duration(milliseconds: 520);
-  static const double   pillPeak  = 0.09;
-  static const Color    pillTint  = Colors.black;
-  static const double   pillUpW   = 20;   // 20% of 520ms = 104ms attack
-  static const double   pillDownW = 80;   // 80% of 520ms = 416ms decay
+  static const double pillPeak = 0.09;
+  static const Color pillTint = Colors.black;
+  static const double pillUpW = 20; // 20% of 520ms = 104ms attack
+  static const double pillDownW = 80; // 80% of 520ms = 416ms decay
 
   // The reference nav glyphs do not scale. The centre FAB has no counterpart
   // there, so it keeps only a restrained 4% response of its own.
-  static const Duration bounce      = Duration(milliseconds: 160);
-  static const double   bouncePeak  = 1.04;
-  static const double   bounceUpW   = 40;   // 64ms out
-  static const double   bounceDownW = 60;   // 96ms back
+  static const Duration bounce = Duration(milliseconds: 160);
+  static const double bouncePeak = 1.04;
+  static const double bounceUpW = 40; // 64ms out
+  static const double bounceDownW = 60; // 96ms back
 }
 
 /// Restrained tap response for the centre FAB. Regular nav glyphs intentionally
@@ -192,94 +193,24 @@ const String _kNavFont = kAppFont;
 /// apparent stroke with it, so those two tokens move together.
 enum _Glyph { home, campaigns, tools, profile }
 
-/// ⚠ `widget_fill.png` و `user_fill.png` بە هەڵە **پێچەوانە**ن لە ناوەکانیان.
-///
-/// پێوانەی داپۆشینی مەرەکەب لەسەر هەمان کەنڤاسی 512×512:
-///
-///     home.png        22.1٪   →  home_fill.png        63.4٪   ✓ ڕاست
-///     megaphone.png   16.7٪   →  megaphone_fill.png   32.5٪   ✓ ڕاست
-///     widget.png      50.8٪   →  widget_fill.png      29.3٪   ✗ پێچەوانە
-///     user.png        52.1٪   →  user_fill.png        21.0٪   ✗ پێچەوانە
-///
-/// واتە بۆ ئەم دوو تابە فایلی «پڕ» لە ڕاستیدا هێڵکێشراوەکەیە. ئەنجامەکەی
-/// ئەوە بوو کە «ئامرازەکان» و «پرۆفایل» لە کاتی هەڵبژاردندا **بەتاڵ**
-/// دەبوونەوە، لە کاتێکدا «سەرەکی» و «ڕیکلامەکان» پڕ دەبوون.
-///
-/// چارەسەرەکە لێرەیە و نەک بە ناوگۆڕینی فایلەکان، بۆیە ئەگەر ڕۆژێک
-/// ئارتوۆرکەکە نوێ کرایەوە و ناوەکان ڕاست بوون، تەنها ئەم `switch`ـە
-/// دەگەڕێتەوە بۆ فۆرمی ئاسایی.
-///
-/// ⚠ چارەسەری جێگرەوە — دانانی `Icons.grid_view_rounded` /
-/// `Icons.person_rounded`ی مێتریاڵ — دۆخی پڕبوونی ڕاست دەکردەوە، بەڵام
-/// ئەو دوو تابە بە کێش و ستایلێکی جیاواز لە دوو تابەکەی تەنیشتیان
-/// دەکێشران (ڤێکتۆری مێتریاڵ بەرامبەر ڕەستەری ئەم کیتە) — واتە
-/// ناڕێکییەکی بینراوی نوێ لە جیاتی کۆنەکە.
-String _glyphAsset(_Glyph g, bool filled) {
-  switch (g) {
-    case _Glyph.home:
-      return filled
-          ? 'assets/icons/nav/home_fill.png'
-          : 'assets/icons/nav/home.png';
-    case _Glyph.campaigns:
-      return filled
-          ? 'assets/icons/nav/megaphone_fill.png'
-          : 'assets/icons/nav/megaphone.png';
-    // ↓ بە ئەنقەست پێچەوانە — بڕوانە تێبینییەکەی سەرەوە.
-    case _Glyph.tools:
-      return filled
-          ? 'assets/icons/nav/widget.png'
-          : 'assets/icons/nav/widget_fill.png';
-    case _Glyph.profile:
-      return filled
-          ? 'assets/icons/nav/user.png'
-          : 'assets/icons/nav/user_fill.png';
-  }
-}
-
-/// Outline and filled stacked on one another, cross-faded by [fill] (0 = pure
-/// outline, 1 = pure solid). A layer whose opacity has reached 0 or 1 is
-/// dropped from the tree entirely, so a resting tab paints exactly one image
-/// with no `Opacity` layer — the cross-fade costs nothing except while it runs.
+/// A single external SVG family stays sharp at every device pixel ratio.
 Widget _navGlyph(
   BuildContext context,
-  _Glyph g,
+  _Glyph glyph,
   Color color,
   double fill,
   double box,
-) {
-  // 512×512 PNG بۆ ~24 dp — بەبێ `cacheWidth` هەموو ڕەستەرەکە دیکۆد دەبێت.
-  final double dpr = MediaQuery.maybeDevicePixelRatioOf(context) ?? 3.0;
-  final int cache = (box * dpr).ceil().clamp(16, 512);
-
-  Widget layer(bool filled, double opacity) {
-    final Widget img = Image.asset(
-      _glyphAsset(g, filled),
-      width: box,
-      height: box,
-      cacheWidth: cache,
-      cacheHeight: cache,
+) =>
+    SolarIcon(
+      switch (glyph) {
+        _Glyph.home => SolarIcons.home2,
+        _Glyph.campaigns => SolarIcons.clapperboardPlay,
+        _Glyph.tools => SolarIcons.widget2,
+        _Glyph.profile => SolarIcons.userRounded,
+      },
+      size: box,
       color: color,
-      filterQuality: FilterQuality.medium,
-      isAntiAlias: true,
     );
-    if (opacity >= 1.0) return img;
-    return Opacity(opacity: opacity, child: img);
-  }
-
-  // بۆکسەکە هەمیشە `box × box`ـە بۆ هەر چوار تابەکە و بۆ هەردوو دۆخ،
-  // بۆیە ناوەندی ئایکۆنەکان دەقاودەق لەسەر یەک هێڵن.
-  return SizedBox(
-    width: box,
-    height: box,
-    child: Stack(
-      alignment: Alignment.center,
-      children: [
-        if (fill < 1.0) layer(false, 1.0 - fill),
-        if (fill > 0.0) layer(true, fill),
-      ],
-    ),
-  );
-}
 
 class _NavItemData {
   final _Glyph glyph;
@@ -327,12 +258,11 @@ class ProxoBottomNav extends StatefulWidget {
 
 class _ProxoBottomNavState extends State<ProxoBottomNav>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _slide =
-      AnimationController(
-        vsync: this,
-        duration: _M.indicatorSlide,
-        value: 1.0,
-      );
+  late final AnimationController _slide = AnimationController(
+    vsync: this,
+    duration: _M.indicatorSlide,
+    value: 1.0,
+  );
 
   /// Slot positions are held as fractional indices, not pixels, so the bar
   /// re-derives the indicator's x from the live width on every layout —
@@ -484,8 +414,7 @@ class _ProxoBottomNavState extends State<ProxoBottomNav>
                             final double centreX =
                                 _S.hPad + (_liveSlot + 0.5) * slotW;
                             return Transform.translate(
-                              offset:
-                                  Offset(centreX - _S.indW / 2, 0),
+                              offset: Offset(centreX - _S.indW / 2, 0),
                               child: child,
                             );
                           },
@@ -629,10 +558,9 @@ class _NavItemState extends State<_NavItem> with TickerProviderStateMixin {
                             height: _S.pressPillH,
                             child: DecoratedBox(
                               decoration: BoxDecoration(
-                                color: _M.pillTint
-                                    .withOpacity(_pill.value),
-                                borderRadius: BorderRadius.circular(
-                                    _S.pressPillRadius),
+                                color: _M.pillTint.withOpacity(_pill.value),
+                                borderRadius:
+                                    BorderRadius.circular(_S.pressPillRadius),
                               ),
                             ),
                           ),
@@ -717,7 +645,10 @@ class _AddFabState extends State<_AddFab> with SingleTickerProviderStateMixin {
       child: SizedBox(
         width: widget.size,
         height: widget.size,
-        child: Material(
+        child: Semantics(
+          button: true,
+          label: ProxoLocale.isArabic ? 'إنشاء إعلان' : 'دروستکردنی ڕیکلام',
+          child: Material(
           color: _C.active,
           shape: const CircleBorder(),
           clipBehavior: Clip.antiAlias,
@@ -727,41 +658,13 @@ class _AddFabState extends State<_AddFab> with SingleTickerProviderStateMixin {
             highlightColor: const Color(0x14FFFFFF),
             onTapDown: (_) => _ctrl.forward(from: 0.0),
             onTap: widget.onTap, // ← هەمان onTap(2)ی پێشوو — هیچ نەگۆڕاوە
-            // CustomPaint تەواوی بازنەکە پڕدەکاتەوە، بۆیە ناوەندی «+»
-            // دەقاودەق ناوەندی بازنەکەیە.
-            child: const CustomPaint(painter: _PlusPainter()),
+            child: const Center(
+                child:
+                    SolarIcon(SolarIcons.add, size: 24, color: Colors.white)),
           ),
+        ),
         ),
       ),
     );
   }
-}
-
-// Plus: derived from the circle so the glyph keeps the exact proportions it
-// had at 45dp (arm 8.0 / stroke 2.6) now that the circle is 48dp.
-//   arm    = 8.0  / 45 = 0.1778 × diameter
-//   stroke = 2.6  / 45 = 0.0578 × diameter
-// Round caps extend each arm by stroke/2, and they do so symmetrically, so
-// both strokes stay perfectly centred on (size/2, size/2).
-class _PlusPainter extends CustomPainter {
-  const _PlusPainter();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final cx = size.width / 2;
-    final cy = size.height / 2;
-    final arm = size.width * 0.1778;
-
-    final p = Paint()
-      ..color = Colors.white
-      ..strokeWidth = size.width * 0.0578
-      ..strokeCap = StrokeCap.round
-      ..isAntiAlias = true;
-
-    canvas.drawLine(Offset(cx - arm, cy), Offset(cx + arm, cy), p);
-    canvas.drawLine(Offset(cx, cy - arm), Offset(cx, cy + arm), p);
-  }
-
-  @override
-  bool shouldRepaint(_PlusPainter oldDelegate) => false;
 }

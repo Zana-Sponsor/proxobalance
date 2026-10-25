@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
+import 'package:solar_iconkit/solar_iconkit.dart';
+import '../theme/proxo_ui.dart';
+import 'auth/auth_design.dart';
 import 'notification_bell.dart';
 
+/// Shared app bar: a stable 56 dp row and 48 dp interactive targets.
 class ProxoTopBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onMenuTap;
   final VoidCallback? onBackTap;
@@ -13,15 +16,7 @@ class ProxoTopBar extends StatelessWidget implements PreferredSizeWidget {
   final String userName;
   final String balance;
   final VoidCallback? onBalanceTap;
-
-  static const double _contentHeight = 54.0;
-  static const double _sidePadding = 16.0;
-  static const Color _ink = AppColors.ink;
-  static const Color _hairline = Color(0xFFF2F3F5);
-
-  static const double _iconSize = 21.0;
-  static const double _logoHeight = 20.0;
-  static const String _logoAsset = 'assets/images/proxo_logo.png';
+  final int? notificationCount;
 
   const ProxoTopBar({
     super.key,
@@ -30,147 +25,91 @@ class ProxoTopBar extends StatelessWidget implements PreferredSizeWidget {
     this.automaticallyImplyLeading = false,
     this.onNotificationTap,
     this.onSearchTap,
-    this.actions = const <Widget>[],
+    this.actions = const [],
     this.topPadding = 0,
     this.userName = '—',
     this.balance = '0 IQD',
     this.onBalanceTap,
+    this.notificationCount,
   });
 
   @override
-  Size get preferredSize => Size.fromHeight(_contentHeight + topPadding);
-
-  Widget _buildRightCluster(BuildContext context) {
-    if (onBackTap != null) {
-      return _BarIconButton(
-        onTap: onBackTap,
-        child: const Icon(Icons.arrow_forward_rounded, size: _iconSize, color: _ink),
-      );
-    }
-    if (automaticallyImplyLeading && Navigator.canPop(context)) {
-      return _BarIconButton(
-        onTap: () => Navigator.maybePop(context),
-        child: const Icon(Icons.arrow_forward_rounded, size: _iconSize, color: _ink),
-      );
-    }
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (onMenuTap != null)
-          _MenuIcon(color: _ink, onTap: onMenuTap),
-        const SizedBox(width: 8),
-        NotificationBell(
-          onTap: onNotificationTap ?? () {},
-          iconSize: _iconSize,
-        ),
-        if (onSearchTap != null) ...[
-          const SizedBox(width: 6),
-          _BarIconButton(
-            onTap: onSearchTap,
-            child: const Icon(Icons.search_rounded, size: _iconSize, color: _ink),
-          ),
-        ],
-        ...actions,
-      ],
-    );
-  }
+  Size get preferredSize => Size.fromHeight(56 + topPadding);
 
   @override
   Widget build(BuildContext context) {
+    final back = onBackTap ??
+        (automaticallyImplyLeading && Navigator.canPop(context)
+            ? () {
+                Navigator.maybePop(context);
+              }
+            : null);
     return Container(
-      height: _contentHeight + topPadding,
-      padding: EdgeInsets.only(
-        top: topPadding,
-        left: _sidePadding,
-        right: _sidePadding,
-      ),
+      height: preferredSize.height,
+      padding: EdgeInsetsDirectional.only(start: 8, end: 16, top: topPadding),
       decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(bottom: BorderSide(color: _hairline, width: 1)),
+        color: AuthTokens.pageBackground,
+        border: Border(bottom: BorderSide(color: AuthTokens.lineOff)),
       ),
-      child: Directionality(
-        textDirection: TextDirection.rtl,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // بەشی لای ڕاست: مێنیو + زەنگ
-            _buildRightCluster(context),
-
-            // بەشی لای چەپ: لۆگۆ
-            Semantics(
+      child: Row(children: [
+        if (back != null)
+          _BarIconButton(
+            onTap: back,
+            label: 'گەڕانەوە',
+            icon: Directionality.of(context) == TextDirection.rtl
+                ? SolarIcons.arrowRight
+                : SolarIcons.arrowLeft,
+          )
+        else ...[
+          if (onMenuTap != null)
+            _BarIconButton(
+                onTap: onMenuTap,
+                label: 'مێنیو',
+                icon: SolarIcons.hamburgerMenu),
+          NotificationBell(
+            onTap: onNotificationTap ??
+                () => Navigator.of(context).pushNamed('/notifications'),
+            iconSize: ProxoUi.iconSize,
+            count: notificationCount,
+          ),
+          if (onSearchTap != null)
+            _BarIconButton(
+                onTap: onSearchTap, label: 'گەڕان', icon: SolarIcons.magnifier),
+          ...actions,
+        ],
+        const SizedBox(width: 8),
+        Expanded(
+          child: Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: Semantics(
               label: 'Proxo',
               image: true,
-              child: Image.asset(
-                _logoAsset,
-                height: _logoHeight,
-                fit: BoxFit.contain,
-                excludeFromSemantics: true,
-              ),
+              child: Image.asset('assets/images/proxo_logo.png',
+                  height: 22,
+                  width: 88,
+                  fit: BoxFit.contain,
+                  excludeFromSemantics: true),
             ),
-          ],
+          ),
         ),
-      ),
+      ]),
     );
   }
 }
 
 class _BarIconButton extends StatelessWidget {
+  const _BarIconButton(
+      {required this.onTap, required this.label, required this.icon});
   final VoidCallback? onTap;
-  final Widget child;
-
-  const _BarIconButton({required this.onTap, required this.child});
+  final String label;
+  final String icon;
 
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: SizedBox(
-        width: 36,
-        height: 36,
-        child: Center(child: child),
-      ),
-    );
-  }
-}
-
-class _MenuIcon extends StatelessWidget {
-  final Color color;
-  final VoidCallback? onTap;
-
-  const _MenuIcon({required this.color, this.onTap});
-
-  Widget _bar() => Container(
-        width: 17,
-        height: 1.8,
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(2),
-        ),
+  Widget build(BuildContext context) => IconButton(
+        tooltip: label,
+        onPressed: onTap,
+        constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+        padding: const EdgeInsets.all(12),
+        icon: SolarIcon(icon, size: ProxoUi.iconSize, color: AuthTokens.ink),
       );
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: SizedBox(
-        width: 36,
-        height: 36,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            _bar(),
-            const SizedBox(height: 3.5),
-            _bar(),
-            const SizedBox(height: 3.5),
-            _bar(),
-          ],
-        ),
-      ),
-    );
-  }
 }

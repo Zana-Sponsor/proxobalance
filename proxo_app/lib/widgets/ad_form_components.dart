@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../services/ad_submission.dart';
 import '../theme/app_theme.dart';
+import '../theme/proxo_ui.dart';
 import 'proxo_text.dart';
 import 'receipt/receipt_kit.dart';
 
@@ -11,13 +12,14 @@ abstract final class AdUi {
   static const secondary = AppColors.inkMuted;
   static const green = Color(0xFF157347);
   static const greenSoft = Color(0xFFECF8F0);
-  static const radius = BorderRadius.all(Radius.circular(18));
-  static const controlRadius = BorderRadius.all(Radius.circular(14));
+  static const radius = BorderRadius.all(Radius.circular(ProxoUi.radius));
+  static const controlRadius =
+      BorderRadius.all(Radius.circular(ProxoUi.controlRadius));
   static const controlSurface = Color(0xFFFCFDFF);
   static const controlLine = Color(0xFFE8EDF4);
   static const selectedLine = Color(0xFFCCDFFF);
-  static const sectionGap = 22.0;
-  static const cardPadding = EdgeInsets.all(20);
+  static const sectionGap = ProxoUi.gap24;
+  static const cardPadding = EdgeInsets.all(ProxoUi.cardPadding);
   static const cardShadow = [
     BoxShadow(color: Color(0x0C0F172A), blurRadius: 24, offset: Offset(0, 6)),
     BoxShadow(color: Color(0x040F172A), blurRadius: 4, offset: Offset(0, 2)),
@@ -68,14 +70,12 @@ abstract final class AdUi {
         fillColor: controlSurface,
         constraints: BoxConstraints(minHeight: 56),
         contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-        border: OutlineInputBorder(
-            borderRadius: controlRadius),
+        border: OutlineInputBorder(borderRadius: controlRadius),
         enabledBorder: OutlineInputBorder(
             borderRadius: controlRadius,
             borderSide: BorderSide(color: controlLine)),
         focusedBorder: OutlineInputBorder(
-            borderRadius: controlRadius,
-            borderSide: BorderSide(color: blue)),
+            borderRadius: controlRadius, borderSide: BorderSide(color: blue)),
       ),
       sliderTheme: base.sliderTheme.copyWith(
         trackHeight: 3,
@@ -91,10 +91,9 @@ abstract final class AdUi {
           style: FilledButton.styleFrom(
         backgroundColor: blue,
         foregroundColor: Colors.white,
-        minimumSize: const Size(0, 52),
+        minimumSize: const Size(0, ProxoUi.controlHeight),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-        shape: const RoundedRectangleBorder(
-            borderRadius: controlRadius),
+        shape: const RoundedRectangleBorder(borderRadius: controlRadius),
         textStyle: t.labelLarge?.copyWith(fontWeight: FontWeight.w400),
       )),
       outlinedButtonTheme: OutlinedButtonThemeData(
@@ -103,8 +102,7 @@ abstract final class AdUi {
         minimumSize: const Size(0, 48),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
         side: const BorderSide(color: controlLine),
-        shape: const RoundedRectangleBorder(
-            borderRadius: controlRadius),
+        shape: const RoundedRectangleBorder(borderRadius: controlRadius),
         textStyle: t.labelLarge?.copyWith(fontWeight: FontWeight.w400),
       )),
     );
@@ -136,7 +134,7 @@ class AdFormSection extends StatelessWidget {
                     ProxoText(subtitle!,
                         style: AdUi.text(context, color: AdUi.secondary)),
                   ],
-                  const SizedBox(height: 20),
+                  const SizedBox(height: ProxoUi.gap16),
                   child,
                 ])),
       );
@@ -170,12 +168,15 @@ class AdChoice extends StatelessWidget {
                     color: selected ? AppColors.accentSoft : Colors.white,
                     borderRadius: AdUi.controlRadius,
                     border: Border.all(
-                        color: selected ? AdUi.selectedLine : AdUi.controlLine)),
-                child: Center(widthFactor: 1, heightFactor: 1,
+                        color:
+                            selected ? AdUi.selectedLine : AdUi.controlLine)),
+                child: Center(
+                    widthFactor: 1,
+                    heightFactor: 1,
                     child: ProxoText(label,
-                    textAlign: TextAlign.center,
-                    style: AdUi.text(context,
-                        color: selected ? AdUi.blue : AdUi.ink))),
+                        textAlign: TextAlign.center,
+                        style: AdUi.text(context,
+                            color: selected ? AdUi.blue : AdUi.ink))),
               ),
             )),
       );
@@ -198,8 +199,7 @@ class AdPriceDetails extends StatelessWidget {
               key: const ValueKey('coupon-discount'),
               padding: const EdgeInsets.all(14),
               decoration: const BoxDecoration(
-                  color: AdUi.greenSoft,
-                  borderRadius: AdUi.controlRadius),
+                  color: AdUi.greenSoft, borderRadius: AdUi.controlRadius),
               child: AdValueRow(
                   label: 'داشکاندنی کۆبۆن',
                   value: adIqd(quote.promoIqd, discount: true),
@@ -220,10 +220,10 @@ class AdPriceDetails extends StatelessWidget {
                   color: AppColors.accentSoft,
                   borderRadius: AdUi.controlRadius),
               child: AdValueRow(
-              key: const ValueKey('ad-total'),
-              label: 'کۆی گشتی',
-              value: adIqd(quote.totalIqd),
-              color: AdUi.blue)),
+                  key: const ValueKey('ad-total'),
+                  label: 'کۆی گشتی',
+                  value: adIqd(quote.totalIqd),
+                  color: AdUi.blue)),
         ],
       ]);
 }
@@ -240,45 +240,47 @@ class AdValueRow extends StatelessWidget {
       this.valueColor});
   @override
   Widget build(BuildContext context) => LayoutBuilder(
-    builder: (context, constraints) {
-      final style = AdUi.text(context, color: color);
-      double minimumWidth(String text) {
-        final painter = TextPainter(
-          text: TextSpan(text: ProxoTextDirection.display(text), style: style),
-          textDirection: ProxoTextDirection.of(text),
-          textScaler: MediaQuery.textScalerOf(context),
-        )..layout();
-        final width = painter.minIntrinsicWidth;
-        painter.dispose();
-        return width;
-      }
+        builder: (context, constraints) {
+          final style = AdUi.text(context, color: color);
+          double minimumWidth(String text) {
+            final painter = TextPainter(
+              text: TextSpan(
+                  text: ProxoTextDirection.display(text), style: style),
+              textDirection: ProxoTextDirection.of(text),
+              textScaler: MediaQuery.textScalerOf(context),
+            )..layout();
+            final width = painter.minIntrinsicWidth;
+            painter.dispose();
+            return width;
+          }
 
-      final valueText = ProxoText(
-        value,
-        style: style.copyWith(color: valueColor ?? color),
-        textAlign: TextAlign.left,
+          final valueText = ProxoText(
+            value,
+            style: style.copyWith(color: valueColor ?? color),
+            textAlign: TextAlign.left,
+          );
+          final labelText = ProxoText(
+            label,
+            style: style,
+            textAlign: TextAlign.right,
+          );
+          final cellWidth = (constraints.maxWidth - 16) / 2;
+          if (minimumWidth(value) > cellWidth ||
+              minimumWidth(label) > cellWidth) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [labelText, const SizedBox(height: 6), valueText],
+            );
+          }
+          return Row(
+            textDirection: TextDirection.ltr,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: valueText),
+              const SizedBox(width: 16),
+              Expanded(child: labelText),
+            ],
+          );
+        },
       );
-      final labelText = ProxoText(
-        label,
-        style: style,
-        textAlign: TextAlign.right,
-      );
-      final cellWidth = (constraints.maxWidth - 16) / 2;
-      if (minimumWidth(value) > cellWidth || minimumWidth(label) > cellWidth) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [labelText, const SizedBox(height: 6), valueText],
-        );
-      }
-      return Row(
-        textDirection: TextDirection.ltr,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(child: valueText),
-          const SizedBox(width: 16),
-          Expanded(child: labelText),
-        ],
-      );
-    },
-  );
 }

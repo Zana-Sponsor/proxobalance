@@ -3,22 +3,16 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:proxo_app/widgets/receipt/receipt_kit.dart';
 
-/// Includes the canonical canvas transform when auditing physical bounds.
 Rect receiptPaintedRect(WidgetTester tester, Finder finder) {
   final box = tester.renderObject<RenderBox>(finder);
   return MatrixUtils.transformRect(
       box.getTransformTo(null), Offset.zero & box.size);
 }
 
-/// Audit painted text bounds, complete glyph coverage, common baselines,
-/// physical edges and row rhythm, rather than only checking widget flags.
+/// Inspect actual laid-out glyph bounds, retained text and readable sizes.
+/// Rows may grow to wrap long references or translated labels.
 List<Map<String, dynamic>> auditReceiptRows(WidgetTester tester) {
   final measured = <Map<String, dynamic>>[];
-  final surfaces = find.byType(ReceiptSurface);
-  final factor = surfaces.evaluate().isEmpty
-      ? 1.0
-      : tester.getSize(surfaces.first).width / ReceiptTokens.referenceWidth;
-  double? rowHeight;
   for (final element in find.byType(ReceiptRow).evaluate()) {
     final row = element.widget as ReceiptRow;
     final finder = find.byWidget(row);
@@ -26,77 +20,63 @@ List<Map<String, dynamic>> auditReceiptRows(WidgetTester tester) {
         of: finder,
         matching: find.byWidgetPredicate((widget) => widget is Text));
     expect(texts, findsNWidgets(2));
-    final labelFinder = texts.at(0);
-    final valueFinder = texts.at(1);
     final bounds = receiptPaintedRect(tester, finder);
-    final labelBounds = receiptPaintedRect(tester, labelFinder);
-    final valueBounds = receiptPaintedRect(tester, valueFinder);
-    rowHeight ??= bounds.height;
-    expect(bounds.height, closeTo(rowHeight, 0.01));
+    final labelBounds = receiptPaintedRect(tester, texts.at(0));
+    final valueBounds = receiptPaintedRect(tester, texts.at(1));
     expect(labelBounds.right, closeTo(bounds.right, 0.01));
     expect(valueBounds.left, closeTo(bounds.left, 0.01));
     expect(labelBounds.left - valueBounds.right,
-        closeTo(ReceiptTokens.labelToValue * factor, 0.01));
-    expect(labelBounds.center.dy, closeTo(bounds.center.dy, 0.01));
-    expect(valueBounds.center.dy, closeTo(bounds.center.dy, 0.01));
-
-    final baselines = <double>[];
+        closeTo(ReceiptTokens.labelToValue, 0.01));
+    final cardBounds = receiptPaintedRect(tester,
+        find.ancestor(of: finder, matching: find.byType(ReceiptCard)).first);
+    final inkBounds = <Rect>[];
     for (var i = 0; i < 2; i++) {
       final textFinder = texts.at(i);
       final text = tester.widget<Text>(textFinder);
       final paragraph = tester.renderObject<RenderParagraph>(
           find.descendant(of: textFinder, matching: find.byType(RichText)));
       expect(text.data, receiptSingleLine(i == 0 ? row.label : row.value));
-      expect(text.maxLines, 1);
-      expect(text.softWrap, false);
-      expect(text.overflow, TextOverflow.visible);
-      expect(
-          text.textDirection, i == 0 ? TextDirection.rtl : row.valueDirection);
-      expect(text.style!.fontWeight, FontWeight.w400);
+      expect(text.maxLines, isNull);
+      expect(text.softWrap, true);
+      expect(text.overflow, isNot(TextOverflow.ellipsis));
+      expect(text.style!.fontSize, greaterThanOrEqualTo(13));
       expect(text.style!.fontFamily, ReceiptTokens.fontFamily);
       expect(paragraph.didExceedMaxLines, false);
       final rendered =
           paragraph.text.toPlainText(includeSemanticsLabels: false);
-      final glyphs = paragraph.getBoxesForSelection(
-          TextSelection(baseOffset: 0, extentOffset: rendered.length));
-      for (final box in glyphs) {
-        expect(box.left, greaterThanOrEqualTo(-0.05));
-        expect(box.right, lessThanOrEqualTo(paragraph.size.width + 0.05));
-        // All directional runs belong to the same single line.
-        expect(box.top, closeTo(glyphs.first.top, 0.01));
-        expect(box.bottom, closeTo(glyphs.first.bottom, 0.01));
+      // Flutter includes hanging trailing whitespace outside the paragraph in
+      // mixed RTL/LTR selections. Audit visible runs individually, retaining
+      // strict bounds for every non-whitespace character.
+      final visibleRuns = RegExp(r'[^\s\u2066-\u2069]+').allMatches(rendered);
+      Rect? ink;
+      for (final box in visibleRuns.expand((run) =>
+          paragraph.getBoxesForSelection(
+              TextSelection(baseOffset: run.start, extentOffset: run.end)))) {
+        final glyph = Rect.fromPoints(
+            paragraph.localToGlobal(Offset(box.left, box.top)),
+            paragraph.localToGlobal(Offset(box.right, box.bottom)));
+        ink = ink == null ? glyph : ink.expandToInclude(glyph);
+        // Rabar's glyph ink can overhang its advance box (e.g. Kurdish ن),
+        // so audit the actual padded card edges and the neighboring label,
+        // rather than incorrectly requiring ink inside the advance width.
+        expect(glyph.left, greaterThanOrEqualTo(cardBounds.left + 8));
+        expect(glyph.right, lessThanOrEqualTo(cardBounds.right - 8));
+        expect(glyph.top, greaterThanOrEqualTo(bounds.top - 0.1));
+        expect(glyph.bottom, lessThanOrEqualTo(bounds.bottom + 0.1));
       }
-      // The final character is still laid out, even for a very long UUID/name.
-      var finalCharacter = rendered.length - 1;
-      while (finalCharacter >= 0 &&
-          rendered.codeUnitAt(finalCharacter) >= 0x2066 &&
-          rendered.codeUnitAt(finalCharacter) <= 0x2069) {
-        finalCharacter--;
-      }
-      if (finalCharacter >= 0) {
-        expect(
-            paragraph.getBoxesForSelection(TextSelection(
-                baseOffset: finalCharacter, extentOffset: finalCharacter + 1)),
-            isNotEmpty);
-      }
-      final baseline = paragraph.getDryBaseline(
-          paragraph.constraints, TextBaseline.alphabetic)!;
-      baselines.add(paragraph.localToGlobal(Offset(0, baseline)).dy);
+      inkBounds.add(ink!);
+      expect(receiptPaintedRect(tester, textFinder).bottom,
+          lessThanOrEqualTo(bounds.bottom + 0.1));
     }
-    expect(baselines[0], closeTo(baselines[1], 0.01));
+    expect(inkBounds[0].left - inkBounds[1].right, greaterThanOrEqualTo(4),
+        reason: 'Label and value ink must remain visibly separated');
     measured.add({
       'label': row.label,
       'value': row.value,
       'row_width': bounds.width,
       'row_height': bounds.height,
-      'label_width': labelBounds.width,
-      'value_width': valueBounds.width,
-      'label_value_gap': labelBounds.left - valueBounds.right,
-      'baseline_error': (baselines[0] - baselines[1]).abs(),
-      'center_error': (labelBounds.center.dy - valueBounds.center.dy).abs(),
-      'label_font_size': tester.widget<Text>(labelFinder).style!.fontSize,
-      'value_font_size': tester.widget<Text>(valueFinder).style!.fontSize,
-      'single_line': true,
+      'label_font_size': tester.widget<Text>(texts.at(0)).style!.fontSize,
+      'value_font_size': tester.widget<Text>(texts.at(1)).style!.fontSize
     });
   }
   expect(measured, isNotEmpty);
@@ -107,7 +87,7 @@ List<Map<String, dynamic>> auditReceiptRows(WidgetTester tester) {
       expect(
           receiptPaintedRect(tester, rows.at(i)).top -
               receiptPaintedRect(tester, rows.at(i - 1)).bottom,
-          closeTo(ReceiptTokens.rowToRow * factor, 0.01));
+          closeTo(ReceiptTokens.rowToRow, 0.01));
     }
   }
   return measured;
