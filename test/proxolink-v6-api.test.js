@@ -271,3 +271,20 @@ test('delete dependency race returns safe conflict and never substitutes an arch
  assert.equal(result.status,409);assert.equal(result.json().error,'ad_dependency');
  assert.equal(fixture.rows.length,1);assert.equal(fixture.rows[0].archived_at,undefined);
 });
+
+test('failed first publish is persisted; explicit corrected edit publishes that same page, ready inactive pages remain inactive',async()=>{
+  const body=pagePayload('contact',['telegram']);
+  body.avatar_path=`${OWNER}/${body.client_request_id}/avatar.png`;
+  const failed=await call('cards',{method:'POST',body});
+  assert.equal(failed.status,422);assert.equal(failed.json().error,'publish_failed');
+  assert.equal(fixture.rows.length,1);assert.equal(failed.json().card.publish_status,'failed');
+  const saved=fixture.rows[0],id=saved.id;
+  const corrected=await call('cards',{method:'PATCH',query:{id},body:{avatar_path:null,name:'Corrected page',expected_updated_at:saved.updated_at}});
+  assert.equal(corrected.status,200,corrected.body);assert.equal(corrected.json().card.id,id);
+  assert.equal(corrected.json().card.status,'active');assert.equal(corrected.json().card.publish_status,'ready');
+  assert.equal(fixture.rows.length,1);assert.equal(fixture.rows[0].name,'Corrected page');
+  assert.equal((await call('cards',{query:{id}})).json().card.name,'Corrected page');
+  await call('card-action',{method:'POST',body:{card_id:id,action:'deactivate'}});
+  const edited=await call('cards',{method:'PATCH',query:{id},body:{name:'Intentionally inactive',expected_updated_at:fixture.rows[0].updated_at}});
+  assert.equal(edited.status,200);assert.equal(edited.json().card.status,'inactive');
+});

@@ -107,37 +107,60 @@ abstract final class AdUi {
   }
 }
 
+enum AdSectionStyle { card, open }
+
+enum AdChoiceStyle { standard, primary, secondary }
+
 class AdFormSection extends StatelessWidget {
   final String title;
   final Widget child;
   final String? subtitle;
-  const AdFormSection(
-      {super.key, required this.title, required this.child, this.subtitle});
+  final AdSectionStyle style;
+  const AdFormSection({
+    super.key,
+    required this.title,
+    required this.child,
+    this.subtitle,
+    this.style = AdSectionStyle.card,
+  });
   @override
   Widget build(BuildContext context) => Container(
-        padding: AdUi.cardPadding,
-        decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: AdUi.radius,
-            boxShadow: AdUi.cardShadow),
+        padding:
+            style == AdSectionStyle.open ? EdgeInsets.zero : AdUi.cardPadding,
+        decoration: style == AdSectionStyle.open
+            ? null
+            : const BoxDecoration(
+                color: Colors.white,
+                borderRadius: AdUi.radius,
+                boxShadow: AdUi.cardShadow,
+              ),
         child: Material(
-            type: MaterialType.transparency,
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  ProxoText(title,
-                      translate: true,
-                      style: AdUi.heading(context),
-                      textAlign: TextAlign.right),
-                  if (subtitle != null) ...[
-                    const SizedBox(height: 6),
-                    ProxoText(subtitle!,
-                        translate: true,
-                        style: AdUi.text(context, color: AdUi.secondary)),
-                  ],
-                  const SizedBox(height: 20),
-                  child,
-                ])),
+          type: MaterialType.transparency,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ProxoText(
+                title,
+                translate: true,
+                style: style == AdSectionStyle.open
+                    ? AdUi.heading(context)
+                        .copyWith(fontSize: 17, fontWeight: FontWeight.w600)
+                    : AdUi.heading(context),
+                textAlign: TextAlign.right,
+              ),
+              if (subtitle != null) ...[
+                const SizedBox(height: 6),
+                ProxoText(
+                  subtitle!,
+                  translate: true,
+                  style: AdUi.text(context, color: AdUi.secondary),
+                ),
+              ],
+              const SizedBox(height: 20),
+              child,
+            ],
+          ),
+        ),
       );
 }
 
@@ -146,55 +169,106 @@ class AdChoice extends StatelessWidget {
   final bool selected;
   final VoidCallback? onTap;
   final Widget? icon;
-  const AdChoice(
-      {super.key,
-      required this.label,
-      required this.selected,
-      required this.onTap,
-      this.icon});
+  final AdChoiceStyle style;
+  final double minimumHeight;
+  const AdChoice({
+    super.key,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+    this.icon,
+    this.style = AdChoiceStyle.standard,
+    this.minimumHeight = 48,
+  });
   @override
-  Widget build(BuildContext context) => Semantics(
-        selected: selected,
-        enabled: onTap != null,
-        button: true,
-        child: Material(
-            color: Colors.transparent,
-            child: InkWell(
+  Widget build(BuildContext context) {
+    final primary = style == AdChoiceStyle.primary;
+    final scoped = style != AdChoiceStyle.standard;
+    final foreground = primary
+        ? (selected ? Colors.white : const Color(0xFF64748B))
+        : (selected ? AdUi.blue : AdUi.ink);
+    return Semantics(
+      selected: selected,
+      enabled: onTap != null,
+      button: true,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: AdUi.controlRadius,
+          onTap: onTap,
+          child: AnimatedContainer(
+            duration: MediaQuery.disableAnimationsOf(context)
+                ? Duration.zero
+                : const Duration(milliseconds: 180),
+            curve: Curves.easeOutCubic,
+            constraints: BoxConstraints(minHeight: minimumHeight),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: selected
+                  ? (primary ? AdUi.blue : AppColors.accentSoft)
+                  : Colors.white,
               borderRadius: AdUi.controlRadius,
-              onTap: onTap,
-              child: AnimatedContainer(
-                duration: MediaQuery.disableAnimationsOf(context)
-                    ? Duration.zero
-                    : const Duration(milliseconds: 180),
-                curve: Curves.easeOutCubic,
-                constraints: const BoxConstraints(minHeight: 48),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
-                    color: selected ? AppColors.accentSoft : Colors.white,
-                    borderRadius: AdUi.controlRadius,
-                    border: Border.all(
-                        color:
-                            selected ? AdUi.selectedLine : AdUi.controlLine)),
-                child: Center(
-                    widthFactor: 1,
-                    heightFactor: 1,
-                    child: Row(mainAxisSize: MainAxisSize.min, children: [
-                      if (icon != null) ...[icon!, const SizedBox(width: 8)],
-                      Flexible(
-                          child: ProxoText(label,
-                              translate: true,
-                              textAlign: TextAlign.center,
-                              style: AdUi.text(context,
-                                  color: onTap == null
-                                      ? AdUi.secondary
-                                      : selected
-                                          ? AdUi.blue
-                                          : AdUi.ink))),
-                    ])),
+              border: Border.all(
+                color: primary && selected
+                    ? Colors.transparent
+                    : selected
+                        ? (scoped ? AdUi.blue : AdUi.selectedLine)
+                        : scoped
+                            ? const Color(0xFFCBD5E1)
+                            : AdUi.controlLine,
               ),
-            )),
-      );
+              boxShadow: scoped
+                  ? const [
+                      BoxShadow(
+                        color: Color(0x080F172A),
+                        blurRadius: 5,
+                        offset: Offset(0, 2),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Center(
+              widthFactor: 1,
+              heightFactor: 1,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (icon != null) ...[
+                    IconTheme(
+                      data: IconThemeData(color: foreground, size: 21),
+                      child: icon!,
+                    ),
+                    const SizedBox(width: 8),
+                  ],
+                  Flexible(
+                    child: TweenAnimationBuilder<Color?>(
+                      tween: ColorTween(
+                        end: onTap == null ? AdUi.secondary : foreground,
+                      ),
+                      duration: MediaQuery.disableAnimationsOf(context)
+                          ? Duration.zero
+                          : const Duration(milliseconds: 180),
+                      curve: Curves.easeOutCubic,
+                      builder: (context, color, _) => ProxoText(
+                        label,
+                        translate: true,
+                        textAlign: TextAlign.center,
+                        style: AdUi.text(context, color: color ?? foreground)
+                            .copyWith(
+                          fontWeight:
+                              scoped ? FontWeight.w500 : FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class AdPriceDetails extends StatelessWidget {

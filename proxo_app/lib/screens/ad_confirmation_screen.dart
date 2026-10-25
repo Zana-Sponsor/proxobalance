@@ -17,8 +17,12 @@ class AdConfirmationResult {
   final String? adId;
   final bool useWallet;
   final bool pending;
+  final bool definitiveFailure;
   const AdConfirmationResult(
-      {this.adId, this.useWallet = false, this.pending = false});
+      {this.adId,
+      this.useWallet = false,
+      this.pending = false,
+      this.definitiveFailure = false});
 }
 
 class AdConfirmationScreen extends StatefulWidget {
@@ -99,8 +103,10 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
       widget.repository.cancelPendingOperation(widget.request.id);
     }
     Navigator.of(context).pop(AdConfirmationResult(
-        useWallet: _failure?.paymentCredited == true,
-        pending: _processing || _failure?.uncertain == true));
+      useWallet: _failure?.paymentCredited == true,
+      pending: _processing || _failure?.uncertain == true,
+      definitiveFailure: _failure != null && !_failure!.uncertain,
+    ));
   }
 
   Future<void> _submit() async {
@@ -144,9 +150,9 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
         builder: (context) => Directionality(
             textDirection: TextDirection.rtl,
             child: PopScope<AdConfirmationResult>(
-              canPop: _canCancel &&
-                  !_processing &&
-                  _failure?.paymentCredited != true,
+              // Back and the visible cancel action must return the same
+              // outcome, including a definitive rejection (not a stale retry).
+              canPop: false,
               onPopInvokedWithResult: (didPop, result) {
                 if (didPop) {
                   _cancelled = true;

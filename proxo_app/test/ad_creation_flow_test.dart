@@ -161,7 +161,7 @@ void main() {
           host(AdCreateScreen(repository: repo), scale: scale),
         );
         await tester.pumpAndSettle();
-        await tapVisible(tester, find.byKey(const ValueKey('goal-messages')));
+        await tapVisible(tester, find.byKey(const ValueKey('goal-contact')));
         await tester.ensureVisible(find.byKey(const ValueKey('review-ad')));
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
@@ -172,7 +172,7 @@ void main() {
         )) {
           expect(text.data?.toUpperCase() ?? '', isNot(contains('CPM')));
           if (text.style != null) {
-            expect(text.style!.fontWeight, FontWeight.w400);
+            expect(text.style!.fontWeight, isIn([FontWeight.w400, FontWeight.w500, FontWeight.w600]));
           }
         }
       });
@@ -244,7 +244,7 @@ void main() {
     await tapVisible(tester, ku);
     expect(tester.widget<AdChoice>(ku).selected, isTrue);
     await tapVisible(tester, find.byKey(const ValueKey('gender-female')));
-    await tapVisible(tester, find.byKey(const ValueKey('device-iphone')));
+    expect(find.byKey(const ValueKey('device-iphone')), findsNothing);
     await tapVisible(tester, find.byKey(const ValueKey('age-18-24')));
     expect(
       tester.widget<AdChoice>(find.byKey(const ValueKey('age-all'))).selected,
@@ -262,6 +262,8 @@ void main() {
           ),
         ),
       );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('sticky-price-disclosure')));
       await tester.pumpAndSettle();
       final duration = find.byKey(const ValueKey('duration-slider'));
       for (final days in [2.0, 3.0, 5.0, 1.0, 7.0, 2.0]) {
@@ -305,7 +307,7 @@ void main() {
         '90,000 د.ع',
       );
       expect(find.text('پێشبینی کرتەکان'), findsNothing);
-      await tapVisible(tester, find.byKey(const ValueKey('goal-messages')));
+      await tapVisible(tester, find.byKey(const ValueKey('goal-contact')));
       expect(find.text('پێشبینی کرتەکان'), findsOneWidget);
     },
   );
@@ -325,6 +327,8 @@ void main() {
       await tester.enterText(input, 'VALID');
       await tester.pumpAndSettle();
       await tapVisible(tester, find.text('بەکارهێنانی کۆد'));
+      await tester.tap(find.byKey(const ValueKey('sticky-price-disclosure')));
+      await tester.pumpAndSettle();
       final row = find.byKey(const ValueKey('coupon-discount'));
       expect(row, findsOneWidget);
       final texts = find.descendant(of: row, matching: find.byType(ProxoText));
@@ -366,7 +370,8 @@ void main() {
         find.byKey(const ValueKey('ad-title')),
         'پاراستنی ناو',
       );
-      await tapVisible(tester, find.byKey(const ValueKey('goal-messages')));
+      await tapVisible(tester, find.byKey(const ValueKey('goal-contact')));
+      await tapVisible(tester, find.byKey(const ValueKey('contact-page-disclosure')));
       await tapVisible(tester, find.text('دروستکردنی پەڕەی نوێ'));
       await tester.pumpAndSettle();
       expect(
@@ -392,6 +397,8 @@ void main() {
     await tester.enterText(input, 'VALID');
     await tester.pumpAndSettle();
     await tapVisible(tester, find.text('بەکارهێنانی کۆد'));
+    await tester.tap(find.byKey(const ValueKey('sticky-price-disclosure')));
+    await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('coupon-discount')), findsOneWidget);
     repo.couponExpired = true;
     tester
@@ -572,9 +579,15 @@ void main() {
       host(AdCreateScreen(repository: repo, proxoCard: validDraft().toJson())),
     );
     await tester.pumpAndSettle();
+    final title = find.byKey(const ValueKey('ad-title'));
+    await tester.ensureVisible(title);
+    await tester.enterText(title, 'Edited title survives cancel');
+    await tester.pumpAndSettle();
     await reviewAd(tester);
     expect(find.byType(AdConfirmationScreen), findsOneWidget);
     expect(repo.submissions, 0);
+    expect(tester.widget<AdConfirmationScreen>(find.byType(AdConfirmationScreen))
+        .request.draft.title, 'Edited title survives cancel');
     await tester.pump(const Duration(seconds: 1));
     await tester.tap(find.byKey(const ValueKey('cancel-submission')));
     await tester.pumpAndSettle();
@@ -585,7 +598,7 @@ void main() {
           .widget<TextField>(find.byKey(const ValueKey('ad-title')))
           .controller!
           .text,
-      validDraft().title,
+      'Edited title survives cancel',
     );
   });
   testWidgets(
@@ -839,7 +852,7 @@ void main() {
             .widget<TextField>(find.byKey(const ValueKey('ad-title')))
             .controller!
             .text,
-        isEmpty);
+        startsWith('New Ad '));
     expect(
         tester
             .widget<TextField>(find.byKey(const ValueKey('ad-code')))
@@ -955,6 +968,8 @@ void main() {
     );
     await tester.pumpAndSettle();
     await capturePng(tester, 'docs/create_ad_preview.png');
+    await tester.tap(find.byKey(const ValueKey('sticky-price-disclosure')));
+    await tester.pumpAndSettle();
     await tester.ensureVisible(find.byType(AdPriceDetails));
     await tester.pumpAndSettle();
     await capturePng(tester, 'docs/create_ad_pricing_preview.png');

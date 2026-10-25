@@ -43,12 +43,25 @@ class AdDraft {
   final String title, link, code, note;
   final String platform, pageUrl;
   final String messageDestination;
+
+  /// Customer-facing TikTok flow, persisted locally without inventing a new
+  /// provider objective. Null preserves the frozen contract of older attempts.
+  final String? tiktokAdType;
+  bool get hasTypedTikTokFlow => !isMeta && tiktokAdType != null;
+  String? get effectiveCategory => hasTypedTikTokFlow
+      ? switch (tiktokAdType) {
+          'restaurant' => 'food_beverage',
+          'app_download' => 'games_apps',
+          _ => 'other',
+        }
+      : category;
   final String? tiktokAccountId, tiktokItemId, tiktokUsername;
   final String tiktokVideoCaption;
   bool get isTikTokDirect =>
       platform == 'TIKTOK' &&
       goal == 'messages' &&
-      messageDestination == 'direct_message';
+      messageDestination == 'direct_message' &&
+      (tiktokAdType == null || tiktokAdType == 'contact');
   final Set<String> placements, destinations;
   final int ageMin, ageMax;
   bool get isMeta => platform == 'META';
@@ -70,6 +83,7 @@ class AdDraft {
     this.platform = 'TIKTOK',
     this.pageUrl = '',
     this.messageDestination = 'external_contact',
+    this.tiktokAdType,
     this.tiktokAccountId,
     this.tiktokItemId,
     this.tiktokUsername,
@@ -105,9 +119,20 @@ class AdDraft {
     }
     if (!(isMeta ? metaObjectiveLabels.keys : const ['messages', 'views'])
         .contains(goal)) {
-      errors['goal'] = 'ئامانجی ڕیکلام هەڵبژێرە';
+      errors['goal'] =
+          isMeta ? 'ئامانجی ڕیکلام هەڵبژێرە' : 'جۆری ڕیکلام هەڵبژێرە';
     }
-    if (!isMeta && !isSupportedAdCategory(category)) {
+    if (hasTypedTikTokFlow &&
+        (!const {
+              'contact',
+              'views',
+              'restaurant',
+              'app_download',
+            }.contains(tiktokAdType) ||
+            goal != (tiktokAdType == 'views' ? 'views' : 'messages'))) {
+      errors['goal'] = 'جۆری ڕیکلام هەڵبژێرە';
+    }
+    if (!isMeta && !isSupportedAdCategory(effectiveCategory)) {
       errors['category'] = 'بەشی ڕیکلام هەڵبژێرە';
     }
     if (!isMeta &&
@@ -165,7 +190,8 @@ class AdDraft {
                 ? const ['all', 'erbil', 'sulaymaniyah', 'duhok', 'baghdad']
                 : const ['all', 'kurdistan', 'iraq'])
             .contains(location) ||
-        !const ['all', 'iphone', 'android'].contains(device)) {
+        (!hasTypedTikTokFlow &&
+            !const ['all', 'iphone', 'android'].contains(device))) {
       errors['audience'] = 'هەڵبژاردەکانی ئامانجی ڕیکلام بپشکنەوە';
     }
     if (note.trim().length > 500) {
@@ -175,6 +201,11 @@ class AdDraft {
         goal == 'messages' &&
         !const {'direct_message', 'external_contact'}
             .contains(messageDestination)) {
+      errors['destination'] = 'شوێنی پەیوەندی هەڵبژێرە';
+    }
+    if (hasTypedTikTokFlow &&
+        tiktokAdType != 'contact' &&
+        messageDestination != 'external_contact') {
       errors['destination'] = 'شوێنی پەیوەندی هەڵبژێرە';
     }
     if (isTikTokDirect) {
@@ -248,18 +279,19 @@ class AdDraft {
         'post_code': code.trim(),
       },
       'goal': goal,
+      if (hasTypedTikTokFlow && !isTikTokDirect) 'tiktok_ad_type': tiktokAdType,
       if (!isMeta && goal == 'messages')
         'message_destination': messageDestination,
       if (isTikTokDirect) ...{
         'tiktok_account_id': tiktokAccountId,
         'tiktok_item_id': tiktokItemId,
       },
-      'category': category,
+      'category': effectiveCategory,
       if (!isTikTokDirect) 'asset_id': goal == 'messages' ? assetId : null,
       'age_groups': ages,
       'gender': gender,
       'location': location,
-      'device_type': device,
+      'device_type': hasTypedTikTokFlow ? 'all' : device,
       'customer_note': note.trim(),
       'daily_budget': dailyBudget,
       'days': days,
@@ -276,6 +308,7 @@ class AdDraft {
 
   Map<String, dynamic> toJson() => {
         ...toAd(),
+        if (hasTypedTikTokFlow) 'tiktok_ad_type': tiktokAdType,
         if (isMeta) ...{
           'platform': platform,
           'page_url': pageUrl,
@@ -310,6 +343,7 @@ class AdDraft {
   factory AdDraft.fromJson(Map<String, dynamic> j) => AdDraft(
         title: j['title']?.toString() ?? '',
         platform: j['platform']?.toString() ?? 'TIKTOK',
+        tiktokAdType: j['tiktok_ad_type']?.toString(),
         pageUrl: j['page_url']?.toString() ?? '',
         messageDestination:
             j['message_destination']?.toString() ?? 'external_contact',
@@ -571,6 +605,24 @@ class AdPaymentProgress {
 
 abstract class AdCreationRepository {
   Future<List<Map<String, dynamic>>> loadAssets();
+
+  /// Existing test/custom repositories keep their contract; production filters
+  /// by stored page kind before the database returns rows.
+  Future<List<Map<String, dynamic>>> loadAssetsForType(String pageKind) async {
+    if (!const {'contact', 'order', 'download'}.contains(pageKind)) {
+      throw const AdSubmissionFailure('INVALID_REQUEST');
+    }
+    return (await loadAssets())
+        .where(
+          (row) =>
+              (row['page_kind'] ?? 'contact') == pageKind &&
+              (row['status'] == null || row['status'] == 'active') &&
+              (row['publish_status'] == null ||
+                  row['publish_status'] == 'ready'),
+        )
+        .toList();
+  }
+
   Future<AdQuote> quote(AdDraft draft);
   Future<AdPendingSubmission?> pending();
   Future<bool> metaAvailable() async => false;
@@ -710,8 +762,15 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
       throw const AdSubmissionFailure('NETWORK', uncertain: true);
     }
     if (value['ok'] != true) {
-      throw AdSubmissionFailure('${value['code']}',
-          uncertain: value['uncertain'] == true);
+      throw AdSubmissionFailure(
+        '${value['code']}',
+        uncertain: value['uncertain'] == true ||
+            (op == 'submit' &&
+                (value['ok'] != false ||
+                    value['code'] is! String ||
+                    (value['code'] as String).isEmpty ||
+                    value['code'] == 'IDEMPOTENCY_CONFLICT')),
+      );
     }
     return value;
   }
@@ -721,17 +780,45 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
       Map<String, dynamic>.from(raw as Map);
 
   @override
-  Future<List<Map<String, dynamic>>> loadAssets() async => List<
-      Map<String,
-          dynamic>>.from(await client
-      .from('proxolink_cards')
-      .select(
-          'id,name,template_key,template_version,style,color_theme,card_number,avatar_path,status,publish_status')
-      .eq('status', 'active')
-      .eq('publish_status', 'ready')
-      .eq('user_id', _user)
-      .order('created_at', ascending: false)
-      .timeout(const Duration(seconds: 20)));
+  Future<List<Map<String, dynamic>>> loadAssets() =>
+      loadAssetsForType('contact');
+
+  @override
+  Future<List<Map<String, dynamic>>> loadAssetsForType(String pageKind) async {
+    if (!const {'contact', 'order', 'download'}.contains(pageKind)) {
+      throw const AdSubmissionFailure('INVALID_REQUEST');
+    }
+    final owner = _user;
+    var query = client
+        .from('proxolink_cards')
+        .select(
+          'id,name,template_key,template_version,style,color_theme,card_number,avatar_path,status,publish_status,page_kind,settings,platforms,moderation_status',
+        )
+        .eq('status', 'active')
+        .eq('publish_status', 'ready')
+        .eq('user_id', owner)
+        .isFilter('archived_at', null);
+    // Null is the explicit legacy Contact adapter, never a restaurant/app.
+    query = pageKind == 'contact'
+        ? query.or('page_kind.eq.contact,page_kind.is.null')
+        : query.eq('page_kind', pageKind);
+    final rows = await query
+        .order('created_at', ascending: false)
+        .timeout(const Duration(seconds: 20));
+    if (_user != owner) throw const AdSubmissionFailure('UNAUTHORIZED');
+    return [
+      for (final row in rows)
+        <String, dynamic>{
+          ...row,
+          if (row['avatar_path'] != null)
+            'avatar_url': Uri.parse(BackendConfig.current.publicBase)
+                .resolve(
+                  '/${row['page_kind'] ?? 'contact'}/${row['id']}/avatar',
+                )
+                .toString(),
+        },
+    ];
+  }
 
   @override
   Future<AdQuote> quote(AdDraft draft) async {
@@ -760,12 +847,17 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
   @override
   Future<AdPendingSubmission?> pending() async {
     final owner = _user, key = _storageKey;
-    final raw = await _pendingStorage
-        .run(owner,
-            () async => (await SharedPreferences.getInstance()).getString(key))
-        .timeout(const Duration(seconds: 10));
+    final raw = await _pendingStorage.run(owner, () async {
+      final prefs = await SharedPreferences.getInstance();
+      // Failed platform writes may still mutate the plugin's cache. Only
+      // a durable read can establish that no unresolved request remains.
+      await prefs.reload();
+      return prefs.getString(key);
+    }).timeout(const Duration(seconds: 10));
     if (client.auth.currentUser?.id != owner || raw == null) return null;
-    return AdPendingSubmission.fromJson(_map(jsonDecode(raw)));
+    final saved = _map(jsonDecode(raw));
+    if (saved['resolution'] == 'definite_failure') return null;
+    return AdPendingSubmission.fromJson(saved);
   }
 
   @override
@@ -815,18 +907,23 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
     }
 
     final key = 'proxo.pending-ad.v1.$owner';
+    var wasPending = false;
     final prefs = await _pendingStorage.run(owner, () async {
       final prefs = await SharedPreferences.getInstance();
+      await prefs.reload();
       checkOwner();
       final existing = prefs.getString(key);
-      if (existing != null &&
-          AdPendingSubmission.fromJson(_map(jsonDecode(existing))).id !=
-              request.id) {
+      final saved = existing == null ? null : _map(jsonDecode(existing));
+      wasPending = saved != null && saved['resolution'] != 'definite_failure';
+      if (saved != null &&
+          saved['resolution'] != 'definite_failure' &&
+          AdPendingSubmission.fromJson(saved).id != request.id) {
         throw const AdSubmissionFailure('IDEMPOTENCY_CONFLICT',
             uncertain: true);
       }
       if (!await prefs.setString(key, jsonEncode(request.toJson()))) {
-        throw const AdSubmissionFailure('STORAGE_UNAVAILABLE');
+        await prefs.reload();
+        throw AdSubmissionFailure('STORAGE_UNAVAILABLE', uncertain: wasPending);
       }
       return prefs;
     }).timeout(const Duration(seconds: 10));
@@ -834,22 +931,54 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
     final telemetryScope = telemetry?.sessionScope;
     String? paymentId;
     var submitting = false;
+    var legacyPaymentMayExist = wasPending &&
+        request.draft.paymentMethod == 'fastpay' &&
+        !request.draft.isMeta &&
+        !request.draft.isTikTokDirect;
     // A storage error after a confirmed server result must not turn success
     // into a failed financial operation. A stale record safely reconciles later.
-    Future<void> clearPending() async {
+    Future<bool> clearPending({bool definitiveFailure = false}) async {
+      var marked = false;
       try {
-        await _pendingStorage.run(owner, () async {
+        return await _pendingStorage.run(owner, () async {
           final raw = prefs.getString(key);
           // Only clear this completed identity, never a newer pending request.
           if (raw == null ||
               AdPendingSubmission.fromJson(_map(jsonDecode(raw))).id !=
                   request.id) {
-            return;
+            return true;
           }
-          await prefs.remove(key);
+          if (definitiveFailure) {
+            // Persist the known outcome before deletion. If removal fails,
+            // a restart must not restore a definitively rejected attempt.
+            try {
+              marked = await prefs.setString(
+                key,
+                jsonEncode({
+                  ...request.toJson(),
+                  'resolution': 'definite_failure',
+                }),
+              );
+            } catch (_) {
+              /* Try removal even if marking was unavailable. */
+            }
+          }
+          var removed = false;
+          try {
+            removed = await prefs.remove(key);
+          } catch (_) {
+            /* A durable terminal marker is sufficient. */
+          }
+          if (!removed && !marked) {
+            // SharedPreferences can mutate its memory cache even when the
+            // platform write returns false. Restore the actual durable state.
+            await prefs.reload();
+          }
+          return removed || marked;
         }).timeout(const Duration(seconds: 3));
       } catch (_) {
         debugPrint('Completed ad pending record cleanup deferred');
+        return marked;
       }
     }
 
@@ -862,10 +991,7 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
       }).timeout(const Duration(seconds: 20)));
       checkOwner();
       if (recovered['ok'] == true) {
-        final adId = recovered['ad_id'];
-        if (adId is! String || adId.isEmpty) {
-          throw const AdSubmissionFailure('NETWORK', uncertain: true);
-        }
+        final adId = _acceptedAdId(recovered);
         await clearPending();
         AppDataCache.forClient(client).financialChanged();
         if (!request.draft.isMeta && !request.draft.isTikTokDirect) {
@@ -889,17 +1015,52 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
         AppDataCache.forClient(client).financialChanged();
         return adId;
       }
+      if (!automated && request.draft.paymentMethod == 'fastpay') {
+        // Recover a previously created order before applying today's mutable
+        // date/page checks. A paid order must reach the authoritative submit
+        // transaction; an expired QR can still receive a late payment.
+        final existingPayment = await _paymentRow(request.fastPayOrderId);
+        checkOwner();
+        if (existingPayment != null) {
+          legacyPaymentMayExist = true;
+          if (existingPayment['status'] == 'approved' &&
+              '${existingPayment['gateway_status']}'.toUpperCase() == 'PAID' &&
+              existingPayment['wallet_credited'] == true) {
+            paymentId = await _payWithFastPay(request, progress, owner);
+          }
+        }
+      }
       final trustedTime = automated ? await serverTime() : null;
       if (automated && trustedTime == null) {
         throw const AdSubmissionFailure('SERVER_TIME_UNAVAILABLE');
       }
       checkOwner();
-      final errors = request.draft.validate(
-          now:
-              trustedTime == null ? null : adScheduleNow(instant: trustedTime));
+      final errors = paymentId != null
+          ? <String, String>{}
+          : request.draft.validate(
+              now: trustedTime == null
+                  ? null
+                  : adScheduleNow(instant: trustedTime));
       if (errors.isNotEmpty) {
         throw AdSubmissionFailure(
             errors.containsKey('schedule') ? 'INVALID_SCHEDULE' : 'INVALID_AD');
+      }
+      if (paymentId == null &&
+          request.draft.hasTypedTikTokFlow &&
+          !request.draft.isTikTokDirect &&
+          request.draft.tiktokAdType != 'views') {
+        final pageKind = switch (request.draft.tiktokAdType) {
+          'restaurant' => 'order',
+          'app_download' => 'download',
+          _ => 'contact',
+        };
+        final eligible = await loadAssetsForType(pageKind);
+        checkOwner();
+        if (!eligible.any(
+          (asset) => '${asset['id']}' == request.draft.assetId,
+        )) {
+          throw const AdSubmissionFailure('INVALID_ASSET');
+        }
       }
       if (request.draft.isTikTokDirect) {
         if (request.draft.paymentMethod == 'fastpay') {
@@ -920,9 +1081,10 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
           if (paymentId != null) 'payment_transaction_id': paymentId,
         });
         checkOwner();
+        final adId = _acceptedAdId(result);
         await clearPending();
         AppDataCache.forClient(client).financialChanged();
-        return result['ad_id'] as String;
+        return adId;
       }
       if (request.draft.isMeta) {
         // Recovery above is deliberately first: flags/quotes may have expired.
@@ -942,11 +1104,13 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
           if (paymentId != null) 'payment_transaction_id': paymentId,
         });
         checkOwner();
+        final adId = _acceptedAdId(result);
         await clearPending();
         AppDataCache.forClient(client).financialChanged();
-        return result['ad_id'] as String;
+        return adId;
       }
-      if (request.draft.paymentMethod == 'fastpay') {
+      if (request.draft.paymentMethod == 'fastpay' && paymentId == null) {
+        legacyPaymentMayExist = true;
         paymentId = await _payWithFastPay(request, progress, owner);
       }
       checkOwner();
@@ -962,8 +1126,17 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
         'p_promo_code': request.draft.promoCode,
       }).timeout(const Duration(seconds: 30)));
       checkOwner();
-      if (result['ok'] != true) throw AdSubmissionFailure('${result['code']}');
-      final adId = result['ad_id'] as String;
+      if (result['ok'] != true) {
+        throw AdSubmissionFailure(
+          '${result['code']}',
+          uncertain: result['ok'] != false ||
+              result['uncertain'] == true ||
+              result['code'] is! String ||
+              (result['code'] as String).isEmpty ||
+              result['code'] == 'IDEMPOTENCY_CONFLICT',
+        );
+      }
+      final adId = _acceptedAdId(result);
       await clearPending();
       AppDataCache.forClient(client).financialChanged();
       telemetry?.event('action', 'ad_submit',
@@ -973,7 +1146,18 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
     } on AdSubmissionFailure catch (e) {
       telemetry?.event('action', 'ad_submit',
           outcome: 'failure', expectedScope: telemetryScope);
-      if (!e.uncertain) await clearPending();
+      if (!e.uncertain && legacyPaymentMayExist && paymentId == null) {
+        // An existing or interrupted payment order has no final financial
+        // outcome yet. Keep its identity even if the current form is invalid.
+        throw AdSubmissionFailure(e.code, uncertain: true);
+      }
+      if (!e.uncertain && !await clearPending(definitiveFailure: true)) {
+        throw AdSubmissionFailure(
+          'STORAGE_UNAVAILABLE',
+          uncertain: true,
+          paymentCredited: paymentId != null,
+        );
+      }
       if (!e.uncertain && paymentId != null) {
         throw AdSubmissionFailure(e.code, paymentCredited: true);
       }
@@ -988,7 +1172,13 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
               const {'0A000', 'P0001', 'P0002', 'P0003', '40001', '40P01'}
                   .contains(sqlState);
       if (submitting && definiteRejection) {
-        await clearPending();
+        if (!await clearPending(definitiveFailure: true)) {
+          throw AdSubmissionFailure(
+            'STORAGE_UNAVAILABLE',
+            uncertain: true,
+            paymentCredited: paymentId != null,
+          );
+        }
         const knownCodes = {
           'NOT_AUTHENTICATED',
           'INSUFFICIENT_FUNDS',
@@ -1008,6 +1198,14 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
       // Keep the SAME id and frozen payload on timeout, disconnect or app kill.
       throw const AdSubmissionFailure('NETWORK', uncertain: true);
     }
+  }
+
+  String _acceptedAdId(Map<String, dynamic> result) {
+    final id = result['ad_id'];
+    if (id is! String || id.trim().isEmpty) {
+      throw const AdSubmissionFailure('NETWORK', uncertain: true);
+    }
+    return id;
   }
 
   void _ensureThumbnail(String adId) {
@@ -1057,7 +1255,7 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
         if (status == 'funded' || status == 'compensated') {
           final result = attempt['result'];
           final adId = result is Map ? result['ad_id'] : attempt['ad_id'];
-          if (adId is! String || adId.isEmpty) {
+          if (adId is! String || adId.trim().isEmpty) {
             throw const AdSubmissionFailure('FASTPAY_WAIT', uncertain: true);
           }
           return adId;
@@ -1159,7 +1357,7 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
       final amount = data['amountIqd'];
       if (num.tryParse('$amount')?.round() != r.quote.totalIqd) {
         // Never ask the user to pay an amount different from the confirmation.
-        throw const AdSubmissionFailure('PRICE_CHANGED');
+        throw const AdSubmissionFailure('PRICE_CHANGED', uncertain: true);
       }
       row = await _paymentRow(orderId);
     }
@@ -1184,7 +1382,7 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
           'CANCELED',
           'REJECTED'
         ].contains(status)) {
-          throw const AdSubmissionFailure('FASTPAY_TERMINAL');
+          throw const AdSubmissionFailure('FASTPAY_WAIT', uncertain: true);
         }
         final qr = row['qr_text']?.toString();
         progress.value = AdPaymentProgress(

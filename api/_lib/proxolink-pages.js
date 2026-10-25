@@ -151,11 +151,20 @@ export function validatePage(body,owner,{old=null,allowEmpty=false}={}) {
   card.platforms=Object.fromEntries(card.settings.providers.filter(p=>p.enabled).map(p=>[LEGACY_PROVIDER_IDS[p.provider_key],p.destination_url]));
   assertAvatar(card);return card;
 }
-// A feature preview must never write into the production Supabase project.
-// Production activation requires a separate approved release removing this gate.
+// Default closed. Preview isolation remains strict; the independently approved
+// production release requires both explicit gates and the exact intended project.
 export function assertIsolatedWrites() {
-  const url=process.env.PROXO_SUPABASE_URL||'';
-  if(process.env.PROXO_V6_WRITE_MODE!=='isolated'||!/^(https:\/\/|http:\/\/127\.0\.0\.1:)/.test(url)
-    ||new URL(url).hostname==='cojchkwssmasiejcgvbk.supabase.co')
-    throw Object.assign(pageError('isolated_staging_required'),{status:503});
+  let url;
+  try { url = new URL(process.env.PROXO_SUPABASE_URL || ''); }
+  catch { throw Object.assign(pageError('isolated_staging_required'), {status:503}); }
+  const intended='cojchkwssmasiejcgvbk.supabase.co';
+  const production=process.env.PROXO_V6_WRITE_MODE==='production'
+    && process.env.PROXO_V6_PRODUCTION_ENABLED==='true'
+    && url.origin==='https://'+intended && url.pathname==='/'
+    && !url.search && !url.hash && !url.username && !url.password;
+  const isolated=process.env.PROXO_V6_WRITE_MODE==='isolated'
+    && (url.protocol==='https:' || (url.protocol==='http:' && url.hostname==='127.0.0.1'))
+    && !url.hostname.endsWith('.') && url.hostname!==intended && !url.username && !url.password;
+  if(!production && !isolated)
+    throw Object.assign(pageError('isolated_staging_required'), {status:503});
 }

@@ -232,20 +232,27 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    final menu = find.byType(DropdownButtonFormField<String>).first;
+    final menu = find.byKey(const ValueKey('contact-page-disclosure'));
     await tester.ensureVisible(menu);
     await tester.pumpAndSettle();
     await tester.tap(menu);
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expectVisibleTextFits(tester);
-    await tester.tap(find.text(name).last);
+    final pageRow = find.byKey(const ValueKey('contact-page-contact-1'));
+    await tester.ensureVisible(pageRow);
+    await tester.pumpAndSettle();
+    final body = tester.getRect(find.byKey(const ValueKey('ad-form-scroll')));
+    final price = tester.getRect(find.byKey(const ValueKey('sticky-ad-price')));
+    final rowRect = tester.getRect(pageRow);
+    final visibleTop = rowRect.top > body.top ? rowRect.top : body.top;
+    final visibleBottom = rowRect.bottom < price.top ? rowRect.bottom : price.top;
+    expect(visibleBottom, greaterThan(visibleTop));
+    await tester.tapAt(Offset(rowRect.center.dx, (visibleTop + visibleBottom) / 2));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
-    expect(
-      tester.widget<DropdownButtonFormField<String>>(menu).initialValue,
-      'contact-1',
-    );
+    expect(repo.lastQuoteDraft!.assetId, 'contact-1');
+    expect(find.descendant(of: menu, matching: find.text(name)), findsOneWidget);
     await tester.pumpWidget(const SizedBox.shrink());
   });
   testWidgets('keyboard and orientation changes preserve the editable draft', (
@@ -373,9 +380,8 @@ void main() {
         EdgeInsets.zero));
     await tester.pumpAndSettle();
     final code = find.byKey(const ValueKey('ad-code'));
-    final category = find.byType(DropdownButtonFormField<String>).first;
-    expect(tester.getSize(category).height,
-        closeTo(tester.getSize(code).height, 1));
+    expect(find.byType(DropdownButtonFormField<String>), findsNothing);
+    expect(tester.getSize(code).height, greaterThanOrEqualTo(48));
     final budget = find.byKey(const ValueKey('daily-budget-slider'));
     await tester.ensureVisible(budget);
     await tester.pumpAndSettle();
@@ -388,6 +394,8 @@ void main() {
     await tester.drag(duration, const Offset(90, 0));
     await tester.pumpAndSettle();
     expect(repo.lastQuoteDraft!.days, greaterThan(1));
+    await tester.tap(find.byKey(const ValueKey('sticky-price-disclosure')));
+    await tester.pumpAndSettle();
     final quote =
         tester.widget<AdPriceDetails>(find.byType(AdPriceDetails)).quote;
     expect(quote.grossUsd,

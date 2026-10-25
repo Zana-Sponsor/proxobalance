@@ -53,15 +53,12 @@ FakeTikTokDmRepository accountsFixture() => FakeTikTokDmRepository()
       ]));
 
 Future<void> enterDirect(WidgetTester tester) async {
-  await tapVisible(tester, find.byKey(const ValueKey('goal-messages')));
+  await tapVisible(tester, find.byKey(const ValueKey('goal-contact')));
   await tapVisible(
       tester, find.byKey(const ValueKey('contact-destination-direct_message')));
 }
 
-Finder assetSelector() => find.byWidgetPredicate((widget) =>
-    widget is DropdownButtonFormField<String> &&
-    widget.key is ValueKey &&
-    (widget.key as ValueKey).value.toString().startsWith('asset-'));
+Finder assetSelector() => find.byKey(const ValueKey('contact-page-disclosure'));
 
 void main() {
   AdPaintBinding();
@@ -83,7 +80,7 @@ void main() {
   setUp(() => clearTikTokDmCache('owner-one'));
 
   testWidgets(
-      'two top goals keep Direct Message inside Messages and preserve legacy fields',
+      'four ad types keep Direct Message inside contact and preserve legacy media',
       (tester) async {
     final repository = TikTokFormRepository();
     await tester.pumpWidget(metaHost(AdCreateScreen(
@@ -91,13 +88,15 @@ void main() {
     await tester.pumpAndSettle();
     final sections =
         tester.widgetList<AdFormSection>(find.byType(AdFormSection)).toList();
-    expect(sections[0].title, 'ئامانجی ڕیکلام');
-    expect(sections[1].title, 'زانیاری ڕیکلام');
+    expect(sections[0].title, 'جۆری ڕیکلام');
+    expect(find.text('ناوی ڕیکلام'), findsOneWidget);
+    expect(tester.getTopLeft(find.byKey(const ValueKey('ad-title'))).dy,
+        greaterThan(tester.getBottomLeft(find.byKey(const ValueKey('goal-app_download'))).dy));
     final goals = find.byWidgetPredicate((w) =>
         w is AdChoice &&
         w.key is ValueKey &&
         (w.key as ValueKey).value.toString().startsWith('goal-'));
-    expect(goals, findsNWidgets(2));
+    expect(goals, findsNWidgets(4));
     expect(find.byKey(const ValueKey('goal-direct_message')), findsNothing);
     expect(find.byKey(const ValueKey('contact-destination-direct_message')),
         findsNothing);
@@ -109,7 +108,7 @@ void main() {
     await tester.ensureVisible(find.byKey(const ValueKey('ad-link')));
     await tester.enterText(find.byKey(const ValueKey('ad-link')),
         'https://www.tiktok.com/@example/video/456');
-    await tapVisible(tester, find.byKey(const ValueKey('goal-messages')));
+    await tapVisible(tester, find.byKey(const ValueKey('goal-contact')));
     expect(assetSelector(), findsOneWidget);
     expect(find.text('نوێ'), findsOneWidget);
     await tapVisible(tester,
@@ -136,7 +135,7 @@ void main() {
             .controller!
             .text,
         'https://www.tiktok.com/@example/video/456');
-    await tapVisible(tester, find.byKey(const ValueKey('goal-messages')));
+    await tapVisible(tester, find.byKey(const ValueKey('goal-contact')));
     await tapVisible(tester,
         find.byKey(const ValueKey('contact-destination-external_contact')));
     expect(assetSelector(), findsOneWidget);
@@ -200,7 +199,7 @@ void main() {
       await tester.pumpAndSettle();
       await enterDirect(tester);
       expect(tester.takeException(), isNull);
-      final messages = find.byKey(const ValueKey('goal-messages'));
+      final messages = find.byKey(const ValueKey('goal-contact'));
       final views = find.byKey(const ValueKey('goal-views'));
       expect(tester.getSize(messages), tester.getSize(views));
       await Scrollable.ensureVisible(tester.element(messages), alignment: .1);

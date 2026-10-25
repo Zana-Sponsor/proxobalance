@@ -1,0 +1,142 @@
+{
+  "source_baseline": "4e755dd8c48b248df6b6534f63388d4cb693e376",
+  "publication_parent": "d1e1eba6d5d0dc6a95c399263a5061064d8ad713",
+  "date": "2026-10-25",
+  "runtime": {
+    "flutter": "3.47.8",
+    "dart": "3.13.7",
+    "platform": "Linux widget renderer",
+    "lockfile": "pub get --enforce-lockfile passed; pubspec.lock unchanged"
+  },
+  "full_flutter": {
+    "status": "passed",
+    "command": "flutter --no-version-check test --no-pub --concurrency=4 --reporter expanded",
+    "exit_code": 0,
+    "passed": 1318,
+    "failed": 0,
+    "skipped": 1,
+    "duration": "3m22s",
+    "log_file": "strict-v3-flutter-final.log",
+    "log_sha256": "91252c607365a8e2303fc996a9b192a3f8ac8e6da578c75e49f9de8c455ce783",
+    "terminal_summary": "03:22 +1318 ~1: All tests passed!",
+    "coverage": "All Flutter tests, including Meta, navigation/payment, receipt reference/parity and new strict-v3 fixtures."
+  },
+  "completed": [
+    {
+      "command": "flutter --no-version-check test --no-pub --reporter expanded test/tiktok_strict_v3_controls_test.dart test/tiktok_strict_v3_form_test.dart",
+      "exit_code": 0,
+      "passed": 9,
+      "scope": "Final capture/control rerun after fixture-only precache awaiting decoded fallback; production source unchanged since full suite",
+      "log_file": "strict-v3-final-capture.log",
+      "log_sha256": "28741522e4835b249a387caf73c3c0fce9ff6a76af66e0b4727012207c92713b",
+      "terminal_summary": "00:14 +9: All tests passed!"
+    },
+    {
+      "command": "flutter --no-version-check test --no-pub --concurrency=4 --reporter expanded test/tiktok_strict_v3_controls_test.dart test/tiktok_strict_v3_form_test.dart test/ad_creation_flow_test.dart test/tiktok_dm_form_test.dart test/responsive_ad_ui_test.dart",
+      "exit_code": 0,
+      "passed": 85,
+      "scope": "targeted UI regression and all34 screenshot states",
+      "log_file": "strict-v3-final-focused.log",
+      "log_sha256": "6f124f8a3bab6fa23e9d13ee6a67e77c285fe0643240eb3295f91b8f563b9704",
+      "terminal_summary": "00:23 +85: All tests passed!"
+    },
+    {
+      "command": "flutter --no-version-check test --no-pub test/strict_ad_submission_test.dart test/ad_confirmation_result_test.dart test/ad_repository_test.dart test/ad_fastpay_attempt_test.dart test/pending_storage_serialization_test.dart test/ad_submission_test.dart test/tiktok_dm_draft_test.dart test/meta_ad_repository_test.dart",
+      "exit_code": 0,
+      "passed": 74,
+      "scope": "submission owner focused regression",
+      "log_file": "strict-submission-tests.log",
+      "log_sha256": "17a4fdcaf7c542c868449bda44f804687e954fc47dade85902200c1ba967e1ad",
+      "terminal_summary": "00:10 +74: All tests passed!"
+    },
+    {
+      "command": "flutter --no-version-check test --no-pub test/ad_page_resources_test.dart test/proxolink_strict_create_test.dart test/proxolink_creation_recovery_test.dart",
+      "exit_code": 0,
+      "passed": 42,
+      "scope": "page owner focused regression",
+      "log_file": "strict-pages-flutter.log",
+      "log_sha256": "619b9325fa794fe3158b88ce95693cbafbedf8f4c0f574fdccd0bac9db2afd1a",
+      "terminal_summary": "00:22 +42: All tests passed!"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "passed": 313,
+      "scope": "full backend suite",
+      "log_file": "strict-v3-node.log",
+      "log_sha256": "bc04b732c40b3d5d9f02c201ec17d11c8348ff0901bace63aff1864daa2e41e4",
+      "terminal_summary": "ℹ duration_ms 5518.074568"
+    },
+    {
+      "command": "PGLITE_MODULE=/workspace/scratch/43a583048faa/pgtools/node_modules/@electric-sql/pglite/dist/index.js node scripts/test-tiktok-typed-pages-database.mjs",
+      "exit_code": 0,
+      "passed": 33,
+      "scope": "PostgreSQL checks; isolated fixtures",
+      "log_file": "typed-pages-database.log",
+      "log_sha256": "4ecb5eeba620f8be6cba96385012280e330db71349c618ecb8ca9f214008dc24",
+      "terminal_summary": "VERIFIED: 33 PostgreSQL checks: type/owner/status filtering, null legacy adapter, unchanged core and grants, idempotent purchase, exact debit/outbox count, injected failure atomic rollback."
+    },
+    {
+      "command": "dart analyze test/tiktok_strict_v3_controls_test.dart test/tiktok_strict_v3_form_test.dart test/ad_creation_flow_test.dart test/tiktok_dm_form_test.dart test/responsive_ad_ui_test.dart",
+      "exit_code": 0,
+      "passed": null,
+      "scope": "QA test analyzer",
+      "log_file": "strict-v3-qa-analyze.log",
+      "log_sha256": "332a8fdcee4254101ecbad568bf47442b2b55f147f5b56b0c2ddd4db89ad6e86",
+      "terminal_summary": "No issues found!"
+    },
+    {
+      "command": "npm run lint && npm run build && git diff --check",
+      "exit_code": 0,
+      "observed_by": "parent/root tool run",
+      "summary": "Passed; build verified17 assets"
+    }
+  ],
+  "initial_full_discoveries": {
+    "passed": 1313,
+    "failed": 5,
+    "skipped": 1,
+    "failures": "Hidden insufficient-balance feedback; obsolete section-wrapper assertion; three instances of scaled avatar-fallback clipping. Fixed and verified by focused85 cases before final full rerun."
+  },
+  "known_skip": {
+    "file": "proxo_app/test/staging_transport_test.dart",
+    "test": "staging foreground/background push helpers avoid Firebase and tokens",
+    "reason": "Run this case with the complete guarded staging build defines."
+  },
+  "visual_evidence": {
+    "count": 34,
+    "manifest": "../evidence/tiktok-strict-v3-2026-10-25/manifest.json",
+    "reviewed": true,
+    "review_method": "All originals reviewed through six contact sheets with selected full-size inspection",
+    "physical_android_verified": false,
+    "live_provider_verified": false
+  },
+  "production": {
+    "current_live_acceptance": false,
+    "migration_applied_by_this_patch": false,
+    "production_flags_enabled_by_this_patch": false,
+    "prior_config_only_attempt": "24 October attempt was rolled back",
+    "prior_readiness_record": "../evidence/tiktok-dm-2026-10-23/production-readiness-2026-10-24.json",
+    "prior_failure": "TIKTOK_DM_BACKEND_ORIGIN_NOT_CONFIGURED",
+    "missing_variables": [
+      "PROXO_TIKTOK_DM_BACKEND_ORIGIN",
+      "PROXO_AD_PAYMENTS_BACKEND_ORIGIN"
+    ],
+    "missing_credentials": [
+      "Proxo TikTok DM worker bearer",
+      "Proxo FastPay ad worker bearer"
+    ],
+    "connection_workflow_final_active": false,
+    "other_six_workflows": "unpublished/inactive per24October record",
+    "new_live_check_on_2026_10_25": false
+  },
+  "historical_previews": {
+    "restored_to": "d1e1eba6d5d0dc6a95c399263a5061064d8ad713",
+    "restored_count": 15,
+    "remaining_tracked_png_diff": false
+  },
+  "exact_changed_files_count": 68,
+  "exact_changed_files_manifest": "changed-files.txt",
+  "specification_sha256": "235db726994d82bb3bb241c809ca48c8b53c38f8392e520cdbcb71da29360bb9",
+  "final_diff_check": "passed"
+}
