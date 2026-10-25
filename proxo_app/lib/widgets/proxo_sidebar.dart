@@ -6,7 +6,6 @@ import 'proxo_app_bar.dart';
 import 'package:proxo_app/l10n/proxo_strings.dart';
 import 'package:proxo_app/widgets/proxo_symbol.dart';
 import '../models/receipt_pricing.dart';
-import '../screens/ad_detail_screen.dart' show adDetailsRoute;
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
