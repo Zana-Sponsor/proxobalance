@@ -71,7 +71,9 @@ async function findDuplicate(receiptHash, transactionReference, { userId, exclud
 }
 
 function validRecipient(method, phone) {
-  return method === 'QiCard' ? phone.length >= 6 : /^07\d{9}$/.test(phone);
+  // Recipient identifiers are data, never markup. Qi Card accepts digits only;
+  // Iraqi phone destinations keep the strict 07 + 9 digits format.
+  return method === 'QiCard' ? /^\d{6,32}$/.test(phone) : /^07\d{9}$/.test(phone);
 }
 
 async function submitOrderCorrection(res, body, user) {
