@@ -93,6 +93,11 @@ jobs:
           psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261009131901_proxolink_tools_moderation.sql
           psql -v ON_ERROR_STOP=1 -f test/proxolink-tools-moderation.sql
       - run: node scripts/proxolink-v6-database.mjs
+      - name: Verify disabled release policy, RLS and update rollback
+        run: |
+          psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261026000100_app_release_policy.sql
+          psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261026000100_app_release_policy.sql
+          psql -v ON_ERROR_STOP=1 -f test/sql/app_release_policy.sql
   responsive:
     runs-on: ubuntu-latest
     steps:
@@ -223,6 +228,9 @@ jobs:
           lib/screens/auth/auth_service.dart lib/widgets/fastpay_checkout_sheet.dart lib/services/ad_submission.dart
           test/staging_transport_test.dart test/actual_screen_backend_boundary_test.dart
           integration_test/polish_runtime_test.dart
+          lib/services/app_update_service.dart lib/widgets/app_update_host.dart
+          lib/widgets/proxo_png_icon.dart lib/widgets/proxo_home_hero.dart lib/theme/proxo_design_tokens.dart
+          test/app_update_service_test.dart test/app_wide_capture_test.dart
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -231,8 +239,10 @@ jobs:
             proxo_app/build/ui-verification/*.png
             proxo_app/build/ui-verification/actual-screen-measurements.json
             proxo_app/build/pr44-current-evidence/**
+            proxo_app/build/polish-evidence/**
             proxo_app/build/home-balance-evidence/**
             proxo_app/build/receipt-redesign-evidence/**
+            docs/app-wide-release-2026-10-26/screenshots/**
           retention-days: 7
       - uses: gradle/actions/setup-gradle@v4
         with:

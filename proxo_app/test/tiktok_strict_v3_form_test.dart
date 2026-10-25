@@ -23,7 +23,8 @@ import 'tiktok_dm_form_test.dart' show TikTokFormRepository, accountsFixture;
 import 'proxolink_tools_create_test.dart' show ToolsRepository, field;
 import 'proxolink_page_management_test.dart' show page;
 
-const evidence = '../docs/evidence/tiktok-strict-v3-2026-10-25';
+const evidence =
+    '../docs/app-wide-release-2026-10-26/screenshots/create-ad-flow';
 
 class AvatarClient extends Fake implements HttpClient {
   AvatarClient(this.bytes);
@@ -188,7 +189,8 @@ void main() {
       await reveal(tester, 'contact-page-disclosure', alignment: .05);
       await tester.runAsync(() => precacheImage(
           const AssetImage('assets/images/proxo_logo.png'),
-          tester.element(find.byKey(const ValueKey('contact-page-disclosure')))));
+          tester
+              .element(find.byKey(const ValueKey('contact-page-disclosure')))));
       await tester.pumpAndSettle();
       await shot(tester, '16-page-expanded');
       await shot(tester, '18-contact-only-pages');
@@ -451,7 +453,9 @@ void main() {
         final sponsor = find.byKey(const ValueKey('review-ad'));
         for (var attempt = 0; attempt < 8; attempt++) {
           final current = tester.getRect(sponsor);
-          if (current.center.dy > body.top && current.center.dy < price.top && sponsor.hitTestable().evaluate().isNotEmpty) break;
+          if (current.center.dy > body.top &&
+              current.center.dy < price.top &&
+              sponsor.hitTestable().evaluate().isNotEmpty) break;
           final delta = (exposed.dy - current.center.dy).clamp(-120.0, 120.0);
           await tester.dragFrom(exposed, Offset(0, delta));
           await tester.pumpAndSettle();

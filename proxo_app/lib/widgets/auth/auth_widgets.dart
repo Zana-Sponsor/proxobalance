@@ -101,19 +101,26 @@ class AuthTextField extends StatelessWidget {
           style: AuthTokens.fieldText,
           cursorColor: AuthTokens.accent,
           decoration: InputDecoration(
-            hint: FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: AlignmentDirectional.centerStart,
-              child: ProxoText(
-                hint,
-                translate: true,
-                maxLines: 1,
-                softWrap: false,
-                style: AuthTokens.fieldText.copyWith(
-                  color: AuthTokens.placeholder,
-                ),
-              ),
-            ),
+            hint: prefix != null
+                ? ProxoText(hint,
+                    maxLines: 1,
+                    softWrap: false,
+                    overflow: TextOverflow.ellipsis,
+                    style: AuthTokens.fieldText
+                        .copyWith(color: AuthTokens.placeholder))
+                : FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: AlignmentDirectional.centerStart,
+                    child: ProxoText(
+                      hint,
+                      translate: true,
+                      maxLines: 1,
+                      softWrap: false,
+                      style: AuthTokens.fieldText.copyWith(
+                        color: AuthTokens.placeholder,
+                      ),
+                    ),
+                  ),
             hintStyle: AuthTokens.fieldText.copyWith(
               color: AuthTokens.placeholder,
             ),

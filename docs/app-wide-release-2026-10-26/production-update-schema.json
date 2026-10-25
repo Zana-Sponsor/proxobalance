@@ -1,0 +1,21 @@
+{
+  "project_id": "cojchkwssmasiejcgvbk",
+  "migration": "app_release_policy_disabled_verified",
+  "migration_sha256": "f2c785f0d71860bb36bc113dfbcc6a323d88516a3a7bc4ce02152a2fdf38fef7",
+  "success": true,
+  "policy_rows": 0,
+  "android_policy": null,
+  "ios_policy": null,
+  "rls_enabled": true,
+  "anon_direct_read": false,
+  "anon_insert": false,
+  "authenticated_update": false,
+  "anon_rpc": true,
+  "pages_before": 23,
+  "pages_after": 23,
+  "full_page_digest_before": "ef40f05cf649a94401b6fdf00bfccaf0",
+  "full_page_digest_after": "ef40f05cf649a94401b6fdf00bfccaf0",
+  "update_prompt_enabled": false,
+  "minimum_version_enforced": false,
+  "verification_utc": "2026-10-25T23:18:00.477995+00:00"
+}

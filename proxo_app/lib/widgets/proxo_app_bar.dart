@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../l10n/proxo_strings.dart';
 import '../theme/app_locale.dart';
 import '../theme/proxo_chrome.dart';
-import '../theme/proxo_surface.dart';
+import '../theme/proxo_design_tokens.dart';
 import 'proxo_symbol.dart';
 import 'proxo_text.dart';
 
@@ -28,7 +28,7 @@ class ProxoAppBar extends StatelessWidget implements PreferredSizeWidget {
     List<Widget>? actions,
     TextStyle? titleStyle,
   }) {
-    final style = titleStyle ?? ProxoSurface.section;
+    final style = titleStyle ?? ProxoDesign.appBar;
     final sideWidth = _sideWidth(actions);
     final painter = TextPainter(
       text: TextSpan(text: ProxoStrings.text(title), style: style),
@@ -99,7 +99,7 @@ class ProxoAppBar extends StatelessWidget implements PreferredSizeWidget {
           overflow: TextOverflow.visible,
           textScaler: MediaQuery.textScalerOf(context),
           maxLines: titleMaxLines,
-          style: titleStyle ?? ProxoSurface.section,
+          style: titleStyle ?? ProxoDesign.appBar,
         ),
         actions: [
           SizedBox(

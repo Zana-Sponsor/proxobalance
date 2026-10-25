@@ -89,7 +89,7 @@ void main() {
     c.dispose();
   });
   testWidgets(
-      'narrow large text keeps Auth words and phone hint on complete lines',
+      'narrow large text keeps Auth words complete and phone hint readable',
       (t) async {
     t.view.physicalSize = const Size(280, 852);
     t.view.devicePixelRatio = 1;
@@ -140,9 +140,12 @@ void main() {
     expect(
         email.textScaler.scale(email.text.style!.fontSize!), greaterThan(14));
     final hint = t.renderObject<RenderParagraph>(find
-        .descendant(of: find.byType(FittedBox), matching: find.byType(RichText))
+        .descendant(
+            of: find.text('7XX XXX XXXX'), matching: find.byType(RichText))
         .first);
     expect(hint.maxLines, 1);
+    expect(hint.textScaler.scale(hint.text.style!.fontSize!), greaterThan(26));
+    expect(hint.overflow, TextOverflow.ellipsis);
     expect(t.getSize(find.byType(TextField)).height, lessThan(100));
     expect(t.takeException(), isNull);
     await t.pumpWidget(const SizedBox());

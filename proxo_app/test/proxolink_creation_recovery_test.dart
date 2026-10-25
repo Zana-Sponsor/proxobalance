@@ -137,7 +137,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(() async {
     await (FontLoader(kAppFont)
-          ..addFont(rootBundle.load('assets/fonts/Rabar_021.ttf')))
+          ..addFont(rootBundle.load('assets/fonts/Rabar_022.ttf')))
         .load();
     await (FontLoader('RabarAuthRegular')
           ..addFont(rootBundle.load('assets/fonts/Rabar_022.ttf')))

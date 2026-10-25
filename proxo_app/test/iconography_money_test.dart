@@ -1,3 +1,4 @@
+import 'package:proxo_app/widgets/proxo_png_icon.dart';
 import 'package:proxo_app/widgets/proxo_symbol.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -125,8 +126,13 @@ void main() {
             ),
           );
           await t.pumpAndSettle();
-          expect(find.byType(Image), findsNothing);
-          // SVG icons scale within their viewBox. Labels must never be
+          expect(find.byType(Image), findsNWidgets(3));
+          expect(
+              t
+                  .widgetList<Image>(find.byType(Image))
+                  .every((image) => image.image is AssetImage),
+              isTrue);
+          // Original PNG icons use normalized visible bounds. Labels must never be
           // scaled down by a FittedBox instead of respecting system text size.
           expect(
             find.ancestor(
@@ -168,10 +174,10 @@ void main() {
           ),
         ),
       );
-      final glyph = t.widget<ProxoSymbol>(find.byWidgetPredicate(
-          (w) => w is ProxoSymbol && w.symbol == ProxoSymbolName.wallet));
+      final glyph = t.widget<ProxoPngIcon>(find.byWidgetPredicate(
+          (w) => w is ProxoPngIcon && w.symbol == ProxoSymbolName.wallet));
       expect(glyph.color, AdUi.secondary);
-      expect(glyph.size, 22);
+      expect(glyph.size, 28);
       final button = find.byKey(const ValueKey('home-add-balance'));
       final ink = t.widget<InkWell>(
         find.descendant(of: button, matching: find.byType(InkWell)),

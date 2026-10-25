@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../theme/proxo_surface.dart';
+import '../theme/proxo_design_tokens.dart';
+import 'proxo_png_icon.dart';
 import 'auth/auth_design.dart';
 import 'proxo_symbol.dart';
 import 'proxo_text.dart';
@@ -44,7 +46,7 @@ class ProxoEmptyState extends StatelessWidget {
                   borderRadius:
                       BorderRadius.circular(ProxoSurface.controlRadius),
                 ),
-                child: ProxoSymbol(symbol,
+                child: ProxoPngIcon(symbol,
                     size: 24,
                     color: isError ? AuthTokens.danger : ProxoSurface.accent),
               ),
@@ -55,13 +57,13 @@ class ProxoEmptyState extends StatelessWidget {
               child: ProxoText(title,
                   translate: true,
                   textAlign: TextAlign.center,
-                  style: ProxoSurface.section),
+                  style: ProxoDesign.emptyTitle),
             ),
             const SizedBox(height: 8),
             ProxoText(body,
                 translate: true,
                 textAlign: TextAlign.center,
-                style: ProxoSurface.secondary),
+                style: ProxoDesign.emptyDescription),
             if (details != null) ...[
               const SizedBox(height: 16),
               details!,

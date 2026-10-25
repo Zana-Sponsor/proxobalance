@@ -1,3 +1,4 @@
+import 'proxo_png_icon.dart';
 import 'dart:async';
 import '../services/unread_notification_counter.dart';
 import '../services/app_telemetry_service.dart';
@@ -444,8 +445,8 @@ class _ProxoSidebarState extends State<ProxoSidebar> {
 
   Widget _avatarFallback() => const ColoredBox(
       color: Color(0xFFE6EDFE),
-      child:
-          ProxoSymbol(ProxoSymbolName.user, size: 22, color: AppColors.accent));
+      child: ProxoPngIcon(ProxoSymbolName.user,
+          size: 24, color: AppColors.accent));
 
   Widget _item(
       String id, ProxoSymbolName icon, String label, VoidCallback onTap,
@@ -486,7 +487,7 @@ class _ProxoSidebarState extends State<ProxoSidebar> {
                       child: loading
                           ? CircularProgressIndicator(
                               strokeWidth: 2, color: color)
-                          : ProxoSymbol(icon, size: 22, color: color)),
+                          : ProxoPngIcon(icon, size: 24, color: color)),
                   const SizedBox(width: 12),
                   Expanded(
                       child: ProxoText(label,

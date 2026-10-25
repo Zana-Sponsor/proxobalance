@@ -11,6 +11,7 @@ import '../services/best_metrics_service.dart';
 import '../services/featured_image_cache.dart';
 import 'best_metric_card.dart';
 import 'best_results_design.dart';
+import '../theme/proxo_design_tokens.dart';
 import 'proxo_text.dart';
 import 'proxo_symbol.dart';
 
@@ -258,7 +259,7 @@ class BestMetricsHomeSectionState extends State<BestMetricsHomeSection>
           const SizedBox(width: 8),
           Flexible(
               child: ProxoText('باشترین ئەنجامەکان',
-                  translate: true, style: ResultsUi.text(size: 18))),
+                  translate: true, style: ProxoDesign.heading)),
         ]);
         final action = TextButton(
           key: const ValueKey('home-results-view-all'),

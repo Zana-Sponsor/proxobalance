@@ -107,6 +107,33 @@ List<Map<String, Object?>> measuredLayout(GlobalKey key) {
   return rows;
 }
 
+// Decode bundled PNGs before capturing. pumpAndSettle alone does not wait
+// for the engine image codec outside the widget test's fake clock.
+Future<void> settleLocalImages(WidgetTester tester) async {
+  final elements = find
+      .byType(Image)
+      .evaluate()
+      .where(
+        (e) => ((e.widget as Image).image is AssetImage ||
+            (e.widget as Image).image is ResizeImage),
+      )
+      .toList();
+  await tester.runAsync(() async {
+    await Future.wait(elements.map((e) => precacheImage(
+          (e.widget as Image).image,
+          e,
+        )));
+  });
+  await tester.pump();
+  for (final element in elements) {
+    final raw = find.descendant(
+        of: find.byWidget(element.widget), matching: find.byType(RawImage));
+    expect(raw, findsOneWidget);
+    expect(tester.widget<RawImage>(raw).image, isNotNull,
+        reason: 'Bundled icon must be decoded in the actual captured widget');
+  }
+}
+
 void main() {
   PolishBinding();
   final backend = ActualScreenBackend();
@@ -132,7 +159,12 @@ void main() {
     await backend.dispose();
     ProxoLocale.current.value = ProxoLocale.kurdishSorani;
   });
-  for (final config in [(393.0, 1.0, 3.0), (280.0, 2.0, 2.0)]) {
+  for (final config in [
+    (393.0, 1.0, 3.0),
+    (320.0, 1.0, 2.0),
+    (280.0, 1.0, 2.0),
+    (280.0, 2.0, 2.0)
+  ]) {
     for (final language in ['ckb', 'ar', 'kmr']) {
       for (final section in [
         'login',
@@ -228,7 +260,7 @@ void main() {
                     padding: const EdgeInsets.all(20),
                     child: OtpScreen(
                       onBack: () {},
-                      destination: 'he***@example.com',
+                      destination: '+96475***0000',
                       otpBoxes: AuthOtpBoxes(
                         length: 6,
                         codeController: code,
@@ -321,8 +353,7 @@ void main() {
           }
           if (section == 'signup-filled') {
             await t.enterText(find.byType(TextField).at(0), 'هێمن ئەحمەد');
-            await t.enterText(
-                find.byType(TextField).at(1), 'hemin@example.com');
+            await t.enterText(find.byType(TextField).at(1), '7501234567');
             await t.enterText(find.byType(TextField).at(2), 'Example#2026');
             await t.enterText(find.byType(TextField).at(3), 'Example#2026');
             FocusManager.instance.primaryFocus?.unfocus();
@@ -373,7 +404,17 @@ void main() {
             for (var frame = 0; frame < 20; frame++) {
               await t.pump(const Duration(milliseconds: 16));
             }
-            expect(find.byKey(const ValueKey('refresh-status-label')), findsOneWidget);
+            expect(find.byKey(const ValueKey('refresh-status-label')),
+                findsOneWidget);
+          }
+          await settleLocalImages(t);
+          if (section == 'ads' && scale == 2) {
+            final title = find.text('Fictional screen fixture');
+            expect(title, findsOneWidget);
+            final paragraph = t.renderObject<RenderParagraph>(title);
+            expect(paragraph.textScaler.scale(14), 28,
+                reason:
+                    'Ads list must honor the same accessibility scale as the app');
           }
           final exceptions = <String>[];
           Object? error;

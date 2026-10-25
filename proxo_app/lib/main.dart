@@ -1,4 +1,5 @@
 import 'widgets/ad_activation_notice.dart';
+import 'widgets/app_update_host.dart';
 import 'config/backend_config.dart';
 // main.dart — Proxo App entry point
 
@@ -51,7 +52,8 @@ const String kSupabaseAnonKey = BackendConfig.productionAnonKey;
 bool firebaseAvailable = false;
 
 /// URL ی n8n کراوەکەت بنووسەرەوە — بۆ ناردنی OTP ئیمێڵ
-const String n8nOtpLoginWebhook = 'https://email.proxopages.com/webhook/send_otp';
+const String n8nOtpLoginWebhook =
+    'https://email.proxopages.com/webhook/send_otp';
 
 /// URL ی n8n کراوەکەت بنووسەرەوە — بۆ ئاگاداری تۆمارکردن / چوونەژوورەوە
 const String n8nWebhookUrl = 'https://email.proxopages.com/webhook/send_otp';
@@ -70,7 +72,7 @@ const String n8nWebhookUrl = 'https://email.proxopages.com/webhook/send_otp';
 // نموونەی n8nـن. ئەگەر Wevlix لەسەر هۆستێکی جیاوازە، تەنها ئەم سێ دێڕە
 // بگۆڕە.
 const String _n8nBase = 'https://email.proxopages.com/webhook';
-const String wevlixOtpSendUrl   = '$_n8nBase/wevlix/otp/send';
+const String wevlixOtpSendUrl = '$_n8nBase/wevlix/otp/send';
 const String wevlixOtpStatusUrl = '$_n8nBase/wevlix/otp/status';
 const String wevlixOtpVerifyUrl = '$_n8nBase/wevlix/otp/verify';
 
@@ -143,12 +145,15 @@ void main() async {
 
 class ProxoApp extends StatefulWidget {
   const ProxoApp({super.key});
-  @override State<ProxoApp> createState() => _ProxoAppState();
+  @override
+  State<ProxoApp> createState() => _ProxoAppState();
 }
+
 class _ProxoAppState extends State<ProxoApp> {
   StreamSubscription<AuthState>? _auth;
   String? _owner;
-  @override void initState() {
+  @override
+  void initState() {
     super.initState();
     final client = Supabase.instance.client;
     _owner = client.auth.currentUser?.id;
@@ -156,17 +161,24 @@ class _ProxoAppState extends State<ProxoApp> {
       final previous = _owner;
       _owner = state.session?.user.id;
       if (previous != null && previous != _owner) clearTikTokDmCache(previous);
-      if (previous == null || previous == _owner || AuthScreen.inOtpFlow) return;
+      if (previous == null || previous == _owner || AuthScreen.inOtpFlow)
+        return;
       // This listener outlives the login route. Remove every private route,
       // including a details sheet open when the session is remotely revoked.
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         navigatorKey.currentState?.pushAndRemoveUntil(
-          ProxoPageRoute<void>(builder: (_) => const _AuthGate()), (_) => false);
+            ProxoPageRoute<void>(builder: (_) => const _AuthGate()),
+            (_) => false);
       });
     });
   }
-  @override void dispose() { unawaited(_auth?.cancel()); super.dispose(); }
+
+  @override
+  void dispose() {
+    unawaited(_auth?.cancel());
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -179,9 +191,10 @@ class _ProxoAppState extends State<ProxoApp> {
   }
 
   Widget _buildApp(Locale locale) {
-    final Locale frameworkLocale = (locale.languageCode == 'ckb' || locale.languageCode == 'kmr')
-        ? ProxoLocale.arabic
-        : locale;
+    final Locale frameworkLocale =
+        (locale.languageCode == 'ckb' || locale.languageCode == 'kmr')
+            ? ProxoLocale.arabic
+            : locale;
     return MaterialApp(
       title: 'Proxo',
       debugShowCheckedModeBanner: false,
@@ -204,11 +217,16 @@ class _ProxoAppState extends State<ProxoApp> {
       // framework-owned labels/date pickers while ProxoLocaleScope keeps the
       // app's actual ckb/ar choice and correct RTL direction.
       builder: (context, child) => ProxoLocaleScope(
-        child: AdActivationNoticeHost(
+        child: AppUpdateHost(
           client: Supabase.instance.client,
-          onOpen: (id) => navigatorKey.currentState?.push(
-            ProxoPageRoute<void>(builder: (_) => AuthenticatedGate(child: AdScreen(initialAdId: id)))),
-          child: child ?? const SizedBox.shrink(),
+          child: AdActivationNoticeHost(
+            client: Supabase.instance.client,
+            onOpen: (id) => navigatorKey.currentState?.push(
+                ProxoPageRoute<void>(
+                    builder: (_) =>
+                        AuthenticatedGate(child: AdScreen(initialAdId: id)))),
+            child: child ?? const SizedBox.shrink(),
+          ),
         ),
       ),
       theme: buildAppTheme(),
@@ -221,22 +239,39 @@ class _ProxoAppState extends State<ProxoApp> {
     switch (settings.name) {
       // Named and direct routes share the same 320 ms directional transition.
       case '/my-ads':
-        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AuthenticatedGate(child: AdScreen()));
+        return ProxoPageRoute<void>(
+            settings: settings,
+            builder: (_) => const AuthenticatedGate(child: AdScreen()));
       case '/notifications':
-        return ProxoPageRoute<void>(settings: settings, 
-            builder: (_) => const AuthenticatedGate(child: NotificationsScreen()));
+        return ProxoPageRoute<void>(
+            settings: settings,
+            builder: (_) =>
+                const AuthenticatedGate(child: NotificationsScreen()));
       case '/wallet':
-        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AuthenticatedGate(child: MainShell()));
+        return ProxoPageRoute<void>(
+            settings: settings,
+            builder: (_) => const AuthenticatedGate(child: MainShell()));
       case '/profile':
-        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AuthenticatedGate(child: ProfileScreen()));
+        return ProxoPageRoute<void>(
+            settings: settings,
+            builder: (_) => const AuthenticatedGate(child: ProfileScreen()));
       case '/transactions':
-        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AuthenticatedGate(child: TxHistoryPage()));
+        return ProxoPageRoute<void>(
+            settings: settings,
+            builder: (_) => const AuthenticatedGate(child: TxHistoryPage()));
       case '/coupons':
-        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AuthenticatedGate(child: DiscountCodesPage()));
+        return ProxoPageRoute<void>(
+            settings: settings,
+            builder: (_) =>
+                const AuthenticatedGate(child: DiscountCodesPage()));
       case '/faq':
-        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AuthenticatedGate(child: FaqScreen()));
+        return ProxoPageRoute<void>(
+            settings: settings,
+            builder: (_) => const AuthenticatedGate(child: FaqScreen()));
       case '/assets':
-        return ProxoPageRoute<void>(settings: settings, builder: (_) => const AuthenticatedGate(child: MainShell()));
+        return ProxoPageRoute<void>(
+            settings: settings,
+            builder: (_) => const AuthenticatedGate(child: MainShell()));
       default:
         return null;
     }
@@ -263,18 +298,17 @@ class _AuthGateState extends State<_AuthGate> {
     _authSub = supabase.auth.onAuthStateChange.listen((data) async {
       if (!mounted) return;
       if (AuthScreen.inOtpFlow) return;
-      final event   = data.event;
+      final event = data.event;
       final session = data.session;
 
-      if (session != null &&
-          (event == AuthChangeEvent.signedIn)) {
-
+      if (session != null && (event == AuthChangeEvent.signedIn)) {
         if (firebaseAvailable) {
           NotificationService.instance.saveTokenAfterLogin();
         }
 
         Navigator.of(context).pushAndRemoveUntil(
-          ProxoPageRoute(builder: (_) => const AuthenticatedGate(child: MainShell())),
+          ProxoPageRoute(
+              builder: (_) => const AuthenticatedGate(child: MainShell())),
           (route) => false,
         );
       } else if (event == AuthChangeEvent.signedOut) {
@@ -315,7 +349,7 @@ class MainShell extends StatefulWidget {
 }
 
 class MainShellState extends State<MainShell> with WidgetsBindingObserver {
-  int  _tabIndex       = 0;
+  int _tabIndex = 0;
   bool _creatingAd = false;
   bool _metaEnabled = false;
   int _adAccessRevision = 0;
@@ -396,14 +430,19 @@ class MainShellState extends State<MainShell> with WidgetsBindingObserver {
       }
       if (!mounted) return;
       final result = await Navigator.of(context).push(
-        ProxoPageRoute<String>(builder: (_) => AdCreateScreen(platform: platform)),
+        ProxoPageRoute<String>(
+            builder: (_) => AdCreateScreen(platform: platform)),
       );
       if (result == 'refresh' && mounted) {
         if (_tabIndex == 1) {
           unawaited(_refreshers[1]!.refresh());
-        } else { _switchTab(1); }
+        } else {
+          _switchTab(1);
+        }
       }
-    } finally { _creatingAd = false; }
+    } finally {
+      _creatingAd = false;
+    }
   }
 
   void _onExternalTabRequest() {
@@ -435,31 +474,36 @@ class MainShellState extends State<MainShell> with WidgetsBindingObserver {
       _tabIndex = index;
     });
     mainShellTab.value = index;
-    AppSectionObserver.instance.selectTab(const {0:"home",1:"ads",3:"tools",4:"profile"}[index] ?? "home");
+    AppSectionObserver.instance.selectTab(
+        const {0: "home", 1: "ads", 3: "tools", 4: "profile"}[index] ?? "home");
   }
 
   Future<void> _onTabTap(int index) async {
-      // ── Re-tap on the active tab = refresh ───────────────────────────────
-      // Fire-and-forget on purpose. Awaiting would hold this handler open for
-      // the whole drop + fetch + settle (~1s), and a second tap during that
-      // window is already a no-op inside the controller, so there is nothing
-      // to serialise.
-      if (index == _tabIndex && index != 2) {
-        unawaited(_refreshers[index]?.refresh() ?? Future<void>.value());
-        return;
-      }
-      if (index == 2) {
-        await _openAd('TIKTOK');
-        return;
-      }
-      _switchTab(index);
+    // ── Re-tap on the active tab = refresh ───────────────────────────────
+    // Fire-and-forget on purpose. Awaiting would hold this handler open for
+    // the whole drop + fetch + settle (~1s), and a second tap during that
+    // window is already a no-op inside the controller, so there is nothing
+    // to serialise.
+    if (index == _tabIndex && index != 2) {
+      unawaited(_refreshers[index]?.refresh() ?? Future<void>.value());
+      return;
     }
+    if (index == 2) {
+      await _openAd('TIKTOK');
+      return;
+    }
+    _switchTab(index);
+  }
 
   @override
   void didHaveMemoryPressure() {
     if (!mounted) return;
     AppDataCache.forClient(supabase).cache.clear();
-    setState(() { _builtTabs..clear()..add(_tabIndex); });
+    setState(() {
+      _builtTabs
+        ..clear()
+        ..add(_tabIndex);
+    });
   }
 
   Widget _buildTab(int index) {
@@ -469,22 +513,22 @@ class MainShellState extends State<MainShell> with WidgetsBindingObserver {
           key: const ValueKey('home'),
           isActive: _tabIndex == 0,
           refreshController: _refreshers[0],
-          onMenuTap:   _openSidebar,
+          onMenuTap: _openSidebar,
           onCreateTap: () => _onTabTap(2),
           onAddBalanceTap: () => Navigator.of(context).push(
-            ProxoPageRoute<void>(builder: (_) => const DepositScreen())),
-          onGoToAds:   () => _onTabTap(1),
+              ProxoPageRoute<void>(builder: (_) => const DepositScreen())),
+          onGoToAds: () => _onTabTap(1),
           // کوێک ئاکشنەکانی پەڕەی سەرەکی:
           //   ئامرازی پەیوەندی → تابی Tools ی ئێستا (3)
           //   پرسیارە دووبارەکان → شاشەی تایبەتی FAQ، وەک ڕووتێکی پوش‌کراو
           //     (هەمان شێوازی `AdCreateScreen`) — باری خوارەوە و تابەکان
           //     دەستیان لێنەدراوە، و «دواوە» دەگەڕێتەوە سەر پەڕەی سەرەکی.
-          onToolsTap:  () => _onTabTap(3),
-          onCreatePageTap: () => Navigator.of(context).push(
-            ProxoPageRoute<void>(builder: (_) => const ToolsScreen())),
-          onFaqTap:    () => Navigator.of(context).push(
-                ProxoPageRoute<void>(builder: (_) => const FaqScreen()),
-              ),
+          onToolsTap: () => _onTabTap(3),
+          onCreatePageTap: () => Navigator.of(context)
+              .push(ProxoPageRoute<void>(builder: (_) => const ToolsScreen())),
+          onFaqTap: () => Navigator.of(context).push(
+            ProxoPageRoute<void>(builder: (_) => const FaqScreen()),
+          ),
         );
       case 1:
         return RepaintBoundary(
@@ -503,7 +547,8 @@ class MainShellState extends State<MainShell> with WidgetsBindingObserver {
       case 3:
         return RepaintBoundary(
           key: const ValueKey('tools'),
-          child: ToolsScreen(isActive: _tabIndex == 3, refreshController: _refreshers[3]),
+          child: ToolsScreen(
+              isActive: _tabIndex == 3, refreshController: _refreshers[3]),
         );
       case 4:
         return RepaintBoundary(
@@ -517,17 +562,17 @@ class MainShellState extends State<MainShell> with WidgetsBindingObserver {
         return HomeScreen(
           key: const ValueKey('home_default'),
           isActive: _tabIndex == 0,
-          onMenuTap:   _openSidebar,
+          onMenuTap: _openSidebar,
           onCreateTap: () => _onTabTap(2),
           onAddBalanceTap: () => Navigator.of(context).push(
-            ProxoPageRoute<void>(builder: (_) => const DepositScreen())),
-          onGoToAds:   () => _onTabTap(1),
-          onToolsTap:  () => _onTabTap(3),
-          onCreatePageTap: () => Navigator.of(context).push(
-            ProxoPageRoute<void>(builder: (_) => const ToolsScreen())),
-          onFaqTap:    () => Navigator.of(context).push(
-                ProxoPageRoute<void>(builder: (_) => const FaqScreen()),
-              ),
+              ProxoPageRoute<void>(builder: (_) => const DepositScreen())),
+          onGoToAds: () => _onTabTap(1),
+          onToolsTap: () => _onTabTap(3),
+          onCreatePageTap: () => Navigator.of(context)
+              .push(ProxoPageRoute<void>(builder: (_) => const ToolsScreen())),
+          onFaqTap: () => Navigator.of(context).push(
+            ProxoPageRoute<void>(builder: (_) => const FaqScreen()),
+          ),
         );
     }
   }
@@ -570,40 +615,42 @@ class MainShellState extends State<MainShell> with WidgetsBindingObserver {
           Directionality(
             textDirection: TextDirection.ltr,
             child: Scaffold(
-            key: _scaffoldKey,
-            backgroundColor: AppColors.bg,
-            onEndDrawerChanged: (_) => syncProxoDrawerBackNavigation(context),
-            endDrawer: Directionality(
-              textDirection: TextDirection.rtl,
-              child: ProxoSidebar(
-                currentIndex: _tabIndex,
-                onClose: _closeSidebar,
-                onNavigate: (page) {
-                  if (page == 'home')      _switchTab(0);
-                  if (page == 'ads')       _switchTab(1);
-                  if (page == 'tools')     _switchTab(3);
-                  if (page == 'profile')   _switchTab(4);
-                },
+              key: _scaffoldKey,
+              backgroundColor: AppColors.bg,
+              onEndDrawerChanged: (_) => syncProxoDrawerBackNavigation(context),
+              endDrawer: Directionality(
+                textDirection: TextDirection.rtl,
+                child: ProxoSidebar(
+                  currentIndex: _tabIndex,
+                  onClose: _closeSidebar,
+                  onNavigate: (page) {
+                    if (page == 'home') _switchTab(0);
+                    if (page == 'ads') _switchTab(1);
+                    if (page == 'tools') _switchTab(3);
+                    if (page == 'profile') _switchTab(4);
+                  },
+                ),
               ),
-            ),
-            // ProxoSidebar owns its bounded width and safe-area layout;
-            // Scaffold's DrawerController owns the scrim and closing motion.
-            // Kept-alive tab state with the shared short arrival transition.
-            body: Directionality(
-              textDirection: TextDirection.rtl,
-              child: _buildBody(),
-            ),
-            bottomNavigationBar: ProxoBottomNav(
-              currentIndex: _tabIndex,
-              onTap: _onTabTap,
-              metaEnabled: _metaEnabled,
-              onCreatePlatform: (platform) => unawaited(_openAd(platform)),
-            ),
+              // ProxoSidebar owns its bounded width and safe-area layout;
+              // Scaffold's DrawerController owns the scrim and closing motion.
+              // Kept-alive tab state with the shared short arrival transition.
+              body: Directionality(
+                textDirection: TextDirection.rtl,
+                child: _buildBody(),
+              ),
+              bottomNavigationBar: ProxoBottomNav(
+                currentIndex: _tabIndex,
+                onTap: _onTabTap,
+                metaEnabled: _metaEnabled,
+                onCreatePlatform: (platform) => unawaited(_openAd(platform)),
+              ),
             ),
           ),
           // ── No Internet Banner ──────────────────────────────────────────
           const Positioned(
-            top: 0, left: 0, right: 0,
+            top: 0,
+            left: 0,
+            right: 0,
             child: ProxoNoInternetBanner(),
           ),
         ],

@@ -6,6 +6,8 @@ import '../theme/app_theme.dart';
 import '../theme/proxo_surface.dart';
 import 'ad_form_components.dart';
 import 'proxo_symbol.dart';
+import 'proxo_png_icon.dart';
+import '../theme/proxo_design_tokens.dart';
 import 'proxo_text.dart';
 
 /// Three equal shortcuts at normal text size. Accessible text uses compact
@@ -36,8 +38,8 @@ class HomeQuickActions extends StatelessWidget {
     final callbacks = [onCreateTap, onAddBalanceTap, onCreatePageTap];
     const style = TextStyle(
         fontFamily: ProxoSurface.fontFamily,
-        fontSize: 13,
-        fontWeight: FontWeight.w400,
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
         height: 1.5,
         color: AdUi.ink);
     final scaler = MediaQuery.textScalerOf(context);
@@ -78,8 +80,8 @@ class HomeQuickActions extends StatelessWidget {
                     decoration: const BoxDecoration(
                         color: AppColors.accentSoft,
                         borderRadius: BorderRadius.all(Radius.circular(12))),
-                    child: ProxoSymbol(icons[i],
-                        size: 22,
+                    child: ProxoPngIcon(icons[i],
+                        size: 28,
                         color:
                             callbacks[i] == null ? AdUi.secondary : AdUi.blue));
                 final label = ProxoText(titles[i],
@@ -97,8 +99,9 @@ class HomeQuickActions extends StatelessWidget {
                     key: ValueKey(keys[i]),
                     color: Colors.white,
                     shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(18)),
-                        side: BorderSide(color: Color(0xFFE5EBF4))),
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(ProxoDesign.cardRadius)),
+                        side: BorderSide(color: ProxoDesign.line)),
                     clipBehavior: Clip.antiAlias,
                     child: InkWell(
                       onTap: callbacks[i],

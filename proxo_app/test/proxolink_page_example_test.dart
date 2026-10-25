@@ -132,7 +132,7 @@ void main() {
     expect(git.exitCode, 0);
     sourceCommit = (git.stdout as String).trim();
     await (FontLoader(kAppFont)
-          ..addFont(rootBundle.load('assets/fonts/Rabar_021.ttf')))
+          ..addFont(rootBundle.load('assets/fonts/Rabar_022.ttf')))
         .load();
     await (FontLoader('MaterialIcons')
           ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf')))

@@ -2403,10 +2403,6 @@ class _AdScreenState extends State<AdScreen>
           // زۆر سووک لە سەرەوە بۆ خوارەوە بۆ قووڵییەکی زیاتر — هیچ
           // شتێکی تر (کارت، سێبەر، سنوور، بۆشایی) نەگۆڕدراوە.
           backgroundColor: _dsPageBg,
-          // ── سنووردارکردنی textScaler — ڕێگری لە شکانی proportion-ی
-          // کارتەکان دەکات ئەگەر یوزەر فۆنتی زۆر گەورە هەڵبژاردبێت لە
-          // ڕێکخستنەکانی ئامێر، بەبێ ئەوەی پێشوازی لە هەڵبژاردنی یوزەر
-          // بکەین بە تەواوی — تەنها لەناو سنوورێکی سەلامەتدا (٪90-١٢٥).
           // Shared components — ad_screen.dart owns Campaigns content only.
           appBar: ProxoTopBar(
             topPadding: MediaQuery.paddingOf(context).top,
@@ -2416,13 +2412,7 @@ class _AdScreenState extends State<AdScreen>
           ),
           body: MediaQuery(
             data: MediaQuery.of(context).copyWith(
-              textScaler: MediaQuery.textScalerOf(context)
-                  // The v4 measurements assume textScaler 1.0. Allowing 1.18
-                  // inflated every label ~18%, which wrapped "Impressions",
-                  // the card title, the ID and both filter chips. Capped at
-                  // 1.0 so the card matches the reference; raise this again if
-                  // system font scaling matters more than exact geometry.
-                  .clamp(minScaleFactor: 0.9, maxScaleFactor: 1.0),
+              textScaler: MediaQuery.textScalerOf(context),
             ),
             child: SafeArea(
               top: false,
@@ -3001,9 +2991,9 @@ const double _kAdcBudgetBarH = 3.5;
 // Existing update-request banner colours remain unchanged.
 const Color _kAdcTileBg = Color(0xFFE4EBF7);
 const Color _kAdcTileBorder = Color(0xFFEDF1F6);
-const Color _kAdcInk = Color(0xFF172033);
-const Color _kAdcLabelInk = Color(0xFF707987);
-const Color _kAdcMutedInk = Color(0xFF808894);
+const Color _kAdcInk = AppColors.ink;
+const Color _kAdcLabelInk = AppColors.inkMuted;
+const Color _kAdcMutedInk = AppColors.inkMuted;
 const Color _kAdcToggleSurface = Color(0xFFF7F8FA);
 const Color _kAdcToggleInk = Color(0xFF586579);
 const Color _kAdcBudgetTrack = Color(0xFFE2E8F0);
@@ -3024,7 +3014,7 @@ double _adcMetricHeight(BuildContext context, double scale) {
   final labelHeight = scaler.scale(_kAdcMetricLabelSlotBase * t) * 1.3 * 2;
   final valueHeight = scaler.scale(_kAdcFsStatValue * t) * 1.25;
   return max(_kAdcStatTileH * scale,
-      labelHeight + valueHeight + (2 * _kAdcTilePadV + 4) * scale);
+      labelHeight + valueHeight + (2 * _kAdcTilePadV + 4) * scale).ceilToDouble();
 }
 
 Duration _adcMotionDuration(BuildContext context) =>

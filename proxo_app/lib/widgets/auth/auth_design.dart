@@ -1,3 +1,5 @@
+import '../../theme/proxo_design_tokens.dart';
+import '../../screens/auth/auth_models.dart';
 import 'package:proxo_app/l10n/proxo_strings.dart';
 // auth_design.dart
 import 'package:flutter/material.dart';
@@ -8,10 +10,10 @@ import 'package:flutter/material.dart';
 
 abstract final class AuthTokens {
   // A real Regular face: Rabar_021 contains bold outlines even at weight 400.
-  static const String fontFamily = 'RabarAuthRegular';
-  static const Color accentSoft = Color(0xFFEDF4FF);
-  static const Color accentLine = Color(0xFFBDD5FA);
-  static const Color accentInk = Color(0xFF0759CE);
+  static const String fontFamily = ProxoDesign.font;
+  static const Color accentSoft = ProxoDesign.blueSoft;
+  static const Color accentLine = ProxoDesign.blueInk;
+  static const Color accentInk = ProxoDesign.secondaryBlue;
   static const double toolbarHeight = 56;
   static const double introIconSize = 64;
   static const double contentMaxWidth = 440;
@@ -21,27 +23,27 @@ abstract final class AuthTokens {
   // #94A3B8 ٤ جار، #0B0B32، #68687F، #FCA5A5 …). ئێستا هەموویان لێرەوە
   // دەخوێنرێنەوە، بۆیە گۆڕینی یەک دێڕ هەموو ڕووکاری چوونەژوورەوە دەگۆڕێت.
   static const Color pageBackground = Color(0xFFFFFFFF);
-  static const Color fieldFill = Color(0xFFF8FAFC);
-  static const Color fieldFillOff = Color(0xFFF8FAFC);
+  static const Color fieldFill = ProxoDesign.surface;
+  static const Color fieldFillOff = ProxoDesign.surface;
 
   /// مەرەکەبی سەرەکی — هەمان `AppColors.ink`ی ئەپەکە (#0F172A).
-  static const Color ink = Color(0xFF0F172A);
+  static const Color ink = ProxoDesign.ink;
 
   /// دەقی لاوەکی — هەمان `#64748B`ی tools_screen و دۆخە بەتاڵەکان.
-  static const Color inkMuted = Color(0xFF64748B);
+  static const Color inkMuted = ProxoDesign.muted;
 
   /// دەقی جێگرەوە (placeholder) و ئایکۆنی پێشەوەی خانەکان.
   static const Color placeholder = inkMuted;
 
   /// سنووری نەچالاکی خانەکان — هەمان سنووری چیپەکانی فلتەری ڕیکلام.
-  static const Color line = Color(0xFFE2E8F0);
+  static const Color line = ProxoDesign.line;
   static const Color lineOff = Color(0xFFF1F5F9);
 
   /// شینی سیستەم بۆ فۆکەس، لینک، CTA و ئایکۆنی چالاک.
-  static const Color accent = Color(0xFF046CFA);
+  static const Color accent = ProxoDesign.blue;
 
   /// ڕووی دوگمەی سەرەکی — شینی دیاریکراوی Auth.
-  static const Color primary = Color(0xFF046CFA);
+  static const Color primary = ProxoDesign.blue;
   static const Color onPrimary = Color(0xFFFFFFFF);
 
   /// هەڵە و ئاگادارکردنەوە — بانەرێکی سووری نەرم.
@@ -72,14 +74,14 @@ abstract final class AuthTokens {
   // ── فۆنت و دەقەکان ────────────────────────────────────────────────────────
   // Shared hierarchy: 20dp headings, 14dp inputs, 13dp labels and supporting copy.
   // Text follows accessibility scaling; controls keep a 48dp minimum target.
-  static const double textSize = 14;
+  static const double textSize = 15;
   static const double titleSize = 20;
   static const FontWeight weight = FontWeight.w400;
 
   static const TextStyle title = TextStyle(
     fontFamily: fontFamily,
     fontSize: titleSize,
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.w600,
     color: ink,
     height: 1.5,
   );
@@ -100,21 +102,13 @@ abstract final class AuthTokens {
     color: ink,
   );
 
-  static const TextStyle fieldLabel = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 13,
-    fontWeight: weight,
-    color: ink,
-    height: 1.5,
-  );
-
+  static const TextStyle fieldLabel = ProxoDesign.label;
   static const TextStyle buttonText = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: textSize,
-    height: 1.25,
-    fontWeight: weight,
-    color: onPrimary,
-  );
+      fontFamily: fontFamily,
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+      height: 1.5,
+      color: onPrimary);
 
   /// ژمێرەری دووبارەناردنەوە و دەقی یارمەتی ژێر OTP.
   static const TextStyle helper = TextStyle(
@@ -157,9 +151,9 @@ abstract final class AuthTokens {
   // ── پێوانەی کۆنتڕۆڵەکان ────────────────────────────────────────────────────
   /// Primary actions grow with text; compact icon targets remain 48dp.
   static const double buttonHeight = 50;
-  static const double controlHeight = 48;
-  static const double buttonRadius = 18;
-  static const double fieldRadius = 16;
+  static const double controlHeight = ProxoDesign.fieldHeight;
+  static const double buttonRadius = ProxoDesign.radius;
+  static const double fieldRadius = ProxoDesign.radius;
 
   /// ⚠ ستوونی بوو 13. ئێستا 15 — لەناو مەودای 14–16، بۆیە خانەکە
   /// بەرزاییەکی ئاسوودەی هەیە بەبێ ئەوەی لە دوگمەکە قەڵەوتر بێت.
@@ -504,6 +498,18 @@ abstract final class AuthValidators {
       fullName(name) == null &&
       AuthValidators.email(email) == null &&
       AuthValidators.newPassword(password) == null &&
+      confirmation.isNotEmpty &&
+      confirmation == password;
+
+  static bool phoneSignUpReady({
+    required String name,
+    required String phone,
+    required String password,
+    required String confirmation,
+  }) =>
+      fullName(name) == null &&
+      IraqPhone.isValid(phone) &&
+      newPassword(password) == null &&
       confirmation.isNotEmpty &&
       confirmation == password;
 

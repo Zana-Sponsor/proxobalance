@@ -9,6 +9,36 @@ import 'package:proxo_app/widgets/proxo_toast.dart';
 void main() {
   tearDown(ProxoErrorStack.clear);
   testWidgets(
+      'manual close is immediate and action-required feedback stays readable',
+      (t) async {
+    late BuildContext screen;
+    var actionCalls = 0;
+    await t.pumpWidget(MaterialApp(home: Builder(builder: (context) {
+      screen = context;
+      return const Scaffold();
+    })));
+    ProxoErrorStack.show(screen, 'Recoverable failure');
+    await t.pump();
+    await t.tap(find.byKey(const ValueKey('notice-dismiss')));
+    await t.pump();
+    expect(find.byType(ProxoNoticeCard), findsNothing);
+    ProxoErrorStack.show(screen, 'Action required',
+        actionLabel: 'Retry', onAction: () => actionCalls++);
+    await t.pump();
+    await t.pump(const Duration(seconds: 10));
+    expect(find.text('Action required'), findsOneWidget);
+    await t.tap(find.text('Retry'));
+    await t.pump();
+    expect(actionCalls, 1);
+    expect(find.byType(ProxoNoticeCard), findsNothing);
+    ProxoErrorStack.show(screen, 'Long readable message ' * 5);
+    await t.pump();
+    await t.pump(const Duration(seconds: 2));
+    expect(find.byType(ProxoNoticeCard), findsOneWidget);
+    await t.pump(const Duration(seconds: 1));
+    expect(find.byType(ProxoNoticeCard), findsNothing);
+  });
+  testWidgets(
       'validation expires 2000ms after appearing, including delayed mount',
       (t) async {
     final controller = AdValidationController();

@@ -23,7 +23,7 @@ import 'proxolink_page_management_test.dart' show page;
 import 'tiktok_dm_form_test.dart' show accountsFixture;
 import 'tiktok_strict_v3_form_test.dart' show StrictRepository, reveal, view;
 
-const evidence = '../docs/evidence/tiktok-reference-colors-2026-10-25';
+const evidence = '../docs/app-wide-release-2026-10-26/screenshots/create-ad';
 final measurements = <String, Object?>{};
 Finder key(String value) => find.byKey(ValueKey(value));
 Finder section(String title) => key('ad-section-$title');
@@ -203,15 +203,15 @@ void main() {
 
     final collapsed = tester.getRect(key('sticky-ad-price'));
     final nav = tester.getRect(find.byType(ProxoBottomNav));
-    expect(collapsed.left, 0);
-    expect(collapsed.width, 393);
+    expect(collapsed.left, 20);
+    expect(collapsed.width, 353);
     expect(collapsed.height, 64);
     expect(nav.top - collapsed.bottom, 0);
     final surface = tester.widget<Container>(key('sticky-ad-price'));
-    expect(
-        (surface.decoration! as BoxDecoration).borderRadius, BorderRadius.zero);
-    expect(tester.getRect(key('sticky-price-total')).left, 20);
-    expect(tester.getRect(key('sticky-price-label')).right, 373);
+    expect((surface.decoration! as BoxDecoration).borderRadius,
+        const BorderRadius.all(Radius.circular(10)));
+    expect(tester.getRect(key('sticky-price-total')).left, 36);
+    expect(tester.getRect(key('sticky-price-label')).right, 357);
     measurements['393px'] = {
       'screen': {'width': 393, 'height': 852, 'text_scale': 1},
       'gaps_dp': gaps,
@@ -242,7 +242,10 @@ void main() {
       'button_radius_dp': 12,
       'input_radius_dp': 12,
       'input_horizontal_padding_dp': 16,
-      'price_radius_dp': 0,
+      'price_radius_dp':
+          ((surface.decoration! as BoxDecoration).borderRadius! as BorderRadius)
+              .topLeft
+              .x,
     };
 
     await tapVisible(tester, key('goal-views'));
@@ -365,7 +368,7 @@ void main() {
         isTrue);
     await tester.pump(const Duration(milliseconds: 300));
     await shot(tester, '23-price-expanded-loading');
-    expect(tester.getRect(key('sticky-price-loading')).left, 20);
+    expect(tester.getRect(key('sticky-price-loading')).left, 36);
     // Loading must not disable the full-row expand/collapse interaction.
     await tester.tap(key('sticky-price-label'));
     await tester.pump(const Duration(milliseconds: 250));
@@ -522,13 +525,13 @@ void main() {
       await tester.pumpAndSettle();
       final card = tester.getRect(key('sticky-ad-price'));
       final nav = tester.getRect(find.byType(ProxoBottomNav));
-      expect(card.left, 0);
-      expect(card.width, scenario.$1);
+      expect(card.left, 20);
+      expect(card.width, scenario.$1 - 40);
       expect(nav.top - card.bottom, 0);
       if (scenario.$3 == 1) expect(card.height, 64);
       if (scenario.$1 == 768) {
-        expect(tester.getRect(key('sticky-price-total')).left, 84);
-        expect(tester.getRect(key('sticky-price-label')).right, 684);
+        expect(tester.getRect(key('sticky-price-total')).left, 100);
+        expect(tester.getRect(key('sticky-price-label')).right, 668);
       }
       assertTextFits(tester);
       await shot(tester, scenario.$4);

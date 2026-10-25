@@ -1,0 +1,492 @@
+{
+  "family": "iconmonstr",
+  "format": "Original 240px transparent PNG downloaded from original source; no local raster conversion",
+  "normalization": "Visible alpha bounds are centered at runtime in a 24dp box with a 22dp longest visible axis. Original PNG bytes are preserved.",
+  "icons": [
+    {
+      "name": "banknote-2",
+      "source": "https://iconmonstr.com/banknote-2-png/",
+      "download": "https://iconmonstr.com/wp-content/g/gd/png.php?size=240&padding=0&icon=releases%2Fsource%2F2013%2Fpng%2Ficonmonstr-banknote-2.png&in=iconmonstr-banknote-2.png&bgShape=&bgColorR=255&bgColorG=255&bgColorB=255&iconColorR=0&iconColorG=0&iconColorB=0",
+      "license": "https://iconmonstr.com/license/",
+      "creator": "Alexander Kahlkopf",
+      "bounds": [
+        0,
+        50,
+        240,
+        190
+      ],
+      "size": [
+        240,
+        240
+      ],
+      "sha256": "05bd662b5cd6fccccab4d2aa287ddaea6feecd4ba1c40ee9234f75d5df37cd45",
+      "use": [
+        "wallet"
+      ],
+      "retrieved_at": "2026-10-25"
+    },
+    {
+      "name": "bell-2",
+      "source": "https://iconmonstr.com/bell-2-png/",
+      "download": "https://iconmonstr.com/wp-content/g/gd/png.php?size=240&padding=0&icon=releases%2Fsource%2F2013%2Fpng%2Ficonmonstr-bell-2.png&in=iconmonstr-bell-2.png&bgShape=&bgColorR=255&bgColorG=255&bgColorB=255&iconColorR=0&iconColorG=0&iconColorB=0",
+      "license": "https://iconmonstr.com/license/",
+      "creator": "Alexander Kahlkopf",
+      "bounds": [
+        20,
+        0,
+        220,
+        240
+      ],
+      "size": [
+        240,
+        240
+      ],
+      "sha256": "2e38c7b2b267c1e64a1180d9a800c79e7cdb6faedcc957906843c98ec08b3733",
+      "use": [
+        "bell"
+      ],
+      "retrieved_at": "2026-10-25"
+    },
+    {
+      "name": "download-2",
+      "source": "https://iconmonstr.com/download-2-png/",
+      "download": "https://iconmonstr.com/wp-content/g/gd/png.php?size=240&padding=0&icon=releases%2Fsource%2F2012%2Fpng%2Ficonmonstr-download-2.png&in=iconmonstr-download-2.png&bgShape=&bgColorR=255&bgColorG=255&bgColorB=255&iconColorR=0&iconColorG=0&iconColorB=0",
+      "license": "https://iconmonstr.com/license/",
+      "creator": "Alexander Kahlkopf",
+      "bounds": [
+        30,
+        0,
+        210,
+        240
+      ],
+      "size": [
+        240,
+        240
+      ],
+      "sha256": "da5310b93b610cb7e4b0730cbe78945c7efbb7d7358f9f54644db80b03dcc99e",
+      "use": [
+        "download"
+      ],
+      "retrieved_at": "2026-10-25"
+    },
+    {
+      "name": "email-2",
+      "source": "https://iconmonstr.com/email-2-png/",
+      "download": "https://iconmonstr.com/wp-content/g/gd/png.php?size=240&padding=0&icon=releases%2Fsource%2F2012%2Fpng%2Ficonmonstr-email-2.png&in=iconmonstr-email-2.png&bgShape=&bgColorR=255&bgColorG=255&bgColorB=255&iconColorR=0&iconColorG=0&iconColorB=0",
+      "license": "https://iconmonstr.com/license/",
+      "creator": "Alexander Kahlkopf",
+      "bounds": [
+        0,
+        30,
+        240,
+        210
+      ],
+      "size": [
+        240,
+        240
+      ],
+      "sha256": "f25a50ddb74aa217cf3bd1875037986f56f059cd17875d30e5cb3c8ab05993c1",
+      "use": [
+        "email"
+      ],
+      "retrieved_at": "2026-10-25"
+    },
+    {
+      "name": "file-20",
+      "source": "https://iconmonstr.com/file-20-png/",
+      "download": "https://iconmonstr.com/wp-content/g/gd/png.php?size=240&padding=0&icon=releases%2Fsource%2F2012%2Fpng%2Ficonmonstr-file-20.png&in=iconmonstr-file-20.png&bgShape=&bgColorR=255&bgColorG=255&bgColorB=255&iconColorR=0&iconColorG=0&iconColorB=0",
+      "license": "https://iconmonstr.com/license/",
+      "creator": "Alexander Kahlkopf",
+      "bounds": [
+        20,
+        0,
+        220,
+        240
+      ],
+      "size": [
+        240,
+        240
+      ],
+      "sha256": "12a85ad1cf903633355dee80b95070e09378fa961872e4937607701ea8f4610d",
+      "use": [
+        "tools",
+        "document"
+      ],
+      "retrieved_at": "2026-10-25"
+    },
+    {
+      "name": "gear-2",
+      "source": "https://iconmonstr.com/gear-2-png/",
+      "download": "https://iconmonstr.com/wp-content/g/gd/png.php?size=240&padding=0&icon=releases%2Fsource%2F2012%2Fpng%2Ficonmonstr-gear-2.png&in=iconmonstr-gear-2.png&bgShape=&bgColorR=255&bgColorG=255&bgColorB=255&iconColorR=0&iconColorG=0&iconColorB=0",
+      "license": "https://iconmonstr.com/license/",
+      "creator": "Alexander Kahlkopf",
+      "bounds": [
+        0,
+        0,
+        240,
+        240
+      ],
+      "size": [
+        240,
+        240
+      ],
+      "sha256": "7361ca93c5a0e6aa01cb1e972c028ece80ae0632a309ffe66e313777dee14113",
+      "use": [
+        "settings"
+      ],
+      "retrieved_at": "2026-10-25"
+    },
+    {
+      "name": "globe-2",
+      "source": "https://iconmonstr.com/globe-2-png/",
+      "download": "https://iconmonstr.com/wp-content/g/gd/png.php?size=240&padding=0&icon=releases%2Fsource%2F2012%2Fpng%2Ficonmonstr-globe-2.png&in=iconmonstr-globe-2.png&bgShape=&bgColorR=255&bgColorG=255&bgColorB=255&iconColorR=0&iconColorG=0&iconColorB=0",
+      "license": "https://iconmonstr.com/license/",
+      "creator": "Alexander Kahlkopf",
+      "bounds": [
+        0,
+        0,
+        240,
+        240
+      ],
+      "size": [
+        240,
+        240
+      ],
+      "sha256": "4451da884cd3e5e5a841545915ef929f48772136fa91c600e27263f9fe93033b",
+      "use": [
+        "language"
+      ],
+      "retrieved_at": "2026-10-25"
+    },
+    {
+      "name": "help-3",
+      "source": "https://iconmonstr.com/help-3-png/",
+      "download": "https://iconmonstr.com/wp-content/g/gd/png.php?size=240&padding=0&icon=releases%2Fsource%2F2012%2Fpng%2Ficonmonstr-help-3.png&in=iconmonstr-help-3.png&bgShape=&bgColorR=255&bgColorG=255&bgColorB=255&iconColorR=0&iconColorG=0&iconColorB=0",
+      "license": "https://iconmonstr.com/license/",
+      "creator": "Alexander Kahlkopf",
+      "bounds": [
+        0,
+        0,
+        240,
+        240
+      ],
+      "size": [
+        240,
+        240
+      ],
+      "sha256": "20fca65097bbf3bf916f1e2c69e7357ee80d04200e2faf469a70656c49877758",
+      "use": [
+        "help"
+      ],
+      "retrieved_at": "2026-10-25"
+    },
+    {
+      "name": "home-2",
+      "source": "https://iconmonstr.com/home-2-png/",
+      "download": "https://iconmonstr.com/wp-content/g/gd/png.php?size=240&padding=0&icon=releases%2Fsource%2F2012%2Fpng%2Ficonmonstr-home-2.png&in=iconmonstr-home-2.png&bgShape=&bgColorR=255&bgColorG=255&bgColorB=255&iconColorR=0&iconColorG=0&iconColorB=0",
+      "license": "https://iconmonstr.com/license/",
+      "creator": "Alexander Kahlkopf",
+      "bounds": [
+        0,
+        10,
+        240,
+        240
+      ],
+      "size": [
+        240,
+        240
+      ],
+      "sha256": "09050a97d846d7f98e196c9015b82c8475fcb1daca2bc930b3104b8f733b4f01",
+      "use": [
+        "home"
+      ],
+      "retrieved_at": "2026-10-25"
+    },
+    {
+      "name": "info-2",
+      "source": "https://iconmonstr.com/info-2-png/",
+      "download": "https://iconmonstr.com/wp-content/g/gd/png.php?size=240&padding=0&icon=releases%2Fsource%2F2012%2Fpng%2Ficonmonstr-info-2.png&in=iconmonstr-info-2.png&bgShape=&bgColorR=255&bgColorG=255&bgColorB=255&iconColorR=0&iconColorG=0&iconColorB=0",
+      "license": "https://iconmonstr.com/license/",
+      "creator": "Alexander Kahlkopf",
+      "bounds": [
+        0,
+        0,
+        240,
+        240
+      ],
+      "size": [
+        240,
+        240
+      ],
+      "sha256": "dcd77fa5fa3cd96208585005fa76379d9ba2d8e0bdf45e4c253ecefca70ac06f",
+      "use": [
+        "info"
+      ],
+      "retrieved_at": "2026-10-25"
+    },
+    {
+      "name": "lock-6",
+      "source": "https://iconmonstr.com/lock-6-png/",
+      "download": "https://iconmonstr.com/wp-content/g/gd/png.php?size=240&padding=0&icon=releases%2Fsource%2F2012%2Fpng%2Ficonmonstr-lock-6.png&in=iconmonstr-lock-6.png&bgShape=&bgColorR=255&bgColorG=255&bgColorB=255&iconColorR=0&iconColorG=0&iconColorB=0",
+      "license": "https://iconmonstr.com/license/",
+      "creator": "Alexander Kahlkopf",
+      "bounds": [
+        30,
+        0,
+        210,
+        240
+      ],
+      "size": [
+        240,
+        240
+      ],
+      "sha256": "eaf8fe854474d03484a7ca2cbddddae559dbca7faa69de39d99d324a6445d134",
+      "use": [
+        "lock"
+      ],
+      "retrieved_at": "2026-10-25"
+    },
+    {
+      "name": "log-out-2",
+      "source": "https://iconmonstr.com/log-out-2-png/",
+      "download": "https://iconmonstr.com/wp-content/g/gd/png.php?size=240&padding=0&icon=releases%2Fsource%2F2013%2Fpng%2Ficonmonstr-log-out-2.png&in=iconmonstr-log-out-2.png&bgShape=&bgColorR=255&bgColorG=255&bgColorB=255&iconColorR=0&iconColorG=0&iconColorB=0",
+      "license": "https://iconmonstr.com/license/",
+      "creator": "Alexander Kahlkopf",
+      "bounds": [
+        0,
+        20,
+        240,
+        220
+      ],
+      "size": [
+        240,
+        240
+      ],
+      "sha256": "484046670e1786c9eae6eb1cb3bc1effdbfe7396aaf0a13a2d7969a6905497b1",
+      "use": [
+        "logout"
+      ],
+      "retrieved_at": "2026-10-25"
+    },
+    {
+      "name": "megaphone-2",
+      "source": "https://iconmonstr.com/megaphone-2-png/",
+      "download": "https://iconmonstr.com/wp-content/g/gd/png.php?size=240&padding=0&icon=releases%2Fsource%2F2012%2Fpng%2Ficonmonstr-megaphone-2.png&in=iconmonstr-megaphone-2.png&bgShape=&bgColorR=255&bgColorG=255&bgColorB=255&iconColorR=0&iconColorG=0&iconColorB=0",
+      "license": "https://iconmonstr.com/license/",
+      "creator": "Alexander Kahlkopf",
+      "bounds": [
+        0,
+        30,
+        240,
+        220
+      ],
+      "size": [
+        240,
+        240
+      ],
+      "sha256": "18ccaa4384fa8ec20c17f5e777ab44c56000e790475bcbe2a59b82c129b5de17",
+      "use": [
+        "ads"
+      ],
+      "retrieved_at": "2026-10-25"
+    },
+    {
+      "name": "pencil-9",
+      "source": "https://iconmonstr.com/pencil-9-png/",
+      "download": "https://iconmonstr.com/wp-content/g/gd/png.php?size=240&padding=0&icon=releases%2Fsource%2F2012%2Fpng%2Ficonmonstr-pencil-9.png&in=iconmonstr-pencil-9.png&bgShape=&bgColorR=255&bgColorG=255&bgColorB=255&iconColorR=0&iconColorG=0&iconColorB=0",
+      "license": "https://iconmonstr.com/license/",
+      "creator": "Alexander Kahlkopf",
+      "bounds": [
+        0,
+        0,
+        240,
+        240
+      ],
+      "size": [
+        240,
+        240
+      ],
+      "sha256": "482b5fd6d630f4e04c9a1aa0f7f4d60734cc9e2189127033cc3f30f684576c16",
+      "use": [
+        "edit"
+      ],
+      "retrieved_at": "2026-10-25"
+    },
+    {
+      "name": "refresh-3",
+      "source": "https://iconmonstr.com/refresh-3-png/",
+      "download": "https://iconmonstr.com/wp-content/g/gd/png.php?size=240&padding=0&icon=releases%2Fsource%2F2012%2Fpng%2Ficonmonstr-refresh-3.png&in=iconmonstr-refresh-3.png&bgShape=&bgColorR=255&bgColorG=255&bgColorB=255&iconColorR=0&iconColorG=0&iconColorB=0",
+      "license": "https://iconmonstr.com/license/",
+      "creator": "Alexander Kahlkopf",
+      "bounds": [
+        0,
+        30,
+        240,
+        210
+      ],
+      "size": [
+        240,
+        240
+      ],
+      "sha256": "36d15ab3a74f8aaf5ac0550f2a6052633af9b5fa441a90921d2fbac4a2bbf5e4",
+      "use": [
+        "refresh"
+      ],
+      "retrieved_at": "2026-10-25"
+    },
+    {
+      "name": "shield-20",
+      "source": "https://iconmonstr.com/shield-20-png/",
+      "download": "https://iconmonstr.com/wp-content/g/gd/png.php?size=240&padding=0&icon=releases%2Fsource%2F2012%2Fpng%2Ficonmonstr-shield-20.png&in=iconmonstr-shield-20.png&bgShape=&bgColorR=255&bgColorG=255&bgColorB=255&iconColorR=0&iconColorG=0&iconColorB=0",
+      "license": "https://iconmonstr.com/license/",
+      "creator": "Alexander Kahlkopf",
+      "bounds": [
+        30,
+        0,
+        210,
+        240
+      ],
+      "size": [
+        240,
+        240
+      ],
+      "sha256": "d3fe04c2bf7534547b37107a22eb3f640852dabf6536b1d976934c6f4b634114",
+      "use": [
+        "verified"
+      ],
+      "retrieved_at": "2026-10-25"
+    },
+    {
+      "name": "smartphone-3",
+      "source": "https://iconmonstr.com/smartphone-3-png/",
+      "download": "https://iconmonstr.com/wp-content/g/gd/png.php?size=240&padding=0&icon=releases%2Fsource%2F2012%2Fpng%2Ficonmonstr-smartphone-3.png&in=iconmonstr-smartphone-3.png&bgShape=&bgColorR=255&bgColorG=255&bgColorB=255&iconColorR=0&iconColorG=0&iconColorB=0",
+      "license": "https://iconmonstr.com/license/",
+      "creator": "Alexander Kahlkopf",
+      "bounds": [
+        50,
+        0,
+        190,
+        240
+      ],
+      "size": [
+        240,
+        240
+      ],
+      "sha256": "617a40faeb08374b6f14ffc2652e3cc2052b9bab343733604b1da07efcc2e33f",
+      "use": [
+        "phone"
+      ],
+      "retrieved_at": "2026-10-25"
+    },
+    {
+      "name": "speech-bubble-18",
+      "source": "https://iconmonstr.com/speech-bubble-18-png/",
+      "download": "https://iconmonstr.com/wp-content/g/gd/png.php?size=240&padding=0&icon=releases%2Fsource%2F2012%2Fpng%2Ficonmonstr-speech-bubble-18.png&in=iconmonstr-speech-bubble-18.png&bgShape=&bgColorR=255&bgColorG=255&bgColorB=255&iconColorR=0&iconColorG=0&iconColorB=0",
+      "license": "https://iconmonstr.com/license/",
+      "creator": "Alexander Kahlkopf",
+      "bounds": [
+        0,
+        10,
+        240,
+        230
+      ],
+      "size": [
+        240,
+        240
+      ],
+      "sha256": "6514eda4c1200693ad93e632b257daae0015e4b0034b881fdacade42c9ee8a88",
+      "use": [
+        "chat"
+      ],
+      "retrieved_at": "2026-10-25"
+    },
+    {
+      "name": "tag-2",
+      "source": "https://iconmonstr.com/tag-2-png/",
+      "download": "https://iconmonstr.com/wp-content/g/gd/png.php?size=240&padding=0&icon=releases%2Fsource%2F2012%2Fpng%2Ficonmonstr-tag-2.png&in=iconmonstr-tag-2.png&bgShape=&bgColorR=255&bgColorG=255&bgColorB=255&iconColorR=0&iconColorG=0&iconColorB=0",
+      "license": "https://iconmonstr.com/license/",
+      "creator": "Alexander Kahlkopf",
+      "bounds": [
+        0,
+        0,
+        240,
+        240
+      ],
+      "size": [
+        240,
+        240
+      ],
+      "sha256": "39436cb115baeeca5a287c598b94390eba2ebd24b32e992a792698d63a4e7f6a",
+      "use": [
+        "discount"
+      ],
+      "retrieved_at": "2026-10-25"
+    },
+    {
+      "name": "time-3",
+      "source": "https://iconmonstr.com/time-3-png/",
+      "download": "https://iconmonstr.com/wp-content/g/gd/png.php?size=240&padding=0&icon=releases%2Fsource%2F2012%2Fpng%2Ficonmonstr-time-3.png&in=iconmonstr-time-3.png&bgShape=&bgColorR=255&bgColorG=255&bgColorB=255&iconColorR=0&iconColorG=0&iconColorB=0",
+      "license": "https://iconmonstr.com/license/",
+      "creator": "Alexander Kahlkopf",
+      "bounds": [
+        0,
+        0,
+        240,
+        240
+      ],
+      "size": [
+        240,
+        240
+      ],
+      "sha256": "37e1503252758edbd3edf89666876c8766060e000d96d5b7625b1d32b5f6fcf7",
+      "use": [
+        "history"
+      ],
+      "retrieved_at": "2026-10-25"
+    },
+    {
+      "name": "trash-can-2",
+      "source": "https://iconmonstr.com/trash-can-2-png/",
+      "download": "https://iconmonstr.com/wp-content/g/gd/png.php?size=240&padding=0&icon=releases%2Fsource%2F2013%2Fpng%2Ficonmonstr-trash-can-2.png&in=iconmonstr-trash-can-2.png&bgShape=&bgColorR=255&bgColorG=255&bgColorB=255&iconColorR=0&iconColorG=0&iconColorB=0",
+      "license": "https://iconmonstr.com/license/",
+      "creator": "Alexander Kahlkopf",
+      "bounds": [
+        20,
+        0,
+        220,
+        240
+      ],
+      "size": [
+        240,
+        240
+      ],
+      "sha256": "4b781cf4a03d642d3e67ea621216178b67678d2929000a2180371e07a827e9e8",
+      "use": [
+        "trash"
+      ],
+      "retrieved_at": "2026-10-25"
+    },
+    {
+      "name": "user-6",
+      "source": "https://iconmonstr.com/user-6-png/",
+      "download": "https://iconmonstr.com/wp-content/g/gd/png.php?size=240&padding=0&icon=releases%2Fsource%2F2012%2Fpng%2Ficonmonstr-user-6.png&in=iconmonstr-user-6.png&bgShape=&bgColorR=255&bgColorG=255&bgColorB=255&iconColorR=0&iconColorG=0&iconColorB=0",
+      "license": "https://iconmonstr.com/license/",
+      "creator": "Alexander Kahlkopf",
+      "bounds": [
+        0,
+        0,
+        240,
+        240
+      ],
+      "size": [
+        240,
+        240
+      ],
+      "sha256": "d6343c6dcdc683e70beba8ec82469e801276787e68f4bbdb71779c0dc5bc3ed2",
+      "use": [
+        "user"
+      ],
+      "retrieved_at": "2026-10-25"
+    }
+  ]
+}

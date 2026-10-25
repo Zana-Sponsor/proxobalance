@@ -1,0 +1,53 @@
+{
+  "local_flutter": "3.47.8",
+  "ci_flutter": "3.47.2",
+  "production_released": false,
+  "native_android": "CI requested on published commit; no physical device attached locally",
+  "tests": {
+    "flutter_full": {
+      "status": "1512 passed; 1 intentional guarded-staging skip",
+      "log_sha256": "ea4968881ded7fa66909824512e5c90a56c4e74d5ab5895e14a74a243a467962"
+    },
+    "backend": {
+      "status": "484 passed",
+      "log_sha256": "ef3e9c3329613dc2ea16d53f65772435413f67a66fde91e1cbedb27ac69060ae"
+    },
+    "backend_lint": {
+      "status": "passed",
+      "log_sha256": "d20855a0c8ce22991aa28ec56fad805f5f8dc6f1fad1dfca84df69fbef9b2c5d"
+    },
+    "backend_build": {
+      "status": "passed",
+      "log_sha256": "6aebf3aab6de8381c41286d29617c33a1113778a359d593cd5742b4742e95808"
+    },
+    "analyzer_ci_scope": {
+      "status": "exit 0; informational diagnostics retained",
+      "log_sha256": "b1da8d589e3620ea4753c26f8221ad08aeac0f8fa8cd35d81cfa8442f8aec7cf"
+    },
+    "price_geometry": {
+      "status": "8 passed",
+      "log_sha256": "ea222e46c06ca7a4bb8572687c81802a41ab62b2064c754b83a8f21b934d8565"
+    },
+    "phone_otp_captures": {
+      "status": "8 passed",
+      "log_sha256": "963e783aafcdc5375610e44da0172c0a6b02af54ae846398c63d317fffc580db"
+    },
+    "app_states": {
+      "status": "24 passed",
+      "log_sha256": "546d675c2bf67f5a3e3c0c3da219619572785894e283e2a1e0da7c7968a73aa4"
+    },
+    "page_recovery": {
+      "status": "34 passed",
+      "log_sha256": "424233c17804bc36a45cbb55acbb0b27ee9a98f9340171c3078b6dc1cf938a00"
+    },
+    "ads_accessibility": {
+      "status": "12 passed",
+      "log_sha256": "25ae6cd90ea6128b80510f2f60d4414f03a1b90738b57dca2a516ebf60922df3"
+    },
+    "guarded_staging": {
+      "status": "6 passed, including separate guarded-mode transport restrictions",
+      "log_sha256": "af97ac05fe4e039000f57e74f977b36667c9315148a70a71aecd2e4e67b5c763"
+    }
+  },
+  "note": "The complete final Flutter source suite passed after the Ads accessibility and PNG capture corrections. The separate guarded-staging transport run passed all 6 checks. GitHub repeats verification and native Android on the published commit."
+}

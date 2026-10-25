@@ -1,3 +1,6 @@
+import '../theme/tiktok_ad_tokens.dart';
+import '../theme/proxo_design_tokens.dart';
+import '../widgets/proxo_app_bar.dart';
 import '../widgets/form_help_actions.dart';
 
 import 'package:proxo_app/l10n/proxo_strings.dart';
@@ -21,7 +24,6 @@ import '../widgets/proxo_text.dart';
 import '../widgets/proxo_symbol.dart';
 import '../widgets/proxo_empty_state.dart';
 import '../widgets/proxolink_design_selector.dart';
-import '../widgets/receipt/receipt_kit.dart';
 
 /// New authoring presentation. Templates remain private server documents;
 /// only twelve bundled raster thumbnails are decoded in this route.
@@ -423,20 +425,22 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
     int lines = 1,
     int? limit,
     TextInputType? keyboard,
-  }) => ProxoDirectionalInput(
-    controller: controller,
-    keyboardType: keyboard,
-    builder: (context, direction) => TextFormField(
-      controller: controller,
-      readOnly: _busy || !_sameOwner,
-      textDirection: direction,
-      decoration: InputDecoration(labelText: ProxoStrings.text(label)),
-      minLines: lines,
-      maxLines: lines == 1 ? 1 : 6,
-      maxLength: limit,
-      keyboardType: keyboard,
-    ),
-  );
+  }) =>
+      ProxoDirectionalInput(
+        controller: controller,
+        keyboardType: keyboard,
+        builder: (context, direction) => TextFormField(
+          controller: controller,
+          readOnly: _busy || !_sameOwner,
+          textDirection: direction,
+          decoration: InputDecoration(labelText: ProxoStrings.text(label)),
+          minLines: lines,
+          maxLines: lines == 1 ? 1 : 6,
+          maxLength: limit,
+          keyboardType: keyboard,
+          style: ProxoDesign.field,
+        ),
+      );
   @override
   Widget build(BuildContext context) {
     final originRoute = ModalRoute.of(context);
@@ -452,19 +456,15 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
       });
     }
     return Theme(
-      data: AdUi.theme(context),
+      data: TikTokAdTokens.theme(AdUi.theme(context)),
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: Builder(
           builder: (context) => Scaffold(
-            backgroundColor: const Color(0xFFF8FAFD),
+            backgroundColor: ProxoDesign.surface,
+            appBar: ProxoAppBar.adaptive(context, title: 'دروستکردنی پەڕە'),
             body: Column(
               children: [
-                ReceiptAppBar(
-                  translateTitle: true,
-                  title: 'دروستکردنی پەڕە',
-                  onBack: () => Navigator.of(context).maybePop(),
-                ),
                 Expanded(
                   child: Stack(
                     children: [
@@ -487,7 +487,8 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
                                           _design,
                                           _type,
                                         ),
-                                        exampleCaption: 'نمونەی پەڕەکە؛ ناو و وێنە و بەستەرەکانی خۆت دابنێ',
+                                        exampleCaption:
+                                            'نمونەی پەڕەکە؛ ناو و وێنە و بەستەرەکانی خۆت دابنێ',
                                       ),
                                       const SizedBox(height: 12),
                                       if (_loading)
@@ -502,22 +503,25 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
                                               CrossAxisAlignment.stretch,
                                           children: [
                                             AdFormSection(
+                                              style: AdSectionStyle.open,
                                               title: 'جۆری پەڕە',
                                               child: Column(
                                                 children: [
                                                   for (final type
-                                                      in ProxoPageType.values.where(
-                                                        (type) =>
-                                                            (!widget.lockType &&
-                                                                _failedSavedPage ==
-                                                                    null) ||
-                                                            type == _type,
-                                                      ))
+                                                      in ProxoPageType.values
+                                                          .where(
+                                                    (type) =>
+                                                        (!widget.lockType &&
+                                                            _failedSavedPage ==
+                                                                null) ||
+                                                        type == _type,
+                                                  ))
                                                     Padding(
                                                       padding:
                                                           const EdgeInsets.only(
-                                                            bottom: 8,
-                                                          ),
+                                                        bottom: ProxoDesign
+                                                            .controlGap,
+                                                      ),
                                                       child: SizedBox(
                                                         width: double.infinity,
                                                         child: AdChoice(
@@ -529,8 +533,8 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
                                                               _type == type,
                                                           onTap: () =>
                                                               setState(() {
-                                                                _type = type;
-                                                              }),
+                                                            _type = type;
+                                                          }),
                                                         ),
                                                       ),
                                                     ),
@@ -538,9 +542,10 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
                                               ),
                                             ),
                                             const SizedBox(
-                                              height: AdUi.sectionGap,
+                                              height: ProxoDesign.sectionGap,
                                             ),
                                             AdFormSection(
+                                              style: AdSectionStyle.open,
                                               title: 'زانیاری سەرەکی',
                                               child: Column(
                                                 crossAxisAlignment:
@@ -553,9 +558,9 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
                                                     icon: ProxoSymbol(
                                                       _image == null
                                                           ? ProxoSymbolName
-                                                                .gallery
+                                                              .gallery
                                                           : ProxoSymbolName
-                                                                .check,
+                                                              .check,
                                                       size: 22,
                                                       color: AdUi.blue,
                                                     ),
@@ -601,45 +606,46 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
                                               ),
                                             ),
                                             const SizedBox(
-                                              height: AdUi.sectionGap,
+                                              height: ProxoDesign.sectionGap,
                                             ),
                                             AdFormSection(
+                                              style: AdSectionStyle.open,
                                               title: 'پەیوەندی و دووگمەکان',
                                               child: Column(
                                                 children: [
                                                   for (final p
                                                       in _providers.where(
-                                                        (p) =>
-                                                            p.pageType ==
-                                                            _type.key,
-                                                      ))
+                                                    (p) =>
+                                                        p.pageType == _type.key,
+                                                  ))
                                                     Padding(
                                                       padding:
                                                           const EdgeInsets.only(
-                                                            bottom: 16,
-                                                          ),
+                                                        bottom: 16,
+                                                      ),
                                                       child: _field(
                                                         _values[p.key]!,
                                                         p.label,
-                                                        keyboard:
-                                                            p.inputKind ==
+                                                        keyboard: p.inputKind ==
                                                                 'phone'
                                                             ? TextInputType
-                                                                  .phone
+                                                                .phone
                                                             : p.inputKind ==
-                                                                  'url'
-                                                            ? TextInputType.url
-                                                            : TextInputType
-                                                                  .text,
+                                                                    'url'
+                                                                ? TextInputType
+                                                                    .url
+                                                                : TextInputType
+                                                                    .text,
                                                       ),
                                                     ),
                                                 ],
                                               ),
                                             ),
                                             const SizedBox(
-                                              height: AdUi.sectionGap,
+                                              height: ProxoDesign.sectionGap,
                                             ),
                                             AdFormSection(
+                                              style: AdSectionStyle.open,
                                               title: 'ستایلی پەڕە',
                                               child: ProxoLinkDesignSelector(
                                                 templates: _templates,
@@ -658,8 +664,7 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
                                         key: const ValueKey(
                                           'create-page-submit',
                                         ),
-                                        onPressed:
-                                            _busy ||
+                                        onPressed: _busy ||
                                                 _loading ||
                                                 !_sameOwner ||
                                                 _templates.isEmpty
@@ -671,9 +676,9 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
                                                 height: 22,
                                                 child:
                                                     CircularProgressIndicator(
-                                                      strokeWidth: 2,
-                                                      color: Colors.white,
-                                                    ),
+                                                  strokeWidth: 2,
+                                                  color: Colors.white,
+                                                ),
                                               )
                                             : const ProxoText(
                                                 'پەڕە دروستبکە',
@@ -718,18 +723,18 @@ class _CreatePageState extends State<ProxoLinkCreatePageScreen> {
   }
 
   Widget _loadError() => ProxoEmptyState(
-    key: const ValueKey('create-page-load-error'),
-    symbol: ProxoSymbolName.info,
-    title: 'نەتوانرا پەڕە ئامادە بکرێت',
-    body: _loadFailure!,
-    isError: true,
-    action: OutlinedButton(
-      onPressed: _loading ? null : _load,
-      style: OutlinedButton.styleFrom(
-        minimumSize: const Size.fromHeight(ProxoSurface.actionHeight),
-        textStyle: ProxoSurface.body,
-      ),
-      child: const ProxoText('دووبارە هەوڵ بدەرەوە', translate: true),
-    ),
-  );
+        key: const ValueKey('create-page-load-error'),
+        symbol: ProxoSymbolName.info,
+        title: 'نەتوانرا پەڕە ئامادە بکرێت',
+        body: _loadFailure!,
+        isError: true,
+        action: OutlinedButton(
+          onPressed: _loading ? null : _load,
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size.fromHeight(ProxoSurface.actionHeight),
+            textStyle: ProxoSurface.body,
+          ),
+          child: const ProxoText('دووبارە هەوڵ بدەرەوە', translate: true),
+        ),
+      );
 }

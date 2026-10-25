@@ -1,3 +1,4 @@
+import 'package:proxo_app/widgets/proxo_png_icon.dart';
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -18,7 +19,6 @@ import 'package:proxo_app/widgets/home_best_result_card.dart';
 import 'package:proxo_app/widgets/best_results_design.dart';
 import 'package:proxo_app/widgets/home_quick_actions.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
-import 'package:proxo_app/widgets/proxo_symbol.dart';
 
 import 'ad_creation_flow_test.dart' show TestAdRepository;
 import 'text_direction_test.dart' show expectLtrToken, paragraphOf;
@@ -85,7 +85,7 @@ Widget sections({GlobalKey<BestMetricsHomeSectionState>? resultsKey}) => Column(
       children: [
         HomeQuickActions(
             onCreateTap: () {}, onToolsTap: () {}, onFaqTap: () {}),
-        const SizedBox(height: 24),
+        const SizedBox(height: 32),
         BestMetricsHomeSection(
           autoPlay: false,
           key: resultsKey,
@@ -102,7 +102,7 @@ void auditText(
   for (final text in tester.widgetList<ProxoText>(
     find.descendant(of: parent, matching: find.byType(ProxoText)),
   )) {
-    expect(text.style!.fontWeight, FontWeight.w400);
+    expect(text.style!.fontWeight, isIn([FontWeight.w400, FontWeight.w500]));
     expect(text.style!.fontFamily, font);
     final paragraph = paragraphOf(tester, find.byWidget(text));
     expect(paragraph.didExceedMaxLines, false);
@@ -492,7 +492,7 @@ void main() {
             'home-create-page'
           ].map((key) => tester.getCenter(find.descendant(
               of: find.byKey(ValueKey(key)),
-              matching: find.byType(ProxoSymbol))));
+              matching: find.byType(ProxoPngIcon))));
           expect(
               glyphs.every((point) => (point.dy - glyphs.first.dy).abs() < .1),
               true);
@@ -515,7 +515,7 @@ void main() {
         expect(
             section.top -
                 actions.map((r) => r.bottom).reduce((a, b) => a > b ? a : b),
-            closeTo(24, .1));
+            closeTo(32, .1));
         if (scale == 1) expect(collapsed.height, lessThanOrEqualTo(290));
         expect(
             find.byKey(const ValueKey('result-expanded-beauty')), findsNothing);

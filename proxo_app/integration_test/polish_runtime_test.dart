@@ -1,3 +1,6 @@
+import 'package:proxo_app/services/app_update_service.dart';
+import 'package:proxo_app/widgets/app_update_host.dart';
+import '../test/app_update_service_test.dart' show policy;
 // Production widgets in an Android profile build, with fictional backend data.
 // No real account, payment, message, credential or external page is used.
 import 'dart:async';
@@ -343,7 +346,7 @@ void main() {
                   padding: const EdgeInsets.all(20),
                   child: OtpScreen(
                       onBack: () {},
-                      destination: 'fi***@example.invalid',
+                      destination: '+96475***0000',
                       otpBoxes: AuthOtpBoxes(
                           length: 6,
                           codeController: code,
@@ -356,6 +359,39 @@ void main() {
                           onPressed: () async {}))))),
     };
     for (final entry in screens.entries) await record(entry.key, entry.value);
+    for (final required in [false, true]) {
+      final service = AppUpdateService(
+        preferences: await SharedPreferences.getInstance(),
+        fetch: (_, __) async => policy(required: required),
+      );
+      final name = required ? 'update-required' : 'update-optional';
+      await record(
+          name,
+          AppUpdateHost(
+            client: backend.client,
+            service: service,
+            installedBuild: 10,
+            platform: 'android',
+            launch: (_) async => false,
+            child: HomeScreen(onCreateTap: () {}),
+          ));
+      expect(
+          find.byKey(
+              ValueKey(required ? 'required-update' : 'optional-update')),
+          findsOneWidget);
+      expect(find.byKey(const ValueKey('update-later')),
+          required ? findsNothing : findsOneWidget);
+      await t.tap(find.byKey(const ValueKey('update-now')));
+      await settle();
+      expect(find.text('بەستەرەکە نەکرایەوە. تکایە دووبارە هەوڵ بدەرەوە.'),
+          findsOneWidget);
+      await capture('$name-link-recovery');
+      if (!required) {
+        await t.tap(find.byKey(const ValueKey('update-later')));
+        await settle();
+        expect(find.byKey(const ValueKey('optional-update')), findsNothing);
+      }
+    }
     await mount(const SizedBox.shrink());
     await AdSnapshotCache.clearStoredFor(screenFixtureOwner);
     backend.emptyAds = true;

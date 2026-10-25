@@ -1,3 +1,4 @@
+import '../theme/proxo_design_tokens.dart';
 import '../theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'proxo_symbol.dart';
@@ -6,13 +7,14 @@ import '../l10n/proxo_strings.dart';
 import 'proxo_text.dart';
 
 abstract final class ResultsUi {
-  static const ink = Color(0xFF182338);
-  static const muted = Color(0xFF667085);
-  static const blue = Color(0xFF046CFA);
-  static const line = Color(0xFFE7EBF1);
-  static const banner = Color(0xFFF5F0E8);
-  static const font = 'RabarAuthRegular';
-  static const radius = BorderRadius.all(Radius.circular(18));
+  static const ink = ProxoDesign.ink;
+  static const muted = ProxoDesign.muted;
+  static const blue = ProxoDesign.blue;
+  static const line = ProxoDesign.line;
+  static const banner = ProxoDesign.blueSoft;
+  static const font = ProxoDesign.font;
+  static const radius =
+      BorderRadius.all(Radius.circular(ProxoDesign.cardRadius));
   static const thumbnailWidth = 56.0;
   static const thumbnailHeight = 64.0;
   static const thumbnailRadius = 12.0;
@@ -76,7 +78,7 @@ class ResultRank extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
         decoration: BoxDecoration(
-          color: const Color(0xFFF1F6FF),
+          color: ProxoDesign.blueSoft,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Wrap(
@@ -121,7 +123,7 @@ class ResultsStateCard extends StatelessWidget {
                   child: ResultIcon(
                     error ? 'refresh' : 'trophy',
                     size: 24,
-                    color: const Color(0xFFB77918),
+                    color: ResultsUi.blue,
                   ),
                 ),
                 const SizedBox(height: 12),

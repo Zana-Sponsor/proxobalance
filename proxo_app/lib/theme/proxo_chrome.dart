@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'app_theme.dart';
+import 'proxo_design_tokens.dart';
 
 /// Shared navigation/profile dimensions. Text keeps the user's text scaler.
 abstract final class ProxoChrome {
@@ -9,11 +10,11 @@ abstract final class ProxoChrome {
   static const actionSize = 48.0;
   static const labelSize = 14.0;
   static const radius = 16.0;
-  static const surface = Color(0xFFF4F7FC);
-  static const selected = Color(0xFFEAF2FF);
-  static const border = Color(0xFFE5EBF4);
+  static const surface = ProxoDesign.softSurface;
+  static const selected = ProxoDesign.blueSoft;
+  static const border = ProxoDesign.line;
   static const label = TextStyle(
-      fontFamily: kAppFont,
+      fontFamily: ProxoDesign.font,
       fontSize: labelSize,
       height: 1.5,
       color: AppColors.ink);

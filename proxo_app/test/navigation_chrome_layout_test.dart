@@ -1,3 +1,4 @@
+import 'package:proxo_app/widgets/proxo_png_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -157,11 +158,8 @@ void main() {
           expect(t.takeException(), isNull);
         }
         final logoutIcon = find.byWidgetPredicate(
-            (w) => w is ProxoSymbol && w.symbol == ProxoSymbolName.logout);
-        expect(
-            t.getSize(find.descendant(
-                of: logoutIcon, matching: find.byType(SvgPicture))),
-            const Size(22, 22));
+            (w) => w is ProxoPngIcon && w.symbol == ProxoSymbolName.logout);
+        expect(t.getSize(logoutIcon), const Size(24, 24));
         await t.pumpWidget(const SizedBox());
         await t.pumpAndSettle();
       });

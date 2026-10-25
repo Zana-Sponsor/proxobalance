@@ -1,3 +1,4 @@
+import '../theme/proxo_design_tokens.dart';
 import 'package:proxo_app/theme/app_locale.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../widgets/proxo_banner.dart';
@@ -455,8 +456,7 @@ class _HomeScreenState extends State<HomeScreen>
         if (await launchUrl(uri, mode: LaunchMode.externalApplication)) return;
       } catch (_) {}
     }
-    if (mounted)
-      showProxoToast(context, 'ئەم بەستەرە بەردەست نییە');
+    if (mounted) showProxoToast(context, 'ئەم بەستەرە بەردەست نییە');
   }
 
   @override
@@ -501,7 +501,7 @@ class _HomeScreenState extends State<HomeScreen>
                                 child: ProxoBanner(
                                     onStart: widget.onCreateTap,
                                     onNavigate: _openBannerTarget))),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: ProxoDesign.sectionGap),
                         _Reveal(
                           animation: _aActions,
                           child: RepaintBoundary(
@@ -514,7 +514,7 @@ class _HomeScreenState extends State<HomeScreen>
                             ),
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: ProxoDesign.sectionGap),
                         _Reveal(
                           animation: _aWeekly,
                           child: RepaintBoundary(

@@ -5,6 +5,8 @@ import '../widgets/proxo_toast.dart';
 import 'package:proxo_app/l10n/proxo_strings.dart';
 import '../widgets/auth/auth_header.dart';
 import '../widgets/proxo_symbol.dart';
+import '../widgets/proxo_png_icon.dart';
+import '../theme/proxo_design_tokens.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:proxo_app/theme/app_locale.dart';
 import 'dart:async';
@@ -607,9 +609,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     showBalance: _showBalance,
                                     onTap: () => _push(const DepositScreen()),
                                   ),
-                                  const SizedBox(height: 24),
+                                  const SizedBox(
+                                      height: ProxoDesign.sectionGap),
                                   const _SectionTitle('هەژمار'),
-                                  const SizedBox(height: 8),
+                                  const SizedBox(
+                                      height: ProxoDesign.headingGap),
                                   _SettingsGroup(
                                     entries: <_MenuEntry>[
                                       _MenuEntry(
@@ -646,9 +650,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 24),
+                                  const SizedBox(
+                                      height: ProxoDesign.sectionGap),
                                   const _SectionTitle('پشتگیری و ڕێساکان'),
-                                  const SizedBox(height: 8),
+                                  const SizedBox(
+                                      height: ProxoDesign.headingGap),
                                   _SettingsGroup(
                                     entries: <_MenuEntry>[
                                       _MenuEntry(
@@ -676,7 +682,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   const SizedBox(
                                       height: ProxoSurface.sectionGap),
                                   const _SectionTitle('ڕێکخستنەکان'),
-                                  const SizedBox(height: 8),
+                                  const SizedBox(
+                                      height: ProxoDesign.headingGap),
                                   _SettingsGroup(
                                     leading: const _ProfileLanguageTile(),
                                     entries: <_MenuEntry>[
@@ -690,7 +697,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               const WhatsappMarketingScreen())),
                                     ],
                                   ),
-                                  const SizedBox(height: 24),
+                                  const SizedBox(
+                                      height: ProxoDesign.sectionGap),
                                   ValueListenableBuilder<bool>(
                                     valueListenable: _signingOut,
                                     builder: (_, signingOut, __) =>
@@ -1452,7 +1460,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               ),
                               const SizedBox(height: ProxoSurface.sectionGap),
                               const _SectionTitle('ناوچەی مەترسیدار'),
-                              const SizedBox(height: 8),
+                              const SizedBox(height: ProxoDesign.headingGap),
                               Material(
                                 color: _ProfileColors.dangerSoft,
                                 shape: const RoundedRectangleBorder(
@@ -1739,7 +1747,7 @@ class _SimpleTopBar extends StatelessWidget {
 }
 
 class _ProfileSymbol extends StatelessWidget {
-  const _ProfileSymbol(this.icon, {this.size = 22, this.color});
+  const _ProfileSymbol(this.icon, {this.size = 24, this.color});
   final IconData icon;
   final double size;
   final Color? color;
@@ -1773,7 +1781,7 @@ class _ProfileSymbol extends StatelessWidget {
   };
   @override
   Widget build(BuildContext context) =>
-      ProxoSymbol(_symbols[icon]!, size: size, color: color);
+      ProxoPngIcon(_symbols[icon]!, size: size, color: color);
 }
 
 class _CircleActionButton extends StatelessWidget {
@@ -2223,7 +2231,7 @@ class _SettingsTile extends StatelessWidget {
                 ),
                 child: entry.brandAsset == null
                     ? _ProfileSymbol(entry.icon,
-                        size: 22, color: _ProfileColors.iconInk)
+                        size: 24, color: _ProfileColors.iconInk)
                     : SvgPicture.asset(entry.brandAsset!,
                         key: const ValueKey('profile-whatsapp-brand'),
                         width: 22,
@@ -2290,7 +2298,7 @@ class _ProfileLanguageTile extends StatelessWidget {
                   borderRadius: BorderRadius.all(Radius.circular(12)),
                 ),
                 child: const ProxoSymbol(ProxoSymbolName.language,
-                    size: 22, color: _ProfileColors.iconInk),
+                    size: 24, color: _ProfileColors.iconInk),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -2355,7 +2363,7 @@ class _SignOutTile extends StatelessWidget {
                   ),
                   child: const _ProfileSymbol(
                     SolarIconsOutline.logout,
-                    size: 22,
+                    size: 24,
                     color: _ProfileColors.danger,
                   ),
                 ),
@@ -3287,7 +3295,7 @@ class _ProfileScrollBehavior extends ScrollBehavior {
 abstract final class _ProfileColors {
   // ڕەنگەکان لە فریمە پڕقەبارەکانی ڤیدیۆکەوە هێمن کراون: پەڕە سپییە،
   // کارت و گرووپەکان تەنها یەک هەنگاو لێی جیاوازن و ڕەشەکە navy نییە.
-  static const Color page = Color(0xFFF8FAFC);
+  static const Color page = ProxoDesign.surface;
   static const Color groupSurface = Colors.white;
   static const Color readOnlySurface = Color(0xFFF6F7F8);
   static const Color ink = AuthTokens.ink;
@@ -3325,8 +3333,8 @@ abstract final class _ProfileText {
       height: 1.5,
       color: AuthTokens.danger);
   static const TextStyle version = ProxoSurface.secondary;
-  static const TextStyle fieldLabel = ProxoSurface.secondary;
-  static const TextStyle field = ProxoSurface.body;
+  static const TextStyle fieldLabel = ProxoDesign.label;
+  static const TextStyle field = ProxoDesign.field;
   static const TextStyle hint = ProxoSurface.secondary;
   static const TextStyle error = TextStyle(
       fontFamily: ProxoSurface.fontFamily,
@@ -3334,7 +3342,7 @@ abstract final class _ProfileText {
       height: 1.5,
       fontWeight: FontWeight.w400,
       color: AuthTokens.danger);
-  static const TextStyle button = ProxoSurface.body;
+  static const TextStyle button = ProxoDesign.button;
   static const TextStyle dangerTitle = TextStyle(
       fontFamily: ProxoSurface.fontFamily,
       fontSize: 14,

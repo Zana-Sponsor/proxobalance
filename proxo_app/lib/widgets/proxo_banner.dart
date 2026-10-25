@@ -1,4 +1,3 @@
-import '../l10n/proxo_strings.dart';
 import 'ad_form_components.dart';
 import '../theme/app_locale.dart';
 // proxo_banner.dart
@@ -50,7 +49,7 @@ import 'dart:io' show Platform;
 import 'dart:typed_data';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:flutter/foundation.dart';   // ← compute()
+import 'package:flutter/foundation.dart'; // ← compute()
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -59,6 +58,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../theme/app_theme.dart';
 import 'proxo_error_ui.dart';
+import 'proxo_home_hero.dart';
 import '../main.dart' show supabase, firebaseAvailable;
 import 'package:proxo_app/widgets/proxo_text.dart';
 
@@ -87,7 +87,8 @@ void _rememberBannerBytes(String key, Uint8List bytes) {
   if (bytes.lengthInBytes > _maxBannerBytes) return;
   _sImageBytes.remove(key);
   _sImageBytes[key] = bytes;
-  var total = _sImageBytes.values.fold<int>(0, (sum, b) => sum + b.lengthInBytes);
+  var total =
+      _sImageBytes.values.fold<int>(0, (sum, b) => sum + b.lengthInBytes);
   while (_sImageBytes.length > 12 || total > _maxBannerBytes) {
     final oldest = _sImageBytes.keys.first;
     total -= _sImageBytes.remove(oldest)!.lengthInBytes;
@@ -98,15 +99,15 @@ void _rememberBannerBytes(String key, Uint8List bytes) {
 // Top-level constants & helpers (دەرەوەی هەموو کلاسەکان)
 // ─────────────────────────────────────────────────────────────────────────────
 
-const _kCacheFb      = 'proxo_banner_fb_v3';
-const _kCacheSupa    = 'proxo_banner_supa_v3';
-const _kDeviceId     = 'proxo_device_id';
+const _kCacheFb = 'proxo_banner_fb_v3';
+const _kCacheSupa = 'proxo_banner_supa_v3';
+const _kDeviceId = 'proxo_device_id';
 const _kCacheVersion = 'proxo_banner_cache_ver';
-const _kCacheTs      = 'proxo_banner_cache_ts';
+const _kCacheTs = 'proxo_banner_cache_ts';
 // ئەم ژمارەیە بگۆڕە کاتێک بانەری نوێ بنێری — کاچی کۆن پاک دەکاتەوە
-const _kCurrentVer   = '1';
+const _kCurrentVer = '1';
 // کاچ دوای ٧ ڕۆژ کۆنە دەبێت — ئینتەرنێت هەبوو نوێ دەکاتەوە، نەبوو کاچ دەخوێنێتەوە
-const _kCacheTtlMs   = 7 * 24 * 60 * 60 * 1000;
+const _kCacheTtlMs = 7 * 24 * 60 * 60 * 1000;
 
 // ── Device ID — ئایدی ڕاستەقینەی مۆبایل دەخوێنێتەوە ──
 String? _sDeviceId;
@@ -135,7 +136,9 @@ Future<String> _getOrCreateDeviceId() async {
       final ios = await info.iosInfo;
       hardwareId = ios.identifierForVendor;
     }
-    if (hardwareId != null && hardwareId.isNotEmpty && hardwareId != 'unknown') {
+    if (hardwareId != null &&
+        hardwareId.isNotEmpty &&
+        hardwareId != 'unknown') {
       _sDeviceId = 'hw_$hardwareId';
       await prefs.setString(_kDeviceId, _sDeviceId!);
       return _sDeviceId!;
@@ -143,8 +146,8 @@ Future<String> _getOrCreateDeviceId() async {
   } catch (_) {}
 
   // ④ Fallback: ئەگەر Hardware ID نەبووبێت، random ID درووست بکە
-  final rng  = DateTime.now().microsecondsSinceEpoch;
-  final id   = 'gen_${rng}_${rng.hashCode.abs()}';
+  final rng = DateTime.now().microsecondsSinceEpoch;
+  final id = 'gen_${rng}_${rng.hashCode.abs()}';
   _sDeviceId = id;
   await prefs.setString(_kDeviceId, id);
   return id;
@@ -154,10 +157,10 @@ Future<String> _getOrCreateDeviceId() async {
 final _bannerCacheManager = CacheManager(
   Config(
     'proxo_banner_images_v3',
-    stalePeriod:         const Duration(days: 365),
+    stalePeriod: const Duration(days: 365),
     maxNrOfCacheObjects: 50,
-    repo:                JsonCacheInfoRepository(databaseName: 'proxo_banner_images_v3'),
-    fileService:         HttpFileService(),
+    repo: JsonCacheInfoRepository(databaseName: 'proxo_banner_images_v3'),
+    fileService: HttpFileService(),
   ),
 );
 
@@ -182,10 +185,10 @@ class ProxoBanner extends StatefulWidget {
 }
 
 // ── Static cache — زیندو دەمێنێتەوە تەنانەت دوای dispose ──
-List<_FbBanner>  _sBanners       = [];
-_SupaBanner?     _sSupaHero;
-bool             _sLoaded        = false;
-int              _sCurSliderPage = 0;
+List<_FbBanner> _sBanners = [];
+_SupaBanner? _sSupaHero;
+bool _sLoaded = false;
+int _sCurSliderPage = 0;
 
 StreamSubscription? _sGlobalFbSub;
 StreamSubscription? _sGlobalActiveFbSub;
@@ -215,7 +218,7 @@ class _ProxoBannerState extends State<ProxoBanner> {
   bool _loading = !_sLoaded;
 
   StreamSubscription? _fbSub;
-  RealtimeChannel?    _supaSub;
+  RealtimeChannel? _supaSub;
 
   @override
   void initState() {
@@ -224,7 +227,9 @@ class _ProxoBannerState extends State<ProxoBanner> {
     _boot();
   }
 
-  void _onRevision() { if (mounted) setState(() {}); }
+  void _onRevision() {
+    if (mounted) setState(() {});
+  }
 
   Future<void> _boot() async {
     if (_sLoaded) {
@@ -249,7 +254,7 @@ class _ProxoBannerState extends State<ProxoBanner> {
 
   Future<bool> _loadFromCache() async {
     try {
-      final prefs    = await SharedPreferences.getInstance();
+      final prefs = await SharedPreferences.getInstance();
       final deviceId = await _getOrCreateDeviceId();
 
       // ئەگەر version گۆڕاوە کاچی کۆن پاک بکەرەوە
@@ -262,9 +267,9 @@ class _ProxoBannerState extends State<ProxoBanner> {
       }
 
       // TTL پشکنین — ئەگەر کاچ کۆنەتر لە ٣٠ خولەک، کۆنە دەزانرێت
-      final savedTs  = prefs.getInt(_kCacheTs) ?? 0;
-      final nowMs    = DateTime.now().millisecondsSinceEpoch;
-      final isFresh  = (nowMs - savedTs) < _kCacheTtlMs;
+      final savedTs = prefs.getInt(_kCacheTs) ?? 0;
+      final nowMs = DateTime.now().millisecondsSinceEpoch;
+      final isFresh = (nowMs - savedTs) < _kCacheTtlMs;
 
       // TTL کۆنیش بێت — داتا نیشان بدە، background refresh بکاتەوە
 
@@ -273,8 +278,8 @@ class _ProxoBannerState extends State<ProxoBanner> {
       if (fbRaw != null) {
         final list = (jsonDecode(fbRaw) as List)
             .map((e) => _FbBanner(
-                  imageURL:  e['imageURL']  ?? '',
-                  imageB64:  e['imageB64']  ?? '',
+                  imageURL: e['imageURL'] ?? '',
+                  imageB64: e['imageB64'] ?? '',
                   targetURL: e['targetURL'] ?? '',
                   locale: e['locale']?.toString() ?? 'ckb',
                 ))
@@ -282,7 +287,10 @@ class _ProxoBannerState extends State<ProxoBanner> {
             .toList();
         if (list.isNotEmpty && mounted) {
           _sLoaded = true;
-          setState(() { _fbBanners = list; _loading = false; });
+          setState(() {
+            _fbBanners = list;
+            _loading = false;
+          });
           // FIX: وێنەکان لە دیسک کاچ بخەرە مێموری — بەبێ کۆتایی
           // بەمەوە دوای کردنەوەی app، _NetImg یەکسەر Image.memory() نیشان دەدات
           _prewarmGlobal(list).ignore();
@@ -296,7 +304,10 @@ class _ProxoBannerState extends State<ProxoBanner> {
         final m = jsonDecode(supaRaw) as Map<String, dynamic>;
         if (mounted) {
           _sLoaded = true;
-          setState(() { _supaHero = _SupaBanner.fromMap(m); _loading = false; });
+          setState(() {
+            _supaHero = _SupaBanner.fromMap(m);
+            _loading = false;
+          });
           return true;
         }
       }
@@ -308,16 +319,18 @@ class _ProxoBannerState extends State<ProxoBanner> {
 
   Future<void> _saveFbCache(List<_FbBanner> list) async {
     try {
-      final prefs    = await SharedPreferences.getInstance();
+      final prefs = await SharedPreferences.getInstance();
       final deviceId = await _getOrCreateDeviceId();
       await prefs.setString(
         '${_kCacheFb}_$deviceId',
-        jsonEncode(list.map((b) => {
-          'imageURL':  b.imageURL,
-          'imageB64':  b.imageB64,
-          'targetURL': b.targetURL,
-          'locale': b.locale,
-        }).toList()),
+        jsonEncode(list
+            .map((b) => {
+                  'imageURL': b.imageURL,
+                  'imageB64': b.imageB64,
+                  'targetURL': b.targetURL,
+                  'locale': b.locale,
+                })
+            .toList()),
       );
       // timestamp-ی نوێکردنەوە پاشەکەوت بکە
       await prefs.setInt(_kCacheTs, DateTime.now().millisecondsSinceEpoch);
@@ -326,7 +339,7 @@ class _ProxoBannerState extends State<ProxoBanner> {
 
   Future<void> _saveSupaCache(Map<String, dynamic>? data) async {
     try {
-      final prefs    = await SharedPreferences.getInstance();
+      final prefs = await SharedPreferences.getInstance();
       final deviceId = await _getOrCreateDeviceId();
       if (data == null) {
         await prefs.remove('${_kCacheSupa}_$deviceId');
@@ -351,18 +364,32 @@ class _ProxoBannerState extends State<ProxoBanner> {
       bool primaryReady = false, legacyReady = false;
       void publish() {
         if (!primaryReady || (primary.isEmpty && !legacyReady)) return;
-        final next = primary.isNotEmpty ? primary : [if (legacy != null) legacy!];
+        final next =
+            primary.isNotEmpty ? primary : [if (legacy != null) legacy!];
         _sBanners = next;
         _sLoaded = true;
         _sBannerRevision.value++;
         _saveFbCache(next).ignore();
         if (next.isNotEmpty) _prewarmGlobal(next).ignore();
       }
-      _sGlobalFbSub = FirebaseDatabase.instance.ref('appContent/banners')
-        .onValue.listen((event) { primaryReady = true; primary = _parseBanners(event.snapshot.value); publish(); }, onError: (_) {});
-      _sGlobalActiveFbSub = FirebaseDatabase.instance.ref('appContent/activeBanner')
-        .onValue.listen((event) { legacyReady = true; legacy = _parseActiveBanner(event.snapshot.value); publish(); }, onError: (_) {});
-    } catch (_) { /* Supabase fallback was already started above. */ }
+
+      _sGlobalFbSub = FirebaseDatabase.instance
+          .ref('appContent/banners')
+          .onValue
+          .listen((event) {
+        primaryReady = true;
+        primary = _parseBanners(event.snapshot.value);
+        publish();
+      }, onError: (_) {});
+      _sGlobalActiveFbSub = FirebaseDatabase.instance
+          .ref('appContent/activeBanner')
+          .onValue
+          .listen((event) {
+        legacyReady = true;
+        legacy = _parseActiveBanner(event.snapshot.value);
+        publish();
+      }, onError: (_) {});
+    } catch (_) {/* Supabase fallback was already started above. */}
   }
 
   // ── Supabase ──────────────────────────────────────────────────────────────
@@ -384,7 +411,7 @@ class _ProxoBannerState extends State<ProxoBanner> {
         _sLoaded = true;
         setState(() {
           _supaHero = res != null ? _SupaBanner.fromMap(res) : null;
-          _loading  = false;
+          _loading = false;
         });
       }
 
@@ -427,21 +454,30 @@ class _ProxoBannerState extends State<ProxoBanner> {
       // Firebase Map<Object?, Object?> — کلیل و نرخ هەردووکیان Object? ن
       String get(String key) =>
           (raw.entries
-              .where((e) => e.key?.toString() == key)
-              .firstOrNull
-              ?.value)
-              ?.toString() ?? '';
+                  .where((e) => e.key?.toString() == key)
+                  .firstOrNull
+                  ?.value)
+              ?.toString() ??
+          '';
 
       if (get('is_active') == 'false' || get('active') == 'false') continue;
-      final imageUrl  = get('imageURL');
-      final imageB64  = get('imageB64');
+      final imageUrl = get('imageURL');
+      final imageB64 = get('imageB64');
       final targetUrl = get('targetURL');
       final locale = get('locale').isEmpty ? 'ckb' : get('locale');
 
       if (imageUrl.isNotEmpty) {
-        list.add(_FbBanner(imageURL: imageUrl, imageB64: '', targetURL: targetUrl, locale: locale));
+        list.add(_FbBanner(
+            imageURL: imageUrl,
+            imageB64: '',
+            targetURL: targetUrl,
+            locale: locale));
       } else if (imageB64.length > 10) {
-        list.add(_FbBanner(imageURL: '', imageB64: imageB64, targetURL: targetUrl, locale: locale));
+        list.add(_FbBanner(
+            imageURL: '',
+            imageB64: imageB64,
+            targetURL: targetUrl,
+            locale: locale));
       }
     }
     return list;
@@ -451,18 +487,20 @@ class _ProxoBannerState extends State<ProxoBanner> {
   _FbBanner? _parseActiveBanner(Object? val) {
     if (val == null || val is! Map) return null;
     String get(String key) =>
-        (val.entries
-            .where((e) => e.key?.toString() == key)
-            .firstOrNull
-            ?.value)
-            ?.toString() ?? '';
+        (val.entries.where((e) => e.key?.toString() == key).firstOrNull?.value)
+            ?.toString() ??
+        '';
     if (get('is_active') == 'false' || get('active') == 'false') return null;
     final b64 = get('imageB64');
     final url = get('imageURL');
     final tgt = get('targetURL');
     final locale = get('locale').isEmpty ? 'ckb' : get('locale');
-    if (b64.length > 10) return _FbBanner(imageURL: '', imageB64: b64, targetURL: tgt, locale: locale);
-    if (url.isNotEmpty)  return _FbBanner(imageURL: url, imageB64: '', targetURL: tgt, locale: locale);
+    if (b64.length > 10)
+      return _FbBanner(
+          imageURL: '', imageB64: b64, targetURL: tgt, locale: locale);
+    if (url.isNotEmpty)
+      return _FbBanner(
+          imageURL: url, imageB64: '', targetURL: tgt, locale: locale);
     return null;
   }
 
@@ -473,21 +511,29 @@ class _ProxoBannerState extends State<ProxoBanner> {
     // ئەگەر داتا هاتوو — نیشانی بدە
     ProxoLocale.watch(context);
     final locale = ProxoLocale.current.value.languageCode;
-    final banners = _fbBanners.where((b) => b.locale == locale || b.locale == 'all').toList();
+    final banners = _fbBanners
+        .where((b) => b.locale == locale || b.locale == 'all')
+        .toList();
+    Widget? announcement;
     if (banners.isNotEmpty) {
-      return _FbSlider(key: ValueKey(locale), banners: banners, onNavigate: widget.onNavigate);
+      announcement = _FbSlider(
+          key: ValueKey(locale),
+          banners: banners,
+          onNavigate: widget.onNavigate);
+    } else if (_supaHero != null &&
+        (_supaHero!.locale == locale || _supaHero!.locale == 'all')) {
+      announcement = _SupaHero(
+          banner: _supaHero!,
+          onStart: widget.onStart,
+          onNavigate: widget.onNavigate);
     }
-    // Embedded image text cannot be translated. When CMS content has no
-    // matching locale, show the app's fully localized text hero instead.
-    if (_supaHero != null && (_supaHero!.locale == locale || _supaHero!.locale == 'all')) {
-      return Directionality(textDirection: TextDirection.rtl, child: _SupaHero(
-        banner:     _supaHero!,
-        onStart:    widget.onStart,
-        onNavigate: widget.onNavigate,
-      ));
-    }
-    // هەمیشە _StaticHero نیشان بدە (چ لۆدینگدا چ دوای)  — هیچ flash ی سپی نییە
-    return _StaticHero(onStart: widget.onStart);
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      ProxoHomeHero(onStart: widget.onStart),
+      if (announcement != null) ...[
+        const SizedBox(height: 16),
+        announcement,
+      ],
+    ]);
   }
 }
 
@@ -519,7 +565,7 @@ class _OfflineBannerState extends State<OfflineBanner>
     with SingleTickerProviderStateMixin {
   bool _offline = false;
   late AnimationController _anim;
-  late Animation<Offset>   _slide;
+  late Animation<Offset> _slide;
 
   StreamSubscription<List<ConnectivityResult>>? _sub;
 
@@ -528,12 +574,12 @@ class _OfflineBannerState extends State<OfflineBanner>
     super.initState();
 
     _anim = AnimationController(
-      vsync:    this,
+      vsync: this,
       duration: const Duration(milliseconds: 320),
     );
     _slide = Tween<Offset>(
-      begin: const Offset(0, -1),   // بانەر بەرەوی سەرەوە شاراوەیە
-      end:   Offset.zero,
+      begin: const Offset(0, -1), // بانەر بەرەوی سەرەوە شاراوەیە
+      end: Offset.zero,
     ).animate(CurvedAnimation(parent: _anim, curve: Curves.easeOutCubic));
 
     // چەک کردنی دەمی دەستپێک
@@ -573,8 +619,8 @@ class _OfflineBannerState extends State<OfflineBanner>
     if (!_offline && !_anim.isAnimating) return const SizedBox.shrink();
 
     return Positioned(
-      top:   0,
-      left:  0,
+      top: 0,
+      left: 0,
       right: 0,
       child: SlideTransition(
         position: _slide,
@@ -594,10 +640,10 @@ class _OfflineBannerState extends State<OfflineBanner>
                 border: Border(bottom: BorderSide(color: p.border)),
               ),
               padding: EdgeInsets.only(
-                top:    MediaQuery.of(context).padding.top + 8,
+                top: MediaQuery.of(context).padding.top + 8,
                 bottom: 10,
-                left:   ProxoErrorStyle.s16,
-                right:  ProxoErrorStyle.s16,
+                left: ProxoErrorStyle.s16,
+                right: ProxoErrorStyle.s16,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -605,12 +651,13 @@ class _OfflineBannerState extends State<OfflineBanner>
                   Icon(
                     Icons.wifi_off_rounded,
                     color: p.accent,
-                    size:  16,
+                    size: 16,
                   ),
                   const SizedBox(width: ProxoErrorStyle.s8),
                   Flexible(
                     child: ProxoText(
-                      'ئینتەرنێت پچڕاوە — تکایە پەیوەندی بکەرەوە', translate: true,
+                      'ئینتەرنێت پچڕاوە — تکایە پەیوەندی بکەرەوە',
+                      translate: true,
                       style: ProxoErrorType.body(p.ink, kAppFont),
                       textDirection: TextDirection.rtl,
                       maxLines: 2,
@@ -632,21 +679,21 @@ class _OfflineBannerState extends State<OfflineBanner>
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _FbSlider extends StatefulWidget {
-  final List<_FbBanner>             banners;
+  final List<_FbBanner> banners;
   final void Function(String page)? onNavigate;
 
-  const _FbSlider({super.key,required this.banners, this.onNavigate});
+  const _FbSlider({super.key, required this.banners, this.onNavigate});
 
   @override
   State<_FbSlider> createState() => _FbSliderState();
 }
 
 class _FbSliderState extends State<_FbSlider> {
-  int              _cur  = _sCurSliderPage;
+  int _cur = _sCurSliderPage;
   late PageController _ctrl;
-  Timer?           _timer;
+  Timer? _timer;
 
-  static const _slideDur   = Duration(milliseconds: 550);
+  static const _slideDur = Duration(milliseconds: 550);
   static const _slideCurve = Curves.fastOutSlowIn;
 
   @override
@@ -657,7 +704,7 @@ class _FbSliderState extends State<_FbSlider> {
       initialPage: _sCurSliderPage.clamp(0, widget.banners.length - 1),
       keepPage: true,
     );
-    _startAuto(pause: true);   // timer یەکسەر دەستپێدەکات — چاو بە warming ناکات
+    _startAuto(pause: true); // timer یەکسەر دەستپێدەکات — چاو بە warming ناکات
     _prewarmImages(widget.banners);
   }
 
@@ -666,7 +713,8 @@ class _FbSliderState extends State<_FbSlider> {
     super.didUpdateWidget(oldWidget);
     // ئەگەر بانەری نوێ هات (لە Firebase update)، وێنەی نوێ پیشخەرم بکە
     final oldUrls = oldWidget.banners.map((b) => b.imageURL).toSet();
-    final newUrls = widget.banners.map((b) => b.imageURL)
+    final newUrls = widget.banners
+        .map((b) => b.imageURL)
         .where((u) => u.isNotEmpty && !oldUrls.contains(u))
         .toList();
     if (newUrls.isNotEmpty) _prewarmImages(widget.banners);
@@ -683,7 +731,7 @@ class _FbSliderState extends State<_FbSlider> {
         if (_sImageBytes.containsKey(b.imageURL)) return; // پێشتر لە مێموریدایە
         try {
           // ① دیسک کاچ بخوێنەوە (یان دابەزێنە)
-          final file  = await _bannerCacheManager.getSingleFile(b.imageURL);
+          final file = await _bannerCacheManager.getSingleFile(b.imageURL);
           final bytes = await file.readAsBytes();
           _rememberBannerBytes(b.imageURL, bytes);
           _NetImgState._warmed.add(b.imageURL);
@@ -700,7 +748,8 @@ class _FbSliderState extends State<_FbSlider> {
             if (!mounted) return;
             // ignore: use_build_context_synchronously
             await precacheImage(
-              CachedNetworkImageProvider(b.imageURL, cacheManager: _bannerCacheManager),
+              CachedNetworkImageProvider(b.imageURL,
+                  cacheManager: _bannerCacheManager),
               context,
             );
             _NetImgState._warmed.add(b.imageURL);
@@ -737,11 +786,14 @@ class _FbSliderState extends State<_FbSlider> {
   }
 
   void _goNext() {
-    if (!_ctrl.hasClients || !mounted || MediaQuery.disableAnimationsOf(context) || MediaQuery.accessibleNavigationOf(context)) return;
+    if (!_ctrl.hasClients ||
+        !mounted ||
+        MediaQuery.disableAnimationsOf(context) ||
+        MediaQuery.accessibleNavigationOf(context)) return;
     _ctrl.animateToPage(
       (_cur + 1) % widget.banners.length,
       duration: _slideDur,
-      curve:    _slideCurve,
+      curve: _slideCurve,
     );
   }
 
@@ -760,7 +812,7 @@ class _FbSliderState extends State<_FbSlider> {
               // بەمەوە کاتی گۆڕین بۆ هەر پەیجێک: Flutter پێشتر render کردووی
               // و _NetImg Image.memory() یەکسەر نیشان دەدات — هیچ decode delay نییە
               PageView(
-                controller:    _ctrl,
+                controller: _ctrl,
                 onPageChanged: (i) {
                   setState(() => _cur = i);
                   _sCurSliderPage = i;
@@ -785,7 +837,9 @@ class _FbSliderState extends State<_FbSlider> {
 
               if (widget.banners.length > 1)
                 Positioned(
-                  bottom: 10, left: 0, right: 0,
+                  bottom: 10,
+                  left: 0,
+                  right: 0,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(widget.banners.length, (i) {
@@ -793,15 +847,17 @@ class _FbSliderState extends State<_FbSlider> {
                       return GestureDetector(
                         behavior: HitTestBehavior.opaque,
                         onTap: () {
-                          _ctrl.animateToPage(i, duration: _slideDur, curve: _slideCurve);
+                          _ctrl.animateToPage(i,
+                              duration: _slideDur, curve: _slideCurve);
                           _startAuto(pause: true);
                         },
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 4, vertical: 8),
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 300),
                             curve: Curves.easeInOut,
-                            width:  active ? 22 : 7,
+                            width: active ? 22 : 7,
                             height: 7,
                             decoration: BoxDecoration(
                               color: active
@@ -869,7 +925,7 @@ class _NetImg extends StatefulWidget {
 
 class _NetImgState extends State<_NetImg> with SingleTickerProviderStateMixin {
   late AnimationController _anim;
-  late Animation<double>   _fade;
+  late Animation<double> _fade;
 
   // URL-ە پیشخەرمکراوەکان (precacheImage یان getSingleFile)
   static final _warmed = <String>{};
@@ -878,12 +934,12 @@ class _NetImgState extends State<_NetImg> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     // ئەگەر bytes لە مێموری هەن یان پیشخەرم کراوە — هیچ ئانیمەیشن پێویست نییە
-    final instant = _sImageBytes.containsKey(widget.url) ||
-                    _warmed.contains(widget.url);
+    final instant =
+        _sImageBytes.containsKey(widget.url) || _warmed.contains(widget.url);
     _anim = AnimationController(
-      vsync:    this,
+      vsync: this,
       duration: const Duration(milliseconds: 350),
-      value:    instant ? 1.0 : 0.0,
+      value: instant ? 1.0 : 0.0,
     );
     _fade = CurvedAnimation(parent: _anim, curve: Curves.easeOut);
 
@@ -910,7 +966,10 @@ class _NetImgState extends State<_NetImg> with SingleTickerProviderStateMixin {
   }
 
   @override
-  void dispose() { _anim.dispose(); super.dispose(); }
+  void dispose() {
+    _anim.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -919,9 +978,9 @@ class _NetImgState extends State<_NetImg> with SingleTickerProviderStateMixin {
     if (bytes != null) {
       return Image.memory(
         bytes,
-        fit:             BoxFit.cover,
-        width:           double.infinity,
-        height:          double.infinity,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
         gaplessPlayback: true,
       );
     }
@@ -930,25 +989,25 @@ class _NetImgState extends State<_NetImg> with SingleTickerProviderStateMixin {
     return FadeTransition(
       opacity: _fade,
       child: CachedNetworkImage(
-        imageUrl:        widget.url,
-        cacheManager:    _bannerCacheManager,
-        fit:             BoxFit.cover,
-        width:           double.infinity,
-        height:          double.infinity,
-        fadeInDuration:  Duration.zero,
+        imageUrl: widget.url,
+        cacheManager: _bannerCacheManager,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+        fadeInDuration: Duration.zero,
         fadeOutDuration: Duration.zero,
         imageBuilder: (_, img) {
           _onImageLoaded();
           return Image(
-            image:           img,
-            fit:             BoxFit.cover,
-            width:           double.infinity,
-            height:          double.infinity,
+            image: img,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
             gaplessPlayback: true,
           );
         },
-        placeholder:  (_, __) => _BannerPlaceholder(),
-        errorWidget:  (_, __, ___) => _BannerPlaceholder(error: true),
+        placeholder: (_, __) => _BannerPlaceholder(),
+        errorWidget: (_, __, ___) => _BannerPlaceholder(error: true),
       ),
     );
   }
@@ -969,14 +1028,17 @@ class _BannerPlaceholderState extends State<_BannerPlaceholder>
   void initState() {
     super.initState();
     _ctrl = AnimationController(
-      vsync:    this,
+      vsync: this,
       duration: const Duration(milliseconds: 1100),
     );
     if (!widget.error) _ctrl.repeat(reverse: true);
   }
 
   @override
-  void dispose() { _ctrl.dispose(); super.dispose(); }
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -984,7 +1046,8 @@ class _BannerPlaceholderState extends State<_BannerPlaceholder>
       return Container(
         color: AppColors.dark,
         child: const Center(
-          child: Icon(Icons.broken_image_outlined, color: Colors.white24, size: 36),
+          child: Icon(Icons.broken_image_outlined,
+              color: Colors.white24, size: 36),
         ),
       );
     }
@@ -992,7 +1055,8 @@ class _BannerPlaceholderState extends State<_BannerPlaceholder>
       animation: _ctrl,
       builder: (_, __) => Container(
         decoration: BoxDecoration(
-          color: Color.lerp(AppColors.dark, const Color(0xFF1C2333), _ctrl.value),
+          color:
+              Color.lerp(AppColors.dark, const Color(0xFF1C2333), _ctrl.value),
         ),
       ),
     );
@@ -1024,21 +1088,21 @@ class _B64Img extends StatefulWidget {
 
 class _B64ImgState extends State<_B64Img> with SingleTickerProviderStateMixin {
   late AnimationController _anim;
-  late Animation<Offset>   _slide;
-  Uint8List? _bytes;   // null = still decoding in isolate
+  late Animation<Offset> _slide;
+  Uint8List? _bytes; // null = still decoding in isolate
 
   @override
   void initState() {
     super.initState();
     final alreadySeen = _b64Shown.contains(widget.b64.substring(0, 20));
     _anim = AnimationController(
-      vsync:    this,
+      vsync: this,
       duration: const Duration(milliseconds: 420),
-      value:    alreadySeen ? 1.0 : 0.0,
+      value: alreadySeen ? 1.0 : 0.0,
     );
     _slide = Tween<Offset>(
       begin: const Offset(0, 0.08),
-      end:   Offset.zero,
+      end: Offset.zero,
     ).animate(CurvedAnimation(parent: _anim, curve: Curves.easeOutCubic));
 
     // FIX — decode off the UI thread
@@ -1047,9 +1111,8 @@ class _B64ImgState extends State<_B64Img> with SingleTickerProviderStateMixin {
 
   Future<void> _decodeAsync() async {
     try {
-      final raw = widget.b64.contains(',')
-          ? widget.b64.split(',').last
-          : widget.b64;
+      final raw =
+          widget.b64.contains(',') ? widget.b64.split(',').last : widget.b64;
 
       // compute() runs _decodeB64Isolate in a separate Dart isolate.
       // The UI thread is never blocked regardless of image size.
@@ -1072,7 +1135,10 @@ class _B64ImgState extends State<_B64Img> with SingleTickerProviderStateMixin {
   }
 
   @override
-  void dispose() { _anim.dispose(); super.dispose(); }
+  void dispose() {
+    _anim.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1085,11 +1151,11 @@ class _B64ImgState extends State<_B64Img> with SingleTickerProviderStateMixin {
         opacity: _anim,
         child: Image.memory(
           _bytes!,
-          fit:             BoxFit.cover,
-          width:           double.infinity,
-          height:          double.infinity,
-          gaplessPlayback: true,   // FIX — no flicker on rebuild
-          errorBuilder:    (_, __, ___) => _placeholder(),
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: double.infinity,
+          gaplessPlayback: true, // FIX — no flicker on rebuild
+          errorBuilder: (_, __, ___) => _placeholder(),
         ),
       ),
     );
@@ -1108,9 +1174,9 @@ class _B64ImgState extends State<_B64Img> with SingleTickerProviderStateMixin {
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _SupaHero extends StatelessWidget {
-  final _SupaBanner                  banner;
-  final VoidCallback?                onStart;
-  final void Function(String page)?  onNavigate;
+  final _SupaBanner banner;
+  final VoidCallback? onStart;
+  final void Function(String page)? onNavigate;
 
   const _SupaHero({required this.banner, this.onStart, this.onNavigate});
 
@@ -1137,132 +1203,123 @@ class _SupaHero extends StatelessWidget {
     final background = _parseBg();
     // Admin-selected light backgrounds still need readable foreground text.
     final luminance = background.computeLuminance();
-    final darkContrast = (luminance + .05) / (AppColors.ink.computeLuminance() + .05);
+    final darkContrast =
+        (luminance + .05) / (AppColors.ink.computeLuminance() + .05);
     final whiteContrast = 1.05 / (luminance + .05);
     final ink = darkContrast >= whiteContrast ? AppColors.ink : Colors.white;
-    final actionable = banner.navigateTo.isNotEmpty ? onNavigate != null : onStart != null;
-    return Semantics(button: actionable, child: GestureDetector(
-      onTap: actionable ? _handleTap : null,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(22),
-        decoration: BoxDecoration(
-          color: background,
-          borderRadius: AdUi.radius,
-        ),
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Positioned(
-              top: -30, right: -30,
-              child: Container(
-                width: 120, height: 120,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.04),
-                  shape: BoxShape.circle,
-                ),
-              ),
+    final actionable =
+        banner.navigateTo.isNotEmpty ? onNavigate != null : onStart != null;
+    return Semantics(
+        button: actionable,
+        child: GestureDetector(
+          onTap: actionable ? _handleTap : null,
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(22),
+            decoration: BoxDecoration(
+              color: background,
+              borderRadius: AdUi.radius,
             ),
-            Positioned(
-              bottom: -20, left: -20,
-              child: Container(
-                width: 80, height: 80,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.03),
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Stack(
+              clipBehavior: Clip.none,
               children: [
-                ProxoText(
-                  banner.title,
-                  // Bold kept: a promo hero headline's whole job is to grab
-                  // attention, which is the "high-priority emphasis" case.
-                  // Explicit height added (was unset/font-default) since
-                  // banner.title is CMS content of unpredictable length.
-                  style: TextStyle(
-                    fontFamily: kAppFont,
-                    fontSize:   21,
-                    fontWeight: FontWeight.w700,
-                    color:      ink,
-                    height:     1.5,
-                  ),
-                ),
-                if (banner.subtitle.isNotEmpty) ...[
-                  const SizedBox(height: 6),
-                  ProxoText(
-                    banner.subtitle,
-                    style: TextStyle(
-                      fontFamily: kAppFont,
-                      fontSize:   13.5,
-                      fontWeight: FontWeight.w400,
-                      color:      ink.withOpacity(0.85),
-                      height:     1.35, // was 1.7, above the multiline ceiling
+                Positioned(
+                  top: -30,
+                  right: -30,
+                  child: Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.04),
+                      shape: BoxShape.circle,
                     ),
                   ),
-                ],
-                if (actionable && banner.btnText.isNotEmpty) ...[
-                const SizedBox(height: 14),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.12),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.white.withOpacity(0.15)),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.play_arrow_rounded, size: 14, color: ink),
-                      const SizedBox(width: 6),
-                      Flexible(child: ProxoText(
-                        banner.btnText,
-                        style: TextStyle(
-                          fontFamily: kAppFont,
-                          fontSize:   13,
-                          color:      ink,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      )),
-                    ],
+                ),
+                Positioned(
+                  bottom: -20,
+                  left: -20,
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.03),
+                      shape: BoxShape.circle,
+                    ),
                   ),
                 ),
-                ],
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ProxoText(
+                      banner.title,
+                      // Bold kept: a promo hero headline's whole job is to grab
+                      // attention, which is the "high-priority emphasis" case.
+                      // Explicit height added (was unset/font-default) since
+                      // banner.title is CMS content of unpredictable length.
+                      style: TextStyle(
+                        fontFamily: kAppFont,
+                        fontSize: 21,
+                        fontWeight: FontWeight.w700,
+                        color: ink,
+                        height: 1.5,
+                      ),
+                    ),
+                    if (banner.subtitle.isNotEmpty) ...[
+                      const SizedBox(height: 6),
+                      ProxoText(
+                        banner.subtitle,
+                        style: TextStyle(
+                          fontFamily: kAppFont,
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w400,
+                          color: ink.withOpacity(0.85),
+                          height: 1.35, // was 1.7, above the multiline ceiling
+                        ),
+                      ),
+                    ],
+                    if (actionable && banner.btnText.isNotEmpty) ...[
+                      const SizedBox(height: 14),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 18, vertical: 9),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(20),
+                          border:
+                              Border.all(color: Colors.white.withOpacity(0.15)),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.play_arrow_rounded,
+                                size: 14, color: ink),
+                            const SizedBox(width: 6),
+                            Flexible(
+                                child: ProxoText(
+                              banner.btnText,
+                              style: TextStyle(
+                                fontFamily: kAppFont,
+                                fontSize: 13,
+                                color: ink,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            )),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
               ],
             ),
-          ],
-        ),
-      ),
-    ));
+          ),
+        ));
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // _StaticHero (fallback)
 // ─────────────────────────────────────────────────────────────────────────────
-
-class _StaticHero extends StatelessWidget {
-  final VoidCallback? onStart;
-  const _StaticHero({this.onStart});
-  @override
-  Widget build(BuildContext context) => Container(
-    width: double.infinity,
-    padding: const EdgeInsets.all(22),
-    decoration: const BoxDecoration(color: Color(0xFFEDF4FF), borderRadius: AdUi.radius),
-    child: const Directionality(textDirection: TextDirection.rtl,
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        ProxoText('ڕیکلامی تیک تۆک بەردەستە', translate: true,
-          style: TextStyle(fontFamily: kAppFont, fontSize: 21, fontWeight: FontWeight.w600,
-            color: AppColors.ink, height: 1.5)),
-        SizedBox(height: 8),
-        ProxoText('ڕیکلامەکانت بڕوانە و بیکەرەوە بە ئاسانی لەگەڵ Proxo', translate: true,
-          style: TextStyle(fontFamily: kAppFont, fontSize: 14, color: AppColors.inkMuted, height: 1.65)),
-      ]),
-    ),
-  );
-}
 
 class _SkeletonBanner extends StatefulWidget {
   const _SkeletonBanner();
@@ -1278,13 +1335,16 @@ class _SkeletonBannerState extends State<_SkeletonBanner>
   void initState() {
     super.initState();
     _ctrl = AnimationController(
-      vsync:    this,
+      vsync: this,
       duration: const Duration(milliseconds: 1200),
     )..repeat(reverse: true);
   }
 
   @override
-  void dispose() { _ctrl.dispose(); super.dispose(); }
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1337,11 +1397,11 @@ class _SupaBanner {
   });
 
   factory _SupaBanner.fromMap(Map<String, dynamic> m) => _SupaBanner(
-        locale:     m['locale']?.toString() ?? 'ckb',
-        title:      m['title']?.toString()       ?? 'Proxo',
-        subtitle:   m['subtitle']?.toString()    ?? '',
-        btnText:    m['btn_text']?.toString()    ?? '',
-        bgColor:    m['bg_color']?.toString()    ?? '',
+        locale: m['locale']?.toString() ?? 'ckb',
+        title: m['title']?.toString() ?? 'Proxo',
+        subtitle: m['subtitle']?.toString() ?? '',
+        btnText: m['btn_text']?.toString() ?? '',
+        bgColor: m['bg_color']?.toString() ?? '',
         navigateTo: (m['navigate_to'] ?? m['link'])?.toString() ?? '',
       );
 }
