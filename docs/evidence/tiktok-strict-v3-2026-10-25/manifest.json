@@ -314,7 +314,7 @@
       "label": "Definitive submission failure",
       "width": 786,
       "height": 1704,
-      "sha256": "44bf9bc75b86f9b09c4848831274ff47cc22645e2f7be5aeadaa846af3475b57",
+      "sha256": "48932ad103ca331997bb40c7f878ed618c8168077396de34525d28eb297f7b31",
       "test": "failure_reopen",
       "evidence": "actual Flutter widget render; controlled repositories"
     },

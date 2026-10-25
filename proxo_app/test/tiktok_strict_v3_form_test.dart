@@ -574,6 +574,8 @@ void main() {
       await tester.pumpAndSettle();
       expect(repo.submissions, 1);
       expect(find.byType(AdConfirmationScreen), findsOneWidget);
+      expect(find.text('جۆری ڕیکلام'), findsOneWidget);
+      expect(find.text('بینینەکان'), findsOneWidget);
       await shot(tester, '31-definitive-failure');
       await tester.tap(find.byKey(const ValueKey('cancel-submission')));
       await tester.pumpAndSettle();

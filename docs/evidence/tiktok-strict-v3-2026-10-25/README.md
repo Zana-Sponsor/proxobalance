@@ -10,6 +10,8 @@ State 17 exercises `Image.network` with an HTTPS URL intercepted by a determinis
 
 All 34 originals were reviewed, using six contact sheets plus full-size inspection of the main, price, avatar, Sponsor, and narrow layouts. The review found and drove fixes for split money, extreme keyboard price overflow, and scaled fallback-logo clipping. Large-text bottom navigation retains its existing horizontal scroll behavior. Final review found no unresolved captured-state overflow or mixed primary/secondary styling.
 
+The follow-up review corrected the confirmation ad-type label in state 31. The other 33 originals reproduced byte-for-byte; the updated image changes only the label/value text within its existing row. See the [follow-up measurements](../../tiktok-strict-v3/verification.json).
+
 ## State-to-evidence map
 
 | # | Required state | Test | Preview (click for original) |

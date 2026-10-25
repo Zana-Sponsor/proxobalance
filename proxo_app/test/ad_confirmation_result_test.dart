@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:proxo_app/screens/ad_confirmation_screen.dart';
 import 'package:proxo_app/services/ad_submission.dart';
+import 'package:proxo_app/widgets/ad_form_components.dart';
 
 import 'ad_submission_test.dart' show validDraft;
+import 'responsive_ad_ui_test.dart' show expectVisibleTextFits;
 
 class _RejectedRepository extends AdCreationRepository {
   final bool uncertain;
@@ -30,6 +32,58 @@ class _RejectedRepository extends AdCreationRepository {
 }
 
 void main() {
+  for (final (platform, type, goal, heading, label) in [
+    ('TIKTOK', 'contact', 'messages', 'جۆری ڕیکلام', 'نامە و پەیوەندی'),
+    ('TIKTOK', 'views', 'views', 'جۆری ڕیکلام', 'بینینەکان'),
+    ('TIKTOK', 'restaurant', 'messages', 'جۆری ڕیکلام', 'خواردنگە'),
+    ('TIKTOK', 'app_download', 'messages', 'جۆری ڕیکلام', 'دابەزاندنی ئەپ'),
+    ('TIKTOK', null, 'views', 'ئامانج', 'بینین'),
+    ('META', null, 'views', 'ئامانج', 'بینین'),
+  ]) {
+    testWidgets('confirmation preserves the $platform $type customer label',
+        (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(280, 700);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final draft = AdDraft.fromJson({
+        ...validDraft().toJson(),
+        'platform': platform,
+        'tiktok_ad_type': type,
+        'goal': goal,
+      });
+      final request = AdPendingSubmission.fromJson(
+        AdPendingSubmission.create(
+          draft,
+          const AdQuote(grossUsd: 10, costUsd: 10, rate: 1800),
+        ).toJson(),
+      );
+      final repository = _RejectedRepository(false);
+      await tester.pumpWidget(MaterialApp(
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(2)),
+          child: child!,
+        ),
+        home: AdConfirmationScreen(
+          request: request,
+          repository: repository,
+          countdown: const Duration(hours: 1),
+        ),
+      ));
+      await tester.pump();
+      final row = find.byWidgetPredicate(
+        (widget) => widget is AdValueRow && widget.label == heading,
+      );
+      expect(row, findsOneWidget);
+      expect(tester.widget<AdValueRow>(row).value, label);
+      await tester.ensureVisible(row);
+      await tester.pump();
+      expectVisibleTextFits(tester);
+      expect(repository.submissions, 0);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+  }
   for (final uncertain in [false, true]) {
     for (final systemBack in [false, true]) {
       testWidgets(

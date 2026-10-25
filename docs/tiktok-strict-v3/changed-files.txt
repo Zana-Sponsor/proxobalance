@@ -48,11 +48,13 @@ docs/tiktok-strict-v3/changed-files.txt
 docs/tiktok-strict-v3/implementation-report.md
 docs/tiktok-strict-v3/specification.md
 docs/tiktok-strict-v3/verification.json
+proxo_app/integration_test/polish_runtime_test.dart
 proxo_app/lib/screens/ad_confirmation_screen.dart
 proxo_app/lib/screens/ad_create_screen.dart
 proxo_app/lib/screens/proxolink_create_page_screen.dart
 proxo_app/lib/services/ad_submission.dart
 proxo_app/lib/widgets/ad_form_components.dart
+proxo_app/lib/widgets/proxo_sidebar.dart
 proxo_app/supabase/migrations/20261025120000_tiktok_typed_page_eligibility.sql
 proxo_app/test/ad_confirmation_result_test.dart
 proxo_app/test/ad_creation_flow_test.dart

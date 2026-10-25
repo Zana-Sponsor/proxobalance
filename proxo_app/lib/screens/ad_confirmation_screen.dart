@@ -487,18 +487,27 @@ class _AdConfirmationScreenState extends State<AdConfirmationScreen>
 
   Widget _summary() {
     final d = widget.request.draft;
+    final typedLabel = d.isMeta
+        ? null
+        : const {
+            'contact': 'نامە و پەیوەندی',
+            'views': 'بینینەکان',
+            'restaurant': 'خواردنگە',
+            'app_download': 'دابەزاندنی ئەپ',
+          }[d.tiktokAdType];
     String two(int n) => '$n'.padLeft(2, '0');
     final s = d.schedule;
     final rows = <(String, String)>[
       ('ناوی ڕیکلام', d.title),
       if (!d.isMeta && !d.isTikTokDirect) ('کۆدی ڤیدیۆ', d.code),
       (
-        'ئامانج',
-        d.isMeta
-            ? metaObjectiveLabels[d.goal] ?? ''
-            : d.goal == 'messages'
-                ? 'نامە'
-                : 'بینین'
+        typedLabel == null ? 'ئامانج' : 'جۆری ڕیکلام',
+        typedLabel ??
+            (d.isMeta
+                ? metaObjectiveLabels[d.goal] ?? ''
+                : d.goal == 'messages'
+                    ? 'نامە'
+                    : 'بینین')
       ),
       if (d.isMeta) ...[
         ('لینکی پەیج', d.pageUrl),

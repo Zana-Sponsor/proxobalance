@@ -19,7 +19,8 @@
     "log_file": "strict-v3-flutter-final.log",
     "log_sha256": "91252c607365a8e2303fc996a9b192a3f8ac8e6da578c75e49f9de8c455ce783",
     "terminal_summary": "03:22 +1318 ~1: All tests passed!",
-    "coverage": "All Flutter tests, including Meta, navigation/payment, receipt reference/parity and new strict-v3 fixtures."
+    "coverage": "All Flutter tests, including Meta, navigation/payment, receipt reference/parity and new strict-v3 fixtures.",
+    "source_revision": "b6bdac7d837a528bbbe4fbecf04b57722e406bee"
   },
   "completed": [
     {
@@ -138,5 +139,65 @@
   "exact_changed_files_count": 68,
   "exact_changed_files_manifest": "changed-files.txt",
   "specification_sha256": "235db726994d82bb3bb241c809ca48c8b53c38f8392e520cdbcb71da29360bb9",
-  "final_diff_check": "passed"
+  "final_diff_check": "passed",
+  "followup_review": {
+    "date": "2026-10-25",
+    "reviewed_parent": "ce8f1fa5a8562d87c93168035d9aa1aeb53bf3a7",
+    "changes": [
+      "Unused sidebar import already removed in b0fb8f1; validated by exact CI analysis command.",
+      "Repaired malformed native fixture and verified exact generated ad title before submit, in saved request, and after cancel.",
+      "Confirmation displays all four typed TikTok ad labels; legacy and Meta labels retained."
+    ],
+    "focused": {
+      "log_file": "strict-v3-followup-label-tests.log",
+      "passed": 186,
+      "exit_code": 0,
+      "sha256": "730edc062cd76be1f8d19e8a90a1c5fe633c93c0c57fa989e9db9b4b7cef9d80",
+      "terminal_summary": "00:30 +186: All tests passed!"
+    },
+    "final_narrow_confirmation": {
+      "log_file": "strict-v3-followup-narrow-confirmation.log",
+      "passed": 10,
+      "exit_code": 0,
+      "sha256": "e82f348eb4e4b7986f6a4496e7f25f99858ee1bc71cea61fbdfbbefb7a563162",
+      "terminal_summary": "00:03 +10: All tests passed!"
+    },
+    "profile_runner_tests": {
+      "passed": 7,
+      "command": "python3 -m unittest discover -s test -p 'polish_runtime_runner_test.py'"
+    },
+    "analysis": {
+      "exact_ci_screen_command_exit": 0,
+      "warnings": 0,
+      "errors": 0,
+      "existing_infos": 110,
+      "final_changed_files_exit": 0,
+      "final_existing_fixture_infos": 13
+    },
+    "visual_review": {
+      "required_states_reviewed": 34,
+      "review_sheets": 6,
+      "pixel_check": {
+        "image": "docs/evidence/tiktok-strict-v3-2026-10-25/31-definitive-failure.png",
+        "image_size": [
+          786,
+          1704
+        ],
+        "changed_pixel_bounds": [
+          64,
+          1014,
+          722,
+          1042
+        ],
+        "changed_pixels": 1659,
+        "old_sha256": "44bf9bc75b86f9b09c4848831274ff47cc22645e2f7be5aeadaa846af3475b57",
+        "new_sha256": "48932ad103ca331997bb40c7f878ed618c8168077396de34525d28eb297f7b31",
+        "other_required_captures_unchanged": 33
+      },
+      "receipt_reference_test": "passed; exact reference bitmap and 393x627 geometry",
+      "physical_device_verified": false
+    },
+    "remote_ci": "Results after publication are recorded on https://github.com/Zana-Sponsor/proxobalance/pull/46; this record contains completed local checks.",
+    "production_changed": false
+  }
 }
