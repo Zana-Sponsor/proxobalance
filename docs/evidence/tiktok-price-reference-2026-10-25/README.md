@@ -1,5 +1,7 @@
 # TikTok Create Ad — supplied final-price reference
 
+> Historical price-geometry captures. The latest [reference-color gallery](../tiktok-reference-colors-2026-10-25/README.md) applies the picture's sampled palette without changing these measurements.
+
 **39 fresh captures for the supplied final-price image.** The price surface is now flush, full-width and square-cornered. [Original user reference](reference-user.jpg). Actual Flutter widgets and bundled Auth fonts are rendered with fictional deterministic data, not live payments or TikTok delivery.
 
 [Reference comparison and implementation report](../../tiktok-price-reference/implementation-report.md) · [Actual measurements](measurements.json) · [Image hashes](manifest.json) · [Browser gallery](index.html)

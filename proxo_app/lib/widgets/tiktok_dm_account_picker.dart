@@ -8,6 +8,7 @@ import 'package:shimmer/shimmer.dart';
 
 import '../services/tiktok_dm_accounts.dart';
 import '../theme/tiktok_ad_tokens.dart';
+import '../theme/ad_form_colors.dart';
 import 'ad_brand_logo.dart';
 import 'ad_form_components.dart';
 import 'proxo_text.dart';
@@ -441,7 +442,7 @@ class _TikTokDmAccountPickerState extends State<TikTokDmAccountPicker>
                                           ? 'DM_NOT_ELIGIBLE'
                                           : account.status)),
                                   style: AdUi.text(context,
-                                      color: AdUi.secondary))),
+                                      color: AdUi.secondaryOf(context)))),
                         const SizedBox(height: 10),
                       ],
                       _capsule(height),
@@ -485,6 +486,9 @@ class _TikTokDmAccountPickerState extends State<TikTokDmAccountPicker>
                         for (final account
                             in _accounts.where((account) => account.selectable))
                           AdChoice(
+                              style: widget.openSections
+                                  ? AdChoiceStyle.secondary
+                                  : AdChoiceStyle.standard,
                               label:
                                   '@${account.username.replaceFirst('@', '')}',
                               selected: account.id == _accountId,
@@ -523,7 +527,8 @@ class _TikTokDmAccountPickerState extends State<TikTokDmAccountPicker>
   Widget _feedback(String message, VoidCallback refresh) => Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        ProxoText(message, style: AdUi.text(context, color: AdUi.secondary)),
+        ProxoText(message,
+            style: AdUi.text(context, color: AdUi.secondaryOf(context))),
         Align(
             alignment: AlignmentDirectional.centerEnd,
             child: TextButton(
@@ -538,17 +543,22 @@ class _TikTokDmAccountPickerState extends State<TikTokDmAccountPicker>
             : 'tiktok-account-${account.id}'),
         height: height,
         child: CustomPaint(
-            foregroundPainter: account == null ? const _DashedBorder() : null,
+            foregroundPainter: account == null
+                ? _DashedBorder(AdUi.controlLineOf(context))
+                : null,
             child: Material(
-                color: selected ? const Color(0xFFEEF4FF) : Colors.white,
+                color: selected
+                    ? (AdFormColors.of(context)?.selectedFill ??
+                        const Color(0xFFEEF4FF))
+                    : Colors.white,
                 shape: RoundedRectangleBorder(
                     borderRadius: AdUi.controlRadius,
                     side: account == null
                         ? BorderSide.none
                         : BorderSide(
                             color: selected
-                                ? AdUi.selectedLine
-                                : AdUi.controlLine)),
+                                ? AdUi.selectedLineOf(context)
+                                : AdUi.controlLineOf(context))),
                 clipBehavior: Clip.antiAlias,
                 child: InkWell(
                     onTap: !widget.enabled || _accountsLoading
@@ -569,18 +579,19 @@ class _TikTokDmAccountPickerState extends State<TikTokDmAccountPicker>
                                 child: SizedBox.square(
                                     dimension: 32,
                                     child: account.profileImageUrl == null
-                                        ? const Icon(Icons.person_outline,
-                                            color: AdUi.secondary)
+                                        ? Icon(Icons.person_outline,
+                                            color: AdUi.secondaryOf(context))
                                         : CachedNetworkImage(
                                             imageUrl: account.profileImageUrl!,
                                             fit: BoxFit.cover,
                                             memCacheWidth: 96,
-                                            placeholder: (_, __) =>
-                                                const ColoredBox(
-                                                    color: AdUi.controlLine),
-                                            errorWidget: (_, __, ___) =>
-                                                const Icon(Icons.person_outline,
-                                                    color: AdUi.secondary)))),
+                                            placeholder: (_, __) => ColoredBox(
+                                                color: AdUi.controlLineOf(
+                                                    context)),
+                                            errorWidget: (_, __, ___) => Icon(
+                                                Icons.person_outline,
+                                                color: AdUi.secondaryOf(
+                                                    context))))),
                           const SizedBox(width: 12),
                           Expanded(
                               child: account == null
@@ -595,8 +606,9 @@ class _TikTokDmAccountPickerState extends State<TikTokDmAccountPicker>
                                               overflow: TextOverflow.ellipsis,
                                               style: AdUi.text(context,
                                                   color: account.selectable
-                                                      ? AdUi.ink
-                                                      : AdUi.secondary))),
+                                                      ? AdUi.inkOf(context)
+                                                      : AdUi.secondaryOf(
+                                                          context)))),
                                       if (selected || !account.selectable) ...[
                                         const SizedBox(width: 4),
                                         Icon(
@@ -605,24 +617,25 @@ class _TikTokDmAccountPickerState extends State<TikTokDmAccountPicker>
                                                 : Icons.info_outline,
                                             size: 20,
                                             color: selected
-                                                ? AdUi.blue
-                                                : AdUi.secondary),
+                                                ? AdUi.blueOf(context)
+                                                : AdUi.secondaryOf(context)),
                                       ],
                                     ])),
                           if (account == null)
-                            const SizedBox(
+                            SizedBox(
                                 width: 48,
                                 height: 48,
-                                child:
-                                    Icon(Icons.add, size: 22, color: AdUi.blue))
+                                child: Icon(Icons.add,
+                                    size: 22, color: AdUi.blueOf(context)))
                           else
                             IconButton(
                                 tooltip: 'پچڕاندنی پەیوەندی',
                                 onPressed: widget.enabled && !_accountsLoading
                                     ? () => _disconnect(account)
                                     : null,
-                                icon: const Icon(Icons.delete_outline,
-                                    size: 22, color: AdUi.secondary)),
+                                icon: Icon(Icons.delete_outline,
+                                    size: 22,
+                                    color: AdUi.secondaryOf(context))),
                         ]))))));
   }
 
@@ -643,8 +656,8 @@ class _TikTokDmAccountPickerState extends State<TikTokDmAccountPicker>
                     skeleton ? _videoCard(null) : _videoCard(_videos[index]))));
     return skeleton && !MediaQuery.disableAnimationsOf(context)
         ? Shimmer.fromColors(
-            baseColor: AdUi.controlLine,
-            highlightColor: AdUi.controlSurface,
+            baseColor: AdUi.controlLineOf(context),
+            highlightColor: AdUi.controlSurfaceOf(context),
             direction: ShimmerDirection.rtl,
             child: content)
         : content;
@@ -739,8 +752,8 @@ class _TikTokDmAccountPickerState extends State<TikTokDmAccountPicker>
               borderRadius: AdUi.controlRadius,
               side: BorderSide(
                   color: video != null && _selectedItem == video.itemId
-                      ? AdUi.blue
-                      : AdUi.controlLine)),
+                      ? AdUi.blueOf(context)
+                      : AdUi.controlLineOf(context))),
           clipBehavior: Clip.antiAlias,
           child: InkWell(
               onTap: video != null && _fresh && widget.enabled
@@ -762,35 +775,36 @@ class _TikTokDmAccountPickerState extends State<TikTokDmAccountPicker>
                                     imageUrl: video!.thumbnailUrl!,
                                     fit: BoxFit.cover,
                                     memCacheWidth: 320,
-                                    placeholder: (_, __) => const ColoredBox(
-                                        color: AdUi.controlLine),
+                                    placeholder: (_, __) => ColoredBox(
+                                        color: AdUi.controlLineOf(context)),
                                     errorWidget: (_, __, ___) =>
                                         const Center(child: ProxoText('Proxo')))
                               else
-                                const ColoredBox(color: AdUi.controlLine),
+                                ColoredBox(color: AdUi.controlLineOf(context)),
                               if (video != null &&
                                   _selectedItem == video.itemId)
-                                const Align(
+                                Align(
                                     alignment: AlignmentDirectional.topEnd,
                                     child: Padding(
-                                        padding: EdgeInsets.all(4),
+                                        padding: const EdgeInsets.all(4),
                                         child: Icon(Icons.check_circle,
-                                            color: AdUi.blue, size: 24))),
+                                            color: AdUi.blueOf(context),
+                                            size: 24))),
                             ])),
                         const SizedBox(height: 8),
                         if (video == null)
-                          const Expanded(
+                          Expanded(
                               child: Column(
                                   crossAxisAlignment:
                                       CrossAxisAlignment.stretch,
                                   children: [
                                 ColoredBox(
-                                    color: AdUi.controlLine,
-                                    child: SizedBox(height: 16)),
-                                SizedBox(height: 6),
+                                    color: AdUi.controlLineOf(context),
+                                    child: const SizedBox(height: 16)),
+                                const SizedBox(height: 6),
                                 ColoredBox(
-                                    color: AdUi.controlLine,
-                                    child: SizedBox(height: 16)),
+                                    color: AdUi.controlLineOf(context),
+                                    child: const SizedBox(height: 16)),
                               ]))
                         else
                           Expanded(
@@ -804,7 +818,7 @@ class _TikTokDmAccountPickerState extends State<TikTokDmAccountPicker>
                         const SizedBox(height: 6),
                         if (video == null)
                           ColoredBox(
-                              color: AdUi.controlLine,
+                              color: AdUi.controlLineOf(context),
                               child: SizedBox(
                                   height: MediaQuery.textScalerOf(context)
                                           .scale(AdUi.text(context).fontSize ??
@@ -816,19 +830,21 @@ class _TikTokDmAccountPickerState extends State<TikTokDmAccountPicker>
                                   ? ' '
                                   : '${video.publishedAt!.year}/${video.publishedAt!.month}/${video.publishedAt!.day}',
                               maxLines: 1,
-                              style: AdUi.text(context, color: AdUi.secondary)),
+                              style: AdUi.text(context,
+                                  color: AdUi.secondaryOf(context))),
                       ]))));
 }
 
 class _DashedBorder extends CustomPainter {
-  const _DashedBorder();
+  const _DashedBorder(this.color);
+  final Color color;
   @override
   void paint(Canvas canvas, Size size) {
     final path = Path()
       ..addRRect(RRect.fromRectAndRadius(
           Offset.zero & size, const Radius.circular(14)));
     final paint = Paint()
-      ..color = AdUi.controlLine
+      ..color = color
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
     for (final metric in path.computeMetrics()) {
@@ -840,7 +856,7 @@ class _DashedBorder extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_DashedBorder oldDelegate) => false;
+  bool shouldRepaint(_DashedBorder oldDelegate) => oldDelegate.color != color;
 }
 
 class TikTokDmConnectSheet extends StatefulWidget {
@@ -1107,7 +1123,8 @@ class _TikTokDmConnectSheetState extends State<TikTokDmConnectSheet>
                                       ProxoText(
                                           'لینکی پەیوەستکردن پشتڕاست نەکرایەوە؛ دووبارە پشکنین بکە.',
                                           style: AdUi.text(context,
-                                              color: AdUi.secondary)),
+                                              color:
+                                                  AdUi.secondaryOf(context))),
                                     const SizedBox(height: 16),
                                     const TikTokQrTutorial(),
                                     const SizedBox(height: 12),
@@ -1124,7 +1141,7 @@ class _TikTokDmConnectSheetState extends State<TikTokDmConnectSheet>
                                                         connection.status),
                                         textAlign: TextAlign.center,
                                         style: AdUi.text(context,
-                                            color: AdUi.secondary)),
+                                            color: AdUi.secondaryOf(context))),
                                     if (connection.status ==
                                             'USERNAME_MISMATCH' &&
                                         connection.authorizedUsername != null)
@@ -1136,7 +1153,7 @@ class _TikTokDmConnectSheetState extends State<TikTokDmConnectSheet>
                                   if (_error != null) ...[
                                     ProxoText(_error!.message,
                                         style: AdUi.text(context,
-                                            color: AdUi.secondary)),
+                                            color: AdUi.secondaryOf(context))),
                                     const SizedBox(height: 12)
                                   ],
                                   FilledButton(

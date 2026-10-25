@@ -1,0 +1,191 @@
+{
+  "baseline": "d42f2aaa9925a58bda2222b427a0466ea5dc37ef",
+  "focused_tests_passed": 83,
+  "analysis": {
+    "errors": 0,
+    "warnings": 0,
+    "preexisting_infos": 2
+  },
+  "captured_states": 44,
+  "review_sheets": 8,
+  "sampled_palette_roles": 11,
+  "painted_pixel_checks": [
+    {
+      "capture": "01-top-create-ad",
+      "role": "navigation create button",
+      "x_px": 429,
+      "y_px": 1600,
+      "argb": "FF0278FE"
+    },
+    {
+      "capture": "02-ad-types",
+      "role": "primary fill",
+      "x_px": 210,
+      "y_px": 204,
+      "argb": "FF0278FE"
+    },
+    {
+      "capture": "05-contact-destination",
+      "role": "secondary fill",
+      "x_px": 393,
+      "y_px": 264,
+      "argb": "FFEEF7FF"
+    },
+    {
+      "capture": "05-contact-destination",
+      "role": "contact page fill",
+      "x_px": 393,
+      "y_px": 632,
+      "argb": "FFF6F9FE"
+    },
+    {
+      "capture": "05-contact-destination",
+      "role": "new badge",
+      "x_px": 80,
+      "y_px": 364,
+      "argb": "FFFE6F61"
+    },
+    {
+      "capture": "34-payment-sheet-wallet",
+      "role": "modal selected fill",
+      "x_px": 393,
+      "y_px": 1242,
+      "argb": "FFEEF7FF"
+    },
+    {
+      "capture": "34-payment-sheet-wallet",
+      "role": "modal confirm fill",
+      "x_px": 393,
+      "y_px": 1572,
+      "argb": "FF0278FE"
+    },
+    {
+      "capture": "35-payment-sheet-fastpay",
+      "role": "modal FastPay selected fill",
+      "x_px": 393,
+      "y_px": 1388,
+      "argb": "FFEEF7FF"
+    }
+  ],
+  "geometry_unchanged": true,
+  "measured_gaps": 27,
+  "meta_baseline_images": [
+    {
+      "file": "proxo_app/docs/meta_ads_evidence/launcher.png",
+      "unchanged": true,
+      "sha256": "110284cf9231a8727e992106a22bfb3c99a8378ef23f826008f5036e904e20f3"
+    },
+    {
+      "file": "proxo_app/docs/meta_ads_evidence/launcher_280_2x.png",
+      "unchanged": true,
+      "sha256": "d5175a483e153eb7ef423897e33616cdf91bb6b00b403fc373fa9f3cfe6079d7"
+    },
+    {
+      "file": "proxo_app/docs/meta_ads_evidence/launcher_768_2x.png",
+      "unchanged": true,
+      "sha256": "8ba00b8ab407e7aab7ecc267cc19bfe4463d7d4f5be4892bedab7a367fadb7f1"
+    },
+    {
+      "file": "proxo_app/docs/meta_ads_evidence/meta_280_1x.png",
+      "unchanged": true,
+      "sha256": "e014ebb6cafd7b54486152ea7d29a123db1a79983905d410aa7f5901e5e0bf39"
+    },
+    {
+      "file": "proxo_app/docs/meta_ads_evidence/meta_280_2x.png",
+      "unchanged": true,
+      "sha256": "30c8953222178524fffc98780f6a0958ac6b1048a98322c1cf68185ef9171ef1"
+    },
+    {
+      "file": "proxo_app/docs/meta_ads_evidence/meta_393_1x.png",
+      "unchanged": true,
+      "sha256": "4b9495dacaf8a247e8837980bd76845b1720c0954a1b5b18edfa89956345033a"
+    },
+    {
+      "file": "proxo_app/docs/meta_ads_evidence/meta_393_2x.png",
+      "unchanged": true,
+      "sha256": "472174bffa6244c3ab3de49e67a4030c05d1a960ad85728f7fa10ba005b4e6b5"
+    },
+    {
+      "file": "proxo_app/docs/meta_ads_evidence/meta_768_1x.png",
+      "unchanged": true,
+      "sha256": "b040f71ae415eb5839d484d75f6d1af8273f0ea3125963f522b8e5f8bb3f7a16"
+    },
+    {
+      "file": "proxo_app/docs/meta_ads_evidence/meta_768_2x.png",
+      "unchanged": true,
+      "sha256": "b7f266e6ad716536ca68f58fdd5d20784eabedbfabe5fe9b4fbcb291b10b8944"
+    },
+    {
+      "file": "proxo_app/docs/meta_ads_evidence/meta_payment.png",
+      "unchanged": true,
+      "sha256": "38993e7bf4ae8a09cf93150cee399dcfd6f2eebbb3db9a42d917b4068d44446f"
+    },
+    {
+      "file": "proxo_app/docs/meta_ads_evidence/payment_sheet_280_1x.png",
+      "unchanged": true,
+      "sha256": "993a53e8e3ee1b253b190a20c148884620dbe25d09358618a96232ce18d190e4"
+    },
+    {
+      "file": "proxo_app/docs/meta_ads_evidence/payment_sheet_280_2x.png",
+      "unchanged": true,
+      "sha256": "27ee351a51420df7a7241c0843bdd9cc0c6d3e02c1d1428ef2ae8cb5b75039be"
+    },
+    {
+      "file": "proxo_app/docs/meta_ads_evidence/payment_sheet_393_1x.png",
+      "unchanged": true,
+      "sha256": "6e83ed8dbd94537f3dda244e720923201c98dc250b5f18f4cb04439619d848f5"
+    },
+    {
+      "file": "proxo_app/docs/meta_ads_evidence/payment_sheet_393_2x.png",
+      "unchanged": true,
+      "sha256": "124f50b0c8c12fc57528bf37658e478f3167baa7bab1e784c6c2d3906dbe4aee"
+    },
+    {
+      "file": "proxo_app/docs/meta_ads_evidence/payment_sheet_768_1x.png",
+      "unchanged": true,
+      "sha256": "213522f73f17032e55db0c10d8ce7809289782c2f2968177fc9be265255c74bf"
+    },
+    {
+      "file": "proxo_app/docs/meta_ads_evidence/payment_sheet_768_2x.png",
+      "unchanged": true,
+      "sha256": "2564eb57e8749faab7670bd9db77f0c54718ab67da6a51eede15082fce16e1b6"
+    }
+  ],
+  "receipt_reference_golden": "passed",
+  "historical_generated_images_restored": 34,
+  "logs": [
+    {
+      "file": "colors-focused-tests.log",
+      "sha256": "1d2ab2bf657435d027f97059914e763a1a7e2221e6acd6469340621d4f1b6081",
+      "tail": [
+        "01:17 +81: /workspace/scratch/43a583048faa/proxo-strict-v3/proxo_app/test/meta_ad_form_test.dart: Meta form fits 768.0 at 1.0 and captures real widgets",
+        "01:17 +82: /workspace/scratch/43a583048faa/proxo-strict-v3/proxo_app/test/meta_ad_form_test.dart: Meta form fits 768.0 at 2.0 and captures real widgets",
+        "01:18 +83: /workspace/scratch/43a583048faa/proxo-strict-v3/proxo_app/test/meta_ad_form_test.dart: (tearDownAll)",
+        "01:18 +83: All tests passed!"
+      ]
+    },
+    {
+      "file": "colors-analyze.log",
+      "sha256": "dded2bb560b84a09055a0154788f6adc16ead962cfdb177638c66a2e23e5729e",
+      "tail": [
+        "   info \u2022 Use interpolation to compose strings and values. Try using string interpolation to build the composite string \u2022 lib/screens/ad_create_screen.dart:675:13 \u2022 prefer_interpolation_to_compose_strings",
+        "   info \u2022 Statements in an if should be enclosed in a block. Try wrapping the statement in a block \u2022 lib/widgets/form_help_actions.dart:38:7 \u2022 curly_braces_in_flow_control_structures",
+        "",
+        "2 issues found. (ran in 12.4s)"
+      ]
+    },
+    {
+      "file": "colors-capture-tests.log",
+      "sha256": "36b85fb126753948fdba33ad1ceeb77e2fad31f81b00d41ddbe62dc3a5463ac5",
+      "tail": [
+        "00:13 +6: 280.0px / 2.0x responsive layout and anchored price",
+        "00:14 +7: 768.0px / 1.0x responsive layout and anchored price",
+        "00:15 +8: (tearDownAll)",
+        "00:15 +8: All tests passed!"
+      ]
+    }
+  ],
+  "ci": "See the exact published commit checks on PR #46; prior commit checks are not evidence for this revision.",
+  "production": "Draft PR; no workflow activation, migration or production release in this color correction.",
+  "visual_review": "All 44 captures reviewed through 8 contact sheets; payment provider artwork decoded before capture and tap feedback settled."
+}

@@ -62,7 +62,7 @@ void main() {
               ? TikTokAdTokens.muted
               : TikTokAdTokens.ink,
         );
-        expect((inactive.border! as Border).top.color, const Color(0xFFCBD5E1));
+        expect((inactive.border! as Border).top.color, const Color(0xFFEEEEEE));
         expect(inactive.borderRadius, TikTokAdTokens.controlRadius);
         final animated = tester.widget<AnimatedContainer>(container);
         expect(animated.duration, const Duration(milliseconds: 180));
@@ -79,9 +79,10 @@ void main() {
         } else {
           expect(active.color, isNot(TikTokAdTokens.blue));
           expect(active.color, isNot(Colors.white));
-          expect(
-              tester.widget<ProxoText>(text).style!.color, TikTokAdTokens.blue);
-          expect((active.border! as Border).top.color, TikTokAdTokens.blue);
+          expect(tester.widget<ProxoText>(text).style!.color,
+              TikTokAdTokens.secondaryBlue);
+          expect((active.border! as Border).top.color,
+              TikTokAdTokens.selectedLine);
         }
         change(() => selected = false);
         await tester.pumpAndSettle();

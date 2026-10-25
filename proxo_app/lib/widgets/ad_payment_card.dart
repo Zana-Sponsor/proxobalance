@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../theme/proxo_surface.dart';
+import '../theme/ad_form_colors.dart';
 import '../l10n/proxo_strings.dart';
 import 'ad_form_components.dart';
 import 'payments/payment_option.dart';
@@ -8,9 +9,10 @@ import 'proxo_symbol.dart';
 import 'proxo_text.dart';
 
 const _walletLabel = 'باڵانسی هەژمار';
-Widget _paymentLogo(String value) => value == 'fastpay'
+Widget _paymentLogo(BuildContext context, String value) => value == 'fastpay'
     ? const ProviderLogo(provider: 'fastpay', width: 44, height: 24)
-    : const ProxoSymbol(ProxoSymbolName.wallet, size: 26, color: AdUi.blue);
+    : ProxoSymbol(ProxoSymbolName.wallet,
+        size: 26, color: AdUi.blueOf(context));
 
 // Measure both labels so switching methods cannot resize either surface.
 double _paymentRowHeight(BuildContext context, double labelWidth) {
@@ -104,12 +106,13 @@ class _AdPaymentCardState extends State<AdPaymentCard> {
           SizedBox(
               width: 44,
               height: 32,
-              child: Center(child: _paymentLogo(widget.value))),
+              child: Center(child: _paymentLogo(context, widget.value))),
           const SizedBox(width: 8),
           Expanded(
               child: ProxoText(
                   widget.value == 'fastpay' ? 'FastPay' : _walletLabel,
-                  style: ProxoSurface.body)),
+                  style: ProxoSurface.body
+                      .copyWith(color: AdFormColors.of(context)?.ink))),
         ];
         final changeButton = SizedBox(
             width: stacked
@@ -126,9 +129,9 @@ class _AdPaymentCardState extends State<AdPaymentCard> {
         return Material(
           key: const ValueKey('selected-payment-card'),
           color: Colors.white,
-          shape: const RoundedRectangleBorder(
+          shape: RoundedRectangleBorder(
               borderRadius: AdUi.controlRadius,
-              side: BorderSide(color: AdUi.controlLine)),
+              side: BorderSide(color: AdUi.controlLineOf(context))),
           clipBehavior: Clip.antiAlias,
           child: ConstrainedBox(
               constraints: BoxConstraints(minHeight: height),
@@ -184,9 +187,9 @@ class _AdPaymentSheetState extends State<_AdPaymentSheet> {
                 Material(
                     color: Colors.white,
                     clipBehavior: Clip.antiAlias,
-                    shape: const RoundedRectangleBorder(
+                    shape: RoundedRectangleBorder(
                         borderRadius: AdUi.controlRadius,
-                        side: BorderSide(color: AdUi.controlLine)),
+                        side: BorderSide(color: AdUi.controlLineOf(context))),
                     child: LayoutBuilder(builder: (context, constraints) {
                       final rowHeight = _paymentRowHeight(
                           context, constraints.maxWidth - 128);
@@ -197,23 +200,23 @@ class _AdPaymentSheetState extends State<_AdPaymentSheet> {
                             minimumHeight: rowHeight,
                             selectedOnlyCheck: true,
                             label: _walletLabel,
-                            leading: _paymentLogo('app_balance'),
+                            leading: _paymentLogo(context, 'app_balance'),
                             selected: _selected == 'app_balance',
                             onTap: () =>
                                 setState(() => _selected = 'app_balance')),
-                        const Divider(
+                        Divider(
                             height: 1,
                             thickness: 1,
                             indent: 12,
                             endIndent: 12,
-                            color: AdUi.controlLine),
+                            color: AdUi.controlLineOf(context)),
                         PaymentOption(
                             key: const ValueKey('payment-fastpay'),
                             grouped: true,
                             minimumHeight: rowHeight,
                             selectedOnlyCheck: true,
                             label: 'FastPay',
-                            leading: _paymentLogo('fastpay'),
+                            leading: _paymentLogo(context, 'fastpay'),
                             selected: _selected == 'fastpay',
                             onTap: widget.fastPayEnabled
                                 ? () => setState(() => _selected = 'fastpay')
@@ -223,7 +226,8 @@ class _AdPaymentSheetState extends State<_AdPaymentSheet> {
                 if (!widget.fastPayEnabled) ...[
                   const SizedBox(height: 8),
                   ProxoText('FastPay ئێستا بەردەست نییە',
-                      style: AdUi.text(context, color: AdUi.secondary)),
+                      style:
+                          AdUi.text(context, color: AdUi.secondaryOf(context))),
                 ],
                 const SizedBox(height: 20),
                 FilledButton(

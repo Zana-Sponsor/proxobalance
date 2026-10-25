@@ -187,7 +187,7 @@ class _TikTokAdPriceCardState extends State<TikTokAdPriceCard> {
               borderRadius: TikTokAdTokens.priceRadius,
               boxShadow: TikTokAdTokens.priceShadow),
           foregroundDecoration: const BoxDecoration(
-              border: Border(top: BorderSide(color: Color(0xFFF1F3F5)))),
+              border: Border(top: BorderSide(color: TikTokAdTokens.line))),
           child: Align(
             alignment: Alignment.bottomCenter,
             heightFactor: 1,

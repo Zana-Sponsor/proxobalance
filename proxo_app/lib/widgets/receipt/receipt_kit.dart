@@ -161,6 +161,7 @@ class ReceiptAppBar extends StatelessWidget {
 
   /// Optional screen-specific typography; receipt defaults remain unchanged.
   final TextStyle? titleStyle;
+  final Color? iconColor, dividerColor;
 
   const ReceiptAppBar({
     super.key,
@@ -170,6 +171,8 @@ class ReceiptAppBar extends StatelessWidget {
     this.backTooltip,
     this.action,
     this.titleStyle,
+    this.iconColor,
+    this.dividerColor,
   });
 
   @override
@@ -201,10 +204,11 @@ class ReceiptAppBar extends StatelessWidget {
     return Container(
       height: barHeight + top,
       padding: EdgeInsets.only(top: top),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: ReceiptTokens.bar,
         border: Border(
-          bottom: BorderSide(color: ReceiptTokens.barLine, width: 1),
+          bottom: BorderSide(
+              color: dividerColor ?? ReceiptTokens.barLine, width: 1),
         ),
       ),
       child: Stack(
@@ -242,7 +246,7 @@ class ReceiptAppBar extends StatelessWidget {
                       Directionality.of(context) == TextDirection.ltr
                           ? Icons.arrow_back_ios_rounded
                           : Icons.arrow_forward_ios_rounded,
-                      color: ReceiptTokens.ink,
+                      color: iconColor ?? ReceiptTokens.ink,
                     ),
                   ),
                 ),

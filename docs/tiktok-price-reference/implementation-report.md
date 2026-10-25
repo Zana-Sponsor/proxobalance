@@ -1,5 +1,7 @@
 # TikTok Final Price — supplied-image correction
 
+> The later [reference-color correction](../tiktok-reference-colors/implementation-report.md) supersedes color values in this report; the price geometry and behavior remain unchanged.
+
 The user supplied [1000095918.jpg](../evidence/tiktok-price-reference-2026-10-25/reference-user.jpg) and identified **السعر النهائي** as the required design. That image shows a flat white bottom bar spanning the phone content width, square edges, a right-aligned label, and a segmented loading indicator on the left. This follow-up applies those visible characteristics to Proxo's Kurdish price breakdown.
 
 It supersedes the earlier inset 10dp-radius / 72dp-height / 2dp-gap interpretation. The [earlier 69-point report](../tiktok-balanced-ui/implementation-report.md) remains the form specification, with price geometry replaced by this later image.

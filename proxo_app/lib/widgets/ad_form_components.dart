@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../services/ad_submission.dart';
 import '../theme/app_theme.dart';
+import '../theme/ad_form_colors.dart';
 import '../theme/proxo_surface.dart';
 import '../theme/tiktok_ad_tokens.dart';
 import 'proxo_text.dart';
@@ -31,15 +32,28 @@ abstract final class AdUi {
   static const dropdownDecoration = InputDecoration(
       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 4));
 
-  static TextStyle text(BuildContext context, {Color color = ink}) =>
-      ProxoSurface.body.copyWith(color: color);
-  static TextStyle heading(BuildContext context) => ProxoSurface.section;
+  static Color blueOf(BuildContext context) =>
+      AdFormColors.of(context)?.primary ?? blue;
+  static Color inkOf(BuildContext context) =>
+      AdFormColors.of(context)?.ink ?? ink;
+  static Color secondaryOf(BuildContext context) =>
+      AdFormColors.of(context)?.muted ?? secondary;
+  static Color controlLineOf(BuildContext context) =>
+      AdFormColors.of(context)?.line ?? controlLine;
+  static Color controlSurfaceOf(BuildContext context) =>
+      AdFormColors.of(context)?.surface ?? controlSurface;
+  static Color selectedLineOf(BuildContext context) =>
+      AdFormColors.of(context)?.selectedLine ?? selectedLine;
+  static TextStyle text(BuildContext context, {Color? color}) =>
+      ProxoSurface.body.copyWith(color: color ?? inkOf(context));
+  static TextStyle heading(BuildContext context) =>
+      ProxoSurface.section.copyWith(color: AdFormColors.of(context)?.ink);
 
   static ThemeData theme(BuildContext context) {
     final base = Theme.of(context);
     TextStyle? normal(TextStyle? s) => s?.copyWith(fontWeight: FontWeight.w400);
     final t = base.textTheme;
-    return base.copyWith(
+    final themed = base.copyWith(
       scaffoldBackgroundColor: Colors.white,
       colorScheme:
           base.colorScheme.copyWith(primary: blue, surface: Colors.white),
@@ -105,6 +119,9 @@ abstract final class AdUi {
         textStyle: ProxoSurface.body,
       )),
     );
+    return AdFormColors.of(context) == null
+        ? themed
+        : TikTokAdTokens.theme(themed);
   }
 }
 
@@ -189,7 +206,9 @@ class AdChoice extends StatelessWidget {
   Widget build(BuildContext context) {
     final primary = style == AdChoiceStyle.primary;
     final scoped = style != AdChoiceStyle.standard;
-    final blue = scoped ? TikTokAdTokens.blue : AdUi.blue;
+    final blue = scoped
+        ? (primary ? TikTokAdTokens.blue : TikTokAdTokens.secondaryBlue)
+        : AdUi.blueOf(context);
     final radius = scoped ? TikTokAdTokens.controlRadius : AdUi.controlRadius;
     final foreground = primary
         ? (selected ? Colors.white : TikTokAdTokens.muted)
@@ -228,9 +247,11 @@ class AdChoice extends StatelessWidget {
                 color: primary && selected
                     ? Colors.transparent
                     : selected
-                        ? (scoped ? blue : AdUi.selectedLine)
+                        ? (scoped
+                            ? TikTokAdTokens.selectedLine
+                            : AdUi.selectedLineOf(context))
                         : scoped
-                            ? const Color(0xFFCBD5E1)
+                            ? TikTokAdTokens.line
                             : AdUi.controlLine,
               ),
               boxShadow: scoped
@@ -255,7 +276,11 @@ class AdChoice extends StatelessWidget {
                   Flexible(
                     child: TweenAnimationBuilder<Color?>(
                       tween: ColorTween(
-                        end: onTap == null ? AdUi.secondary : foreground,
+                        end: onTap == null
+                            ? (scoped
+                                ? TikTokAdTokens.muted
+                                : AdUi.secondaryOf(context))
+                            : foreground,
                       ),
                       duration: MediaQuery.disableAnimationsOf(context)
                           ? Duration.zero
@@ -403,7 +428,9 @@ class AdValueRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) => LayoutBuilder(
         builder: (context, constraints) {
-          final style = AdUi.text(context, color: color)
+          final effectiveColor =
+              color == AdUi.ink ? AdUi.inkOf(context) : color;
+          final style = AdUi.text(context, color: effectiveColor)
               .copyWith(fontSize: emphasis ? 16 : 14);
           double minimumWidth(String text) {
             final painter = TextPainter(
@@ -419,7 +446,7 @@ class AdValueRow extends StatelessWidget {
 
           final valueText = ProxoText(
             value,
-            style: style.copyWith(color: valueColor ?? color),
+            style: style.copyWith(color: valueColor ?? effectiveColor),
             textAlign: TextAlign.left,
           );
           final labelText = ProxoText(
@@ -427,7 +454,7 @@ class AdValueRow extends StatelessWidget {
             translate: true,
             style: style.copyWith(
                 fontSize: emphasis ? 15 : 13,
-                color: color == AdUi.ink ? AdUi.secondary : color),
+                color: color == AdUi.ink ? AdUi.secondaryOf(context) : color),
             textAlign: TextAlign.right,
           );
           final cellWidth = (constraints.maxWidth - 16) / 2;

@@ -1,0 +1,209 @@
+{
+  "reference": "reference-user.jpg",
+  "sha256": "6c9e30a28b5c4b4abe83d9d404c8b00467aa8082dcbe42982fd0f9aa0bb66daf",
+  "size": [
+    921,
+    2048
+  ],
+  "method": "Median of interior/core pixels; JPEG and antialiasing vary at edges.",
+  "samples": [
+    {
+      "role": "primary",
+      "bounds_xyxy": [
+        590,
+        972,
+        810,
+        988
+      ],
+      "filter": "all",
+      "pixel_count": 3520,
+      "median_rgb": [
+        2.0,
+        120.0,
+        254.0
+      ],
+      "measured_hex": "#0278FE",
+      "implemented_hex": "#0278FE"
+    },
+    {
+      "role": "secondary_fill",
+      "bounds_xyxy": [
+        460,
+        1415,
+        805,
+        1436
+      ],
+      "filter": "all",
+      "pixel_count": 7245,
+      "median_rgb": [
+        238,
+        247,
+        255
+      ],
+      "measured_hex": "#EEF7FF",
+      "implemented_hex": "#EEF7FF"
+    },
+    {
+      "role": "secondary_border",
+      "bounds_xyxy": [
+        470,
+        1402,
+        790,
+        1403
+      ],
+      "filter": "all",
+      "pixel_count": 320,
+      "median_rgb": [
+        38.0,
+        99.0,
+        180.0
+      ],
+      "measured_hex": "#2663B4",
+      "implemented_hex": "#2663B4"
+    },
+    {
+      "role": "secondary_text",
+      "bounds_xyxy": [
+        565,
+        1440,
+        702,
+        1465
+      ],
+      "filter": "blue_core",
+      "pixel_count": 153,
+      "median_rgb": [
+        61,
+        126,
+        194
+      ],
+      "measured_hex": "#3D7EC2",
+      "implemented_hex": "#3D7EC2"
+    },
+    {
+      "role": "heading_ink",
+      "bounds_xyxy": [
+        318,
+        772,
+        623,
+        817
+      ],
+      "filter": "dark_core",
+      "pixel_count": 2026,
+      "median_rgb": [
+        18.0,
+        18.0,
+        21.0
+      ],
+      "measured_hex": "#121215",
+      "implemented_hex": "#121215"
+    },
+    {
+      "role": "inactive_text",
+      "bounds_xyxy": [
+        140,
+        991,
+        255,
+        1024
+      ],
+      "filter": "gray_core",
+      "pixel_count": 251,
+      "median_rgb": [
+        116,
+        117,
+        120
+      ],
+      "measured_hex": "#747578",
+      "implemented_hex": "#747578"
+    },
+    {
+      "role": "inactive_border",
+      "bounds_xyxy": [
+        113,
+        984,
+        116,
+        1031
+      ],
+      "filter": "all",
+      "pixel_count": 141,
+      "median_rgb": [
+        238,
+        238,
+        238
+      ],
+      "measured_hex": "#EEEEEE",
+      "implemented_hex": "#EEEEEE"
+    },
+    {
+      "role": "new_badge",
+      "bounds_xyxy": [
+        370,
+        1397,
+        405,
+        1405
+      ],
+      "filter": "all",
+      "pixel_count": 280,
+      "median_rgb": [
+        254.0,
+        111.0,
+        97.0
+      ],
+      "measured_hex": "#FE6F61",
+      "implemented_hex": "#FE6F61"
+    },
+    {
+      "role": "page_fill",
+      "bounds_xyxy": [
+        250,
+        1696,
+        650,
+        1714
+      ],
+      "filter": "all",
+      "pixel_count": 7200,
+      "median_rgb": [
+        246.0,
+        249.0,
+        254.0
+      ],
+      "measured_hex": "#F6F9FE",
+      "implemented_hex": "#F6F9FE"
+    },
+    {
+      "role": "page_border",
+      "bounds_xyxy": [
+        208,
+        1680,
+        725,
+        1681
+      ],
+      "filter": "all",
+      "pixel_count": 517,
+      "median_rgb": [
+        204,
+        217,
+        230
+      ],
+      "measured_hex": "#CCD9E6",
+      "implemented_hex": "#CCD9E6"
+    },
+    {
+      "role": "white_surface",
+      "bounds_xyxy": [
+        500,
+        590,
+        650,
+        700
+      ],
+      "filter": "all",
+      "pixel_count": 16500,
+      "median_rgb": [
+        255.0,
+        255.0,
+        255.0
+      ],
+      "measured_hex": "#FFFFFF",
+      "implemented_hex": "#FFFFFF"
+    }
+  ]
+}

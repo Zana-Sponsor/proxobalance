@@ -1,18 +1,34 @@
 import 'package:flutter/material.dart';
 
 import 'proxo_surface.dart';
+import 'ad_form_colors.dart';
 
 /// Visual tokens for the open TikTok creation form. Auth's bundled regular
 /// face is retained; receipt, Meta, and navigation defaults stay independent.
 abstract final class TikTokAdTokens {
   static const fontFamily = ProxoSurface.fontFamily;
-  static const ink = ProxoSurface.ink;
-  static const muted = ProxoSurface.muted;
-  static const blue = Color(0xFF2F70C7);
-  static const blueSoft = Color(0xFFEDF4FC);
-  static const line = Color(0xFFCBD5E1);
-  static const fieldLine = Color(0xFFE2E8F0);
-  static const fieldFill = Color(0xFFFCFDFF);
+  static const ink = Color(0xFF121215);
+  static const muted = Color(0xFF747578);
+  static const blue = Color(0xFF0278FE);
+  static const blueSoft = Color(0xFFEEF7FF);
+  static const line = Color(0xFFEEEEEE);
+  static const fieldLine = Color(0xFFEEEEEE);
+  static const fieldFill = Color(0xFFFFFFFF);
+  // Sampled from the supplied JPEG's app screen; see the palette evidence.
+  static const secondaryBlue = Color(0xFF3D7EC2);
+  static const selectedLine = Color(0xFF2663B4);
+  static const pageFill = Color(0xFFF6F9FE);
+  static const pageLine = Color(0xFFCCD9E6);
+  static const newBadge = Color(0xFFFE6F61);
+  static const colors = AdFormColors(
+    primary: blue,
+    ink: ink,
+    muted: muted,
+    line: line,
+    surface: pageFill,
+    selectedFill: blueSoft,
+    selectedLine: selectedLine,
+  );
   static const gutter = 20.0;
   static const headingGap = 16.0;
   static const sectionGap = 32.0;
@@ -28,13 +44,13 @@ abstract final class TikTokAdTokens {
   static const transition = Duration(milliseconds: 180);
   static const priceTransition = Duration(milliseconds: 200);
   static const controlShadow = [
-    BoxShadow(color: Color(0x080F172A), blurRadius: 5, offset: Offset(0, 2)),
+    BoxShadow(color: Color(0x08000000), blurRadius: 5, offset: Offset(0, 2)),
   ];
   static const selectedShadow = [
-    BoxShadow(color: Color(0x102F70C7), blurRadius: 6, offset: Offset(0, 2)),
+    BoxShadow(color: Color(0x100278FE), blurRadius: 6, offset: Offset(0, 2)),
   ];
   static const priceShadow = [
-    BoxShadow(color: Color(0x0A0F172A), blurRadius: 10, offset: Offset(0, -2)),
+    BoxShadow(color: Color(0x0A000000), blurRadius: 10, offset: Offset(0, -2)),
   ];
 
   static const appBar = TextStyle(
@@ -99,8 +115,34 @@ abstract final class TikTokAdTokens {
       color: blue);
 
   static ThemeData theme(ThemeData base) => base.copyWith(
-        colorScheme: base.colorScheme.copyWith(primary: blue),
+        extensions: [
+          ...base.extensions.values.where((e) => e is! AdFormColors),
+          colors
+        ],
+        colorScheme: base.colorScheme.copyWith(
+          primary: blue,
+          onPrimary: Colors.white,
+          primaryContainer: blueSoft,
+          onPrimaryContainer: secondaryBlue,
+          secondary: secondaryBlue,
+          onSecondary: Colors.white,
+          surface: Colors.white,
+          onSurface: ink,
+          onSurfaceVariant: muted,
+          outline: line,
+          outlineVariant: line,
+        ),
+        textTheme: base.textTheme.apply(bodyColor: ink, displayColor: ink),
+        iconTheme: base.iconTheme.copyWith(color: ink),
+        dividerColor: line,
+        disabledColor: muted,
+        textSelectionTheme: const TextSelectionThemeData(
+          cursorColor: blue,
+          selectionColor: Color(0x330278FE),
+          selectionHandleColor: blue,
+        ),
         inputDecorationTheme: base.inputDecorationTheme.copyWith(
+          fillColor: fieldFill,
           constraints: const BoxConstraints(minHeight: inputHeight),
           isDense: true,
           contentPadding:
@@ -117,7 +159,7 @@ abstract final class TikTokAdTokens {
             activeTrackColor: blue,
             thumbColor: blue,
             inactiveTrackColor: blueSoft,
-            overlayColor: const Color(0x142F70C7)),
+            overlayColor: const Color(0x140278FE)),
         filledButtonTheme: FilledButtonThemeData(
             style: FilledButton.styleFrom(
           backgroundColor: blue,

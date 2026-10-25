@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -22,7 +23,7 @@ import 'proxolink_page_management_test.dart' show page;
 import 'tiktok_dm_form_test.dart' show accountsFixture;
 import 'tiktok_strict_v3_form_test.dart' show StrictRepository, reveal, view;
 
-const evidence = '../docs/evidence/tiktok-price-reference-2026-10-25';
+const evidence = '../docs/evidence/tiktok-reference-colors-2026-10-25';
 final measurements = <String, Object?>{};
 Finder key(String value) => find.byKey(ValueKey(value));
 Finder section(String title) => key('ad-section-$title');
@@ -36,6 +37,37 @@ Finder heading(String title) => find
 Future<void> shot(WidgetTester tester, String name) async {
   expect(tester.takeException(), isNull, reason: name);
   await capturePng(tester, '$evidence/$name.png');
+}
+
+// Verify actual rendered pixels against sampled reference colors, including
+// modal theme capture. Geometry and state assertions remain independent.
+Future<void> paintedColor(WidgetTester tester, String capture, String role,
+    Offset logicalPoint, int expectedArgb) async {
+  final actualArgb = await tester.runAsync(() async {
+    final codec = await ui.instantiateImageCodec(
+        await File('$evidence/$capture.png').readAsBytes());
+    final frame = await codec.getNextFrame();
+    final bytes = (await frame.image.toByteData())!;
+    final x = (logicalPoint.dx * 2).floor();
+    final y = (logicalPoint.dy * 2).floor();
+    final offset = (y * frame.image.width + x) * 4;
+    final argb = (bytes.getUint8(offset + 3) << 24) |
+        (bytes.getUint8(offset) << 16) |
+        (bytes.getUint8(offset + 1) << 8) |
+        bytes.getUint8(offset + 2);
+    (measurements.putIfAbsent('painted_colors', () => <Object?>[]) as List)
+        .add({
+      'capture': capture,
+      'role': role,
+      'x_px': x,
+      'y_px': y,
+      'argb': argb.toRadixString(16).toUpperCase()
+    });
+    frame.image.dispose();
+    codec.dispose();
+    return argb;
+  });
+  expect(actualArgb, expectedArgb, reason: '$role rendered pixel in $capture');
 }
 
 Map<String, double> rect(Rect value) => {
@@ -82,6 +114,9 @@ void main() {
         AdCreateScreen(repository: repo, tiktokRepository: accountsFixture())));
     await tester.pumpAndSettle();
     await shot(tester, '01-top-create-ad');
+    final plusRect = tester.getRect(key('bottom-nav-2'));
+    await paintedColor(tester, '01-top-create-ad', 'navigation create button',
+        plusRect.center + const Offset(18, -12), 0xFF0278FE);
 
     final gaps = <String, double>{};
     void gap(String name, Finder before, Finder after, double expected) {
@@ -213,6 +248,9 @@ void main() {
     await tapVisible(tester, key('goal-views'));
     await reveal(tester, 'ad-section-جۆری ڕیکلام', alignment: 0);
     await shot(tester, '02-ad-types');
+    final primaryRect = tester.getRect(key('goal-views'));
+    await paintedColor(tester, '02-ad-types', 'primary fill',
+        Offset(primaryRect.center.dx, primaryRect.top + 6), 0xFF0278FE);
     await reveal(tester, 'ad-field-title', alignment: .1);
     await shot(tester, '03-ad-name');
     await reveal(tester, 'ad-media', alignment: .05);
@@ -228,6 +266,16 @@ void main() {
     gap('page → media', section('پەڕەی پەیوەندی'), key('ad-media'), 32);
     await reveal(tester, 'ad-section-شوێنی پەیوەندیکردن', alignment: .05);
     await shot(tester, '05-contact-destination');
+    final destinationRect =
+        tester.getRect(key('contact-destination-external_contact'));
+    await paintedColor(tester, '05-contact-destination', 'secondary fill',
+        Offset(destinationRect.center.dx, destinationRect.top + 8), 0xFFEEF7FF);
+    final pageRect = tester.getRect(key('contact-page-disclosure'));
+    await paintedColor(tester, '05-contact-destination', 'contact page fill',
+        Offset(pageRect.center.dx, pageRect.top + 8), 0xFFF6F9FE);
+    final badgeRect = tester.getRect(key('tiktok-new-badge'));
+    await paintedColor(tester, '05-contact-destination', 'new badge',
+        badgeRect.topLeft + const Offset(12, 3), 0xFFFE6F61);
     await reveal(tester, 'ad-section-پەڕەی پەیوەندی', alignment: .05);
     await shot(tester, '06-contact-page-collapsed');
     await tapVisible(tester, key('contact-page-disclosure'));
@@ -257,6 +305,31 @@ void main() {
     await shot(tester, '11-schedule');
     await reveal(tester, 'ad-section-شێوازەکانی پارەدان', alignment: .05);
     await shot(tester, '12-payment');
+    await tapVisible(tester, key('change-payment'));
+    await tester.runAsync(() => precacheImage(
+        const AssetImage('assets/logos/providers/fastpay.png'),
+        tester.element(key('payment-method-sheet'))));
+    await tester.pumpAndSettle();
+    await shot(tester, '34-payment-sheet-wallet');
+    final walletRect = tester.getRect(key('payment-app_balance'));
+    await paintedColor(tester, '34-payment-sheet-wallet', 'modal selected fill',
+        Offset(walletRect.center.dx, walletRect.top + 8), 0xFFEEF7FF);
+    final confirmRect = tester.getRect(key('confirm-payment'));
+    await paintedColor(tester, '34-payment-sheet-wallet', 'modal confirm fill',
+        Offset(confirmRect.center.dx, confirmRect.top + 8), 0xFF0278FE);
+    await tapVisible(tester, key('payment-fastpay'));
+    await tester.pumpAndSettle();
+    await shot(tester, '35-payment-sheet-fastpay');
+    final fastPayRect = tester.getRect(key('payment-fastpay'));
+    await paintedColor(
+        tester,
+        '35-payment-sheet-fastpay',
+        'modal FastPay selected fill',
+        Offset(fastPayRect.center.dx, fastPayRect.top + 8),
+        0xFFEEF7FF);
+    // Closing without confirming must retain the original payment method.
+    Navigator.of(tester.element(key('payment-method-sheet'))).pop();
+    await tester.pumpAndSettle();
     await reveal(tester, 'review-ad', alignment: .4);
     expect(tester.getRect(key('review-ad')).bottom, lessThan(collapsed.top));
     await shot(tester, '13-separate-sponsor');
@@ -355,6 +428,18 @@ void main() {
             'A missing authoritative DM quote must not expose cached amounts');
     expect(tester.widget<ProxoText>(key('sticky-price-total')).data, '—');
     expect(repo.submissions, 0);
+    await tester.tap(key('sticky-price-disclosure'));
+    await tester.pumpAndSettle();
+    await tapVisible(tester, key('tiktok-account-fixture-account'));
+    await reveal(tester, 'tiktok-account-fixture-account', alignment: .05);
+    await shot(tester, '36-direct-account-selected');
+    await tapVisible(tester, key('tiktok-video-fixture-public'));
+    await reveal(tester, 'tiktok-video-fixture-public', alignment: .05);
+    await shot(tester, '37-direct-video-selected');
+    await tapVisible(tester, find.text('بینینی هەموو'));
+    await shot(tester, '38-direct-video-sheet');
+    Navigator.of(tester.element(find.byType(GridView))).pop();
+    await tester.pumpAndSettle();
     assertTextFits(tester);
   });
 

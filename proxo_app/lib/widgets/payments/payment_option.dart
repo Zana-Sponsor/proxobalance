@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../theme/app_theme.dart';
+import '../../theme/ad_form_colors.dart';
 import '../../theme/proxo_surface.dart';
 import '../proxo_symbol.dart';
 import '../proxo_text.dart';
@@ -37,14 +38,19 @@ class PaymentOption extends StatelessWidget {
         selected: selected,
         enabled: onTap != null,
         child: Material(
-          color: selected ? AppColors.accentSoft : Colors.white,
+          color: selected
+              ? (AdFormColors.of(context)?.selectedFill ?? AppColors.accentSoft)
+              : Colors.white,
           shape: grouped
               ? null
               : RoundedRectangleBorder(
                   borderRadius:
                       BorderRadius.circular(ProxoSurface.controlRadius),
                   side: BorderSide(
-                    color: selected ? AppColors.accent : ProxoSurface.line,
+                    color: selected
+                        ? (AdFormColors.of(context)?.primary ??
+                            AppColors.accent)
+                        : (AdFormColors.of(context)?.line ?? ProxoSurface.line),
                     width: selected ? 1.5 : 1,
                   ),
                 ),
@@ -66,11 +72,15 @@ class PaymentOption extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ProxoText(label,
-                            translate: true, style: ProxoSurface.body),
+                            translate: true,
+                            style: ProxoSurface.body.copyWith(
+                                color: AdFormColors.of(context)?.ink)),
                         if (subtitle != null) ...[
                           const SizedBox(height: 4),
                           ProxoText(subtitle!,
-                              translate: true, style: ProxoSurface.secondary),
+                              translate: true,
+                              style: ProxoSurface.secondary.copyWith(
+                                  color: AdFormColors.of(context)?.muted)),
                         ],
                       ],
                     ),
@@ -80,8 +90,10 @@ class PaymentOption extends StatelessWidget {
                     dimension: 24,
                     child: Center(
                       child: selected
-                          ? const ProxoSymbol(ProxoSymbolName.check,
-                              size: 22, color: AppColors.accent)
+                          ? ProxoSymbol(ProxoSymbolName.check,
+                              size: 22,
+                              color: AdFormColors.of(context)?.primary ??
+                                  AppColors.accent)
                           : selectedOnlyCheck
                               ? const SizedBox.shrink()
                               : Container(
@@ -90,7 +102,9 @@ class PaymentOption extends StatelessWidget {
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     border: Border.all(
-                                        color: ProxoSurface.line, width: 1.5),
+                                        color: AdFormColors.of(context)?.line ??
+                                            ProxoSurface.line,
+                                        width: 1.5),
                                   ),
                                 ),
                     ),

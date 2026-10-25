@@ -180,7 +180,7 @@ class _AdTimeDialogState extends State<_AdTimeDialog>
                                   child: Text(_number(hour),
                                       style: AdUi.text(context,
                                           color: _hourAvailable(hour)
-                                              ? AdUi.ink
+                                              ? AdUi.inkOf(context)
                                               : Theme.of(context)
                                                   .disabledColor)))
                           ],
@@ -206,7 +206,7 @@ class _AdTimeDialogState extends State<_AdTimeDialog>
                                   child: Text(_number(minute),
                                       style: AdUi.text(context,
                                           color: _available(_hour, minute)
-                                              ? AdUi.ink
+                                              ? AdUi.inkOf(context)
                                               : Theme.of(context)
                                                   .disabledColor)))
                           ],

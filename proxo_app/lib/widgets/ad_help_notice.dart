@@ -86,8 +86,11 @@ class _AdHelpNoticeState extends State<AdHelpNotice>
                 widget.balanced ? TikTokAdTokens.sectionGap : AdUi.sectionGap),
         child: Container(
             padding: const EdgeInsets.all(14),
-            decoration: const BoxDecoration(
-                color: AdUi.controlSurface, borderRadius: AdUi.controlRadius),
+            decoration: BoxDecoration(
+                color: widget.balanced
+                    ? TikTokAdTokens.pageFill
+                    : AdUi.controlSurface,
+                borderRadius: AdUi.controlRadius),
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [

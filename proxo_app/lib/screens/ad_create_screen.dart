@@ -59,6 +59,10 @@ class AdCreateScreen extends StatefulWidget {
 class _AdCreateScreenState extends State<AdCreateScreen>
     with WidgetsBindingObserver {
   bool get _isMeta => widget.platform == 'META';
+  Color get _ink => _isMeta ? AdUi.ink : TikTokAdTokens.ink;
+  Color get _muted => _isMeta ? AdUi.secondary : TikTokAdTokens.muted;
+  Color get _line => _isMeta ? AdUi.controlLine : TikTokAdTokens.line;
+  Color get _surface => _isMeta ? AdUi.controlSurface : TikTokAdTokens.pageFill;
   double get _sectionGap =>
       _isMeta ? AdUi.sectionGap : TikTokAdTokens.sectionGap;
   bool _metaAllowed = false, _accessLoading = true;
@@ -811,6 +815,9 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                   ? null
                   : ProxoBottomNav(
                       currentIndex: 2,
+                      accentColor: TikTokAdTokens.blue,
+                      mutedColor: TikTokAdTokens.muted,
+                      dividerColor: TikTokAdTokens.line,
                       onTap: (index) {
                         if (index == 2) return;
                         if (Navigator.of(context).canPop()) {
@@ -895,7 +902,8 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                                                 ProxoText(
                                                   'داواکارییە پێشووەکە بار نەبوو؛ پێش داواکارییەکی نوێ دووبارە هەوڵ بدەرەوە.',
                                                   translate: true,
-                                                  style: AdUi.text(context),
+                                                  style: AdUi.text(context,
+                                                      color: _ink),
                                                 ),
                                                 TextButton(
                                                   onPressed: _pendingLoading
@@ -919,7 +927,8 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                                                 ProxoText(
                                                   'دەتوانیت زانیارییەکان دەستکاری بکەیت. پێش ناردنێکی نوێ، ئەنجامی داواکاریی پێشوو بپشکنە.',
                                                   translate: true,
-                                                  style: AdUi.text(context),
+                                                  style: AdUi.text(context,
+                                                      color: _ink),
                                                 ),
                                                 const SizedBox(height: 12),
                                                 FilledButton(
@@ -1087,6 +1096,8 @@ class _AdCreateScreenState extends State<AdCreateScreen>
         translateTitle: true,
         title: 'دروستکردنی ڕیکلام',
         titleStyle: _isMeta ? null : TikTokAdTokens.appBar,
+        iconColor: _isMeta ? null : TikTokAdTokens.ink,
+        dividerColor: _isMeta ? null : TikTokAdTokens.line,
         onBack: () => Navigator.of(context).maybePop(),
       );
     }
@@ -1105,13 +1116,13 @@ class _AdCreateScreenState extends State<AdCreateScreen>
       padding: EdgeInsets.only(top: media.padding.top, left: 8, right: 8),
       decoration: const BoxDecoration(
           color: ReceiptTokens.bar,
-          border: Border(bottom: BorderSide(color: ReceiptTokens.barLine))),
+          border: Border(bottom: BorderSide(color: TikTokAdTokens.line))),
       child: Row(children: [
         IconButton(
             onPressed: () => Navigator.of(context).maybePop(),
             tooltip: ProxoStrings.text('گەڕانەوە'),
             icon: const Icon(Icons.arrow_forward_ios_rounded,
-                color: ReceiptTokens.ink)),
+                color: TikTokAdTokens.ink)),
         Expanded(
             child: ProxoText(title,
                 textAlign: TextAlign.center,
@@ -1145,7 +1156,7 @@ class _AdCreateScreenState extends State<AdCreateScreen>
           label,
           translate: true,
           style: _isMeta
-              ? AdUi.text(context)
+              ? AdUi.text(context, color: _ink)
               : input
                   ? TikTokAdTokens.label
                   : TikTokAdTokens.heading,
@@ -1180,7 +1191,9 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                     textAlign: TextAlign.start,
                     keyboardType: keyboard,
                     maxLines: maxLines,
-                    style: _isMeta ? AdUi.text(context) : TikTokAdTokens.field,
+                    style: _isMeta
+                        ? AdUi.text(context, color: _ink)
+                        : TikTokAdTokens.field,
                     autocorrect: !ltr,
                     textInputAction: maxLines == 1
                         ? TextInputAction.next
@@ -1228,8 +1241,7 @@ class _AdCreateScreenState extends State<AdCreateScreen>
               tilePadding: EdgeInsets.zero,
               childrenPadding: EdgeInsets.zero,
               title: ProxoText('تێبینی (ئارەزوومەندانە)',
-                  translate: true,
-                  style: AdUi.text(context, color: AdUi.secondary)),
+                  translate: true, style: AdUi.text(context, color: _muted)),
               children: [
                 _field(context, 'note', _note, 'تێبینی', maxLines: 3)
               ]),
@@ -1254,7 +1266,7 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                 final painter = TextPainter(
                   text: TextSpan(
                       text: ProxoStrings.text(option.$2),
-                      style: AdUi.text(context)),
+                      style: AdUi.text(context, color: _ink)),
                   textDirection: TextDirection.rtl,
                   textScaler: MediaQuery.textScalerOf(context),
                 )..layout();
@@ -1360,12 +1372,13 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                           top: -7,
                           left: 8,
                           child: Container(
+                            key: const ValueKey('tiktok-new-badge'),
                             padding: const EdgeInsets.symmetric(
                               horizontal: 6,
                               vertical: 1,
                             ),
                             decoration: BoxDecoration(
-                              color: AdUi.blue,
+                              color: TikTokAdTokens.newBadge,
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: ProxoText(
@@ -1539,14 +1552,12 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                             if (!_selection.placements.contains('facebook'))
                               ProxoText(
                                 'بۆ مەسنجەر، فەیسبووک چالاک بکە',
-                                style:
-                                    AdUi.text(context, color: AdUi.secondary),
+                                style: AdUi.text(context, color: _muted),
                               ),
                             if (!_selection.placements.contains('instagram'))
                               ProxoText(
                                 'بۆ نامەی ئینستاگرام، ئینستاگرام چالاک بکە',
-                                style:
-                                    AdUi.text(context, color: AdUi.secondary),
+                                style: AdUi.text(context, color: _muted),
                               ),
                           ],
                         ),
@@ -1659,7 +1670,7 @@ class _AdCreateScreenState extends State<AdCreateScreen>
     final uri = url == null ? null : Uri.tryParse(url);
     final fallback = Container(
       alignment: Alignment.center,
-      color: AdUi.controlSurface,
+      color: _surface,
       child: Padding(
         padding: const EdgeInsets.all(5),
         child: Image.asset(
@@ -1706,12 +1717,12 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                   padding:
                       const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   decoration: BoxDecoration(
-                    color: active ? TikTokAdTokens.blueSoft : Colors.white,
+                    color: TikTokAdTokens.pageFill,
                     borderRadius: TikTokAdTokens.controlRadius,
                     border: Border.all(
                       color: active
-                          ? TikTokAdTokens.blue
-                          : const Color(0xFFCBD5E1),
+                          ? TikTokAdTokens.selectedLine
+                          : TikTokAdTokens.pageLine,
                     ),
                     boxShadow: active
                         ? TikTokAdTokens.selectedShadow
@@ -1733,9 +1744,7 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                                   : TikTokAdTokens.transition,
                               curve: Curves.easeOutCubic,
                               style: TikTokAdTokens.choice.copyWith(
-                                  color: active
-                                      ? TikTokAdTokens.blue
-                                      : TikTokAdTokens.ink),
+                                  color: TikTokAdTokens.secondaryBlue),
                               child: ProxoText(selected == null
                                   ? 'پەڕە هەڵبژێرە'
                                   : '${selected['name'] ?? ''}'),
@@ -1746,7 +1755,7 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                                 _pageStatus(selected),
                                 style: AdUi.text(
                                   context,
-                                  color: AdUi.secondary,
+                                  color: _muted,
                                 ).copyWith(fontSize: 12),
                               ),
                             ],
@@ -1757,9 +1766,9 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                         turns: _pagesExpanded ? .5 : 0,
                         duration: const Duration(milliseconds: 180),
                         curve: Curves.easeOutCubic,
-                        child: Icon(
+                        child: const Icon(
                           Icons.expand_more,
-                          color: active ? TikTokAdTokens.blue : AdUi.ink,
+                          color: TikTokAdTokens.secondaryBlue,
                         ),
                       ),
                     ],
@@ -1795,7 +1804,7 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                               'پەڕەی پەیوەندیت نییە؛ پەڕەیەکی نوێ دروست بکە.',
                               key: const ValueKey('no-contact-page'),
                               translate: true,
-                              style: AdUi.text(context, color: AdUi.secondary),
+                              style: AdUi.text(context, color: _muted),
                             )
                           else
                             for (final page in _assets)
@@ -1825,8 +1834,9 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                                           children: [
                                             ProxoText(
                                               '${page['name'] ?? ''}',
-                                              style:
-                                                  AdUi.text(context).copyWith(
+                                              style: AdUi.text(context,
+                                                      color: _ink)
+                                                  .copyWith(
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),
@@ -1835,7 +1845,7 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                                               _pageStatus(page),
                                               style: AdUi.text(
                                                 context,
-                                                color: AdUi.secondary,
+                                                color: _muted,
                                               ).copyWith(fontSize: 12),
                                             ),
                                           ],
@@ -1848,7 +1858,7 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                                             : Icons.radio_button_unchecked,
                                         color: '${page['id']}' == _assetId
                                             ? TikTokAdTokens.blue
-                                            : AdUi.secondary,
+                                            : _muted,
                                         size: 21,
                                       ),
                                     ],
@@ -1991,7 +2001,7 @@ class _AdCreateScreenState extends State<AdCreateScreen>
         AdValueRow(
             label: _budgetIqd(_budgetOptions.last),
             value: _budgetIqd(_budgetOptions.first),
-            color: AdUi.secondary),
+            color: _muted),
         const SizedBox(height: 24),
         AdValueRow(
             label: 'ماوەی ڕیکلام',
@@ -2012,8 +2022,8 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                   setState(() => _days = v.round());
                   _refreshQuote();
                 })),
-        const AdValueRow(label: '7 ڕۆژ', value: '1 ڕۆژ', color: AdUi.secondary),
-        const Divider(height: 32, color: AdUi.controlLine),
+        AdValueRow(label: '7 ڕۆژ', value: '1 ڕۆژ', color: _muted),
+        Divider(height: 32, color: _line),
         AdValueRow(
             label: 'کۆی بودجە',
             value: _budgetIqd(_daily * _days),
@@ -2137,7 +2147,7 @@ class _AdCreateScreenState extends State<AdCreateScreen>
         title: 'پێشبینی ئەنجام',
         child: ProxoText(
           'پێشبینی بەردەست نییە',
-          style: AdUi.text(context, color: AdUi.secondary),
+          style: AdUi.text(context, color: _muted),
         ),
       );
     }
@@ -2164,14 +2174,14 @@ class _AdCreateScreenState extends State<AdCreateScreen>
             ProxoText(
               'سەرەتا جۆری ڕیکلام هەڵبژێرە.',
               translate: true,
-              style: AdUi.text(context, color: AdUi.secondary),
+              style: AdUi.text(context, color: _muted),
             )
           else ...[
             Container(
               key: const ValueKey('forecast-results'),
               padding: const EdgeInsets.all(14),
-              decoration: const BoxDecoration(
-                color: AdUi.controlSurface,
+              decoration: BoxDecoration(
+                color: _surface,
                 borderRadius: AdUi.controlRadius,
               ),
               child: Column(
@@ -2181,7 +2191,7 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                     value: range(f.viewsLow, f.viewsHigh),
                   ),
                   if (_goal == 'messages') ...[
-                    const Divider(height: 28, color: AdUi.controlLine),
+                    Divider(height: 28, color: _line),
                     AdValueRow(
                       label: 'پێشبینی کرتەکان',
                       value: range(f.clicksLow!, f.clicksHigh!),
@@ -2195,7 +2205,7 @@ class _AdCreateScreenState extends State<AdCreateScreen>
               ProxoText(
                 'کرتەی پەڕەی پەیوەندی؛ بە گریمانەی کاتی.',
                 translate: true,
-                style: AdUi.text(context, color: AdUi.secondary),
+                style: AdUi.text(context, color: _muted),
               ),
             ],
             if (f.provisionalViews) ...[
@@ -2203,7 +2213,7 @@ class _AdCreateScreenState extends State<AdCreateScreen>
               ProxoText(
                 'پێشبینی بینین بە گریمانەی کاتی.',
                 translate: true,
-                style: AdUi.text(context, color: AdUi.secondary),
+                style: AdUi.text(context, color: _muted),
               ),
             ],
           ],
@@ -2211,7 +2221,7 @@ class _AdCreateScreenState extends State<AdCreateScreen>
           ProxoText(
             adForecastDisclaimer,
             translate: true,
-            style: AdUi.text(context, color: AdUi.secondary),
+            style: AdUi.text(context, color: _muted),
           ),
         ],
       ),
@@ -2226,13 +2236,13 @@ class _AdCreateScreenState extends State<AdCreateScreen>
           const SizedBox(height: 16),
           Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              decoration: const BoxDecoration(
-                  color: AdUi.controlSurface, borderRadius: AdUi.controlRadius),
+              decoration: BoxDecoration(
+                  color: _surface, borderRadius: AdUi.controlRadius),
               child: AdValueRow(
                   label: 'باڵانسی بەردەست',
                   value: adIqd(_quote!.balanceUsd * _quote!.rate),
-                  color: AdUi.secondary,
-                  valueColor: AdUi.ink)),
+                  color: _muted,
+                  valueColor: _ink)),
           if (_payment == 'app_balance' &&
               _quote!.balanceUsd + 0.000001 < _quote!.costUsd) ...[
             const SizedBox(height: 10),
@@ -2288,7 +2298,7 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                 minimumSize: Size.fromHeight(
                     _isMeta ? 48 : TikTokAdTokens.controlHeight),
                 elevation: _isMeta ? null : 1,
-                shadowColor: _isMeta ? null : const Color(0x182F70C7),
+                shadowColor: _isMeta ? null : const Color(0x180278FE),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 shape: RoundedRectangleBorder(

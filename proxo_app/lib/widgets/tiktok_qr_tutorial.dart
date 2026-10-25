@@ -38,23 +38,25 @@ class _TikTokQrTutorialState extends State<TikTokQrTutorial>
             height: 84,
             child: AnimatedBuilder(
                 animation: _animation,
-                builder: (_, __) =>
-                    CustomPaint(painter: _ScanPainter(_animation.value)))),
+                builder: (_, __) => CustomPaint(
+                    painter: _ScanPainter(_animation.value,
+                        AdUi.selectedLineOf(context), AdUi.blueOf(context))))),
         const SizedBox(width: 12),
         Expanded(
             child: ProxoText(
                 'تیک تۆک بکەرەوە، QR سکەن بکە، ڕەزامەندی بدە و بگەڕێوە بۆ پڕۆکسۆ.',
-                style: AdUi.text(context, color: AdUi.secondary))),
+                style: AdUi.text(context, color: AdUi.secondaryOf(context)))),
       ]);
 }
 
 class _ScanPainter extends CustomPainter {
   final double progress;
-  const _ScanPainter(this.progress);
+  final Color lineColor, scanColor;
+  const _ScanPainter(this.progress, this.lineColor, this.scanColor);
   @override
   void paint(Canvas canvas, Size size) {
     final outline = Paint()
-      ..color = AdUi.selectedLine
+      ..color = lineColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
     canvas.drawRRect(
@@ -63,7 +65,7 @@ class _ScanPainter extends CustomPainter {
             const Radius.circular(9)),
         outline);
     final ink = Paint()
-      ..color = AdUi.blue
+      ..color = scanColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
     final box = Rect.fromLTWH(18, 26, size.width - 36, 28);
@@ -76,5 +78,7 @@ class _ScanPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_ScanPainter oldDelegate) =>
-      oldDelegate.progress != progress;
+      oldDelegate.progress != progress ||
+      oldDelegate.lineColor != lineColor ||
+      oldDelegate.scanColor != scanColor;
 }

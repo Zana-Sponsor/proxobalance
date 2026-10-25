@@ -17,7 +17,11 @@ class ProxoBottomNav extends StatefulWidget {
       required this.currentIndex,
       required this.onTap,
       this.metaEnabled = false,
+      this.accentColor,
+      this.mutedColor,
+      this.dividerColor,
       this.onCreatePlatform});
+  final Color? accentColor, mutedColor, dividerColor;
   final int currentIndex;
   final ValueChanged<int> onTap;
   final bool metaEnabled;
@@ -214,8 +218,10 @@ class _ProxoBottomNavState extends State<ProxoBottomNav> {
         child: SafeArea(
           top: false,
           child: Container(
-            decoration: const BoxDecoration(
-                border: Border(top: BorderSide(color: ProxoChrome.border))),
+            decoration: BoxDecoration(
+                border: Border(
+                    top: BorderSide(
+                        color: widget.dividerColor ?? ProxoChrome.border))),
             child: LayoutBuilder(builder: (context, constraints) {
               final width = math.min(constraints.maxWidth, 640.0);
               final slot = math.max(width / 5, math.max(56.0, labelWidth + 16));
@@ -231,8 +237,9 @@ class _ProxoBottomNavState extends State<ProxoBottomNav> {
                         child: Row(
                             children: List.generate(5, (i) {
                           final active = i != 2 && widget.currentIndex == i;
-                          final color =
-                              active ? AppColors.accent : AppColors.inkMuted;
+                          final color = active
+                              ? (widget.accentColor ?? AppColors.accent)
+                              : (widget.mutedColor ?? AppColors.inkMuted);
                           final item = Semantics(
                             key: _keys[i],
                             button: true,
@@ -256,16 +263,15 @@ class _ProxoBottomNavState extends State<ProxoBottomNav> {
                                                 width: 56,
                                                 height: 56,
                                                 decoration: BoxDecoration(
-                                                    color: AppColors.accent,
+                                                    color: widget.accentColor ??
+                                                        AppColors.accent,
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             18)),
                                                 alignment: Alignment.center,
                                                 child: AnimatedRotation(
                                                     turns: _expanded ? .125 : 0,
-                                                    duration: MediaQuery
-                                                            .disableAnimationsOf(
-                                                                context)
+                                                    duration: MediaQuery.disableAnimationsOf(context)
                                                         ? Duration.zero
                                                         : const Duration(
                                                             milliseconds: 180),
