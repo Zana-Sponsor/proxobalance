@@ -1,5 +1,7 @@
 # TikTok Create Ad — balanced UI correction
 
+> Price geometry in this revision is historical. The subsequently supplied image is implemented in the [full-width final-price follow-up](../tiktok-price-reference/implementation-report.md). Form typography, section spacing and the rest of the 69-point correction remain applicable.
+
 This revision implements the newly supplied **69-point visual correction**, replacing the rejected strict-v3 appearance. The supplied prompt is preserved verbatim in [specification.md](specification.md) (SHA-256 `b00095a9ff00326fbe517946518f0cc191de2e86542fb487f8931c92f05e0e18`). Both new attachments contained identical text.
 
 Source baseline: `57af051fcf85ab911d96c729be5cdbbeceaa0038`. This is a visual correction to TikTok creation. Provider, backend, quote calculation, payment submission, persistence, recovery, owner/type filtering and production flags retain their existing authority. Meta defaults and the receipt reference are regression checked.

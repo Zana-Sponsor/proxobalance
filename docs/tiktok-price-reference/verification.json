@@ -1,0 +1,74 @@
+{
+  "source_baseline": "9d4d760736c4109133933d76d894949621459859",
+  "reference_file": "../evidence/tiktok-price-reference-2026-10-25/reference-user.jpg",
+  "reference_sha256": "6c9e30a28b5c4b4abe83d9d404c8b00467aa8082dcbe42982fd0f9aa0bb66daf",
+  "runtime": {
+    "flutter": "3.47.8",
+    "dart": "3.13.7",
+    "render_pixel_ratio": 2
+  },
+  "focused_tests": {
+    "passed": 48,
+    "failed": 0,
+    "command": "flutter test --no-pub --concurrency=2 --reporter expanded test/tiktok_balanced_ui_test.dart test/tiktok_strict_v3_form_test.dart test/responsive_ad_ui_test.dart test/receipt_reference_match_test.dart",
+    "log_file": "reference-price-tests.log",
+    "log_sha256": "d36de5f2290d7c2d426a1a975ec10de7be021193a39990665829cb36b752e7a6"
+  },
+  "analysis": {
+    "errors": 0,
+    "warnings": 0,
+    "infos": 1,
+    "info": "Existing prefer_interpolation_to_compose_strings at ad_create_screen.dart:671.",
+    "log_file": "reference-price-analyze.log",
+    "log_sha256": "a38e2c43d62fb241e1450aa938926897b0c968f7fa5d7d691103ae48c2c601d2"
+  },
+  "visual_review": {
+    "fresh_pngs": 39,
+    "review_sheets": 7,
+    "all_reviewed": true,
+    "source_reference_jpgs": 1,
+    "widths_dp": [
+      393,
+      320,
+      280,
+      768
+    ],
+    "text_scales": [
+      1,
+      2
+    ],
+    "additional_extreme_checks": "Existing 240dp/300%/keyboard tests passed.",
+    "bar_outer_margin_dp": 0,
+    "bar_radius_dp": 0,
+    "bar_nav_gap_dp": 0,
+    "normal_collapsed_height_dp": 64,
+    "phone_inner_gutter_dp": 20,
+    "total_label_sp": 15,
+    "total_label_weight": 600,
+    "spinner_diameter_dp": 20
+  },
+  "form_pixel_preservation": {
+    "baseline": "9d4d760736c4109133933d76d894949621459859",
+    "comparison_bounds_px": [
+      0,
+      0,
+      786,
+      1320
+    ],
+    "files": [
+      "01-top-create-ad.png",
+      "02-ad-types.png",
+      "05-contact-destination.png",
+      "06-contact-page-collapsed.png",
+      "07-contact-page-expanded.png"
+    ],
+    "changed_pixels_in_each_region": 0,
+    "measured_form_transitions_unchanged": 27
+  },
+  "limits": [
+    "The supplied image shows the collapsed/loading bar, not expanded rows.",
+    "Phone frame, other-app branding and Arabic copy are not an identical raster target for the Kurdish app.",
+    "Captures use actual app widgets with fictional fixtures; they do not certify live provider delivery or physical-device performance."
+  ],
+  "ci": "Final publication-triggered results are recorded on PR #46."
+}

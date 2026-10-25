@@ -1036,32 +1036,20 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                                 ),
                               ),
                             if (!_isMeta)
-                              const Positioned(
-                                  bottom: 0,
-                                  left: 0,
-                                  right: 0,
-                                  height: 12,
-                                  child: ColoredBox(color: Colors.white)),
-                            if (!_isMeta)
                               PositionedDirectional(
-                                start: ProxoSurface.gutter,
-                                end: ProxoSurface.gutter,
+                                start: 0,
+                                end: 0,
                                 bottom: TikTokAdTokens.priceNavGap,
-                                child: Center(
-                                    child: ConstrainedBox(
-                                  constraints:
-                                      const BoxConstraints(maxWidth: 600),
-                                  child: TikTokAdPriceCard(
-                                    quote: _quote,
-                                    loading: _quoteBusy,
-                                    error: _quoteError,
-                                    expanded: _priceExpanded,
-                                    onToggle: () => setState(
-                                        () => _priceExpanded = !_priceExpanded),
-                                    onRetry: _loadQuote,
-                                    viewportHeight: formConstraints.maxHeight,
-                                  ),
-                                )),
+                                child: TikTokAdPriceCard(
+                                  quote: _quote,
+                                  loading: _quoteBusy,
+                                  error: _quoteError,
+                                  expanded: _priceExpanded,
+                                  onToggle: () => setState(
+                                      () => _priceExpanded = !_priceExpanded),
+                                  onRetry: _loadQuote,
+                                  viewportHeight: formConstraints.maxHeight,
+                                ),
                               ),
                             Positioned(
                               top: 8,

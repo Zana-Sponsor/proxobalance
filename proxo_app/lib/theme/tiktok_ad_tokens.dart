@@ -21,9 +21,10 @@ abstract final class TikTokAdTokens {
   static const controlHeight = 50.0;
   static const inputHeight = 56.0;
   static const controlRadius = BorderRadius.all(Radius.circular(12));
-  static const priceRadius = BorderRadius.all(Radius.circular(10));
-  static const priceNavGap = 2.0;
-  static const priceCollapsedHeight = 72.0;
+  // The supplied final-price reference is a flush, edge-to-edge bottom bar.
+  static const priceRadius = BorderRadius.zero;
+  static const priceNavGap = 0.0;
+  static const priceCollapsedHeight = 64.0;
   static const transition = Duration(milliseconds: 180);
   static const priceTransition = Duration(milliseconds: 200);
   static const controlShadow = [
@@ -33,7 +34,7 @@ abstract final class TikTokAdTokens {
     BoxShadow(color: Color(0x102F70C7), blurRadius: 6, offset: Offset(0, 2)),
   ];
   static const priceShadow = [
-    BoxShadow(color: Color(0x100F172A), blurRadius: 12, offset: Offset(0, -3)),
+    BoxShadow(color: Color(0x0A0F172A), blurRadius: 10, offset: Offset(0, -2)),
   ];
 
   static const appBar = TextStyle(
@@ -87,7 +88,7 @@ abstract final class TikTokAdTokens {
   static const totalLabel = TextStyle(
       fontFamily: fontFamily,
       fontSize: 15,
-      fontWeight: FontWeight.w500,
+      fontWeight: FontWeight.w600,
       height: 1.5,
       color: ink);
   static const totalAmount = TextStyle(

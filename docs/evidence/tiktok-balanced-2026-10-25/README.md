@@ -1,5 +1,7 @@
 # TikTok Create Ad — new balanced design screenshots
 
+> Price geometry in this revision is historical. The subsequently supplied image is implemented in the [full-width final-price follow-up](../tiktok-price-reference-2026-10-25/README.md). Form typography, section spacing and the rest of the 69-point correction remain applicable.
+
 **37 fresh captures for the 69-point correction.** These replace the previously rejected visual evidence; none of the old screenshots is reused. Actual Flutter widgets and bundled Auth fonts are rendered with fictional deterministic data, not live payments or TikTok delivery.
 
 [Implementation report and all 69 requirements](../../tiktok-balanced-ui/implementation-report.md) · [Actual measurements](measurements.json) · [Image hashes](manifest.json) · [Browser gallery](index.html)
