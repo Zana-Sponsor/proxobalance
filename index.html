@@ -68,11 +68,7 @@
 </script>
 
 <meta name="theme-color" id="themeColorMeta" content="#f8fafc">
-<script>
-/* Consistent light-only UI, including accounts with a saved dark preference. */
-document.documentElement.setAttribute('data-theme','light');
-try{localStorage.setItem('zex_theme','light')}catch(e){}
-</script>
+<script src="/assets/js/security-bootstrap.js?v=1"></script>
 
 <!-- Firebase kept only for the live announcement banner (Realtime DB) -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -1536,21 +1532,7 @@ try{localStorage.setItem('zex_theme','light')}catch(e){}
 
 </div>
 
-<script>
-/* If a request never returns, the placeholders would shimmer forever.
-   Resolve them to readable text after 12s. */
-(function(){
-  setTimeout(function(){
-    ['historyPreview','txList','publicFeed'].forEach(function(id){
-      var el = document.getElementById(id);
-      if (el && el.querySelector('.tx-skel, .feed-skel')) {
-        el.innerHTML = '<div class="empty-state">نەتوانرا داتاکان باربکرێن — تکایە دووبارە هەوڵبدەوە</div>';
-      }
-    });
-    document.querySelectorAll('.sk-num').forEach(function(s){ s.replaceWith('—'); });
-  }, 12000);
-})();
-</script>
+
 <script src="/assets/js/index-svg-icons.js?v=1"></script>
 <script src="/assets/js/exchange-reward-pricing.js?v=2"></script>
 <script src="/assets/js/exchange-payout-rounding.js?v=1"></script>
