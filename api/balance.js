@@ -7,10 +7,13 @@ const STATUS = { disabled:'Payout requests are not enabled yet' };
 
 async function ownBalance(userId) {
   const id=encodeURIComponent(userId);
-  const [balances,journal,payouts,config,wallets] = await Promise.all([
+  const [balances,journal,shortfalls,payouts,config,wallets] = await Promise.all([
     serviceFetch('/rest/v1/ex_customer_balances?user_id=eq.'+id+'&select=available_iqd,held_iqd,updated_at&limit=1'),
     serviceFetch('/rest/v1/ex_balance_journal?user_id=eq.'+id+
       '&select=id,kind,order_id,payout_id,note,evidence_ref,created_at,ex_balance_entries(account,delta_iqd,balance_after_iqd)'+
+      '&order=created_at.desc&limit=50'),
+    serviceFetch('/rest/v1/ex_order_shortfall_refunds?user_id=eq.'+id+
+      '&select=id,order_id,order_code,journal_id,amount_iqd,expected_iqd,refunded_before_iqd,refunded_after_iqd,balance_before_iqd,balance_after_iqd,reason,refund_source,created_at'+
       '&order=created_at.desc&limit=50'),
     serviceFetch('/rest/v1/ex_payout_requests?user_id=eq.'+id+
       '&select=id,amount_iqd,destination_wallet,destination_number,status,transfer_reference,payout_receipt_url,created_at,updated_at'+
@@ -19,7 +22,7 @@ async function ownBalance(userId) {
     serviceFetch('/rest/v1/ex_wallets?allow_receive=eq.true&is_locked=eq.false&select=key,name&order=sort_order.asc')
   ]);
   return { balance:balances?.[0]||{available_iqd:0,held_iqd:0},
-    journal:journal||[],payouts:payouts||[],
+    journal:journal||[],shortfalls:shortfalls||[],payouts:payouts||[],
     payouts_enabled:config?.[0]?.payouts_enabled===true,
     max_single_payout_iqd:Number(config?.[0]?.max_single_payout_iqd||1000000),
     wallets:wallets||[] };

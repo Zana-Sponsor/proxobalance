@@ -10,6 +10,59 @@ const PUBLISHABLE_KEY =
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
+const MAX_BODY_BYTES = 32 * 1024;
+const MAX_ANSWER_KEYS = 20;
+const MAX_ATTRIBUTION_KEYS = 10;
+
+function requestError(message, status = 400) {
+  return Object.assign(new Error(message), { status });
+}
+
+async function readJsonLimited(req, maxBytes = MAX_BODY_BYTES) {
+  const rawLength = req.headers?.['content-length'];
+  const declared = rawLength == null || rawLength === '' ? 0 : Number(rawLength);
+  if (!Number.isFinite(declared) || declared < 0) throw requestError('Invalid Content-Length', 400);
+  if (declared > maxBytes) throw requestError('Payload too large', 413);
+
+  if (req.body !== undefined && req.body !== null) {
+    const raw = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
+    if (Buffer.byteLength(raw, 'utf8') > maxBytes) throw requestError('Payload too large', 413);
+    if (typeof req.body !== 'string') return req.body;
+    try { return JSON.parse(raw || '{}'); }
+    catch { throw requestError('Invalid JSON', 400); }
+  }
+
+  const chunks = [];
+  let size = 0;
+  for await (const chunk of req) {
+    size += chunk.length;
+    if (size > maxBytes) throw requestError('Payload too large', 413);
+    chunks.push(chunk);
+  }
+  const raw = Buffer.concat(chunks).toString('utf8');
+  try { return raw ? JSON.parse(raw) : {}; }
+  catch { throw requestError('Invalid JSON', 400); }
+}
+
+function flatInputObject(value, maxKeys, maxValueChars) {
+  if (value == null) return {};
+  if (typeof value !== 'object' || Array.isArray(value)) return null;
+  const entries = Object.entries(value);
+  if (entries.length > maxKeys) return null;
+  const out = {};
+  for (const [key, item] of entries) {
+    if (typeof key !== 'string' || key.length > 80) return null;
+    if (item === null || typeof item === 'boolean' || typeof item === 'number') {
+      if (typeof item === 'number' && !Number.isFinite(item)) return null;
+      out[key] = item;
+      continue;
+    }
+    if (typeof item !== 'string' || item.length > maxValueChars) return null;
+    out[key] = item;
+  }
+  return out;
+}
+
 const db = createClient(SUPABASE_URL, PUBLISHABLE_KEY, {
   auth: {
     persistSession: false,
@@ -73,10 +126,14 @@ async function handleGet(req, res) {
 }
 
 async function handlePost(req, res) {
-  const body =
-    typeof req.body === 'string'
-      ? JSON.parse(req.body || '{}')
-      : (req.body || {});
+  const body = await readJsonLimited(req);
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    return reply(res, 400, {
+      ok: false,
+      code: 'invalid_input',
+      message: 'زانیارییە نێردراوەکان دروست نین.'
+    });
+  }
 
   const formId = cleanString(body.form_id, 64);
   const adId = body.ad_id == null ? '' : cleanString(body.ad_id, 64);
@@ -97,17 +154,15 @@ async function handlePost(req, res) {
     });
   }
 
-  const answers =
-    body.answers && typeof body.answers === 'object' && !Array.isArray(body.answers)
-      ? body.answers
-      : {};
-
-  const attribution =
-    body.attribution &&
-    typeof body.attribution === 'object' &&
-    !Array.isArray(body.attribution)
-      ? body.attribution
-      : {};
+  const answers = flatInputObject(body.answers, MAX_ANSWER_KEYS, 2000);
+  const attribution = flatInputObject(body.attribution, MAX_ATTRIBUTION_KEYS, 500);
+  if (!answers || !attribution) {
+    return reply(res, 400, {
+      ok: false,
+      code: 'invalid_input',
+      message: 'زانیارییە نێردراوەکان دروست نین.'
+    });
+  }
 
   const { data, error } = await db.rpc('pa_submit_public_form', {
     p_form_id: formId,
@@ -155,6 +210,21 @@ export default async function handler(req, res) {
       message: 'Method not allowed.'
     });
   } catch (error) {
+    const status = Number(error?.status) || 500;
+    if (status === 413) {
+      return reply(res, 413, {
+        ok: false,
+        code: 'payload_too_large',
+        message: 'قەبارەی زانیارییە نێردراوەکان زۆر گەورەیە.'
+      });
+    }
+    if (status === 400 || error instanceof SyntaxError) {
+      return reply(res, 400, {
+        ok: false,
+        code: 'invalid_json',
+        message: 'زانیارییە نێردراوەکان دروست نین.'
+      });
+    }
     console.error('[api/forms]', error);
     return reply(res, 500, {
       ok: false,

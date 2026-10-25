@@ -36,7 +36,7 @@ test('Send shows available and held funds even when payout requests are disabled
   assert.equal(p.el('balanceSendSection').hidden,false);
   assert.equal(p.el('balanceAvailable').textContent,'40,000 د.ع');
   assert.equal(p.el('balanceHeld').textContent,'10,000 د.ع');
-  assert.equal(p.el('balancePayoutToggle').disabled,true);
+  assert.equal(p.el('balancePayoutToggle').disabled,false);
   assert.equal(p.calls[0].options.method,'GET');
   assert.equal(p.calls[0].options.headers.Authorization,'Bearer fixture-only-token');
   p.setBalance(0);await p.c.loadMyBalance();
@@ -74,23 +74,17 @@ test('returning to an active Send page refreshes the latest refund balance',asyn
   const before=p.calls.length;p.c._route='profile';await p.events.focus();
   assert.equal(p.calls.length,before);
 });
-test('choosing account balance opens its funded payout form when enabled',async()=>{
-  const p=customer();p.enable();await p.c.openAccountBalanceSend();
-  assert.equal(p.el('balanceSendSection').scrolled,true);
-  assert.equal(p.el('balancePayoutForm').hidden,false);
-  assert.equal(p.el('balanceDestWallet').focused,true);
-  assert.equal(p.calls.length,1);
-  assert.equal(p.calls[0].options.method,'GET');
+test('balance card selects the actual AccountBalance source without creating a payout',async()=>{
+  const p=customer();p.c.FROM_OPTIONS=['FastPay','AccountBalance'];
+  let changed=0;p.c.updateWallet=()=>{changed++;};
+  await p.c.openAccountBalanceSend();
+  assert.equal(p.el('from').value,'AccountBalance');
+  assert.equal(changed,1);
+  assert.equal(p.el('amt').focused,true);
+  assert.equal(p.calls.length,0);
 });
-test('choosing balance explains disabled, insufficient and KYC-blocked payouts',async()=>{
-  for(const state of ['disabled','insufficient','kyc','error']){
-    const p=customer();
-    if(state==='insufficient'){p.enable();p.setBalance(0);}
-    if(state==='kyc'){p.enable();p.block();}
-    if(state==='error')p.error();
-    await p.c.openAccountBalanceSend();
-    assert.equal(p.el('balancePayoutForm').hidden,true,state);
-    assert.equal(p.el('balanceStatusMessage').focused,true,state);
-    assert.equal(p.calls.every(c=>c.options.method==='GET'),true);
-  }
+test('balance source selection obeys an identity verification lock',async()=>{
+  const p=customer();p.block();p.c.FROM_OPTIONS=['FastPay','AccountBalance'];
+  p.el('from').value='FastPay';await p.c.openAccountBalanceSend();
+  assert.equal(p.el('from').value,'FastPay');assert.equal(p.calls.length,0);
 });

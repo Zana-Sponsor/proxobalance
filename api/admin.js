@@ -13,6 +13,7 @@
 //           4xx/5xx { ok: false, error: "...", code: "..." }
 // ─────────────────────────────────────────────────────────────
 import { createClient } from '@supabase/supabase-js';
+import { payoutPlan } from './_lib/payout-rounding.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://pycxuugoblkslvwebxuu.supabase.co';
 const SERVICE_KEY  = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -46,6 +47,113 @@ const STATUS_NEEDS_CORRECTION = 'پێویستی بە ڕاستکردنەوەیە'
 const STATUS_CORRECTED = 'ڕاستکراوەتەوە';
 const REVIEWABLE_ORDER_STATUSES = new Set([STATUS_PENDING, STATUS_CORRECTED]);
 const SUPPORT_STATUSES = new Set(['open', 'in_progress', 'resolved', 'closed']);
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const REFUND_REPORT_PAGE_SIZE = 100;
+const REFUND_ORDER_FIELDS = 'id,order_code,user_id,amount,total,from_method,to_method,status,balance_refunded_at,payout_iqd,payout_rounding_iqd,payout_settlement_id';
+const BAGHDAD_CALENDAR = new Intl.DateTimeFormat('en-US-u-ca-gregory-nu-latn', {
+  timeZone:'Asia/Baghdad',year:'numeric',month:'2-digit',day:'2-digit',era:'short'
+});
+
+function refundReportDate(value) {
+  if(value==null||value==='')return null;
+  if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(value)||value.startsWith('0000'))
+    throw {status:400,code:'invalid_report_date',message:'Use a valid YYYY-MM-DD report date'};
+  const timestamp=Date.parse(value+'T00:00:00.000Z');
+  if(!Number.isFinite(timestamp)||new Date(timestamp).toISOString().slice(0,10)!==value)
+    throw {status:400,code:'invalid_report_date',message:'Use a valid YYYY-MM-DD report date'};
+  return timestamp;
+}
+
+// Resolve the start of a Baghdad calendar day with its actual timezone rules.
+// Comparing dates also handles historical midnight clock changes correctly.
+function baghdadDayStart(timestamp) {
+  const targetDate=new Date(timestamp);
+  const target=targetDate.getUTCFullYear()*10000+(targetDate.getUTCMonth()+1)*100+targetDate.getUTCDate();
+  let low=timestamp-172800000,high=timestamp+172800000;
+  while(low<high){
+    const middle=Math.floor((low+high)/2);
+    const parts=Object.fromEntries(BAGHDAD_CALENDAR.formatToParts(middle).map(p=>[p.type,p.value]));
+    const year=parts.era==='BC'?1-Number(parts.year):Number(parts.year);
+    const day=year*10000+Number(parts.month)*100+Number(parts.day);
+    if(day<target)low=middle+1;else high=middle;
+  }
+  return new Date(low).toISOString();
+}
+
+async function balanceRelationRows(table,fields,ids) {
+  const batches=[];
+  for(let start=0;start<ids.length;start+=100)
+    batches.push(db.from(table).select(fields).in('id',ids.slice(start,start+100)));
+  const results=await Promise.all(batches);
+  for(const result of results){
+    if(result.error)throw result.error;
+    if(!Array.isArray(result.data))throw {status:500,code:'refund_details_unavailable',message:'Refund details could not be loaded'};
+  }
+  return results.flatMap(result=>result.data);
+}
+
+async function balanceRefundOrders(rows) {
+  const ids=[...new Set(rows.map(row=>row.order_id).filter(Boolean))];
+  const data=await balanceRelationRows('ex_orders',REFUND_ORDER_FIELDS,ids);
+  return Object.fromEntries(data.map(order=>[order.id,order]));
+}
+
+function validApprovalTimestamp(value) {
+  if (typeof value !== 'string') return false;
+  const match = /^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,6})?(Z|[+-]\d{2}:\d{2})$/.exec(value);
+  if (!match || match[1].startsWith('0000') || Number(match[2]) > 23 ||
+      Number(match[3]) > 59 || Number(match[4]) > 59) return false;
+  const day = Date.parse(match[1] + 'T00:00:00.000Z');
+  return Number.isFinite(day) && new Date(day).toISOString().slice(0, 10) === match[1] &&
+    Number.isFinite(Date.parse(value));
+}
+
+function validSettlementReceipt(order, value) {
+  const prefix = SUPABASE_URL + '/storage/v1/object/public/receipts/' + order.user_id + '/';
+  return typeof value === 'string' && value.length > prefix.length && value.length <= 2000 &&
+    value.startsWith(prefix) && !/[\s\u0000-\u001f\u007f?#\\]/.test(value) && !/\.\.|%2e|%2f|%5c/i.test(value.slice(prefix.length));
+}
+
+function settlementError(error) {
+  const message = String(error?.message || '');
+  if (error?.code === '42501' || message.includes('STAFF_PERMISSION_REQUIRED'))
+    return {status:403,code:'staff_permission_required',message:'مۆڵەتی پەسەندکردنی ئەم داواکارییەت نییە'};
+  const known = [
+    ['ORDER_SETTLEMENT_STALE',409,'approval_stale','داواکارییەکە گۆڕاوە؛ نوێی بکەرەوە و بڕی ناردنەکە دووبارە بپشکنە'],
+    ['ORDER_ALREADY_DECIDED',409,'already_decided','ئەم داواکارییە پێشتر بڕیاری لەسەر دراوە'],
+    ['SETTLEMENT_REQUEST_KEY_CONFLICT',409,'approval_request_conflict','ئەم داواکارییەی پەسەندکردن پێشتر بە زانیارییەکی جیاواز تۆمار کراوە'],
+    ['SETTLEMENT_RECEIPT_LOCKED',409,'settlement_receipt_locked','وەسڵی ئەم داواکارییە ناتوانرێت زیاد بکرێت یان بگۆڕدرێت'],
+    ['SETTLEMENT_RECEIPT_CONFLICT',409,'settlement_receipt_conflict','وەسڵێکی جیاواز پێشتر بۆ ئەم داواکارییە تۆمار کراوە'],
+    ['ORDER_NOT_FOUND',404,'not_found','Order not found'],
+    ['INVALID_PAYOUT_RECEIPT',400,'invalid_receipt','وەسڵی ناردن دروست نییە'],
+    ['RECEIPT_HAS_MULTIPLE_ORDERS',409,'receipt_multiple_orders','وەسڵی وەرگرتن لە زیاتر لە داواکارییەک بەکارهاتووە'],
+    ['RECEIVED_FUNDS_PROOF_REQUIRED',400,'received_funds_proof_required','وەسڵی پارەی وەرگیراو پێویستە'],
+    ['BALANCE_DEBIT_PROOF_REQUIRED',400,'balance_debit_proof_required','تۆماری کەمکردنەوەی باڵانسی سەرچاوە پێویستە'],
+    ['PAYOUT_AMOUNT_MISMATCH',400,'payout_amount_mismatch','بڕی ناردن و دۆخی پشتڕاستکردنەوە لەگەڵ داواکارییەکە ناگونجێت'],
+    ['ORDER_NOT_ELIGIBLE_FOR_SETTLEMENT',400,'invalid_payout_amount','بڕ یان ڕێڕەوی ئەم داواکارییە بۆ پەسەندکردن دروست نییە'],
+    ['INVALID_SETTLEMENT_REQUEST',400,'invalid_approval','زانیارییەکانی پەسەندکردن تەواو نییە']
+  ];
+  const match = known.find(([name]) => message.includes(name));
+  if (match) return {status:match[1],code:match[2],message:match[3]};
+  if (['PGRST202','42883','42703','42P01'].includes(error?.code))
+    return {status:503,code:'settlement_unavailable',message:'پەسەندکردن کاتییە بەردەست نییە؛ هەمان داواکاری دووبارە بنێرەوە'};
+  return {status:500,code:'settlement_result_unknown',message:'ئەنجامی کارەکە پشتڕاست نەکرایەوە؛ هەمان داواکاری دووبارە بنێرەوە'};
+}
+
+async function settlementRpc(name, args, record) {
+  let result;
+  try { result = await db.rpc(name, args); }
+  catch (error) { throw settlementError(error); }
+  if (result?.error) throw settlementError(result.error);
+  // JSON and single-row table encodings are both used by PostgREST versions.
+  const data = Array.isArray(result?.data)
+    ? result.data.length === 1 ? result.data[0] : null : result?.data;
+  if (!data || typeof data !== 'object' || Array.isArray(data) ||
+      !data.order || Array.isArray(data.order) || data.order.id !== args.p_order_id ||
+      !data[record] || Array.isArray(data[record]) || !UUID.test(String(data[record].id || '')))
+    throw settlementError(null);
+  return data;
+}
 
 function supportStatusLabel(status) {
   return status === 'open' ? 'نوێ'
@@ -62,13 +170,34 @@ function json(res, status, body) {
 const ok   = (res, data)                 => json(res, 200, { ok: true, data });
 const fail = (res, status, error, code)  => json(res, status, { ok: false, error, code });
 
-async function readBody(req) {
-  if (req.body && typeof req.body === 'object') return req.body;      // Vercel parsed it
-  if (typeof req.body === 'string') { try { return JSON.parse(req.body); } catch { return {}; } }
+async function readBody(req, maxBytes = 64 * 1024) {
+  const rawLength = req.headers?.['content-length'];
+  const declared = rawLength == null || rawLength === '' ? 0 : Number(rawLength);
+  if (!Number.isFinite(declared) || declared < 0)
+    throw { status: 400, code: 'invalid_content_length', message: 'Invalid Content-Length' };
+  if (declared > maxBytes)
+    throw { status: 413, code: 'payload_too_large', message: 'Payload too large' };
+
+  if (req.body !== undefined && req.body !== null) {
+    const raw = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
+    if (Buffer.byteLength(raw, 'utf8') > maxBytes)
+      throw { status: 413, code: 'payload_too_large', message: 'Payload too large' };
+    if (typeof req.body === 'object') return req.body;
+    try { return JSON.parse(raw || '{}'); }
+    catch { throw { status: 400, code: 'invalid_json', message: 'Invalid JSON' }; }
+  }
+
   const chunks = [];
-  for await (const c of req) chunks.push(c);
+  let size = 0;
+  for await (const chunk of req) {
+    size += chunk.length;
+    if (size > maxBytes)
+      throw { status: 413, code: 'payload_too_large', message: 'Payload too large' };
+    chunks.push(chunk);
+  }
   if (!chunks.length) return {};
-  try { return JSON.parse(Buffer.concat(chunks).toString('utf8')); } catch { return {}; }
+  try { return JSON.parse(Buffer.concat(chunks).toString('utf8')); }
+  catch { throw { status: 400, code: 'invalid_json', message: 'Invalid JSON' }; }
 }
 
 // ── auth gate ────────────────────────────────────────────────
@@ -87,7 +216,7 @@ async function requireAdmin(req) {
 
   const { data: profile, error: profErr } = await db
     .from('ex_profiles')
-    .select('id, is_admin, is_banned, full_name, email')
+    .select('id, is_admin, is_banned, full_name, email, role, staff_permissions')
     .eq('id', user.id)
     .single();
 
@@ -106,8 +235,60 @@ async function audit(adminId, action, targetUserId, detail) {
   } catch { /* auditing must never break the operation */ }
 }
 
+// Fresh database profile rights, never browser/JWT user_metadata claims.
+export function assertStaffAction(profile,action){
+  if(action==='set_ban' && profile.role!=='super_admin')throw {status:403,code:'super_admin_required',message:'SUPER_ADMIN_REQUIRED'};
+  if(['error_log_summary','list_error_logs','resolve_error_log','resolve_all_error_logs'].includes(action)&&profile.role!=='super_admin')throw {status:403,code:'super_admin_required',message:'SUPER_ADMIN_REQUIRED'};
+  if(profile.role==='super_admin' || profile.staff_permissions==null)return;
+  const permissions={
+    ping:'view',account_balances:'view',balance_dashboard:'view',balance_lookup_order:'view',
+    list_order_correction_history:'view',list_rewards:'view',
+    approve_order:'approve_orders',reject_order:'approve_orders',request_order_correction:'approve_orders',
+    save_order_note:'approve_orders',save_payout_receipt:'approve_orders',
+    balance_credit_refund:'refunds',balance_credit_shortfall:'refunds',balance_refund_report:'refunds',
+    balance_cancel_payout:'refunds',balance_abort_processing:'refunds',
+    balance_claim_payout:'approve_orders',balance_mark_payout_paid:'approve_orders',
+    grant_reward:'manage_rewards',revoke_reward:'manage_rewards'
+  };
+  const required=permissions[action];
+  if(!required || !profile.staff_permissions.includes(required))
+    throw {status:403,code:'staff_permission_required',message:'مۆڵەتی ئەنجامدانی ئەم کارەت نییە'};
+}
+
 // ── actions ──────────────────────────────────────────────────
 const actions = {
+  async save_order_note({order_id,admin_note},ctx){
+    const note=String(admin_note||'').trim();
+    if(!order_id||note.length>500)throw {status:400,code:'bad_note',message:'Invalid order note'};
+    const {data,error}=await db.from('ex_orders').update({admin_note:note||null}).eq('id',order_id).select().single();
+    if(error||!data)throw {status:404,code:'not_found',message:'Order not found'};
+    await audit(ctx.user.id,'save_order_note',data.user_id,data.order_code);
+    return data;
+  },
+  async save_payout_receipt({order_id,payout_receipt_url},ctx){
+    if(typeof order_id!=='string'||!UUID.test(order_id))
+      throw {status:400,code:'bad_input',message:'A valid order_id is required'};
+    order_id=order_id.toLowerCase();
+    const {data:order,error:readError}=await db.from('ex_orders').select('id,user_id,balance_refunded_at,payout_settlement_id').eq('id',order_id).single();
+    if(readError||!order)throw {status:404,code:'not_found',message:'Order not found'};
+    if(order.balance_refunded_at)throw {status:409,code:'already_refunded',message:'Order was already refunded'};
+    if(order.payout_settlement_id){
+      const receipt=typeof payout_receipt_url==='string'?payout_receipt_url.trim():null;
+      if(!validSettlementReceipt(order,receipt))
+        throw {status:400,code:'invalid_receipt',message:'Invalid payout receipt'};
+      const data=await settlementRpc('ex_admin_attach_settlement_receipt',{
+        p_order_id:order_id,p_admin_id:ctx.user.id,p_payout_receipt_url:receipt
+      },'receipt');
+      return data.order;
+    }
+    const prefix=SUPABASE_URL+'/storage/v1/object/public/receipts/'+order.user_id+'/';
+    if(typeof payout_receipt_url!=='string'||!payout_receipt_url.startsWith(prefix)||payout_receipt_url.length>2000)
+      throw {status:400,code:'invalid_receipt',message:'Invalid payout receipt'};
+    const {data,error}=await db.from('ex_orders').update({payout_receipt_url}).eq('id',order_id).is('balance_refunded_at',null).select().single();
+    if(error||!data)throw {status:409,code:'receipt_not_saved',message:'Receipt could not be saved'};
+    await audit(ctx.user.id,'save_payout_receipt',order.user_id,data.order_code);
+    return data;
+  },
   async account_balances({user_ids}) {
     if (!Array.isArray(user_ids) || user_ids.length > 200 ||
         user_ids.some(id => typeof id !== 'string' ||
@@ -124,26 +305,76 @@ const actions = {
   },
 
   // Refund credits and wallet payouts are committed atomically by service-only
-  // PostgreSQL RPCs. A browser never chooses a balance delta.
+  // PostgreSQL RPCs. The database validates the order and any shortfall amount;
+  // a browser never chooses the credited account or its resulting balance.
   async balance_dashboard(_payload,_ctx) {
-    const [balances,refunds,payouts,alerts,config] = await Promise.all([
+    const [balances,refunds,shortfalls,payouts,alerts,config] = await Promise.all([
       db.from('ex_customer_balances').select('*').or('available_iqd.gt.0,held_iqd.gt.0').order('updated_at',{ascending:false}).limit(150),
       db.from('ex_refund_cases').select('*').order('created_at',{ascending:false}).limit(150),
+      db.from('ex_order_shortfall_refunds').select('*').order('created_at',{ascending:false}).limit(150),
       db.from('ex_payout_requests').select('*').order('created_at',{ascending:false}).limit(150),
       db.from('ex_balance_risk_alerts').select('*').eq('status','open').order('created_at',{ascending:false}).limit(100),
       db.from('ex_balance_config').select('*').eq('id',true).single()
     ]);
-    for(const r of [balances,refunds,payouts,alerts,config]) if(r.error)throw r.error;
+    for(const r of [balances,refunds,shortfalls,payouts,alerts,config]) if(r.error)throw r.error;
     const ids=[...new Set([...(balances.data||[]),...(refunds.data||[]),
-      ...(payouts.data||[]),...(alerts.data||[])].map(x=>x.user_id).filter(Boolean))];
-    const names=ids.length?await db.from('ex_profiles').select('id,full_name,username,email').in('id',ids):{data:[],error:null};
-    if(names.error)throw names.error;
+      ...(shortfalls.data||[]),...(payouts.data||[]),...(alerts.data||[])]
+      .flatMap(x=>[x.user_id,x.admin_id,x.verified_by]).filter(Boolean))];
+    const [names,orders]=await Promise.all([
+      balanceRelationRows('ex_profiles','id,full_name,username,email',ids),
+      balanceRefundOrders([...(refunds.data||[]),...(shortfalls.data||[])])
+    ]);
     const reconciliation=await db.rpc('ex_admin_balance_reconcile',{p_admin_id:_ctx.user.id});
     if(reconciliation.error)throw reconciliation.error;
-    const profiles=Object.fromEntries((names.data||[]).map(p=>[p.id,p]));
-    return {balances:balances.data||[],refunds:refunds.data||[],
-      payouts:payouts.data||[],alerts:alerts.data||[],config:config.data,profiles,
+    const profiles=Object.fromEntries(names.map(p=>[p.id,p]));
+    return {balances:balances.data||[],refunds:refunds.data||[],shortfalls:shortfalls.data||[],
+      payouts:payouts.data||[],alerts:alerts.data||[],config:config.data,profiles,orders,
       reconciliation:reconciliation.data};
+  },
+
+  async balance_refund_report({date_from,date_to,page=0,snapshot},_ctx){
+    if(!Number.isSafeInteger(page)||page<0||!Number.isSafeInteger(page*REFUND_REPORT_PAGE_SIZE+REFUND_REPORT_PAGE_SIZE))
+      throw {status:400,code:'invalid_report_page',message:'Use a nonnegative report page number'};
+    const from=refundReportDate(date_from),to=refundReportDate(date_to);
+    if(from!==null&&to!==null&&from>to)
+      throw {status:400,code:'invalid_report_range',message:'The report start date must not follow its end date'};
+    if(snapshot==null){
+      if(page>0)throw {status:400,code:'report_snapshot_required',message:'Continue with the snapshot returned by the first report page'};
+      snapshot=new Date().toISOString();
+    }else{
+      const timestamp=typeof snapshot==='string'?Date.parse(snapshot):NaN;
+      if(!Number.isFinite(timestamp)||new Date(timestamp).toISOString()!==snapshot||timestamp>Date.now())
+        throw {status:400,code:'invalid_report_snapshot',message:'Use the UTC snapshot returned by the first report page'};
+    }
+    const lower=from===null?null:baghdadDayStart(from);
+    const upper=to===null?null:baghdadDayStart(to+86400000);
+    const start=page*REFUND_REPORT_PAGE_SIZE;
+    function reportQuery(table,fields){
+      let query=db.from(table).select(fields).lte('created_at',snapshot);
+      if(table==='ex_refund_cases')query=query.eq('status','credited');
+      if(lower!==null)query=query.gte('created_at',lower);
+      if(upper!==null)query=query.lt('created_at',upper);
+      return query.order('created_at',{ascending:false}).order('id',{ascending:false})
+        .range(start,start+REFUND_REPORT_PAGE_SIZE);
+    }
+    const [full,partial]=await Promise.all([
+      reportQuery('ex_refund_cases','id,order_id,user_id,amount_iqd,status,refund_kind,bank_verification_reference,failure_reason,verified_by,confirmed_funds_received,confirmed_payout_failed,journal_id,created_at'),
+      reportQuery('ex_order_shortfall_refunds','id,order_id,order_code,user_id,customer_phone,admin_id,amount_iqd,expected_iqd,refunded_before_iqd,refunded_after_iqd,balance_before_iqd,balance_after_iqd,journal_id,request_key,reason,verification_reference,refund_source,created_at')
+    ]);
+    for(const result of [full,partial]){
+      if(result.error)throw result.error;
+      if(!Array.isArray(result.data))throw {status:500,code:'refund_report_unavailable',message:'Refund report records could not be loaded'};
+    }
+    const has_more=full.data.length>REFUND_REPORT_PAGE_SIZE||partial.data.length>REFUND_REPORT_PAGE_SIZE;
+    const refunds=full.data.slice(0,REFUND_REPORT_PAGE_SIZE),shortfalls=partial.data.slice(0,REFUND_REPORT_PAGE_SIZE);
+    const rows=[...refunds,...shortfalls];
+    const ids=[...new Set(rows.flatMap(row=>[row.user_id,row.verified_by,row.admin_id]).filter(Boolean))];
+    const [orders,names]=await Promise.all([
+      balanceRefundOrders(rows),
+      balanceRelationRows('ex_profiles','id,full_name,username',ids)
+    ]);
+    const profiles=Object.fromEntries(names.map(profile=>[profile.id,profile]));
+    return {refunds,shortfalls,orders,profiles,page,next_page:has_more?page+1:null,has_more,snapshot};
   },
 
   async balance_lookup_order({search},_ctx){
@@ -151,25 +382,51 @@ const actions = {
     if(!/^(?:[0-9a-f-]{36}|P[A-Z0-9]{11})$/i.test(q))
       throw {status:400,code:'invalid_order',message:'Enter an exact order code or UUID'};
     let query=db.from('ex_orders')
-      .select('id,order_code,user_id,amount,total,fee,from_method,to_method,receipt_url,receipt_hash,payout_receipt_url,status,created_at,decided_at,balance_refunded_at')
+      .select('id,order_code,user_id,amount,total,fee,from_method,to_method,receipt_url,receipt_hash,payout_receipt_url,status,created_at,updated_at,decided_at,balance_refunded_at,balance_debit_journal_id,shortfall_refunded_iqd,payout_iqd,payout_rounding_iqd,payout_settlement_id')
       .limit(1);
     query=/^[0-9a-f-]{36}$/i.test(q)?query.eq('id',q):query.eq('order_code',q.toUpperCase());
     const {data:order,error}=await query.maybeSingle();
     if(error)throw error;
     if(!order)throw {status:404,code:'order_not_found',message:'Order not found'};
-    const [p,r]=await Promise.all([
+    const [p,r,s,b]=await Promise.all([
       db.from('ex_profiles').select('id,full_name,username,email').eq('id',order.user_id).maybeSingle(),
       db.from('ex_refund_cases').select('id,status,amount_iqd,created_at,bank_verification_reference')
-        .eq('order_id',order.id).maybeSingle()
+        .eq('order_id',order.id).maybeSingle(),
+      db.from('ex_order_shortfall_refunds').select('*').eq('order_id',order.id)
+        .order('created_at',{ascending:false}).limit(150),
+      db.from('ex_customer_balances').select('user_id,available_iqd,held_iqd,updated_at')
+        .eq('user_id',order.user_id).maybeSingle()
     ]);
-    if(p.error)throw p.error;if(r.error)throw r.error;
-    return {order,profile:p.data,refund:r.data};
+    for(const result of [p,r,s,b])if(result.error)throw result.error;
+    const adminIds=[...new Set((s.data||[]).map(row=>row.admin_id).filter(Boolean))];
+    const actors=adminIds.length?await db.from('ex_profiles').select('id,full_name,username,email')
+      .in('id',adminIds):{data:[],error:null};
+    if(actors.error)throw actors.error;
+    const profiles=Object.fromEntries([...(p.data?[p.data]:[]),...(actors.data||[])].map(row=>[row.id,row]));
+    const expected=Number(order.total),refunded=Number(order.shortfall_refunded_iqd||0);
+    let code=null;
+    if(order.balance_refunded_at||r.data)code='already_refunded';
+    else if(order.status!==STATUS_APPROVED)code='order_not_approved';
+    else if(order.from_method==='USDT'||order.to_method==='USDT')code='iqd_orders_only';
+    else if(!order.receipt_url&&!order.balance_debit_journal_id)code='original_funds_proof_required';
+    else if(!Number.isSafeInteger(expected)||expected<=0||!Number.isSafeInteger(refunded)||refunded<0)
+      code='invalid_payout_amount';
+    else if(refunded>=expected)code='no_remaining_shortfall';
+    return {order,profile:p.data,profiles,refund:r.data,shortfalls:s.data||[],
+      balance:b.data||{user_id:order.user_id,available_iqd:0,held_iqd:0,updated_at:null},
+      shortfall_summary:{eligible:code===null,code,expected_iqd:expected,
+        refunded_iqd:refunded,remaining_iqd:Math.max(0,expected-refunded)}};
   },
 
   async balance_credit_refund({order_id,verification_reference,reason,failure_reason,
     confirmed_received},ctx){
     if(confirmed_received!==true)
       throw {status:400,code:'confirmation_required',message:'Confirm that customer funds were received'};
+    const existing=await db.from('ex_orders').select('id,shortfall_refunded_iqd')
+      .eq('id',order_id).maybeSingle();
+    if(existing.error)throw existing.error;
+    if(Number(existing.data?.shortfall_refunded_iqd||0)>0)
+      throw {status:409,code:'partially_refunded',message:'An order with a shortfall credit cannot receive a full refund'};
     const {data,error}=await db.rpc('ex_admin_reject_and_refund',{
       p_order_id:order_id,p_admin_id:ctx.user.id,
       p_verification_reference:String(verification_reference||'').trim().slice(0,160),
@@ -187,6 +444,52 @@ const actions = {
       throw {status:409,code:error.code||'refund_failed',message:error.message};
     }
     return data;
+  },
+
+  async balance_credit_shortfall({order_id,amount_iqd,request_key,expected_refunded_iqd,reason,
+    verification_reference,confirmed_shortfall},ctx){
+    if(typeof order_id!=='string'||!UUID.test(order_id))
+      throw {status:400,code:'invalid_order',message:'A valid order ID is required'};
+    if(typeof request_key!=='string'||!UUID.test(request_key))
+      throw {status:400,code:'invalid_request_key',message:'A valid submission key is required'};
+    if(typeof amount_iqd!=='number'||!Number.isSafeInteger(amount_iqd)||amount_iqd<=0||amount_iqd>1000000000)
+      throw {status:400,code:'invalid_amount',message:'Enter a positive whole number of IQD'};
+    if(typeof expected_refunded_iqd!=='number'||!Number.isSafeInteger(expected_refunded_iqd)||
+      expected_refunded_iqd<0||expected_refunded_iqd>1000000000)
+      throw {status:400,code:'invalid_refund_snapshot',message:'Refresh the order before recording its shortfall'};
+    if(confirmed_shortfall!==true)
+      throw {status:400,code:'confirmation_required',message:'Confirm the actual unpaid shortfall'};
+    const normalizedRequestKey=request_key.toLowerCase();
+    const note=typeof reason==='string'?reason.trim():'';
+    // New forms omit the manual reference. Derive its audit value from the same
+    // canonical key on every retry; preserve references submitted by older tabs.
+    const evidence=verification_reference==null?`shortfall:${normalizedRequestKey}`:
+      typeof verification_reference==='string'?verification_reference.trim():'';
+    if(note.length<10||note.length>2000)
+      throw {status:400,code:'invalid_reason',message:'Explain the shortfall in 10 to 2000 characters'};
+    if(evidence.length<6||evidence.length>160)
+      throw {status:400,code:'invalid_evidence',message:'Provide a verification reference of 6 to 160 characters'};
+    // Never generate a new request key on retry. The atomic RPC checks replay
+    // equality, locks the order, caps credits at the net payout and records its
+    // financial case, journal, balance change, audit and notification together.
+    const {data,error}=await db.rpc('ex_admin_credit_shortfall',{
+      p_order_id:order_id.toLowerCase(),p_admin_id:ctx.user.id,p_amount_iqd:amount_iqd,
+      p_request_key:normalizedRequestKey,p_expected_refunded_iqd:expected_refunded_iqd,p_reason:note,
+      p_verification_reference:evidence,p_confirmed_shortfall:true
+    });
+    if(error){
+      const stale=/SHORTFALL_STATE_CHANGED/.test(error.message||'');
+      const status=stale?409:error.code==='42501'?403:error.code==='22023'?400:
+        error.code==='P0002'?404:['23505','23514','P0001'].includes(error.code)?409:500;
+      const code=stale?'shortfall_stale':error.code||'shortfall_failed';
+      throw {status,code,
+        message:status===500?'The shortfall could not be saved; retry with the same submission':error.message};
+    }
+    // PostgREST may serialize the composite result as a row or a one-row array.
+    const refund=Array.isArray(data)?(data.length===1?data[0]:null):data;
+    if(!refund||typeof refund!=='object'||Array.isArray(refund)||typeof refund.id!=='string')
+      throw {status:500,code:'shortfall_result_missing',message:'No credit result was returned; retry with the same submission'};
+    return refund;
   },
 
   async balance_claim_payout({payout_id,verification},ctx){
@@ -251,21 +554,59 @@ const actions = {
     return { pong: true, admin: ctx.profile.email };
   },
 
-  async approve_order({ order_id, payout_receipt_url, admin_note }, ctx) {
-    if (!order_id) throw { status: 400, code: 'bad_input', message: 'order_id is required' };
+  async approve_order({ order_id, payout_receipt_url, admin_note, request_key,
+    expected_updated_at, expected_total, confirmed_payout_iqd, confirmed_received, confirmed_paid }, ctx) {
+    if (typeof order_id !== 'string' || !UUID.test(order_id))
+      throw { status: 400, code: 'bad_input', message: 'A valid order_id is required' };
+    order_id = order_id.toLowerCase();
 
     const { data: order, error: e1 } = await db
       .from('ex_orders').select('*').eq('id', order_id).single();
     if (e1 || !order) throw { status: 404, code: 'not_found', message: 'Order not found' };
+    const plan = payoutPlan(expected_total, order.to_method);
+    if (plan.applies) {
+      if (typeof request_key !== 'string' || !UUID.test(request_key) ||
+          !validApprovalTimestamp(expected_updated_at) || !plan.valid || confirmed_payout_iqd == null)
+        throw {status:400,code:'approval_refresh_required',message:'نوێی بکەرەوە و بڕی ناردنەکە پێش پەسەندکردن پشتڕاست بکەرەوە'};
+      const confirmed = payoutPlan(confirmed_payout_iqd, order.to_method);
+      if (!confirmed.valid || confirmed.expected_iqd !== plan.payout_iqd)
+        throw {status:400,code:'payout_amount_mismatch',message:'بڕی ناردن دەبێت لەگەڵ بڕی پیشاندراو یەک بێت'};
+      if (confirmed_received !== true || confirmed_paid !== plan.requires_payout)
+        throw {status:400,code:'confirmation_required',message:'وەرگرتنی پارە و دۆخی ناردنی بڕی پیشاندراو پشتڕاست بکەرەوە'};
+      if (order.from_method !== 'USDT' &&
+          (!payoutPlan(order.amount, order.to_method).valid || Number(order.amount) <= 0))
+        throw {status:400,code:'invalid_payout_amount',message:'بڕی سەرچاوەی دینار دەبێت ژمارەیەکی تەواو بێت'};
+      if ((admin_note != null && typeof admin_note !== 'string') || String(admin_note || '').trim().length > 500)
+        throw {status:400,code:'bad_note',message:'Invalid order note'};
+      const receipt = payout_receipt_url == null || payout_receipt_url === '' ? null
+        : typeof payout_receipt_url === 'string' ? payout_receipt_url.trim() || null : false;
+      if (receipt === false || (receipt !== null && (!plan.requires_payout || !validSettlementReceipt(order, receipt))))
+        throw {status:400,code:'invalid_receipt',message:'Invalid payout receipt'};
+      // The RPC checks exact-key replays before order state/stale checks. Do not
+      // preclude a retry merely because the first approval already committed.
+      const data = await settlementRpc('ex_admin_approve_order_settlement', {
+        p_order_id:order_id,p_admin_id:ctx.user.id,p_request_key:request_key.toLowerCase(),
+        // Preserve Postgres microseconds; a JS Date round-trip loses precision.
+        p_expected_updated_at:expected_updated_at,p_expected_total:plan.expected_iqd,
+        p_confirmed_payout_iqd:confirmed.expected_iqd,p_confirmed_received:confirmed_received,
+        p_confirmed_paid:confirmed_paid,p_payout_receipt_url:receipt,p_admin_note:admin_note?.trim() || null
+      }, 'settlement');
+      return {...data.order,settlement:data.settlement,refund:data.refund || null};
+    }
+    if (order.to_method !== 'USDT')
+      throw {status:400,code:'invalid_payout_route',message:'This order has no external payout destination'};
+    if ([request_key,expected_updated_at,expected_total,confirmed_payout_iqd,confirmed_received,confirmed_paid]
+        .some(value => value !== undefined))
+      throw {status:409,code:'approval_stale',message:'ڕێڕەوی داواکارییەکە گۆڕاوە؛ نوێی بکەرەوە و دووبارە بپشکنە'};
     if (order.balance_refunded_at || !REVIEWABLE_ORDER_STATUSES.has(order.status)) {
       throw { status: 409, code: 'already_decided', message: 'Order is not ready for review' };
     }
 
-    const patch = { status: STATUS_APPROVED, decided_at: new Date().toISOString() };
+    const patch = { status: STATUS_APPROVED, decided_at: new Date().toISOString(), handled_by:ctx.user.id };
     if (payout_receipt_url) patch.payout_receipt_url = String(payout_receipt_url).slice(0, 2000);
     if (admin_note)         patch.admin_note         = String(admin_note).slice(0, 500);
 
-    const { data, error } = await db.from('ex_orders').update(patch).eq('id', order_id).select().single();
+    const { data, error } = await db.from('ex_orders').update(patch).eq('id', order_id).in('status',[...REVIEWABLE_ORDER_STATUSES]).is('balance_refunded_at',null).select().single();
     if (error) throw { status: 500, code: 'db_error', message: error.message };
 
     await audit(ctx.user.id, 'approve_order', order.user_id, data.order_code);
@@ -283,11 +624,11 @@ const actions = {
     }
 
     const { data, error } = await db.from('ex_orders').update({
-      status: STATUS_REJECTED,
+      status: STATUS_REJECTED, handled_by:ctx.user.id,
       admin_note: reason ? String(reason).slice(0, 500) : null,
       decided_at: new Date().toISOString()
-    }).eq('id', order_id).select().single();
-    if (error) throw { status: 500, code: 'db_error', message: error.message };
+    }).eq('id', order_id).in('status',[...REVIEWABLE_ORDER_STATUSES]).is('balance_refunded_at',null).select().single();
+    if (error) throw { status:error.code==='PGRST116'?409:500, code:'db_error',message:error.message };
 
     await audit(ctx.user.id, 'reject_order', order.user_id, data.order_code);
     return data;
@@ -629,6 +970,8 @@ export default async function handler(req, res) {
     const run  = actions[name];
 
     if (!run) return fail(res, 400, 'Unknown action: ' + name, 'unknown_action');
+
+    assertStaffAction(ctx.profile,name);
 
     const data = await run(body.payload || {}, ctx);
     return ok(res, data);

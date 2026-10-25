@@ -14,11 +14,14 @@ function pbReceiptLabel(label,value,ltr){
 function pbReceiptMethod(key){return typeof methodLabel==='function'?methodLabel(key):String(key||'—');}
 function pbReceiptWhen(value){return typeof txWhen==='function'?txWhen(value,true):String(value||'—');}
 function pbReceiptAmount(value,method){
-  const n=Number(value);
-  const display=Number.isFinite(n)?Math.floor(n).toLocaleString('en-US'):'—';
+  const n=value===null||value===undefined||value===''||!['number','string'].includes(typeof value)||
+    (typeof value==='string'&&!/^\d+(?:\.\d+)?$/.test(value))?NaN:Number(value);
+  const display=Number.isFinite(n)&&n>=0?n.toLocaleString('en-US'):'—';
   return display+(method==='USDT'?' $':' د.ع');
 }
 function pbBuildReceipt(order){
+  const payout=typeof ProxoPayoutRounding==='object'?ProxoPayoutRounding.forOrder(order):null;
+  const rounded=!order.balance_refunded_at&&payout&&(payout.planned||payout.has_settlement);
   const box=document.createElement('article');
   box.className='pb-receipt-print';box.dir='rtl';box.setAttribute('aria-label','پسووڵەی مامەڵە');
   const head=document.createElement('header');head.className='pb-rhead';
@@ -41,7 +44,14 @@ function pbBuildReceipt(order){
     pbReceiptLabel('ڕێگای ناردن',pbReceiptMethod(order.from_method)),
     pbReceiptLabel('ڕێگای وەرگرتن',pbReceiptMethod(order.to_method)),
     pbReceiptLabel('بڕی نێردراو',pbReceiptAmount(order.amount,order.from_method),true),
-    pbReceiptLabel('بڕی وەرگیراو',pbReceiptAmount(order.total,order.to_method),true));
+    pbReceiptLabel(rounded?'بڕی سەرەکی دوای لێبڕین':'بڕی وەرگیراو',pbReceiptAmount(order.total,order.to_method),true));
+  if(rounded){
+    payments.append(
+      pbReceiptLabel('بڕی ناردنی دیاریکراو بۆ وەرگر',pbReceiptAmount(payout.payout_iqd,'IQD'),true),
+      pbReceiptLabel(payout.settled?'گەڕاندنەوەی خۆکار بۆ باڵانسی هەژمار':'گەڕاندنەوە بۆ باڵانس دوای پەسەندکردن',pbReceiptAmount(payout.remainder_iqd,'IQD'),true));
+    if(payout.valid&&payout.payout_iqd===0)payments.append(pbReceiptLabel('ناردنی دەرەکی','هیچ ناردنێکی دەرەکی ئەنجام نادرێت'));
+    if(payout.planned&&payout.valid&&payout.remainder_iqd>0)payments.append(pbReceiptLabel('دۆخی گەڕاندنەوە','چاوەڕوانی پەسەندکردنی مامەڵەیە؛ هێشتا بۆ باڵانس تۆمار نەکراوە'));
+  }
   if(order.from_method!=='USDT'&&order.to_method!=='USDT'&&Number(order.amount)>Number(order.total)){
     payments.append(pbReceiptLabel('بڕی لێبڕین',
       pbReceiptAmount(Number(order.amount)-Number(order.total),'IQD'),true));

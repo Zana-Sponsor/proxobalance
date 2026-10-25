@@ -1,5 +1,7 @@
 # TikTok Direct Message continuation — 23 October 2026
 
+**25 October runtime follow-up:** the production typed-page database schema is now applied, and all seven n8n drafts have their public backend origin saved. The account-connection configuration node passes. All workers remain unpublished and unbound; backend deployment and provider verification remain blocked. See the [current repair evidence](evidence/runtime-repair-2026-10-25/README.md), which supersedes earlier statements below that the page schema and origins were unconfigured.
+
 This is a completion ledger for the 25-section continuation mandate, not a release certificate. PR [#46](https://github.com/Zana-Sponsor/proxobalance/pull/46), branch `codex/meta-tiktok-shared-create`, continues the existing implementation. The audited starting commit was `88287b3aa2dd7036003ea58d505f3e2590d85a77`. The final revision is the commit containing this report; the PR records its exact SHA.
 
 The [continuation file inventory](evidence/tiktok-dm-2026-10-23/changed-files.json) records the exact changed paths from that starting commit.

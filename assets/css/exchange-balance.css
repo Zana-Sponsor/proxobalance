@@ -24,4 +24,104 @@
 .pb-history-row{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:10px 0;border-bottom:1px solid #edf0f5;font-size:12px}
 .pb-history-row small{display:block;color:#758198;font-size:11px}
 .pb-history-row b{font-weight:600;white-space:nowrap;font-size:12px}
+.pb-history-row>div{min-width:0;overflow-wrap:anywhere}
+.pb-history-row .pb-history-title{white-space:normal}
+.pb-history-row .pb-history-credit{color:#15803d}
+/* Admin shortfall credits keep the amount, evidence and audit together. */
+.balance-credit-panel{border:1px solid #dce5f2;background:#f8fbff;border-radius:12px;padding:16px;margin-top:16px;color:#1c2333}
+.balance-credit-panel h4{font-size:15px;font-weight:700;line-height:1.65;margin:0 0 5px;color:#1d4ed8}
+.balance-credit-help{font-size:12px;line-height:1.85;color:#526278;margin:5px 0 12px}
+.balance-credit-panel fieldset{border:0;padding:0;margin:0;min-width:0}
+.balance-credit-panel fieldset:disabled{opacity:.65}
+.balance-credit-panel .modal-btn{max-width:360px;min-height:44px;margin-top:12px;white-space:normal}
+.balance-credit-panel .modal-btn:disabled{opacity:.55;cursor:not-allowed}
+.balance-credit-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.balance-credit-fields>div{min-width:0}
+.balance-credit-preview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:14px 0}
+.balance-credit-preview:empty,.balance-credit-error:empty,.balance-credit-success:empty{display:none}
+.balance-credit-preview>div{background:#fff;border:1px solid #e2e8f0;border-radius:9px;padding:10px;min-width:0}
+.balance-credit-preview span,.balance-credit-preview strong{display:block;line-height:1.7;overflow-wrap:anywhere}
+.balance-credit-preview span{color:#64748b;font-size:11px}
+.balance-credit-preview strong{font-size:14px;font-weight:700;color:#1e293b}
+.balance-credit-preview .balance-credit-highlight{border-color:#b7dac4;background:#f3fbf6}
+.balance-credit-preview .balance-credit-highlight strong{color:#15803d}
+.balance-credit-preview .balance-credit-preview-note{grid-column:1/-1;font-size:11px;color:#64748b;margin:0;line-height:1.8}
+.balance-credit-confirm{display:flex;align-items:flex-start;gap:9px;font-size:12px;line-height:1.85;margin-top:12px;cursor:pointer}
+.balance-credit-confirm input{flex:0 0 auto;margin-top:4px;width:17px;height:17px;accent-color:#2563eb}
+.balance-credit-error{color:#b91c1c;font-size:12px;line-height:1.8;margin-top:12px;overflow-wrap:anywhere}
+.balance-credit-success{color:#166534;background:#ecfdf3;border:1px solid #b8e4c6;border-radius:9px;padding:12px;font-size:12px;line-height:1.85;margin-top:12px;overflow-wrap:anywhere}
+.balance-credit-history{font-size:12px;line-height:1.8;margin-top:14px}
+.balance-credit-history[hidden]{display:none!important}
+.balance-credit-history summary{cursor:pointer;font-weight:600;padding:8px 0;color:#334155}
+.balance-credit-full{background:#fff;border-color:#e2e8f0}
+.balance-credit-full h4{color:#334155}
+.balance-shortfall-table td{vertical-align:top}
+.balance-shortfall-table small{display:block;font-size:11px;line-height:1.8;color:#64748b;white-space:normal;overflow-wrap:anywhere;max-width:260px}
+.balance-shortfall-table .balance-shortfall-note{white-space:pre-wrap;overflow-wrap:anywhere;min-width:180px;max-width:300px}
+.balance-shortfall-table .balance-shortfall-amount{font-weight:700;color:#15803d;white-space:nowrap}
+.balance-shortfall-table details{font-size:11px;line-height:1.8;margin-top:5px}
+.balance-shortfall-table summary{cursor:pointer;color:#2563eb}
+@media(max-width:600px){.balance-credit-panel{padding:12px}.balance-credit-fields{grid-template-columns:1fr;gap:0}.balance-credit-preview{grid-template-columns:repeat(2,minmax(0,1fr))}.balance-credit-panel .modal-btn{max-width:none;width:100%}}
 @media(max-width:420px){.pb-balance{padding:12px}.pb-bal-grid strong{font-size:13px}}
+/* Refund reports use a complete date-scoped export, independent of dashboard limits. */
+.balance-refund-report{margin:14px 0;padding:16px;border:1px solid #dce5f2;border-radius:12px;background:#fff;color:#1c2333}
+.balance-refund-report h4{margin:0 0 5px;font-size:15px;line-height:1.7;font-weight:600;color:#1d4ed8}
+.balance-refund-report p{margin:5px 0;font-size:12px;line-height:1.85;color:#526278}
+.balance-refund-report-controls{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-top:12px}
+.balance-refund-report-controls>div{flex:1 1 160px;min-width:0;max-width:220px}
+.balance-refund-report-controls label{display:block;margin-bottom:5px;font-size:12px}
+.balance-refund-report-controls .minp{min-height:42px;margin:0;width:100%}
+.balance-refund-report-controls button{min-height:42px;white-space:normal}
+.balance-refund-report-controls button:disabled{opacity:.6;cursor:not-allowed}
+.balance-refund-report .balance-refund-report-status{color:#166534}
+.balance-refund-report .balance-refund-report-error{color:#b91c1c}
+.balance-refund-report-status:empty,.balance-refund-report-error:empty{display:none}
+/* One measured DOM page becomes one A4 PDF page; cards are never cut between pages. */
+.balance-refund-pdf{position:fixed;left:-10000px;top:0;width:794px;height:1123px;box-sizing:border-box;padding:34px 36px 38px;background:#fff;color:#17253a;font-family:'R',Rabar,Arial,sans-serif;font-size:13px;line-height:1.65;direction:rtl;text-align:right;display:flex;flex-direction:column;gap:12px;font-variant-numeric:tabular-nums;overflow:hidden}
+.balance-refund-pdf *{box-sizing:border-box}
+.balance-refund-pdf bdi,.balance-refund-pdf [dir="ltr"]{unicode-bidi:isolate;overflow-wrap:anywhere}
+.balance-refund-pdf-header{flex:0 0 auto;border-bottom:2px solid #2563eb;padding-bottom:10px}
+.balance-refund-pdf-heading{display:flex;justify-content:space-between;align-items:center;gap:20px}
+.balance-refund-pdf-heading h1{margin:0;font-size:21px;line-height:1.6;font-weight:700}
+.balance-refund-pdf-brand{font:700 17px Arial,sans-serif;color:#2563eb;white-space:nowrap}
+.balance-refund-pdf-header p{margin:3px 0;font-size:12px;line-height:1.7;color:#526278}
+.balance-refund-pdf-summary{flex:0 0 auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.balance-refund-pdf-summary>div{padding:9px;border:1px solid #dce5f2;border-radius:7px;background:#f5f8fd;min-width:0}
+.balance-refund-pdf-summary span{display:block;font-size:12px;color:#526278}
+.balance-refund-pdf-summary strong{display:block;font-size:16px;line-height:1.6;font-weight:700}
+.balance-refund-pdf-summary-note{grid-column:1/-1;margin:0;font-size:12px;line-height:1.65;color:#526278}
+.balance-refund-pdf-records{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.balance-refund-pdf-card{flex:0 0 auto;border:1px solid #dce5f2;border-radius:8px;padding:10px 12px;background:#fff;break-inside:avoid;page-break-inside:avoid;min-width:0}
+.balance-refund-pdf-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding-bottom:5px;border-bottom:1px solid #edf0f5;font-size:12px}
+.balance-refund-pdf-card-head strong{font-size:14px;font-weight:700}
+.balance-refund-pdf-kind{display:inline-block;color:#1d4ed8;margin-left:7px;font-weight:600}
+.balance-refund-pdf-people{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 0;font-size:12px;overflow-wrap:anywhere}
+.balance-refund-pdf-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:6px 0}
+.balance-refund-pdf-metrics>div{min-width:0;padding:7px;background:#f5f8fd;border-radius:5px}
+.balance-refund-pdf-metrics span{display:block;font-size:12px;line-height:1.6;color:#526278}
+.balance-refund-pdf-metrics strong{display:block;font-size:15px;line-height:1.6;font-weight:700;overflow-wrap:anywhere}
+.balance-refund-pdf-metrics .balance-refund-pdf-credit{background:#edf9f1}
+.balance-refund-pdf-credit strong{color:#166534}
+.balance-refund-pdf-detail,.balance-refund-pdf-note{margin:4px 0;font-size:12px;line-height:1.65;overflow-wrap:anywhere}
+.balance-refund-pdf-note{color:#526278}
+.balance-refund-pdf-audit{display:grid;grid-template-columns:1fr 1fr;column-gap:10px;margin-top:6px;padding-top:5px;border-top:1px solid #edf0f5;color:#526278;font-size:12px;line-height:1.65;overflow-wrap:anywhere}
+.balance-refund-pdf-footer{flex:0 0 auto;font-size:12px;color:#64748b;text-align:center;border-top:1px solid #edf0f5;padding-top:5px}
+@media(max-width:600px){.balance-refund-report{padding:12px}.balance-refund-report-controls{gap:9px}.balance-refund-report-controls>div{max-width:none;flex-basis:130px}.balance-refund-report-controls button{width:100%}}
+/* Keep the original net entitlement distinct from transfer and wallet credit. */
+.payout-rounding-note{margin:10px 0;font-size:12px;line-height:1.85;color:#526278;overflow-wrap:anywhere}
+#pageHome #xcBreakdown #bdExpectedRow #totalDisplay{font-size:14px!important;font-weight:400!important;color:#526278!important}
+#pageHome #xcBreakdown #payoutDisplay{font-size:20px!important;font-weight:600!important;color:#1568ba!important;overflow-wrap:anywhere}
+.payout-wallet-credit .v,.order-payout-credit,.tx-rounding-credit{color:#15803d}
+.tx-rounding-credit{font-size:12px;line-height:1.8;padding:0 0 9px;overflow-wrap:anywhere}
+.order-payout-cell{font-weight:700;color:var(--gr,#15803d)}
+.order-payout-credit{display:block;font:400 11px/1.8 'R',Rabar,sans-serif;white-space:normal;max-width:250px;overflow-wrap:anywhere}
+.payout-approval-review{border:1px solid #dce5f2;background:#f8fbff;border-radius:12px;padding:12px;margin-bottom:12px}
+.payout-approval-review .detail-row{align-items:flex-start;gap:12px}
+.payout-approval-review .lbl,.payout-approval-review .val{min-width:0;overflow-wrap:anywhere;white-space:normal;line-height:1.8}
+.payout-approval-review .val{flex:0 1 50%;text-align:left}
+.payout-approval-receipt{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+.payout-approval-receipt[hidden]{display:none!important}
+#apReceiptPreview img{width:100%;height:100%;object-fit:cover}
+.payout-approve-button{flex:1;justify-content:center;min-height:48px;white-space:normal!important;line-height:1.8;text-align:center}
+.payout-approve-button:disabled{opacity:.6;cursor:not-allowed}
+@media(max-width:420px){.payout-approval-review{padding:9px}.payout-approval-review .detail-row{font-size:12px;gap:8px}.payout-approve-button{font-size:12px}}
