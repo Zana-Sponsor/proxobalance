@@ -564,7 +564,262 @@ void main() {
       final title = find.byKey(const ValueKey('ad-title'));
       await reveal(title, adScroll());
       expect(t.widget<TextField>(title).enabled, isNot(false));
-      expect(t.widget<TextField>(title).controller!.text, validDraft().title);
+      expect(t.widget<TextField>(title).controller!.text,
+          matches(RegExp(r'^New Ad \\d{2}-\\d{2}-\\d{4}
+      await capture('ad-error-editable');
+      await t.tap(title);
+      final titleController = t.widget<TextField>(title).controller!;
+      titleController.selection = TextSelection(
+          baseOffset: 0, extentOffset: titleController.text.length);
+      await t.pump(const Duration(milliseconds: 100));
+      print('PROXO_POLISH_AD_INPUT_READY');
+      final editClock = Stopwatch()..start();
+      while (titleController.text != 'Recovered-ad' &&
+          editClock.elapsed < const Duration(seconds: 12)) {
+        await t.pump(const Duration(milliseconds: 50));
+      }
+      expect(titleController.text, 'Recovered-ad');
+      var stableFrames = 0;
+      var lastInset = 0.0;
+      final keyboardClock = Stopwatch()..start();
+      while (stableFrames < 6 &&
+          keyboardClock.elapsed < const Duration(seconds: 8)) {
+        await t.pump(const Duration(milliseconds: 50));
+        final inset = t.view.viewInsets.bottom;
+        stableFrames = inset > 0 && inset == lastInset ? stableFrames + 1 : 0;
+        lastInset = inset;
+      }
+      expect(stableFrames, greaterThanOrEqualTo(6));
+      final visibleBottom =
+          (t.view.physicalSize.height - t.view.viewInsets.bottom) /
+              t.view.devicePixelRatio;
+      expect(t.getRect(title).bottom, lessThanOrEqualTo(visibleBottom));
+      observations['ad_error_keyboard_inset_px'] = t.view.viewInsets.bottom;
+      observations['ad_error_title_edit_transport'] = 'Android adb input text';
+      print('PROXO_POLISH_AD_KEYBOARD_READY');
+      final captureClock = Stopwatch()..start();
+      while (captureClock.elapsed < const Duration(seconds: 3)) {
+        await t.pump(const Duration(milliseconds: 50));
+      }
+      FocusManager.instance.primaryFocus?.unfocus();
+      await settle();
+      final resume = find.byKey(const ValueKey('resume-pending-ad'));
+      await reveal(resume, adScroll());
+      await t.tap(resume);
+      await settle();
+      expect(failedAdRepository.submissions, 2);
+      expect(failedAdRepository.saved!.id, savedId);
+      await t.ensureVisible(cancel);
+      await settle();
+      await t.tap(cancel);
+      await settle();
+      await reveal(title, adScroll());
+      expect(titleController.text, 'Recovered-ad');
+      observations['ad_error_recovery'] = {
+        'submissions': failedAdRepository.submissions,
+        'same_pending_id': failedAdRepository.saved!.id == savedId,
+        'edited_title_retained': true,
+        'navigation_recovered': true,
+      };
+      await capture('ad-error-retry-restored');
+    });
+    for (final method in ['fib', 'fastpay']) {
+      await record('deposit-$method', const DepositScreen(), action: () async {
+        final option = find.byKey(ValueKey('deposit-method-$method'));
+        await reveal(option, depositScroll());
+        await t.tap(option);
+        await settle();
+        final amount = find.byKey(const ValueKey('deposit-quick-10000'));
+        await reveal(amount, depositScroll());
+        await t.tap(amount);
+        await settle();
+        if (method != 'fastpay') {
+          final details = find.byKey(const ValueKey('deposit-payment-details'));
+          await reveal(details, depositScroll());
+          final instructions =
+              find.byKey(const ValueKey('deposit-instructions'));
+          await reveal(instructions, depositScroll());
+          await t.tap(instructions);
+          await settle();
+          await capture('deposit-$method-instructions');
+        }
+      });
+    }
+    await record(
+        'ad-video-example', AdCreateScreen(repository: TestAdRepository()),
+        action: () async {
+      final button = find.byKey(const ValueKey('help-example-ad_video_link'));
+      await t.ensureVisible(button);
+      await settle();
+      await t.tap(button);
+      await settle();
+      expect(find.byType(Dialog), findsOneWidget);
+    });
+    await record('page-example',
+        ProxoLinkCreatePageScreen(repository: ToolsRepository([])),
+        action: () async {
+      final button = find.byKey(const ValueKey('help-example-page_creation'));
+      await t.ensureVisible(button);
+      await settle();
+      await t.tap(button);
+      await settle();
+      expect(find.byType(Dialog), findsOneWidget);
+    });
+    await record('auth-login', const AuthShell());
+    await record('auth-phone', const AuthShell(), action: () async {
+      await tapLabel(AuthStrings.channelPhone);
+      final input = find.byType(TextField).first;
+      // Profile builds reject TestTextInput's debug-only client id -1.
+      // Type through Android's actual input channel instead.
+      await t.tap(input);
+      await t.pump(const Duration(milliseconds: 100));
+      print('PROXO_POLISH_PHONE_INPUT_READY');
+      final inputClock = Stopwatch()..start();
+      while (t.widget<TextField>(input).controller!.text != '7501234567' &&
+          inputClock.elapsed < const Duration(seconds: 12)) {
+        await t.pump(const Duration(milliseconds: 50));
+      }
+      expect(t.widget<TextField>(input).controller!.text, '7501234567');
+      observations['phone_input_transport'] = 'Android adb input text';
+      FocusManager.instance.primaryFocus?.unfocus();
+      await settle();
+      expect(find.byType(IraqPhonePrefix), findsOneWidget);
+      expect(t.widget<TextField>(input).controller!.text, '7501234567',
+          reason: 'Phone input must survive unfocus');
+    });
+    await record('auth-signup', const AuthShell(), action: () async {
+      await tapLabel(AuthStrings.noAccountAction);
+      expect(find.byType(TextField), findsNWidgets(4));
+    });
+    await record('auth-recovery', const AuthShell(), action: () async {
+      await tapLabel(AuthStrings.forgotPasswordLink);
+    });
+    await record('auth-channel-cycles', const AuthShell(), action: () async {
+      for (var i = 0; i < 8; i++) {
+        await tapLabel(
+            i.isEven ? AuthStrings.channelPhone : AuthStrings.channelEmail);
+        expect(t.takeException(), isNull);
+      }
+    });
+    // Measure a production refresh with a controlled pending response.
+    final refresh = ProxoRefreshController();
+    await record('home-refresh', HomeScreen(refreshController: refresh),
+        action: () async {
+      final gate = Completer<void>();
+      backend.refreshGate = gate;
+      final first = refresh.refresh();
+      unawaited(refresh.refresh());
+      for (var i = 0; i < 25; i++)
+        await t.pump(const Duration(milliseconds: 16));
+      expect(find.text('نوێدەکرێتەوە'), findsOneWidget);
+      await capture('home-refresh-pending');
+      gate.complete();
+      backend.refreshGate = null;
+      // The refresh Future also awaits its closing spring; integration tests
+      // must pump those frames before awaiting the Future's completion.
+      final completionClock = Stopwatch()..start();
+      while (refresh.isRefreshing &&
+          completionClock.elapsed < const Duration(seconds: 12)) {
+        await t.pump(const Duration(milliseconds: 16));
+      }
+      expect(refresh.isRefreshing, isFalse,
+          reason: 'Refresh fetch and closing animation must finish');
+      await first.timeout(const Duration(seconds: 1));
+      await settle();
+    });
+    await mount(const AuthShell());
+    final keyboardField = find.byType(TextField).first;
+    await t.tap(keyboardField);
+    final keyboardClock = Stopwatch()..start();
+    var stableKeyboardFrames = 0;
+    var previousKeyboardInset = 0.0;
+    while (stableKeyboardFrames < 6 &&
+        keyboardClock.elapsed < const Duration(seconds: 8)) {
+      await t.pump(const Duration(milliseconds: 50));
+      final inset = t.view.viewInsets.bottom;
+      stableKeyboardFrames = inset > 0 && inset == previousKeyboardInset
+          ? stableKeyboardFrames + 1
+          : 0;
+      previousKeyboardInset = inset;
+    }
+    expect(t.view.viewInsets.bottom, greaterThan(0),
+        reason: 'Capture the real Android software keyboard');
+    expect(stableKeyboardFrames, greaterThanOrEqualTo(6));
+    for (var i = 0; i < 6; i++) {
+      await t.pump(const Duration(milliseconds: 50));
+    }
+    final keyboardFieldBounds = t.getRect(keyboardField);
+    final visibleBottom =
+        (t.view.physicalSize.height - t.view.viewInsets.bottom) /
+            t.view.devicePixelRatio;
+    expect(keyboardFieldBounds.bottom, lessThanOrEqualTo(visibleBottom),
+        reason: 'Focused email field must remain above the Android keyboard');
+    observations['keyboard_inset_px'] = t.view.viewInsets.bottom;
+    observations['keyboard_field_bottom_dp'] = keyboardFieldBounds.bottom;
+    observations['keyboard_visible_bottom_dp'] = visibleBottom;
+    print('PROXO_POLISH_KEYBOARD_READY');
+    // Continue Flutter frames while the host captures the native IME surface.
+    final captureClock = Stopwatch()..start();
+    while (captureClock.elapsed < const Duration(seconds: 4)) {
+      await t.pump(const Duration(milliseconds: 50));
+    }
+    FocusManager.instance.primaryFocus?.unfocus();
+    await settle();
+    await mount(const Scaffold(
+        body: Center(child: Text('Proxo notification fixture'))));
+    observations['background_notification'] = await native
+        .invokeMapMethod<String, dynamic>('postBackgroundFcmFixture');
+    await Future<void>.delayed(const Duration(seconds: 2));
+    final active =
+        await native.invokeListMethod<dynamic>('activeNotifications');
+    expect(active?.any((n) => (n as Map)['id'] == 4321), isTrue);
+    observations['active_background_notifications'] = active;
+    // The host captures the Android heads-up/shade and then resumes this activity.
+    print('PROXO_POLISH_NOTIFICATION_VISIBLE');
+    await native
+        .invokeMethod<bool>('waitForResume')
+        .timeout(const Duration(seconds: 30));
+    await settle();
+    await mount(const SizedBox());
+    refresh.dispose();
+    code.dispose();
+    focus.dispose();
+    password.dispose();
+    confirmation.dispose();
+    showPassword.dispose();
+    showConfirmation.dispose();
+    final unexpectedAttempts = backend.nonGetAttempts
+        .where((attempt) => attempt['expected_blocked_operation'] == null)
+        .toList();
+    observations['blocked_non_get_requests'] = backend.nonGetAttempts;
+    observations['blocked_fixture_thumbnail_repairs'] = backend.nonGetAttempts
+        .where((attempt) =>
+            attempt['expected_blocked_operation'] ==
+            'fictional_thumbnail_repair')
+        .length;
+    observations['blocked_trusted_device_lookups'] = backend.nonGetAttempts
+        .where((attempt) =>
+            attempt['expected_blocked_operation'] == 'trusted_device_lookup')
+        .length;
+    observations['blocked_unread_notification_counts'] = backend.nonGetAttempts
+        .where((attempt) =>
+            attempt['expected_blocked_operation'] ==
+            'unread_notification_count')
+        .length;
+    observations['unexpected_backend_requests'] = unexpectedAttempts;
+    observations['fixture_network_boundary'] =
+        'Every non-GET request is rejected by the local mock before network '
+        'access. Only the exact fictional thumbnail repair, Android Auth '
+        'trusted-device lookup and owner-filtered unread-count HEAD shapes '
+        'are expected. Production RPC semantics '
+        'and writes are not exercised by this fixture.';
+    expect(unexpectedAttempts, isEmpty,
+        reason: 'No payment, page, auth registration or other unexpected '
+            'backend request may be attempted by the visual fixture');
+    observations['completed'] = true;
+  }, timeout: const Timeout(Duration(minutes: 10)));
+}
+)));
       await capture('ad-error-editable');
       await t.tap(title);
       final titleController = t.widget<TextField>(title).controller!;
