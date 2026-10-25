@@ -73,6 +73,16 @@ function colorForWalletKey(key){
   return WALLET_PALETTE[h % WALLET_PALETTE.length];
 }
 function escHtml(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function safeWalletImageSrc(value){
+  const raw=String(value||'').trim();
+  if(!raw) return '';
+  if(/^data:image\/(?:png|jpe?g|webp);base64,[A-Za-z0-9+/=\s]+$/i.test(raw)) return raw;
+  try{
+    if(raw.startsWith('/')) return new URL(raw, location.origin).href;
+    const url=new URL(raw);
+    return url.protocol==='https:' ? url.href : '';
+  }catch(_){ return ''; }
+}
 // Rebuilds METHOD_META / FROM_OPTIONS / RECEIVE_OPTIONS from whatever rows
 // currently exist in ex_wallets, so wallets added/edited/removed in the
 // admin panel show up here immediately (via subscribeWalletsUser) without
@@ -106,10 +116,14 @@ function syncNativeSelect(id, opts){
 
 function methodIconHTML(key, sizeClass, forceId){
   const m = METHOD_META[key]; if(!m) return '';
-  const cls = 'method-icon'+(sizeClass?' '+sizeClass:'')+(m.img?' has-img':'');
-  const idAttr = forceId ? ' id="'+forceId+'"' : '';
-  const bgAttr = m.img ? '' : ' style="background:'+m.color+'"';
-  const inner = m.img ? '<img src="'+m.img+'" alt="'+m.label+'">' : m.icon;
+  const imageSrc=safeWalletImageSrc(m.img);
+  const cls = 'method-icon'+(sizeClass?' '+sizeClass:'')+(imageSrc?' has-img':'');
+  const idAttr = forceId ? ' id="'+escHtml(forceId)+'"' : '';
+  const color=/^#[0-9a-f]{3,8}$/i.test(String(m.color||'')) ? String(m.color) : '#2563eb';
+  const bgAttr = imageSrc ? '' : ' style="background:'+color+'"';
+  const inner = imageSrc
+    ? '<img src="'+escHtml(imageSrc)+'" alt="'+escHtml(m.label)+'">'
+    : m.icon;
   return '<span class="'+cls+'"'+idAttr+bgAttr+'>'+inner+'</span>';
 }
 function refreshTrigger(which){
@@ -1763,7 +1777,7 @@ function _validateOrderFields(){
     setFieldError('amt','نەتوانرا بڕی ناردن و گەڕاندنەوە دیاری بکرێت؛ بڕ یان ڕێگاکە بپشکنە.');ok=false;
   }
   if(to==='QiCard'){
-    if(!phone || phone.length<6){ setFieldError('userPhone','ژمارەی کارتی Qi Card داخڵ بکە'); ok=false; }
+    if(!/^\d{6,32}$/.test(phone)){ setFieldError('userPhone','ژمارەی کارتی Qi Card دەبێت تەنها ژمارە بێت'); ok=false; }
   } else if(!phone.startsWith("07")||phone.length!==11){ setFieldError('userPhone','تەنها ژمارەی عێراقی (07) بە 11 ژمارە داخڵ بکە'); ok=false; }
   if(from==='AccountBalance' && (!Number.isSafeInteger(Number(amtValue)) ||
       Number(amtValue)>Number(_myBalanceData?.balance?.available_iqd||0))){
@@ -1810,7 +1824,7 @@ async function openOrderConfirm(){
     + '<div class="confirm-row"><span class="confirm-row-label">بڕی پارە</span><span class="confirm-row-value" dir="ltr">'+displayAmt+'</span></div>'
     + payoutRows
     + senderIdentityRow
-    + '<div class="confirm-row"><span class="confirm-row-label">ژمارەی وەرگر</span><span class="confirm-row-value" dir="ltr">'+phone+'</span></div>';
+    + '<div class="confirm-row"><span class="confirm-row-label">ژمارەی وەرگر</span><span class="confirm-row-value" dir="ltr">'+escHtml(phone)+'</span></div>';
   const overlay=document.getElementById('confirmSheet');
   openSheet(overlay);
 }
@@ -2589,7 +2603,7 @@ function chgValueText(field, v){
   if(field==='is_locked') return v==='true' ? 'داخراوە' : 'کراوە';
   const n=Number(v);
   if(!isNaN(n)) return (field==='fee_percent'||field==='fee') ? (fmtPct(n)+'%') : formatNum(n);
-  return String(v);
+  return escHtml(String(v));
 }
 function chgDelta(r){
   const a=Number(r.old_value), b=Number(r.new_value);
