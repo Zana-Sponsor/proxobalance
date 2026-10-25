@@ -13,7 +13,7 @@ import securityAdminHandler from './api/security-admin.js';
 import trackHandler from './api/track.js';
 import proxolinkHandler from './api/proxolink.js';
 import formsHandler from './api/forms.js';
-import metaAdsHandler from './api/meta-ads.js';
+import metaAdsHandler from './api/_lib/advertising.js';
 import { stealthBanMiddleware } from './api/_lib/security.js';
 
 const __filename = fileURLToPath(import.meta.url);

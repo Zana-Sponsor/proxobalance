@@ -1,4 +1,4 @@
-// One deployment function keeps ProxoLink within the Vercel Hobby limit.
+// Share the deployment entrypoint; each service keeps its own authentication.
 import cards from './_lib/proxolink-handlers/contact-cards.js';
 import action from './_lib/proxolink-handlers/contact-card-action.js';
 import preview from './_lib/proxolink-handlers/contact-preview-token.js';
@@ -15,6 +15,12 @@ const handlers = { cards, 'card-action': action, 'preview-token': preview,
   'order-avatar':avatar, 'download-avatar':avatar, 'ad-avatar':avatar, templates, providers,
   'form-preview-token':createFormPreview, 'form-preview':renderFormPreview, 'form-preview-avatar':formPreviewAvatar, 'template-preview': templatePreview };
 export default async function handler(req, res) {
+  if (req.query?.service !== undefined) {
+    if (req.query.service === 'advertising') {
+      return (await import('./_lib/advertising.js')).default(req, res);
+    }
+    return json(res, 404, { ok: false, error: 'not_found' });
+  }
   const op = typeof req.query?.op === 'string' ? req.query.op : '';
   const selected = Object.hasOwn(handlers, op) && handlers[op];
   if (!selected) return json(res, 404, { ok: false, error: 'not_found' });

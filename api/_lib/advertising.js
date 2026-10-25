@@ -1,8 +1,8 @@
 import { timingSafeEqual } from 'node:crypto';
-import { verifyBearer, readJson, json } from './_lib/security.js';
-import { MetaError, fail, normalizeConfiguration, fingerprint, unavailableForecast } from './_lib/meta/contract.js';
-import { preflight } from './_lib/meta/provider.js';
-import { runWorker, graphFor } from './_lib/meta/worker.js';
+import { verifyBearer, readJson, json } from './security.js';
+import { MetaError, fail, normalizeConfiguration, fingerprint, unavailableForecast } from './meta/contract.js';
+import { preflight } from './meta/provider.js';
+import { runWorker, graphFor } from './meta/worker.js';
 
 const uuid=value=>typeof value==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 const allowedBody=(body,keys)=>body&&typeof body==='object'&&!Array.isArray(body)&&Object.keys(body).every(k=>keys.includes(k));
@@ -102,7 +102,7 @@ export function createMetaHandler({env=process.env,fetchImpl=fetch,db,now=Date.n
 const metaHandler=createMetaHandler();
 export default async function advertisingDispatcher(req,res) {
   const platform=String(req.query?.platform||new URL(req.url,'https://local.invalid').searchParams.get('platform')||'');
-  if(platform==='tiktok')return (await import('./_lib/tiktok/handler.js')).default(req,res);
-  if(platform==='payments')return (await import('./_lib/payments/handler.js')).default(req,res);
+  if(platform==='tiktok')return (await import('./tiktok/handler.js')).default(req,res);
+  if(platform==='payments')return (await import('./payments/handler.js')).default(req,res);
   return metaHandler(req,res);
 }

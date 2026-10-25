@@ -4,7 +4,7 @@ import { createServer } from 'node:http';
 import { normalizeConfiguration, fingerprint, MetaError } from '../api/_lib/meta/contract.js';
 import { graphClient, preflight, resolvePost, resolveRedirect, providerParameters, reconcileStage, observeChain, selectTuple } from '../api/_lib/meta/provider.js';
 import { runWorker } from '../api/_lib/meta/worker.js';
-import { createMetaHandler, backend } from '../api/meta-ads.js';
+import { createMetaHandler, backend } from '../api/_lib/advertising.js';
 
 const now=Date.parse('2026-10-23T08:00:00Z');
 const at=new Date(now).toISOString();

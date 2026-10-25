@@ -1,6 +1,6 @@
 import { timingSafeEqual } from 'node:crypto';
 import { readJson,json } from '../security.js';
-import { backend } from '../../meta-ads.js';
+import { backend } from '../advertising.js';
 import { TikTokError,fail,uuid,normalizeAd,fingerprint,fresh } from './contract.js';
 import { clientFor,readiness,listVideos,preflight } from './provider.js';
 import { runWorker } from './worker.js';

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { spawn } from 'node:child_process';
 import { request as httpRequest } from 'node:http';
 import { fileURLToPath } from 'node:url';
@@ -9,12 +9,22 @@ const root=fileURLToPath(new URL('../',import.meta.url));
 const callback='https://callback.example/api/tiktok-dm/callback/';
 const state='a'.repeat(43);
 
-test('Vercel routes the registered OAuth callback through the existing advertising function',()=>{
+test('Vercel shares the advertising entrypoint and preserves every public route',()=>{
   const config=JSON.parse(readFileSync(new URL('../vercel.json',import.meta.url),'utf8'));
   assert.deepEqual(config.redirects.find(r=>r.source==='/api/tiktok-dm/callback'),
     {source:'/api/tiktok-dm/callback',destination:'/api/tiktok-dm/callback/',permanent:true});
   assert.deepEqual(config.rewrites.find(r=>r.source==='/api/tiktok-dm/callback/'),
-    {source:'/api/tiktok-dm/callback/',destination:'/api/meta-ads?platform=tiktok&op=oauth-callback'});
+    {source:'/api/tiktok-dm/callback/',destination:'/api/proxolink?service=advertising&platform=tiktok&op=oauth-callback'});
+  for (const [source, destination] of [
+    ['/api/meta-ads','/api/proxolink?service=advertising'],
+    ['/api/tiktok-dm','/api/proxolink?service=advertising&platform=tiktok'],
+    ['/api/v1/wallet/refund','/api/proxolink?service=advertising&op=refund'],
+  ]) assert.deepEqual(config.rewrites.find(r=>r.source===source),{source,destination});
+  assert.equal(config.functions['api/proxolink.js'].maxDuration,60);
+  // Reserve one function slot for the existing routing middleware.
+  const entrypoints=readdirSync(new URL('../api/',import.meta.url)).filter(name=>name.endsWith('.js'));
+  assert(entrypoints.length+1<=12,'API entrypoints and middleware must fit the existing Hobby deployment');
+  assert(!entrypoints.includes('meta-ads.js'));
   assert.equal(config.trailingSlash,undefined,'callback normalization must not change unrelated routes');
 });
 
@@ -77,4 +87,19 @@ test('real Express callback preserves query, fixes operation, rejects duplicates
   assert.equal((await duplicate.json()).code,'TIKTOK_CALLBACK_INVALID');
   assert.equal((await request('/api/tiktok-dm/callback/',{method:'POST'})).status,404);
   assert.equal((await request('/api/tiktok-dm/callback/unrelated')).status,404);
+  // Exercise the deployed gateway with the same real OAuth implementation.
+  const gateway=await request('/api/proxolink?service=advertising&platform=tiktok&op=oauth-callback&state='+state+'&error=access_denied');
+  assert.equal(gateway.status,200);
+  assert.deepEqual(await gateway.json(),{ok:false,status:'REJECTED',error_code:'TIKTOK_AUTHORIZATION_REJECTED'});
+  const duplicateGateway=await request('/api/proxolink?service=advertising&platform=tiktok&op=oauth-callback&state='+state+'&state='+state+'&error=access_denied');
+  assert.equal(duplicateGateway.status,400);
+  assert.equal((await duplicateGateway.json()).code,'TIKTOK_CALLBACK_INVALID');
+  for (const query of ['service=unknown','service=advertising&service=unknown']) {
+    assert.equal((await request('/api/proxolink?'+query+'&op=providers')).status,404);
+  }
+  for (const path of ['/api/proxolink?service=advertising&platform=tiktok&op=accounts',
+    '/api/proxolink?service=advertising&op=quote','/api/proxolink?op=cards']) {
+    const denied=await request(path,{method:'POST'});
+    assert.equal(denied.status,401,'gateway must preserve the service authentication boundary');
+  }
 });

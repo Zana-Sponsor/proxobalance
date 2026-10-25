@@ -12,16 +12,20 @@
   ],
   "rewrites": [
     {
+      "source": "/api/meta-ads",
+      "destination": "/api/proxolink?service=advertising"
+    },
+    {
       "source": "/api/tiktok-dm/callback/",
-      "destination": "/api/meta-ads?platform=tiktok&op=oauth-callback"
+      "destination": "/api/proxolink?service=advertising&platform=tiktok&op=oauth-callback"
     },
     {
       "source": "/api/tiktok-dm",
-      "destination": "/api/meta-ads?platform=tiktok"
+      "destination": "/api/proxolink?service=advertising&platform=tiktok"
     },
     {
       "source": "/api/v1/wallet/refund",
-      "destination": "/api/meta-ads?op=refund"
+      "destination": "/api/proxolink?service=advertising&op=refund"
     },
     {
       "source": "/exchange-admin",
@@ -121,7 +125,7 @@
     }
   ],
   "functions": {
-    "api/meta-ads.js": {
+    "api/proxolink.js": {
       "maxDuration": 60
     },
     "api/*.js": {
