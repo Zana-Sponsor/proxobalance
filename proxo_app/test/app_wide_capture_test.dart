@@ -15,7 +15,7 @@ import 'package:proxo_app/theme/app_locale.dart';
 import 'package:proxo_app/theme/app_theme.dart';
 import 'package:proxo_app/widgets/app_update_host.dart';
 import 'package:proxo_app/widgets/proxo_sidebar.dart';
-import 'package:proxo_app/widgets/proxo_png_icon.dart';
+import 'package:proxo_app/widgets/proxo_symbol.dart';
 import '../integration_test/support/actual_screen_fixtures.dart';
 import 'app_update_service_test.dart' show policy;
 import 'home_sections_test.dart' show examples;
@@ -118,7 +118,7 @@ void main() {
           expect(find.byKey(ValueKey('result-expanded-${examples().first.id}')),
               findsOneWidget);
         }
-        if (screen == 'menu') expect(find.byType(ProxoPngIcon), findsWidgets);
+        if (screen == 'menu') expect(find.byType(ProxoSymbol), findsWidgets);
         expect(t.takeException(), isNull);
         Future<void> capture(String suffix) async {
           await settleLocalImages(t);

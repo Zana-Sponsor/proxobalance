@@ -203,15 +203,16 @@ void main() {
 
     final collapsed = tester.getRect(key('sticky-ad-price'));
     final nav = tester.getRect(find.byType(ProxoBottomNav));
-    expect(collapsed.left, 20);
-    expect(collapsed.width, 353);
+    // The restored design uses a flush price bar with 20dp content gutters.
+    expect(collapsed.left, 0);
+    expect(collapsed.width, 393);
     expect(collapsed.height, 64);
     expect(nav.top - collapsed.bottom, 0);
     final surface = tester.widget<Container>(key('sticky-ad-price'));
-    expect((surface.decoration! as BoxDecoration).borderRadius,
-        const BorderRadius.all(Radius.circular(10)));
-    expect(tester.getRect(key('sticky-price-total')).left, 36);
-    expect(tester.getRect(key('sticky-price-label')).right, 357);
+    expect(
+        (surface.decoration! as BoxDecoration).borderRadius, BorderRadius.zero);
+    expect(tester.getRect(key('sticky-price-total')).left, 20);
+    expect(tester.getRect(key('sticky-price-label')).right, 373);
     measurements['393px'] = {
       'screen': {'width': 393, 'height': 852, 'text_scale': 1},
       'gaps_dp': gaps,
@@ -368,7 +369,7 @@ void main() {
         isTrue);
     await tester.pump(const Duration(milliseconds: 300));
     await shot(tester, '23-price-expanded-loading');
-    expect(tester.getRect(key('sticky-price-loading')).left, 36);
+    expect(tester.getRect(key('sticky-price-loading')).left, 20);
     // Loading must not disable the full-row expand/collapse interaction.
     await tester.tap(key('sticky-price-label'));
     await tester.pump(const Duration(milliseconds: 250));
@@ -525,13 +526,13 @@ void main() {
       await tester.pumpAndSettle();
       final card = tester.getRect(key('sticky-ad-price'));
       final nav = tester.getRect(find.byType(ProxoBottomNav));
-      expect(card.left, 20);
-      expect(card.width, scenario.$1 - 40);
+      expect(card.left, 0);
+      expect(card.width, scenario.$1);
       expect(nav.top - card.bottom, 0);
       if (scenario.$3 == 1) expect(card.height, 64);
       if (scenario.$1 == 768) {
-        expect(tester.getRect(key('sticky-price-total')).left, 100);
-        expect(tester.getRect(key('sticky-price-label')).right, 668);
+        expect(tester.getRect(key('sticky-price-total')).left, 84);
+        expect(tester.getRect(key('sticky-price-label')).right, 684);
       }
       assertTextFits(tester);
       await shot(tester, scenario.$4);
