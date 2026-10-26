@@ -483,8 +483,13 @@ class AdSubmissionFailure implements Exception {
   final String code;
   final bool uncertain;
   final bool paymentCredited;
+  /// Set only by a strict initial-prepare rejection proving no durable payment
+  /// attempt exists. Missing/ambiguous responses never set this marker.
+  final bool paymentAttemptAbsent;
   const AdSubmissionFailure(this.code,
-      {this.uncertain = false, this.paymentCredited = false});
+      {this.uncertain = false,
+      this.paymentCredited = false,
+      this.paymentAttemptAbsent = false});
 
   /// A brief reason for temporary feedback. Financial recovery instructions
   /// remain in [message] so they stay readable after the notice expires.
@@ -507,7 +512,10 @@ class AdSubmissionFailure implements Exception {
         'NOT_ELIGIBLE' =>
           'دروستکردنی ڕیکلامی Meta ئێستا بەردەست نییە',
         'FASTPAY_DISABLED' ||
-        'PAYMENT_NOT_ENABLED' =>
+        'PAYMENT_NOT_ENABLED' ||
+        'AD_FASTPAY_UNAVAILABLE' ||
+        'META_FASTPAY_UNAVAILABLE' ||
+        'TIKTOK_DM_FASTPAY_UNAVAILABLE' =>
           'پارەدانی FastPay بۆ ئەم ڕیکلامە ئێستا بەردەست نییە؛ باڵانسی هەژمار هەڵبژێرە',
         'TIKTOK_DM_DISABLED' ||
         'CONVERSATION_UNAVAILABLE' ||
@@ -764,6 +772,25 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
     if (value['ok'] != true) {
       throw AdSubmissionFailure(
         '${value['code']}',
+        paymentAttemptAbsent: platform == 'payments' &&
+            op == 'prepare' &&
+            response.statusCode == 409 &&
+            value['ok'] == false &&
+            value['uncertain'] == false &&
+            value['attempt_created'] == false &&
+            const {
+              'AD_FASTPAY_UNAVAILABLE',
+              'META_FASTPAY_UNAVAILABLE',
+              'TIKTOK_DM_FASTPAY_UNAVAILABLE',
+              'QUOTE_NOT_FOUND',
+              'QUOTE_EXPIRED',
+              'QUOTE_CHANGED',
+              'CONNECTION_EXPIRED',
+              'TIKTOK_ACCOUNT_UNAVAILABLE',
+              'PRICE_CHANGED',
+              'INVALID_PROMO',
+              'RATE_LIMITED',
+            }.contains(value['code']),
         uncertain: value['uncertain'] == true ||
             (op == 'submit' &&
                 (value['ok'] != false ||
@@ -1291,6 +1318,7 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
         attempt = await _paymentCall('status', {'submission_id': request.id});
       }
     } on AdSubmissionFailure catch (error) {
+      if (error.paymentAttemptAbsent) rethrow;
       throw AdSubmissionFailure(error.code, uncertain: true);
     }
   }

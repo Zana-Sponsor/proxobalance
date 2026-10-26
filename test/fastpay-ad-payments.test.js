@@ -206,6 +206,46 @@ test('prepare forwards expected totals only to the immutable quote RPC and never
   assert.equal(userCalls.length, 1);
 });
 
+test('prepare proves no attempt exists only for explicit pre-attempt business rejections', async () => {
+  const body = { submission_id: SUBMISSION, platform: 'TIKTOK', quote_id: QUOTE, expected_cost_usd: 10, expected_amount_iqd: 14500 };
+  for (const code of ['AD_FASTPAY_UNAVAILABLE', 'QUOTE_EXPIRED', 'PRICE_CHANGED']) {
+    let gatewayCalls = 0, privateCalls = 0;
+    const handler = createPaymentHandler({ env,
+      db: { authenticate: async () => ({ id: USER }),
+        user: async () => { throw new PaymentError(code, { status: 409 }); },
+        service: async () => { privateCalls++; throw new Error('must not start payment'); } },
+      fetchImpl: async () => { gatewayCalls++; throw new Error('must not call provider'); } });
+    const response = await invoke(handler, 'prepare', body);
+    assert.equal(response.statusCode, 409);
+    assert.equal(response.body.code, code);
+    assert.equal(response.body.uncertain, false);
+    assert.equal(response.body.attempt_created, false);
+    assert.equal(privateCalls, 0); assert.equal(gatewayCalls, 0);
+  }
+});
+
+test('conflicts, ambiguous RPC results and errors after durable prepare cannot prove no payment exists', async () => {
+  const body = { submission_id: SUBMISSION, platform: 'META', quote_id: QUOTE, expected_cost_usd: 10, expected_amount_iqd: 14500 };
+  for (const error of [
+    new PaymentError('IDEMPOTENCY_CONFLICT', { status: 409 }),
+    new PaymentError('QUOTE_EXPIRED', { status: 503, uncertain: true }),
+    new PaymentError('FASTPAY_VERIFICATION_MISMATCH', { status: 409 }),
+  ]) {
+    const handler = createPaymentHandler({ env, db: { authenticate: async () => ({ id: USER }),
+      user: async () => { throw error; } } });
+    const response = await invoke(handler, 'prepare', body);
+    assert.equal(Object.hasOwn(response.body, 'attempt_created'), false);
+  }
+  const handler = createPaymentHandler({ env, now: () => NOW,
+    db: { authenticate: async () => ({ id: USER }), user: async () => attempt(),
+      service: async () => { throw new PaymentError('QUOTE_EXPIRED', { status: 409 }); } } });
+  const response = await invoke(handler, 'prepare', body);
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.body.attempt_id, ID);
+  assert.equal(response.body.uncertain, true);
+  assert.equal(Object.hasOwn(response.body, 'attempt_created'), false);
+});
+
 test('worker requires its dedicated secret, accepts no caller IDs, and never starts prepared QR orders', async () => {
   const db = ledger(); let gatewayCalls = 0;
   const handler = createPaymentHandler({ env, db, now: () => NOW, fetchImpl: async () => { gatewayCalls++; throw new Error('unexpected'); } });

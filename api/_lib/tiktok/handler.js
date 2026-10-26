@@ -8,6 +8,20 @@ import { oauthConfig,startAuthorization,completeAuthorization,publicConnection,r
 import { runActivationWorker } from './activation.js';
 
 const exact=(v,keys)=>v&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).every(k=>keys.includes(k));
+function connectionForClient(row,env) {
+  // Completed requests do not need OAuth secrets just to show their status.
+  // A broken/rotated pending grant must not hide the owner's other accounts.
+  if(row.status!=='PENDING')return publicConnection(row);
+  try {
+    const config=oauthConfig(env);
+    if(row.app_id!==config.appId||row.redirect_uri!==config.redirect.href)fail('TIKTOK_OAUTH_CONFIGURATION_CHANGED',{status:409});
+    return publicConnection(row,{config,includeAuthorization:true});
+  }
+  catch(error) {
+    if(!(error instanceof TikTokError)||!['TIKTOK_OAUTH_NOT_CONFIGURED','TIKTOK_OAUTH_CONFIGURATION_CHANGED','TIKTOK_PRIVATE_CREDENTIAL_INVALID'].includes(error.code))throw error;
+    return {...publicConnection(row),status:'UNAVAILABLE',error_code:error.code};
+  }
+}
 function workerAuth(req,env) {
   const expected=env.TIKTOK_DM_WORKER_SECRET,header=String(req.headers?.authorization||''),provided=header.replace(/^Bearer\s+/i,'');
   if(typeof expected!=='string'||expected.length<32)fail('TIKTOK_WORKER_NOT_CONFIGURED',{status:503});
@@ -52,7 +66,7 @@ export function createTikTokHandler({env=process.env,fetchImpl=fetch,db,now=Date
         const result=await call('list_accounts');const rows=Array.isArray(result)?result:result?.accounts;
         if(!Array.isArray(rows))fail('TIKTOK_BACKEND_RESPONSE_INVALID',{status:503});
         const pending=result?.pending_request;
-        return json(res,200,{ok:true,accounts:rows.map(a=>publicAccount(a,{now:now()})),pending_request:pending?publicConnection(pending,{config:oauthConfig(env),includeAuthorization:true}):null});
+        return json(res,200,{ok:true,accounts:rows.map(a=>publicAccount(a,{now:now()})),pending_request:pending?connectionForClient(pending,env):null});
       }
       if(op==='seen'){if(!exact(body,[]))fail('INVALID_INPUT');return json(res,200,await call('seen'));}
       if(op==='connect-start') {
@@ -62,7 +76,7 @@ export function createTikTokHandler({env=process.env,fetchImpl=fetch,db,now=Date
       if(op==='connect-status') {
         if(!exact(body,['request_id'])||!uuid(body.request_id))fail('INVALID_INPUT');
         const request=await call('oauth_status',{id:body.request_id});
-        return json(res,200,publicConnection(request,{config:oauthConfig(env),includeAuthorization:true}));
+        return json(res,200,connectionForClient(request,env));
       }
       if(op==='connect-revoke') {
         if(!exact(body,['request_id'])||!uuid(body.request_id))fail('INVALID_INPUT');

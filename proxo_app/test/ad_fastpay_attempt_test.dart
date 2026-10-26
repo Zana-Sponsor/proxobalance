@@ -146,6 +146,96 @@ void main() {
     expect((await repo.pending())!.toJson(), r.toJson());
   });
 
+  for (final meta in [false, true]) {
+    for (final code in [
+      'AD_FASTPAY_UNAVAILABLE',
+      'QUOTE_EXPIRED',
+      'PRICE_CHANGED',
+    ]) {
+      test('${meta ? 'Meta' : 'TikTok'} $code before payment permits a fresh confirmation',
+          () async {
+        final r = request(meta: meta), operations = <String>[];
+        final transport = mockTransport((req) async {
+          if (req.url.path.endsWith('/pa_ad_submission_status')) {
+            return jsonResponse({'ok': false, 'code': 'NOT_FOUND'});
+          }
+          operations.add(req.url.queryParameters['op']!);
+          return http.Response(jsonEncode({
+            'ok': false, 'code': code, 'uncertain': false,
+            'attempt_created': false,
+          }), 409, headers: {'content-type': 'application/json'});
+        });
+        final client = await signedClient(transport);
+        addTearDown(client.dispose);
+        final repo = SupabaseAdCreationRepository(client, backendConfig: staging);
+        final progress = ValueNotifier(const AdPaymentProgress());
+        addTearDown(progress.dispose);
+        await expectLater(
+            http.runWithClient(() => repo.submit(r, progress), () => transport),
+            throwsA(isA<AdSubmissionFailure>()
+                .having((e) => e.code, 'rejection', code)
+                .having((e) => e.uncertain, 'definite pre-payment rejection', false)));
+        expect(await repo.pending(), isNull);
+        expect(operations, ['prepare']);
+        expect(progress.value.qrUrl, isNull);
+      });
+    }
+  }
+
+  for (final response in [
+    {'ok': false, 'code': 'QUOTE_EXPIRED', 'uncertain': false},
+    {'ok': null, 'code': 'QUOTE_EXPIRED', 'uncertain': false, 'attempt_created': false},
+    {'ok': false, 'code': 'QUOTE_EXPIRED', 'uncertain': true, 'attempt_created': false},
+    {'ok': false, 'code': 'IDEMPOTENCY_CONFLICT', 'uncertain': false, 'attempt_created': false},
+  ]) {
+    test('ambiguous prepare rejection retains the same payment identity: $response',
+        () async {
+      final r = request();
+      final transport = mockTransport((req) async =>
+          req.url.path.endsWith('/pa_ad_submission_status')
+              ? jsonResponse({'ok': false, 'code': 'NOT_FOUND'})
+              : http.Response(jsonEncode(response), 409,
+                  headers: {'content-type': 'application/json'}));
+      final client = await signedClient(transport);
+      addTearDown(client.dispose);
+      final repo = SupabaseAdCreationRepository(client, backendConfig: staging);
+      final progress = ValueNotifier(const AdPaymentProgress());
+      addTearDown(progress.dispose);
+      await expectLater(
+          http.runWithClient(() => repo.submit(r, progress), () => transport),
+          throwsA(isA<AdSubmissionFailure>()
+              .having((e) => e.uncertain, 'retain payment recovery', true)));
+      expect((await repo.pending())!.id, r.id);
+    });
+  }
+
+  test('status rejection after prepare never clears an existing payment', () async {
+    final r = request(), operations = <String>[];
+    final transport = mockTransport((req) async {
+      if (req.url.path.endsWith('/pa_ad_submission_status')) {
+        return jsonResponse({'ok': false, 'code': 'NOT_FOUND'});
+      }
+      final op = req.url.queryParameters['op']!;
+      operations.add(op);
+      if (op == 'prepare') return jsonResponse(attempt(r, status: 'awaiting'));
+      return http.Response(jsonEncode({
+        'ok': false, 'code': 'QUOTE_EXPIRED', 'uncertain': false,
+        'attempt_created': false,
+      }), 409, headers: {'content-type': 'application/json'});
+    });
+    final client = await signedClient(transport);
+    addTearDown(client.dispose);
+    final repo = SupabaseAdCreationRepository(client, backendConfig: staging);
+    final progress = ValueNotifier(const AdPaymentProgress());
+    addTearDown(progress.dispose);
+    await expectLater(
+        http.runWithClient(() => repo.submit(r, progress), () => transport),
+        throwsA(isA<AdSubmissionFailure>()
+            .having((e) => e.uncertain, 'retain payment recovery', true)));
+    expect(operations, ['prepare', 'status']);
+    expect((await repo.pending())!.id, r.id);
+  });
+
   test('malformed recovered success never removes the frozen submission',
       () async {
     final r = request();

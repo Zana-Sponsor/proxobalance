@@ -7,6 +7,14 @@ import { preparePayment, reconcilePayment, runPaymentReconciliation } from './wo
 const uuid = value => typeof value === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 const allowed = (value, keys) => value && typeof value === 'object' && !Array.isArray(value) && Object.keys(value).every(key => keys.includes(key));
 const terminal = status => ['funded', 'compensated'].includes(status);
+// The immutable-attempt RPC recovers an existing submission before these
+// checks. Only these explicit business rejections prove no payment attempt was
+// created; conflicts, transport failures and provider errors remain uncertain.
+const noAttemptRejections = new Set([
+  'AD_FASTPAY_UNAVAILABLE', 'META_FASTPAY_UNAVAILABLE', 'TIKTOK_DM_FASTPAY_UNAVAILABLE',
+  'QUOTE_NOT_FOUND', 'QUOTE_EXPIRED', 'QUOTE_CHANGED', 'CONNECTION_EXPIRED',
+  'TIKTOK_ACCOUNT_UNAVAILABLE', 'PRICE_CHANGED', 'INVALID_PROMO', 'RATE_LIMITED',
+]);
 function authorizedWorker(req, env) {
   const expected = env.FASTPAY_AD_WORKER_SECRET, supplied = String(req.headers?.authorization || '').match(/^Bearer\s+(\S+)$/i)?.[1];
   if (typeof expected !== 'string' || expected.length < 32) fail('FASTPAY_WORKER_NOT_CONFIGURED', { status: 503 });
@@ -65,10 +73,17 @@ export function createPaymentHandler({ env = process.env, fetchImpl = fetch, db,
             typeof body.expected_cost_usd !== 'number' || !Number.isFinite(body.expected_cost_usd) || body.expected_cost_usd <= 0 ||
             !/^\d+(?:\.\d{1,6})?$/.test(String(body.expected_cost_usd)) ||
             !Number.isSafeInteger(body.expected_amount_iqd) || body.expected_amount_iqd < 1000) fail('INVALID_INPUT');
-        const attempt = await backend.user(req, 'pa_ad_payment_attempt', {
-          p_submission_id: body.submission_id, p_platform: body.platform, p_quote_id: body.quote_id,
-          p_expected_cost_usd: body.expected_cost_usd, p_expected_amount_iqd: body.expected_amount_iqd,
-        });
+        let attempt;
+        try {
+          attempt = await backend.user(req, 'pa_ad_payment_attempt', {
+            p_submission_id: body.submission_id, p_platform: body.platform, p_quote_id: body.quote_id,
+            p_expected_cost_usd: body.expected_cost_usd, p_expected_amount_iqd: body.expected_amount_iqd,
+          });
+        } catch (error) {
+          if (error instanceof PaymentError && error.status === 409 && !error.uncertain && noAttemptRejections.has(error.code))
+            error.attemptNotCreated = true;
+          throw error;
+        }
         let prepared = attempt;
         if (!terminal(attempt.status)) {
           try { prepared = await preparePayment(attempt.attempt_id, options); }
@@ -95,7 +110,8 @@ export function createPaymentHandler({ env = process.env, fetchImpl = fetch, db,
       const known = error instanceof PaymentError;
       const status = known ? error.status : error.status === 413 ? 413 : error instanceof SyntaxError ? 400 : 503;
       const code = known ? error.code : error.status === 413 ? 'PAYLOAD_TOO_LARGE' : error instanceof SyntaxError ? 'INVALID_INPUT' : 'AD_PAYMENT_BACKEND_UNAVAILABLE';
-      return json(res, status, { ok: false, error: code, code, uncertain: status >= 500 || known && error.uncertain, retryable: status >= 500 || known && error.retryable });
+      return json(res, status, { ok: false, error: code, code, uncertain: status >= 500 || known && error.uncertain, retryable: status >= 500 || known && error.retryable,
+        ...(known && error.attemptNotCreated === true ? { attempt_created: false } : {}) });
     }
   };
 }

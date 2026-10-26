@@ -104,6 +104,11 @@ class _TikTokDmAccountPickerState extends State<TikTokDmAccountPicker>
       _owner = widget.repository.ownerId;
       _accounts = const [];
       _videos = const [];
+      _pending = null;
+      _accountsError = null;
+      _videosError = null;
+      _accountsLoading = false;
+      _videosLoading = false;
       _accountId = _lastAccountByOwner[_owner];
       _selectedItem = null;
       _fresh = false;
@@ -1034,6 +1039,9 @@ class _TikTokDmConnectSheetState extends State<TikTokDmConnectSheet>
 
   @override
   Widget build(BuildContext context) {
+    // Authentication navigation removes this sheet, but an intervening rebuild
+    // must never display the previous owner's username or authorization QR.
+    if (_owner != widget.repository.ownerId) return const SizedBox.shrink();
     final connection = _connection;
     final url = connection?.authorizationUrl;
     final uri = Uri.tryParse(url ?? '');
@@ -1044,7 +1052,8 @@ class _TikTokDmConnectSheetState extends State<TikTokDmConnectSheet>
         !uri.hasPort &&
         (uri.host == 'tiktok.com' || uri.host.endsWith('.tiktok.com'));
     qr.QrImage? matrix;
-    if (official && url!.length <= 2048 && connection?.terminal != true) {
+    if (official && url!.length <= 2048 &&
+        connection?.awaitingAuthorization == true) {
       try {
         matrix = qr.QrImage(qr.QrCode.fromData(
             data: url, errorCorrectLevel: qr.QrErrorCorrectLevel.M));
@@ -1119,7 +1128,7 @@ class _TikTokDmConnectSheetState extends State<TikTokDmConnectSheet>
                                                               'tiktok-official-qr'),
                                                           painter: _QrPainter(
                                                               matrix))))))
-                                    else if (!connection.terminal)
+                                    else if (connection.awaitingAuthorization)
                                       ProxoText(
                                           'لینکی پەیوەستکردن پشتڕاست نەکرایەوە؛ دووبارە پشکنین بکە.',
                                           style: AdUi.text(context,
@@ -1129,12 +1138,10 @@ class _TikTokDmConnectSheetState extends State<TikTokDmConnectSheet>
                                     const TikTokQrTutorial(),
                                     const SizedBox(height: 12),
                                     ProxoText(
-                                        connection.status ==
-                                                    'WAITING_FOR_SCAN' ||
-                                                connection.status ==
-                                                    'AUTHORIZATION_CREATED'
+                                        connection.awaitingAuthorization
                                             ? 'چاوەڕوانی سکەنکردن و ڕەزامەندییە'
-                                            : connection.status == 'VERIFYING'
+                                            : connection.status == 'VERIFYING' ||
+                                                    connection.status == 'EXCHANGING'
                                                 ? 'هەژمار و مۆڵەتەکان پشکنین دەکرێن'
                                                 : tiktokDmMessage(
                                                     connection.errorCode ??

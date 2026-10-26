@@ -136,7 +136,15 @@ class TikTokDmConnection {
         'DISCONNECTED',
         'MISSING_PERMISSION',
         'NOT_BUSINESS_ACCOUNT',
+        'REJECTED',
+        'REVOKED',
+        'VERIFIED_UNLINKED',
         'UNAVAILABLE'
+      }.contains(status);
+  bool get awaitingAuthorization => const {
+        'PENDING',
+        'WAITING_FOR_SCAN',
+        'AUTHORIZATION_CREATED'
       }.contains(status);
   factory TikTokDmConnection.fromJson(Map<String, dynamic> json) =>
       TikTokDmConnection(
@@ -173,12 +181,17 @@ String tiktokDmMessage(String code) =>
       'INVALID_USERNAME' ||
       'USERNAME_INVALID' =>
         'ناوی بەکارهێنەری تیک تۆک بە دروستی بنووسە.',
-      'EXPIRED' || 'QR_EXPIRED' => 'کاتی QR تەواو بوو؛ کۆدێکی نوێ دروست بکە.',
+      'EXPIRED' || 'QR_EXPIRED' || 'AUTHORIZATION_EXPIRED' =>
+        'کاتی QR تەواو بوو؛ کۆدێکی نوێ دروست بکە.',
+      'REJECTED' || 'AUTHORIZATION_REJECTED' =>
+        'ڕەزامەندی نەدرا؛ بۆ پەیوەستکردن دووبارە هەوڵ بدەوە.',
+      'REVOKING' => 'پەیوەندییەکە دەپچڕێندرێت؛ تکایە چاوەڕوان بە.',
       'NOT_BUSINESS_ACCOUNT' => 'ئەم هەژمارە هەژماری بازرگانی تیک تۆک نییە.',
       'IS_PRIVATE_ACCOUNT' =>
         'هەژمارەکە تایبەتە؛ تەنها هەژمار و ڤیدیۆی گشتی بەردەستن.',
       'MESSAGE_PERMISSION_REQUIRED' ||
       'MESSAGE_PERMISSION_MISSING' ||
+      'OAUTH_SCOPE_MISSING' ||
       'SCOPE_UNAVAILABLE' ||
       'MISSING_PERMISSION' =>
         'مۆڵەتی ڕیکلامی نامە نەدراوە؛ مۆڵەتەکان نوێ بکەرەوە.',
@@ -204,14 +217,20 @@ String tiktokDmMessage(String code) =>
         'مۆسیقای ئەم ڤیدیۆیە بۆ ڕیکلام ڕێگەپێدراو نییە؛ ڤیدیۆیەکی تر هەڵبژێرە.',
       'UNAVAILABLE' ||
       'ACCOUNT_NOT_CONNECTED' ||
+      'REVOKED' ||
       'DISCONNECTED' =>
         'هەژمارەکە بەردەست نییە؛ پەیوەندییەکە نوێ بکەرەوە.',
       'NOT_AUTHENTICATED' || 'UNAUTHORIZED' => 'دووبارە بچۆ ژوورەوە.',
       'FEATURE_DISABLED' ||
       'DM_DISABLED' =>
         'نامەی ڕاستەوخۆ ئێستا بەردەست نییە.',
-      'AUTH_CORRELATION_UNAVAILABLE' =>
+      'AUTH_CORRELATION_UNAVAILABLE' ||
+      'OAUTH_NOT_CONFIGURED' ||
+      'OAUTH_CONFIGURATION_CHANGED' ||
+      'PRIVATE_CREDENTIAL_INVALID' =>
         'پەیوەستکردنی هەژمار ئێستا ئامادە نییە؛ تکایە دواتر هەوڵ بدەوە.',
+      'IDENTITY_JOIN_UNVERIFIED' || 'VERIFIED_UNLINKED' =>
+        'هەژمارەکە پشتڕاست کرایەوە، بەڵام پەیوەندییەکەی بە هەژماری ڕیکلام هێشتا پشتڕاست نەکراوەتەوە.',
       'OWNER_BINDING_UNVERIFIED' ||
       'IDENTITY_MISMATCH' ||
       'IDENTITY_UNAVAILABLE' =>

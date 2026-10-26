@@ -18,11 +18,15 @@ class FakeTikTokDmRepository extends TikTokDmRepository {
     TikTokDmAccount(id: 'a', username: 'store_a', dmReady: true)
   ];
   Future<TikTokDmVideoPage> Function(String)? loadVideos;
+  Future<TikTokDmAccounts> Function()? loadAccounts;
+  TikTokDmConnection? pending;
   Future<TikTokDmConnection> Function()? check;
   var starts = 0, checks = 0, disconnects = 0;
   String? requested;
   @override
-  Future<TikTokDmAccounts> accounts() async => TikTokDmAccounts(connected);
+  Future<TikTokDmAccounts> accounts() async => loadAccounts != null
+      ? loadAccounts!()
+      : TikTokDmAccounts(connected, pendingRequest: pending);
   @override
   Future<TikTokDmConnection> startConnection(
       String username, String requestId) async {
@@ -334,6 +338,111 @@ void main() {
     await tester.pump();
     expect(find.byKey(const ValueKey('tiktok-official-qr')), findsNothing);
     await tester.pumpWidget(const SizedBox());
+  });
+  testWidgets('real PENDING OAuth state shows waiting copy with the official QR',
+      (tester) async {
+    final repository = FakeTikTokDmRepository();
+    await tester.pumpWidget(host(TikTokDmConnectSheet(
+        repository: repository,
+        initialConnection: const TikTokDmConnection(
+            id: 'request',
+            requestedUsername: 'store',
+            status: 'PENDING',
+            authorizationUrl:
+                'https://www.tiktok.com/v2/auth/authorize/?state=example'))));
+    await tester.pump();
+    expect(find.byKey(const ValueKey('tiktok-official-qr')), findsOneWidget);
+    expect(find.text('چاوەڕوانی سکەنکردن و ڕەزامەندییە'), findsOneWidget);
+    expect(find.text(tiktokDmMessage('UNKNOWN')), findsNothing);
+    await tester.pumpWidget(const SizedBox());
+  });
+  testWidgets('owner switch removes a pending authorization before the new read',
+      (tester) async {
+    final next = Completer<TikTokDmAccounts>();
+    final repository = FakeTikTokDmRepository()
+      ..pending = const TikTokDmConnection(
+          id: 'owner-one-request', requestedUsername: 'private_store',
+          status: 'PENDING');
+    Widget picker() => host(TikTokDmAccountPicker(
+        repository: repository, onChanged: (_) {}));
+    await tester.pumpWidget(picker());
+    await flush(tester);
+    expect(find.text('بەردەوامبوون لە پەیوەستکردن'), findsOneWidget);
+    repository
+      ..ownerId = 'owner-two'
+      ..loadAccounts = (() => next.future);
+    await tester.pumpWidget(picker());
+    expect(find.text('بەردەوامبوون لە پەیوەستکردن'), findsNothing);
+    next.complete(const TikTokDmAccounts([]));
+    await flush(tester);
+    expect(find.text('بەردەوامبوون لە پەیوەستکردن'), findsNothing);
+    await tester.pumpWidget(const SizedBox());
+  });
+  testWidgets('owner switch hides an open authorization QR and stops its poll',
+      (tester) async {
+    final repository = FakeTikTokDmRepository();
+    Widget sheet() => host(TikTokDmConnectSheet(
+        repository: repository,
+        initialConnection: const TikTokDmConnection(
+            id: 'owner-one-request', requestedUsername: 'private_store',
+            status: 'PENDING',
+            authorizationUrl:
+                'https://www.tiktok.com/v2/auth/authorize/?state=owner-one')));
+    await tester.pumpWidget(sheet());
+    await tester.pump();
+    expect(find.byKey(const ValueKey('tiktok-official-qr')), findsOneWidget);
+    expect(find.text('@private_store'), findsOneWidget);
+    repository.ownerId = 'owner-two';
+    await tester.pumpWidget(sheet());
+    expect(find.byKey(const ValueKey('tiktok-official-qr')), findsNothing);
+    expect(find.text('@private_store'), findsNothing);
+    await tester.pump(const Duration(seconds: 30));
+    expect(repository.checks, 0);
+    await tester.pumpWidget(const SizedBox());
+  });
+  testWidgets('declined OAuth hides the consumed QR and stops status polling',
+      (tester) async {
+    final repository = FakeTikTokDmRepository()
+      ..check = (() async => const TikTokDmConnection(
+          id: 'request',
+          requestedUsername: 'store',
+          status: 'REJECTED',
+          errorCode: 'TIKTOK_AUTHORIZATION_REJECTED'));
+    await tester.pumpWidget(host(TikTokDmConnectSheet(
+        repository: repository,
+        initialConnection: const TikTokDmConnection(
+            id: 'request',
+            requestedUsername: 'store',
+            status: 'PENDING',
+            authorizationUrl:
+                'https://www.tiktok.com/v2/auth/authorize/?state=example'))));
+    await tester.pump(const Duration(seconds: 3));
+    await flush(tester);
+    expect(repository.checks, 1);
+    expect(find.byKey(const ValueKey('tiktok-official-qr')), findsNothing);
+    expect(find.text(tiktokDmMessage('TIKTOK_AUTHORIZATION_REJECTED')),
+        findsOneWidget);
+    expect(find.text('QR ـی نوێ دروست بکە'), findsOneWidget);
+    await tester.pump(const Duration(seconds: 30));
+    expect(repository.checks, 1);
+    await tester.pumpWidget(const SizedBox());
+  });
+  test('OAuth blocked and revoked states never become selectable connections',
+      () {
+    for (final status in ['REJECTED', 'REVOKED', 'VERIFIED_UNLINKED']) {
+      final connection = TikTokDmConnection(
+          id: 'request', requestedUsername: 'store', status: status);
+      expect(connection.terminal, isTrue);
+      expect(connection.awaitingAuthorization, isFalse);
+    }
+    expect(tiktokDmMessage('TIKTOK_IDENTITY_JOIN_UNVERIFIED'),
+        isNot(tiktokDmMessage('UNKNOWN')));
+    expect(tiktokDmMessage('TIKTOK_OAUTH_NOT_CONFIGURED'),
+        isNot(tiktokDmMessage('UNKNOWN')));
+    expect(tiktokDmMessage('TIKTOK_OAUTH_SCOPE_MISSING'),
+        tiktokDmMessage('MISSING_PERMISSION'));
+    expect(tiktokDmMessage('TIKTOK_AUTHORIZATION_EXPIRED'),
+        tiktokDmMessage('EXPIRED'));
   });
   testWidgets('expired authorization hides QR and offers regeneration',
       (tester) async {

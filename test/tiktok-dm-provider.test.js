@@ -5,6 +5,7 @@ import { normalizeAd,username,money,schedule,fingerprint,TikTokError } from '../
 import { tiktokClient,readiness,verifyIdentity,publicVideo,listVideos,preflight,stageParameters,reconcileStage,observe,reportSpend,reportMetrics,unlinkAdvertiser } from '../api/_lib/tiktok/provider.js';
 import { runWorker } from '../api/_lib/tiktok/worker.js';
 import { createTikTokHandler,publicAccount } from '../api/_lib/tiktok/handler.js';
+import { oauthConfig,encryptPrivate } from '../api/_lib/tiktok/oauth.js';
 
 const now=Date.parse('2026-10-23T10:00:00Z'),at=new Date(now).toISOString();
 const uid='10000000-0000-4000-8000-000000000001',aid='20000000-0000-4000-8000-000000000002',jid='30000000-0000-4000-8000-000000000003';
@@ -288,4 +289,83 @@ test('isolated HTTP API authenticates and masks private proof; quote readonly an
   events.length=0;assert.equal((await post('quote',{ad:draft})).status,200);assert.deepEqual(events.map(e=>e.action),['gate','account','store_quote']);
   events.length=0;assert.equal((await post('submit',{submission_id:uid,ad:draft,quote_id:jid,expected_cost_usd:0,expected_price_iqd:0})).status,200);assert.deepEqual(events.map(e=>e.action),['pa_submit_ad']);
   assert.equal(events[0].payload.p_ad.tiktok_quote_id,jid);assert.equal(events[0].payload.p_expected_cost_usd,0);
+});
+
+test('OAuth configuration failure cannot hide linked accounts or terminal request status',async t=>{
+  let request;
+  const calls=[],a=account();
+  const db={authenticate:async req=>req.headers.authorization==='Bearer jwt'?{id:uid}:null,
+    service:async(action,args)=>{calls.push({action,args});
+      if(action==='list_accounts')return {accounts:[a],pending_request:request};
+      if(action==='oauth_status')return request;
+      throw Error('Unexpected account mutation');}};
+  const server=createServer(createTikTokHandler({db,env:{},now:()=>now,
+    fetchImpl:async()=>{throw Error('Status reads must not call a provider');}}));
+  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+  t.after(()=>new Promise(resolve=>server.close(resolve)));
+  const url=`http://127.0.0.1:${server.address().port}/api/tiktok-dm`;
+  const post=async(op,body,token='jwt')=>{
+    const response=await fetch(`${url}?op=${op}`,{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify(body)});
+    return {status:response.status,body:await response.json()};
+  };
+  for(const status of ['REJECTED','EXPIRED','VERIFIED_UNLINKED','PENDING']) {
+    request={id:jid,user_id:uid,status,requested_username:'our.store',
+      error_code:status==='REJECTED'?'TIKTOK_AUTHORIZATION_REJECTED':null,
+      state_ciphertext:{private:'must-not-leak'},credential_ciphertext:{private:'must-not-leak'}};
+    const accounts=await post('accounts',{});
+    assert.equal(accounts.status,200);assert.equal(accounts.body.accounts[0].dm_ready,true);
+    const connection=await post('connect-status',{request_id:jid});
+    assert.equal(connection.status,200);
+    assert.deepEqual(accounts.body.pending_request,connection.body);
+    assert.equal(connection.body.status,['PENDING','VERIFIED_UNLINKED'].includes(status)?'UNAVAILABLE':status);
+    if(status==='PENDING')assert.equal(connection.body.error_code,'TIKTOK_OAUTH_NOT_CONFIGURED');
+    if(status==='VERIFIED_UNLINKED')assert.equal(connection.body.error_code,'TIKTOK_IDENTITY_JOIN_UNVERIFIED');
+    assert.equal(connection.body.authorization_url,undefined);
+    assert(!JSON.stringify(accounts.body).includes('must-not-leak'));
+  }
+  const count=calls.length;
+  assert.equal((await post('connect-status',{request_id:jid},'wrong')).status,401);
+  assert.equal(calls.length,count);
+  assert(calls.every(call=>call.args.userId===uid));
+  assert(calls.every(call=>['list_accounts','oauth_status'].includes(call.action)));
+});
+
+test('pending OAuth reads suppress authorization when the persisted app or callback no longer matches',async t=>{
+  const redirect='https://staging.example.com/api/tiktok-dm/callback/';
+  const env={TIKTOK_OAUTH_CLIENT_ID:'12345',TIKTOK_OAUTH_CLIENT_SECRET:'fixture-private-app-secret',TIKTOK_OAUTH_KEY_ID:'test-key-v1',
+    TIKTOK_OAUTH_ENCRYPTION_KEY:Buffer.alloc(32,7).toString('base64url'),TIKTOK_OAUTH_REDIRECT_URI:redirect,
+    TIKTOK_OAUTH_AUTHORIZATION_URL:`https://www.tiktok.com/v2/auth/authorize/?client_key=12345&redirect_uri=${encodeURIComponent(redirect)}`};
+  const state=Buffer.alloc(32,8).toString('base64url');
+  const original={id:jid,user_id:uid,idempotency_key:jid,status:'PENDING',requested_username:'our.store',app_id:'12345',redirect_uri:redirect,
+    state_ciphertext:encryptPrivate({state},`tiktok:state:${uid}:${jid}`,oauthConfig(env))};
+  let request=original;
+  const db={authenticate:async()=>({id:uid}),service:async(action,args)=>{
+    assert.equal(args.userId,uid);
+    if(action==='list_accounts')return {accounts:[account()],pending_request:request};
+    assert.equal(action,'oauth_status');return request;
+  }};
+  const server=createServer(createTikTokHandler({db,env,now:()=>now,
+    fetchImpl:async()=>{throw Error('Status reads must not call a provider');}}));
+  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+  t.after(()=>new Promise(resolve=>server.close(resolve)));
+  const post=async op=>{
+    const response=await fetch(`http://127.0.0.1:${server.address().port}/api/tiktok-dm?op=${op}`,{
+      method:'POST',headers:{Authorization:'Bearer jwt','Content-Type':'application/json'},
+      body:JSON.stringify(op==='accounts'?{}:{request_id:jid})});
+    assert.equal(response.status,200);return response.json();
+  };
+  const matching=await post('connect-status');
+  assert.equal(matching.status,'PENDING');
+  assert.equal(new URL(matching.authorization_url).searchParams.get('state'),state);
+  for(const change of [{app_id:'67890'},{redirect_uri:'https://previous.example.com/callback/'}]) {
+    request={...original,...change};
+    const accounts=await post('accounts'),connection=await post('connect-status');
+    assert.equal(accounts.accounts[0].dm_ready,true);
+    assert.deepEqual(accounts.pending_request,connection);
+    assert.equal(connection.status,'UNAVAILABLE');
+    assert.equal(connection.error_code,'TIKTOK_OAUTH_CONFIGURATION_CHANGED');
+    assert.equal(connection.authorization_url,undefined);
+    assert(!JSON.stringify(connection).includes(state));
+    assert.equal(request.status,'PENDING');
+  }
 });
