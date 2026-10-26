@@ -486,10 +486,14 @@ class AdSubmissionFailure implements Exception {
   /// Set only by a strict initial-prepare rejection proving no durable payment
   /// attempt exists. Missing/ambiguous responses never set this marker.
   final bool paymentAttemptAbsent;
+  /// A durable attempt was irrevocably closed before any gateway request could
+  /// start. This is different from expiry/decline of a dispatched payment.
+  final bool paymentAttemptClosedUnstarted;
   const AdSubmissionFailure(this.code,
       {this.uncertain = false,
       this.paymentCredited = false,
-      this.paymentAttemptAbsent = false});
+      this.paymentAttemptAbsent = false,
+      this.paymentAttemptClosedUnstarted = false});
 
   /// A brief reason for temporary feedback. Financial recovery instructions
   /// remain in [message] so they stay readable after the notice expires.
@@ -553,6 +557,8 @@ class AdSubmissionFailure implements Exception {
           'کاتی سێرڤەر پشتڕاست نەکرایەوە؛ دووبارە هەوڵ بدەرەوە',
         'NOT_AUTHENTICATED' => 'دووبارە بچۆ ژوورەوە',
         'FASTPAY_TERMINAL' => 'پارەدانی FastPay تەواو نەکرا',
+        'FASTPAY_NOT_STARTED' =>
+          'پارەدان دەستی پێ نەکردووە؛ بگەڕێوە و دووبارە هەوڵ بدەوە.',
         'AMOUNT_TOO_SMALL' => 'بڕی پارەدان بۆ FastPay زۆر کەمە',
         'STORAGE_UNAVAILABLE' => 'داواکاریەکە نەپارێزرا؛ دووبارە هەوڵ بدەرەوە',
         'CANCELLED' =>
@@ -766,7 +772,9 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
             body: jsonEncode(body))
         .timeout(Duration(seconds: op == 'quote' ? 60 : 25));
     final value = _map(jsonDecode(utf8.decode(response.bodyBytes)));
-    if (response.statusCode >= 500) {
+    if (response.statusCode >= 500 ||
+        (platform == 'payments' && value['ok'] == true &&
+            response.statusCode != 200)) {
       throw const AdSubmissionFailure('NETWORK', uncertain: true);
     }
     if (value['ok'] != true) {
@@ -1251,6 +1259,24 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
       }
     }
 
+    bool closedBeforePayment(Map<String, dynamic> attempt,
+        {String? expectedId}) =>
+        attempt['ok'] == true &&
+        attempt['payment_not_started'] == true &&
+        attempt['uncertain'] == false &&
+        const ['cancelled', 'expired'].contains(attempt['status']) &&
+        attempt['attempt_id'] is String &&
+        (attempt['attempt_id'] as String).isNotEmpty &&
+        (expectedId == null || attempt['attempt_id'] == expectedId) &&
+        attempt['currency'] == 'IQD' &&
+        num.tryParse('${attempt['amount_iqd']}') == request.quote.totalIqd &&
+        attempt['environment'] ==
+            (_backend.isStaging ? 'sandbox' : 'production') &&
+        attempt['qr_url'] == null &&
+        attempt['qr_text'] == null &&
+        attempt['ad_id'] == null &&
+        attempt['result'] == null;
+
     checkOwner();
     _checkCancellation(request.id);
     progress.value =
@@ -1279,6 +1305,10 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
               uncertain: true);
         }
         final status = '${attempt['status']}';
+        if (closedBeforePayment(attempt)) {
+          throw const AdSubmissionFailure('FASTPAY_NOT_STARTED',
+              paymentAttemptClosedUnstarted: true);
+        }
         if (status == 'funded' || status == 'compensated') {
           final result = attempt['result'];
           final adId = result is Map ? result['ad_id'] : attempt['ad_id'];
@@ -1290,8 +1320,13 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
         if (_cancelledSubmissions.contains(request.id)) {
           final attemptId = attempt['attempt_id'];
           if (attemptId is String && attemptId.isNotEmpty) {
-            await _paymentCall('cancel', {'attempt_id': attemptId});
+            final cancelled =
+                await _paymentCall('cancel', {'attempt_id': attemptId});
             checkOwner();
+            if (closedBeforePayment(cancelled, expectedId: attemptId)) {
+              throw const AdSubmissionFailure('CANCELLED',
+                  paymentAttemptClosedUnstarted: true);
+            }
           }
           throw const AdSubmissionFailure('CANCELLED', uncertain: true);
         }
@@ -1318,7 +1353,9 @@ class SupabaseAdCreationRepository extends AdCreationRepository {
         attempt = await _paymentCall('status', {'submission_id': request.id});
       }
     } on AdSubmissionFailure catch (error) {
-      if (error.paymentAttemptAbsent) rethrow;
+      if (error.paymentAttemptAbsent || error.paymentAttemptClosedUnstarted) {
+        rethrow;
+      }
       throw AdSubmissionFailure(error.code, uncertain: true);
     }
   }

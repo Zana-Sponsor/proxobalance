@@ -46,6 +46,12 @@ jobs:
           node-version: '24'
       - run: npm ci
       - run: psql -v ON_ERROR_STOP=1 -f test/fixtures/proxolink-v5-database.sql
+      - name: Verify isolated payment and provider database contracts
+        run: |
+          node scripts/test-ad-payments-database.mjs
+          node scripts/test-meta-database.mjs
+          node scripts/test-tiktok-dm-database.mjs
+          node scripts/test-tiktok-report-database.mjs
       - name: Verify migration transaction rollback
         run: |
           psql -v ON_ERROR_STOP=1 <<'SQL'

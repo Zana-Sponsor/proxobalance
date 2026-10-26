@@ -37,6 +37,11 @@ function ledger(seed = attempt()) {
       return { ...structuredClone(state), create_authorized: true };
     }
     if (action === 'qr_created') { Object.assign(state, args.payload, { status: 'awaiting' }); return structuredClone(state); }
+    if (action === 'close_unstarted') {
+      if (state.status === 'prepared' && !state.creation_hash && !state.creation_started_at)
+        Object.assign(state, { status: 'cancelled', payment_not_started: true });
+      return structuredClone(state);
+    }
     if (action === 'unknown') { state.status = 'reconcile'; return { ok: true }; }
     if (action === 'observe_status') {
       assert.equal(args.payload.verification_source, 'FASTPAY_STATUS');
@@ -268,9 +273,9 @@ test('database adapter authenticates actual user and uses user token for owner R
   assert.throws(() => createQrRequest({ ...attempt(), amount_iqd: 0 }, fastpayConfiguration('sandbox', { env, forCreate: true }), { now: NOW }), { code: 'FASTPAY_ATTEMPT_MISMATCH' });
 });
 
-test('prepare preserves the durable attempt on configuration, service and intent failures', async () => {
+test('prepare preserves the durable attempt on service and intent failures', async () => {
   const body = { submission_id: SUBMISSION, platform: 'META', quote_id: QUOTE, expected_cost_usd: 10, expected_amount_iqd: 14500 };
-  for (const mode of ['configuration', 'read', 'intent']) {
+  for (const mode of ['read', 'intent']) {
     const db = ledger(); let gatewayCalls = 0;
     const backend = { authenticate: async () => ({ id: USER }), user: async () => attempt(),
       service: async (action, args) => {
@@ -283,6 +288,69 @@ test('prepare preserves the durable attempt on configuration, service and intent
     assert.equal(response.statusCode, 200); assert.equal(response.body.attempt_id, ID);
     assert.equal(response.body.uncertain, true); assert.equal(response.body.terminal, false);
     assert.equal(gatewayCalls, 0); assert.equal(response.body.qr_text, null);
+  }
+});
+
+test('configuration and elapsed QR window close unstarted attempts without contacting FastPay', async () => {
+  const body = { submission_id: SUBMISSION, platform: 'META', quote_id: QUOTE, expected_cost_usd: 10, expected_amount_iqd: 14500 };
+  for (const mode of ['configuration', 'expired']) {
+    const db = ledger(mode === 'expired' ? { ...attempt(), expires_at: new Date(NOW - 1).toISOString() } : attempt());
+    let gatewayCalls = 0;
+    const backend = { authenticate: async () => ({ id: USER }), user: async () => structuredClone(db.state), service: db.service };
+    const handler = createPaymentHandler({ env: { ...env, FASTPAY_AD_CREATE_ENABLED: mode === 'configuration' ? 'false' : 'true' },
+      db: backend, now: () => NOW, fetchImpl: async () => { gatewayCalls++; throw new Error('No gateway intent exists'); } });
+    const response = await invoke(handler, 'prepare', body);
+    assert.equal(response.statusCode, 200); assert.equal(response.body.status, 'cancelled');
+    assert.equal(response.body.payment_not_started, true); assert.equal(response.body.uncertain, false);
+    assert.equal(response.body.qr_text, null); assert.equal(gatewayCalls, 0);
+    assert.deepEqual(db.calls.map(call => call.action), ['read', 'close_unstarted']);
+    const recovered = await invoke(handler, 'status', { submission_id: SUBMISSION });
+    assert.equal(recovered.body.payment_not_started, true);
+    assert(!db.calls.some(call => call.action === 'create_intent'));
+  }
+});
+
+test('expired unstarted status closes synchronously without depending on the background worker', async () => {
+  const db = ledger({ ...attempt(), expires_at: new Date(NOW - 1).toISOString() });
+  const result = await reconcilePayment(db.state, { service: db.service, env, now: () => NOW,
+    fetchImpl: async () => { throw new Error('No gateway request may occur'); } });
+  assert.equal(result.payment_not_started, true); assert.equal(result.status, 'cancelled');
+  assert.deepEqual(db.calls.map(call => call.action), ['close_unstarted']);
+});
+
+test('a database gate closing before intent obtains closure proof instead of stranding preparation', async () => {
+  const db = ledger();
+  const result = await preparePayment(ID, { env, now: () => NOW,
+    service: async (action, args) => {
+      if (action === 'create_intent') throw new PaymentError('PAYMENT_ATTEMPT_EXPIRED', { status: 409 });
+      return db.service(action, args);
+    }, fetchImpl: async () => { throw new Error('No gateway request may occur'); } });
+  assert.equal(result.payment_not_started, true);
+  assert.equal(result.status, 'cancelled');
+  assert.equal(db.calls.at(-1).action, 'close_unstarted');
+});
+
+test('concurrent gateway intent or lost close response never yields retry permission', async () => {
+  const body = { submission_id: SUBMISSION, platform: 'META', quote_id: QUOTE, expected_cost_usd: 10, expected_amount_iqd: 14500 };
+  for (const lostReply of [false, true]) {
+    const db = ledger();
+    const backend = { authenticate: async () => ({ id: USER }), user: async () => structuredClone(db.state),
+      service: async (action, args) => {
+        if (action === 'close_unstarted') {
+          if (lostReply) throw new PaymentError('AD_PAYMENT_BACKEND_UNAVAILABLE', { status: 503, uncertain: true });
+          Object.assign(db.state, { status: 'creating', creation_hash: 'a'.repeat(64) });
+        }
+        return db.service(action, args);
+      } };
+    const response = await invoke(createPaymentHandler({ env: { ...env, FASTPAY_AD_CREATE_ENABLED: 'false' }, db: backend, now: () => NOW }), 'prepare', body);
+    assert.equal(response.body.uncertain, true);
+    assert.equal(response.body.payment_not_started, undefined);
+    assert.equal(response.body.attempt_id, ID);
+  }
+  for (const change of [{ status: 'awaiting' }, { creation_hash: 'a'.repeat(64) }, { creation_started_at: new Date(NOW).toISOString() },
+    { result: { ad_id: QUOTE } }, { ad_id: QUOTE }]) {
+    const response = publicPaymentAttempt({ ...attempt(), status: 'cancelled', payment_not_started: true, ...change });
+    assert.equal(response.payment_not_started, undefined);
   }
 });
 

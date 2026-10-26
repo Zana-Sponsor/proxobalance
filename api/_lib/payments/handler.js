@@ -30,6 +30,11 @@ export function publicPaymentAttempt(attempt, { now = Date.now(), cancelled = fa
     result, terminal: terminal(attempt?.status), compensated: attempt?.status === 'compensated' || result?.compensated === true,
     uncertain: ['creating', 'reconcile'].includes(attempt?.status), qr_url: null, qr_text: null };
   const cancelRequested = cancelled || attempt?.cancel_requested === true || attempt?.status === 'cancelled';
+  if (attempt?.payment_not_started === true && ['cancelled', 'expired'].includes(attempt?.status) &&
+      !attempt?.creation_hash && !attempt?.creation_started_at && !attempt?.result && !attempt?.ad_id) {
+    response.payment_not_started = true;
+    response.uncertain = false;
+  }
   if (!response.terminal && !cancelRequested && !['declined', 'expired'].includes(attempt?.status) && Date.parse(attempt?.expires_at) > now) {
     response.qr_url = attempt.qr_url || null; response.qr_text = attempt.qr_text || null;
   }
@@ -37,7 +42,7 @@ export function publicPaymentAttempt(attempt, { now = Date.now(), cancelled = fa
   if (['PAID', 'UNPAID', 'DECLINED'].includes(attempt?.gateway_status)) response.gateway_status = attempt.gateway_status;
   if (/^[A-Z][A-Z0-9_]{2,100}$/.test(attempt?.reconciliation_code || '')) {
     response.error_code = attempt.reconciliation_code;
-    response.uncertain ||= attempt.reconciliation_code !== 'FASTPAY_CREATION_NOT_STARTED';
+    response.uncertain ||= response.payment_not_started !== true && attempt.reconciliation_code !== 'FASTPAY_CREATION_NOT_STARTED';
   }
   return response;
 }

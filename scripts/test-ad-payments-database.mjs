@@ -33,6 +33,11 @@ try{
  await db.exec(checkout.slice(checkout.indexOf('create or replace function public.pa_quote_ad_checkout('),checkout.indexOf('revoke all on function public.pa_quote_ad_checkout(')));
  const migrations=(await fs.readdir(new URL('../proxo_app/supabase/migrations/',import.meta.url))).filter(n=>/^2026102[23].*\.sql$/.test(n)).sort();
  for(const name of migrations){const source=await read('proxo_app/supabase/migrations/'+name);if(source.trim())await db.exec(source);}
+ const closureMigration=await read('proxo_app/supabase/migrations/20261026213026_fastpay_unstarted_attempt_closure.sql');
+ await db.exec('begin;'+closureMigration.replace(/^begin;$/m,'').replace(/^commit;$/m,'')+'rollback;');
+ check(await scalar("select to_regprocedure('app_finance.ad_payment_service_before_unstarted_closure(text,uuid,jsonb)') is null v"),'closure migration rollback restores original service');
+ check(await scalar("select count(*)=0 v from pg_trigger where tgname='ad_payment_closed_unstarted'"),'closure migration rollback removes finality guard');
+ await db.exec(closureMigration);
  await db.query('insert into auth.users(id,email_confirmed_at) values($1,now()),($2,now())',[user,other]);
  await db.query('insert into auth.sessions(id,user_id) values($1,$2),($3,$4)',[session,user,otherSession,other]);
  await db.query('insert into public.profiles(id) values($1),($2)',[user,other]);
@@ -175,5 +180,55 @@ try{
  // Legacy wallet-only callback remains available for unbound genuine top-ups.
  const legacyId=uuid();await db.query("insert into public.pa_transactions(id,user_id,type,kind,method,gateway,status,amount,currency,fx_rate,gateway_amount,fastpay_order_id) values($1,$2,'deposit','deposit','fastpay','fastpay','pending',10,'IQD',1800,18000,'legacy-topup')",[legacyId,user]);
  check((await role('service_role',()=>scalar("select public.fastpay_mark_paid('legacy-topup','legacy-provider',18000,'IQD') v"))).ok,'existing unbound FastPay top-up callback preserved');
+ // A never-dispatched attempt may be closed without waiting for provider
+ // reconciliation. Its proof must remain true across restart and stale calls.
+ const freshAttempt=async()=>{
+  await db.query("delete from app_finance.request_limits where actor_id=$1 and operation='ad_payment_attempt'",[user]);
+  return attempt(await quote());
+ };
+ const unstarted=await freshAttempt();check(unstarted.payment_not_started===false,'prepared is not closure proof');
+ const beforeClose=await scalar("select jsonb_build_object('wallet',(select balance from public.pa_wallets where user_id=$1),'ledger',(select count(*) from app_finance.ledger),'ads',(select count(*) from public.pa_ads)) v",[user]);
+ const closed=await service('close_unstarted',unstarted.attempt_id,{error_code:'FASTPAY_NOT_CONFIGURED'});
+ check(closed.status==='cancelled'&&closed.payment_not_started===true,'unstarted configuration failure closes definitively');
+ check(closed.qr_url===null&&closed.qr_text===null&&closed.ad_id===null&&closed.result===null,'closed attempt exposes no QR, order result or ad');
+ assert.deepEqual(await scalar("select jsonb_build_object('wallet',(select balance from public.pa_wallets where user_id=$1),'ledger',(select count(*) from app_finance.ledger),'ads',(select count(*) from public.pa_ads)) v",[user]),beforeClose);checks++;
+ check(await scalar("select status='rejected' and gateway_status='CANCELLED' and not wallet_credited v from public.pa_transactions where id=$1",[unstarted.transaction_id]),'local closure updates only the unpaid receipt');
+ check((await service('close_unstarted',unstarted.attempt_id)).payment_not_started===true,'closure retry is idempotent');
+ const unstartedKey=await scalar('select submission_id v from app_finance.ad_payment_attempts where id=$1',[unstarted.attempt_id]);
+ check((await role('authenticated',()=>scalar('select public.pa_ad_payment_status(p_submission_id=>$1) v',[unstartedKey]))).payment_not_started===true,'restart recovers durable no-payment proof');
+ check((await service('create_intent',unstarted.attempt_id,{request_hash:'e'.repeat(64)})).create_authorized!==true,'closure winning row lock prevents future dispatch');
+ check((await service('unknown',unstarted.attempt_id,{error_code:'STALE_WORKER'})).payment_not_started===true,'stale unknown outcome cannot reopen closed attempt');
+ check((await service('observe_verified',unstarted.attempt_id,verified(unstarted))).code==='PAYMENT_ATTEMPT_NOT_STARTED','closed unstarted attempt cannot accept a payment proof');
+ check((await service('observe_status',unstarted.attempt_id,verified(unstarted,{status:'DECLINED',verification_source:'FASTPAY_STATUS'}))).code==='PAYMENT_ATTEMPT_NOT_STARTED','closed unstarted attempt cannot accept an unrelated gateway status');
+ await fails("update app_finance.ad_payment_attempts set status='creating',creation_hash=$2,creation_started_at=now() where id=$1",[unstarted.attempt_id,'f'.repeat(64)],'PAYMENT_ATTEMPT_CLOSED_UNSTARTED');
+ await denied("select app_finance.ad_payment_service_before_unstarted_closure('read','"+unstarted.attempt_id+"','{}')");
+ await denied("select public.pa_ad_payment_service('close_unstarted','"+unstarted.attempt_id+"')");
+ let serviceBypass=false;try{await role('service_role',()=>db.query("select app_finance.ad_payment_service_before_unstarted_closure('read',$1,'{}')",[unstarted.attempt_id]));}catch(e){serviceBypass=e.code==='42501';}
+ check(serviceBypass,'service role cannot bypass closure guard through renamed function');
+ const started=await freshAttempt();
+ check((await service('create_intent',started.attempt_id,{request_hash:'e'.repeat(64)})).create_authorized===true,'gateway intent wins before closure');
+ const stillStarted=await service('close_unstarted',started.attempt_id,{error_code:'CONFIG_CHANGED'});
+ check(stillStarted.status==='creating'&&stillStarted.payment_not_started===false,'started attempt never receives no-payment proof');
+ check((await service('observe_verified',started.attempt_id,verified(started))).status==='funded','started attempt retains ordinary late-payment settlement');
+ check((await service('close_unstarted',started.attempt_id)).payment_not_started===false,'funded attempt can never be locally closed');
+ const userCancel=await freshAttempt();
+ check((await role('authenticated',()=>scalar('select public.pa_ad_payment_cancel($1) v',[userCancel.attempt_id]))).payment_not_started===true,'owner cancellation before dispatch is safe closure');
+ check(await scalar("select status='rejected' and gateway_status='CANCELLED' and not wallet_credited v from public.pa_transactions where id=$1",[userCancel.transaction_id]),'owner cancellation before dispatch cannot leave a pending receipt');
+ const startedCancel=await freshAttempt();await service('create_intent',startedCancel.attempt_id,{request_hash:'f'.repeat(64)});
+ check((await role('authenticated',()=>scalar('select public.pa_ad_payment_cancel($1) v',[startedCancel.attempt_id]))).payment_not_started===false,'owner cancellation after dispatch is not payment finality');
+ check((await service('observe_verified',startedCancel.attempt_id,verified(startedCancel))).status==='compensated','cancelled dispatched attempt still compensates a late capture');
+ const expire=await freshAttempt();
+ await db.exec('alter table app_finance.ad_payment_attempts disable trigger ad_payment_attempt_immutable');
+ await db.query("update app_finance.ad_payment_attempts set expires_at=now()-interval '1 minute' where id=$1",[expire.attempt_id]);
+ await db.exec('alter table app_finance.ad_payment_attempts enable trigger ad_payment_attempt_immutable');
+ await service('claim_reconcile');
+ check((await role('authenticated',()=>scalar('select public.pa_ad_payment_status($1) v',[expire.attempt_id]))).payment_not_started===true,'background no-intent expiry exposes the same safe proof');
+ check(await scalar("select status='rejected' and gateway_status='EXPIRED' and not wallet_credited v from public.pa_transactions where id=$1",[expire.transaction_id]),'background expiry before dispatch cannot leave a pending receipt');
+ const hold=uuid();await db.query("insert into public.promo_codes(id,code,discount_type,discount_value,max_uses,expires_at,created_by) values($1,'UNSTARTED_TEST','percentage',10,1,now()+interval '1 day','fixture')",[hold]);
+ const heldQuote=await tiktok('store_quote',{ad:base,config_hash:fingerprint(base),evidence:{authorized:true,ready:true,account_id:account,declared_budget_usd:20},promo_id:hold,promo_code:'UNSTARTED_TEST'});
+ const held=await attempt(heldQuote);check(held.ok,'unstarted promo reservation prepared');
+ check(await scalar('select used_count=1 v from public.promo_codes where id=$1',[hold]),'unstarted promo has one hold');
+ await service('close_unstarted',held.attempt_id);await service('close_unstarted',held.attempt_id);
+ check(await scalar('select used_count=0 v from public.promo_codes where id=$1',[hold]),'closure releases promo reservation exactly once');
  console.log(`PASS ${checks} immutable ad payment PostgreSQL assertions`);
 }finally{await db.close();}

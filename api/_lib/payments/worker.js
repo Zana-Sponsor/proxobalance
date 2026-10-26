@@ -1,15 +1,26 @@
 import { PaymentError, fastpayConfiguration, fastpayClient, createQrRequest, createQr, verifyFastpayAttempt } from './fastpay.js';
 
 const done = attempt => ['funded', 'compensated'].includes(attempt?.status);
+const closedUnstarted = attempt => attempt?.payment_not_started === true &&
+  ['cancelled', 'expired'].includes(attempt?.status) && !attempt?.creation_hash && !attempt?.creation_started_at;
 const safeCode = error => error instanceof PaymentError ? error.code : 'FASTPAY_RECONCILIATION_UNAVAILABLE';
+const preCreationFailures = new Set([
+  'FASTPAY_ENVIRONMENT_MISMATCH', 'FASTPAY_AD_CREATION_DISABLED', 'FASTPAY_AD_PRODUCTION_DISABLED',
+  'FASTPAY_MERCHANT_NOT_CONFIGURED', 'FASTPAY_CALLBACK_NOT_CONFIGURED', 'FASTPAY_RETURN_URL_INVALID',
+  'FASTPAY_QR_ORIGINS_INVALID', 'FASTPAY_ATTEMPT_MISMATCH', 'FASTPAY_QR_WINDOW_ELAPSED',
+]);
 const gateway = (attempt, { env, fetchImpl, clientFactory }, forCreate = false) => {
   const config = fastpayConfiguration(attempt.environment, { env, forCreate });
   return { config, api: clientFactory ? clientFactory(config) : fastpayClient(config, { fetchImpl }) };
 };
 
 export async function reconcilePayment(attempt, { service, env = process.env, fetchImpl = fetch, clientFactory, now = Date.now } = {}) {
-  if (done(attempt)) return attempt;
-  if (!attempt.creation_hash) return { ...attempt, reconciliation_code: 'FASTPAY_CREATION_NOT_STARTED' };
+  if (done(attempt) || closedUnstarted(attempt)) return attempt;
+  if (!attempt.creation_hash) {
+    if (attempt.status === 'prepared' && Date.parse(attempt.expires_at) <= now())
+      return service('close_unstarted', { attemptId: attempt.attempt_id, payload: { error_code: 'FASTPAY_QR_WINDOW_ELAPSED' } });
+    return { ...attempt, reconciliation_code: 'FASTPAY_CREATION_NOT_STARTED' };
+  }
   const { config, api } = gateway(attempt, { env, fetchImpl, clientFactory });
   const observed = await verifyFastpayAttempt(api, attempt, config, { now: now() });
   if (!observed.paid) {
@@ -22,12 +33,29 @@ export async function reconcilePayment(attempt, { service, env = process.env, fe
 export async function preparePayment(attemptId, options = {}) {
   const { service, env = process.env, fetchImpl = fetch, clientFactory, now = Date.now } = options;
   const attempt = await service('read', { attemptId });
-  if (done(attempt) || attempt.qr_url && attempt.qr_text) return attempt;
+  if (done(attempt) || closedUnstarted(attempt) || attempt.qr_url && attempt.qr_text) return attempt;
   // No replay of QR creation after a durable intent, timeout or lost reply.
   if (attempt.status !== 'prepared' || attempt.creation_hash) return reconcilePayment(attempt, options);
-  const { config, api } = gateway(attempt, { env, fetchImpl, clientFactory }, true);
-  const request = createQrRequest(attempt, config, { now: now() });
-  const intent = await service('create_intent', { attemptId, payload: { request_hash: request.request_hash } });
+  let config, api, request;
+  try {
+    ({ config, api } = gateway(attempt, { env, fetchImpl, clientFactory }, true));
+    request = createQrRequest(attempt, config, { now: now() });
+  } catch (error) {
+    if (!(error instanceof PaymentError) || !preCreationFailures.has(error.code)) throw error;
+    // The database closes under the same row lock used by create_intent. It
+    // returns proof only if no concurrent request has acquired gateway intent.
+    // A failed/ambiguous close remains recoverable through the original ID.
+    return service('close_unstarted', { attemptId, payload: { error_code: error.code } });
+  }
+  let intent;
+  try {
+    intent = await service('create_intent', { attemptId, payload: { request_hash: request.request_hash } });
+  } catch (error) {
+    if (!(error instanceof PaymentError) || error.code !== 'PAYMENT_ATTEMPT_EXPIRED' || error.uncertain || error.status !== 409) throw error;
+    // A database gate can close between configuration validation and intent.
+    // Still require the locked closure proof; never infer it from this error.
+    return service('close_unstarted', { attemptId, payload: { error_code: 'FASTPAY_CREATION_NOT_STARTED' } });
+  }
   if (intent.create_authorized !== true) return intent;
   try {
     const qr = await createQr(api, request, config);

@@ -29,6 +29,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 import '../main.dart' show supabase;
 import '../config/backend_config.dart';
+import '../services/fastpay_pending_checkout.dart';
 import '../theme/app_theme.dart' show kAppFont;
 import 'payments/payment_option.dart';
 import 'proxo_toast.dart';
@@ -82,13 +83,13 @@ const List<BoxShadow> _kSoftElevation = [
 
 // ── دۆخەکان ───────────────────────────────────────────────────────────────
 
-enum FastPayPhase { confirm, dispatching, waiting, paid, cancelled, expired }
+enum FastPayPhase { confirm, dispatching, waiting, paid, cancelled, expired, paused }
 
 /// دۆخی گەیتوەی، وەک لە `pa_transactions.gateway_status` تۆمار کراوە.
 enum FastPayGatewayStatus { created, paid, declined, expired, failed, unknown }
 
-FastPayGatewayStatus _gatewayStatusFrom(String? raw) {
-  switch ((raw ?? '').toUpperCase()) {
+FastPayGatewayStatus _gatewayStatusFrom(Object? raw) {
+  switch (raw is String ? raw.toUpperCase() : '') {
     case 'CREATED':
       return FastPayGatewayStatus.created;
     case 'PAID':
@@ -144,6 +145,24 @@ class FastPayException implements Exception {
 class FastPayService {
   const FastPayService._();
 
+  static void _checkOwner(String owner) {
+    if (supabase.auth.currentUser?.id != owner) {
+      throw const FastPayException('هەژمارەکە گۆڕاوە؛ دووبارە بچۆ ژوورەوە');
+    }
+  }
+
+  static bool walletCredited(Map<String, dynamic> row, {required int amountIqd}) =>
+      row['status'] == 'approved' &&
+      row['gateway_status'] == 'PAID' &&
+      row['wallet_credited'] == true && row['gateway_amount'] == amountIqd;
+
+  static bool isCheckoutUrl(String value) {
+    final uri = Uri.tryParse(value);
+    return value.length <= 4096 && uri != null && uri.scheme == 'https' &&
+        uri.userInfo.isEmpty && !uri.hasPort &&
+        const {'qr.fast-pay.iq', 'staging-qr.fast-pay.iq'}.contains(uri.host);
+  }
+
   /// ناسنامەیەکی نوێی داواکاری. هەمان شێوازی ئەوانەی لە بەرهەمهێناندان:
   /// `PX` + کاتی یەکەیی + چوار ژمارەی هەڕەمەکی (١٩ پیت — لەنێو ٨ و ٣٢).
   static String newOrderId() {
@@ -157,12 +176,20 @@ class FastPayService {
     required String orderId,
     required int billAmountIqd,
     String? note,
+    String? expectedUserId,
     BackendConfig? backendConfig,
   }) async {
     (backendConfig ?? BackendConfig.current).requireProductionTransport();
     final session = supabase.auth.currentSession;
     if (session == null) {
       throw const FastPayException('تکایە دووبارە بچۆ ژوورەوە');
+    }
+    final owner = expectedUserId ?? session.user.id;
+    _checkOwner(owner);
+    if (!RegExp(r'^[A-Za-z0-9_-]{8,32}$').hasMatch(orderId) ||
+        RegExp(r'^AP[0-9a-f]{28}$', caseSensitive: false).hasMatch(orderId) ||
+        billAmountIqd < kFastPayMinIqd) {
+      throw const FastPayException('زانیاریی پارەدان دروست نییە');
     }
     late final http.Response res;
     try {
@@ -189,6 +216,8 @@ class FastPayService {
       throw const FastPayException('پەیوەندی بە ئینتەرنێتەوە نییە');
     }
 
+    _checkOwner(owner);
+
     // بۆدییەکی بەتاڵ = وەرکفلۆکە بەبێ وەڵام کۆتایی هاتووە. ئەمە
     // `Unexpected end of JSON input`ـە کە جاران دەردەکەوت.
     if (res.body.trim().isEmpty) {
@@ -208,17 +237,27 @@ class FastPayService {
       throw const FastPayException('وەڵامی سێرڤەر تێنەگەیشتن');
     }
 
-    if (body['success'] != true) {
+    if (res.statusCode < 200 || res.statusCode >= 300 || body['success'] != true) {
       final msg = body['message'];
       throw FastPayException(
           msg is String && msg.isNotEmpty ? msg : 'دروستکردنی QR سەرنەکەوت');
     }
 
+    if (body['orderId'] != orderId) {
+      throw const FastPayException('ناسنامەی پارەدان پشتڕاست نەکرایەوە');
+    }
+    final qrUrl = body['qrUrl'], qrText = body['qrText'];
+    if ((qrUrl != null && (qrUrl is! String || !isCheckoutUrl(qrUrl))) ||
+        (qrText != null && (qrText is! String || qrText.isEmpty || qrText.length > 8192)) ||
+        (qrUrl == null && qrText == null)) {
+      throw const FastPayException('لینکی پارەدان پشتڕاست نەکرایەوە');
+    }
+
     return FastPayOrder(
-      orderId: (body['orderId'] as String?) ?? orderId,
+      orderId: orderId,
       transactionId: body['transactionId'] as String?,
-      qrUrl: body['qrUrl'] as String?,
-      qrText: body['qrText'] as String?,
+      qrUrl: qrUrl as String?,
+      qrText: qrText as String?,
     );
   }
 
@@ -226,12 +265,31 @@ class FastPayService {
   ///
   /// پۆلیسی RLSـی `Own transactions` ڕێگە دەدات بەکارهێنەر تەنها
   /// ڕیزەکانی خۆی ببینێت، بۆیە ئەمە بێ مەترسییە لە ئەپەوە.
-  static Future<Map<String, dynamic>?> fetchRow(String orderId) async {
+  static Future<Map<String, dynamic>?> fetchRow(String orderId,
+      {required String expectedUserId, BackendConfig? backendConfig}) async {
+    (backendConfig ?? BackendConfig.current).requireProductionTransport();
+    _checkOwner(expectedUserId);
+    final session = supabase.auth.currentSession;
+    if (session == null) throw const FastPayException('تکایە دووبارە بچۆ ژوورەوە');
+    // Ask the existing authenticated worker to reconcile first. Its response
+    // never supplies payment proof: the committed ledger below is authoritative.
+    try {
+      await http.post(
+        Uri.parse(kFastPayOrderCreateUrl.replaceFirst('/order-create', '/order-status')),
+        headers: {'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${session.accessToken}'},
+        body: jsonEncode({'orderId': orderId}),
+      ).timeout(const Duration(seconds: 15));
+    } catch (_) { /* A lost status response may follow a committed credit. */ }
+    _checkOwner(expectedUserId);
     final row = await supabase
         .from('pa_transactions')
-        .select('gateway_status, status, expires_at, public_transaction_id')
+        .select('gateway_status, status, wallet_credited, expires_at, public_transaction_id,qr_url,qr_text,gateway_amount')
+        .eq('user_id', expectedUserId)
         .eq('fastpay_order_id', orderId)
-        .maybeSingle();
+        .maybeSingle()
+        .timeout(const Duration(seconds: 15));
+    _checkOwner(expectedUserId);
     return row;
   }
 }
@@ -270,6 +328,21 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
   Duration _remaining = kFastPayFallbackWindow;
   Timer? _ticker;
   Timer? _poller;
+  StreamSubscription<dynamic>? _authSubscription;
+  late final String _owner;
+  int _generation = 0;
+  Future<void>? _polling;
+  static const _pendingStore = FastPayPendingCheckoutStore();
+  late int _amountIqd;
+  String? _note;
+  bool _restoring = true;
+  bool _hasPending = false;
+  bool _gatewayTerminal = false;
+
+  bool get _ownerValid =>
+      widget.userId == _owner && supabase.auth.currentUser?.id == _owner;
+  bool _current(String order, int generation) => mounted && _ownerValid &&
+      _orderId == order && _generation == generation;
 
   /// دەبێتە هۆی ئەوەی داواکاری دووەم نەنێردرێت لەکاتی چاوەڕوانیدا.
   bool _dispatching = false;
@@ -277,10 +350,42 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
   @override
   void initState() {
     super.initState();
+    _owner = widget.userId;
+    _amountIqd = widget.amountIqd;
+    _note = widget.note;
     WidgetsBinding.instance.addObserver(this);
     _orderId = FastPayService.newOrderId();
     _deadline = DateTime.now().add(kFastPayFallbackWindow);
     _startTicker();
+    _authSubscription = supabase.auth.onAuthStateChange.listen((_) {
+      if (!mounted || _ownerValid) return;
+      _generation++;
+      _ticker?.cancel();
+      _poller?.cancel();
+      setState(() {});
+    });
+    unawaited(_restorePending());
+  }
+
+  Future<void> _restorePending() async {
+    try {
+      final pending = await _pendingStore.read(_owner);
+      if (!mounted || !_ownerValid) return;
+      if (pending != null) {
+        _orderId = pending.orderId;
+        _amountIqd = pending.amountIqd;
+        _note = pending.note;
+        _hasPending = true;
+        _error = 'داواکاریی پێشووت گەڕێندرایەوە؛ هەمان پارەدان پشتڕاست دەکرێتەوە.';
+      }
+      setState(() => _restoring = false);
+    } catch (_) {
+      if (!mounted || !_ownerValid) return;
+      setState(() {
+        _restoring = false;
+        _error = 'نەتوانرا پارەدانی پێشوو بخوێندرێتەوە؛ پەڕەکە دابخە و دووبارە بیکەرەوە.';
+      });
+    }
   }
 
   @override
@@ -288,6 +393,7 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
     WidgetsBinding.instance.removeObserver(this);
     _ticker?.cancel();
     _poller?.cancel();
+    _authSubscription?.cancel();
     super.dispose();
   }
 
@@ -304,7 +410,7 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
   void _startTicker() {
     _ticker?.cancel();
     _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (!mounted) return;
+      if (!mounted || !_ownerValid) return;
       final left = _deadline.difference(DateTime.now());
       setState(() => _remaining = left.isNegative ? Duration.zero : left);
 
@@ -328,7 +434,9 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
   // ── ڕێڕەوی سەرەکی ───────────────────────────────────────────────────────
 
   Future<void> _continue() async {
-    if (_dispatching) return;
+    if (_dispatching || _restoring || !_ownerValid) return;
+    final generation = _generation;
+    var orderId = _orderId;
     setState(() {
       _dispatching = true;
       _error = null;
@@ -336,39 +444,104 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
     });
 
     try {
-      final order = await FastPayService.createOrder(
+      BackendConfig.current.requireProductionTransport();
+      final pending = await _pendingStore.claim(_owner,
+          FastPayPendingCheckout(orderId: orderId, amountIqd: _amountIqd, note: _note));
+      if (!_current(orderId, generation)) return;
+      final recovering = _hasPending || pending.orderId != orderId;
+      setState(() {
+        orderId = pending.orderId;
+        _orderId = orderId;
+        _amountIqd = pending.amountIqd;
+        _note = pending.note;
+        _hasPending = true;
+      });
+      FastPayOrder? recovered;
+      if (recovering) {
+        final row = await FastPayService.fetchRow(orderId, expectedUserId: _owner);
+        if (!_current(orderId, generation)) return;
+        if (row != null) {
+          if (FastPayService.walletCredited(row, amountIqd: _amountIqd)) {
+            _settle(FastPayPhase.paid);
+            return;
+          }
+          final status = _gatewayStatusFrom(row['gateway_status']);
+          if (status == FastPayGatewayStatus.expired || status == FastPayGatewayStatus.declined) {
+            // Legacy background expiry is based on elapsed time, not proof
+            // that the provider can no longer settle the original payment.
+            _gatewayTerminal = status == FastPayGatewayStatus.declined;
+            _settle(status == FastPayGatewayStatus.expired ? FastPayPhase.expired : FastPayPhase.cancelled);
+            return;
+          }
+          final url = row['qr_url'], token = row['qr_text'];
+          if (row['gateway_amount'] != _amountIqd) {
+            throw const FastPayException('بڕی پارەدان پشتڕاست نەکرایەوە');
+          }
+          final validToken = token is String && token.isNotEmpty && token.length <= 8192;
+          final validUrl = url is String && FastPayService.isCheckoutUrl(url);
+          if ((validToken || validUrl) && (token == null || validToken) && (url == null || validUrl)) {
+            recovered = FastPayOrder(orderId: orderId, qrText: token as String?, qrUrl: url as String?);
+          } else {
+            // The existing attempt is uncertain. Keep its identity and check it;
+            // never create another provider order just because its QR is absent.
+            setState(() => _phase = FastPayPhase.waiting);
+            _startPolling();
+            return;
+          }
+        }
+      }
+      if (recovered == null) {
+        final mayDispatch = await _pendingStore.markDispatched(_owner, orderId);
+        if (!_current(orderId, generation)) return;
+        if (!mayDispatch) {
+          // Legacy QR creation precedes its database insert. A missing row after
+          // dispatch is therefore not proof that no gateway order exists.
+          setState(() {
+            _phase = FastPayPhase.waiting;
+            _error = 'ئەنجامی پارەدانی پێشوو هێشتا دیار نییە؛ هەمان مامەڵە پشکنین دەکرێت.';
+          });
+          _startPolling();
+          return;
+        }
+      }
+      final order = recovered ?? await FastPayService.createOrder(
         orderId: _orderId,
-        billAmountIqd: widget.amountIqd,
-        note: widget.note,
+        billAmountIqd: _amountIqd,
+        note: _note,
+        expectedUserId: _owner,
       );
-      if (!mounted) return;
+      if (!_current(orderId, generation)) return;
       setState(() {
         _order = order;
         _phase = FastPayPhase.waiting;
+        _deadline = DateTime.now().add(kFastPayFallbackWindow);
+        _remaining = kFastPayFallbackWindow;
       });
-
+      _startTicker();
       _startPolling();
       await _openFastPay(order);
     } on FastPayException catch (e) {
-      if (!mounted) return;
+      if (!_current(orderId, generation)) return;
       setState(() {
         _error = e.message;
         _phase = FastPayPhase.confirm;
       });
     } catch (_) {
-      if (!mounted) return;
+      if (!_current(orderId, generation)) return;
       setState(() {
         _error = 'هەڵەیەکی چاوەڕوان نەکراو ڕوویدا';
         _phase = FastPayPhase.confirm;
       });
     } finally {
-      if (mounted) setState(() => _dispatching = false);
+      if (_current(orderId, generation)) setState(() => _dispatching = false);
     }
   }
 
   /// ئەپی فاستپەی دەکاتەوە. ئەگەر دانەمەزرابێت، پەڕەی پارەدان لە
   /// وێبڤیوێکی ناوەکیدا دەکرێتەوە — نەک لە وێبگەڕی دەرەکی.
   Future<void> _openFastPay(FastPayOrder order) async {
+    final generation = _generation;
+    if (!_current(order.orderId, generation) || _phase != FastPayPhase.waiting) return;
     final link = order.deepLink;
     if (link != null) {
       try {
@@ -384,12 +557,12 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
 
     final url = order.qrUrl;
     if (url == null || url.isEmpty) {
-      if (!mounted) return;
+      if (!_current(order.orderId, generation)) return;
       setState(() => _error = 'لینکی پارەدان بەردەست نییە');
       return;
     }
-    if (!mounted) return;
-    await _FastPayWebViewSheet.open(context, url: url);
+    if (!_current(order.orderId, generation) || _phase != FastPayPhase.waiting) return;
+    await _FastPayWebViewSheet.open(context, url: url, owner: _owner);
   }
 
   // ── چاودێری دۆخ ─────────────────────────────────────────────────────────
@@ -400,16 +573,25 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
     _checkOnce();
   }
 
-  Future<void> _checkOnce() async {
-    if (!mounted || _phase != FastPayPhase.waiting) return;
+  Future<void> _checkOnce() {
+    if (!mounted || !_ownerValid || _phase != FastPayPhase.waiting) return Future.value();
+    if (_polling != null) return _polling!;
+    final request = _readAndApply(_orderId, _generation);
+    _polling = request;
+    return request.whenComplete(() {
+      if (identical(_polling, request)) _polling = null;
+    });
+  }
+
+  Future<void> _readAndApply(String orderId, int generation) async {
 
     Map<String, dynamic>? row;
     try {
-      row = await FastPayService.fetchRow(_orderId);
+      row = await FastPayService.fetchRow(orderId, expectedUserId: _owner);
     } catch (_) {
       return; // تێپەڕاندنی هەڵەی تۆڕ — لە خولی داهاتوودا دووبارە هەوڵ دەدەین
     }
-    if (!mounted || row == null) return;
+    if (!_current(orderId, generation) || _phase != FastPayPhase.waiting || row == null) return;
 
     // کاتی ڕاستەقینەی بەسەرچوون لە باکئێندەوە دەگیرێت.
     final exp = row['expires_at'];
@@ -419,12 +601,24 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
     }
     final pub = row['public_transaction_id'];
     if (pub is String && pub.isNotEmpty) _publicTxId = pub;
+    if (_order == null && row['gateway_amount'] == _amountIqd &&
+        _gatewayStatusFrom(row['gateway_status']) == FastPayGatewayStatus.created) {
+      final url = row['qr_url'], token = row['qr_text'];
+      final validToken = token is String && token.isNotEmpty && token.length <= 8192;
+      final validUrl = url is String && FastPayService.isCheckoutUrl(url);
+      if ((validToken || validUrl) && (token == null || validToken) && (url == null || validUrl)) {
+        _order = FastPayOrder(orderId: orderId, qrText: token as String?, qrUrl: url as String?);
+      }
+    }
 
-    switch (_gatewayStatusFrom(row['gateway_status'] as String?)) {
+    switch (_gatewayStatusFrom(row['gateway_status'])) {
       case FastPayGatewayStatus.paid:
-        _settle(FastPayPhase.paid);
+        if (FastPayService.walletCredited(row, amountIqd: _amountIqd)) _settle(FastPayPhase.paid);
         break;
       case FastPayGatewayStatus.declined:
+        _gatewayTerminal = true;
+        _settle(FastPayPhase.cancelled);
+        break;
       case FastPayGatewayStatus.failed:
         _settle(FastPayPhase.cancelled);
         break;
@@ -439,40 +633,58 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
   }
 
   Future<void> _finalCheckThenExpire() async {
+    final orderId = _orderId, generation = _generation;
+    _ticker?.cancel();
     _poller?.cancel();
-    try {
-      final row = await FastPayService.fetchRow(_orderId);
-      if (mounted &&
-          row != null &&
-          _gatewayStatusFrom(row['gateway_status'] as String?) ==
-              FastPayGatewayStatus.paid) {
-        _settle(FastPayPhase.paid);
-        return;
-      }
-    } catch (_) {
-      // بێدەنگ — بە بەسەرچوو دایدەنێین
+    await _checkOnce();
+    if (!_current(orderId, generation) || _phase != FastPayPhase.waiting) return;
+    // An authoritative expiry can arrive after the local fallback deadline.
+    if (_deadline.isAfter(DateTime.now())) {
+      _startTicker();
+      _startPolling();
+      return;
     }
-    if (mounted) _settle(FastPayPhase.expired);
+    _settle(FastPayPhase.expired);
   }
 
   void _settle(FastPayPhase phase) {
+    _generation++;
     _ticker?.cancel();
     _poller?.cancel();
-    if (mounted) setState(() => _phase = phase);
+    if (phase == FastPayPhase.paid) {
+      unawaited(_pendingStore.clear(_owner, _orderId).catchError((_) {
+        // Retaining a completed identity is safe; reopening reads the ledger.
+      }));
+    }
+    if (mounted) setState(() {
+      _dispatching = false;
+      _phase = phase;
+    });
   }
 
-  /// «پاشگەزبوونەوە» — تەنها ڕووکارەکە دەگۆڕێت. باکئێندەکە خۆی لە
-  /// خولی پۆڵینگدا داواکارییەکە بە `DECLINED` تۆمار دەکات.
-  void _cancel() => _settle(FastPayPhase.cancelled);
+  /// Closing a checkout is not a provider decline. Keep its identity for recovery.
+  void _cancel() => _settle(FastPayPhase.paused);
 
-  void _retry() {
+  Future<void> _retry() async {
+    if (!_ownerValid) return;
+    if (_gatewayTerminal) {
+      final previous = _orderId, generation = _generation;
+      try { await _pendingStore.clear(_owner, previous); }
+      catch (_) { return; }
+      if (!_current(previous, generation)) return;
+      _hasPending = false;
+    }
+    _generation++;
+    _polling = null;
     _poller?.cancel();
     setState(() {
-      _orderId = FastPayService.newOrderId();
+      if (!_hasPending) _orderId = FastPayService.newOrderId();
       _order = null;
       _publicTxId = null;
       _error = null;
       _phase = FastPayPhase.confirm;
+      _dispatching = false;
+      _gatewayTerminal = false;
       _deadline = DateTime.now().add(kFastPayFallbackWindow);
       _remaining = kFastPayFallbackWindow;
     });
@@ -488,7 +700,7 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
   String get _reference => _publicTxId ?? _orderId;
 
   String get _amountLabel {
-    final s = widget.amountIqd.toString().replaceAllMapped(
+    final s = _amountIqd.toString().replaceAllMapped(
         RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},');
     return '$s د.ع';
   }
@@ -497,6 +709,7 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
 
   @override
   Widget build(BuildContext context) {
+    if (!_ownerValid) return const SizedBox.shrink();
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Padding(
@@ -590,19 +803,28 @@ class _FastPayCheckoutSheetState extends State<FastPayCheckoutSheet>
           fg: _kWarnFg,
           icon: Icons.schedule_rounded,
           title: 'بەسەرچوو',
-          message: 'کاتی دیاریکراوی ئەم مامەڵەیە بەسەرچوو، '
-              'تکایە داواکاریی نوێ تۆمار بکە.',
+          message: _gatewayTerminal ? 'کاتی دیاریکراوی ئەم مامەڵەیە بەسەرچوو، تکایە داواکاریی نوێ تۆمار بکە.' :
+              'کاتی چاوەڕوانی تەواو بوو؛ هەمان پارەدان دووبارە پشتڕاست بکەرەوە.',
           reference: _reference,
           onCopy: _copyRef,
-          actionLabel: 'داواکاریی نوێ',
+          actionLabel: _gatewayTerminal ? 'داواکاریی نوێ' : 'پشتڕاستکردنەوەی پارەدان',
           onAction: _retry,
+        );
+      case FastPayPhase.paused:
+        return _StatusView(
+          bg: _kWarnBg, line: _kWarnLine, fg: _kWarnFg,
+          icon: Icons.pause_circle_outline,
+          title: 'چاوەڕوانی پارەدان وەستێنرا',
+          message: 'ئەمە پارەدان هەڵناوەشێنێتەوە؛ هەمان مامەڵە دەتوانرێت پشتڕاست بکرێتەوە.',
+          reference: _reference, onCopy: _copyRef,
+          actionLabel: 'بەردەوامبوون لە پارەدان', onAction: _retry,
         );
     }
   }
 
   Widget _confirmView() {
     final waiting = _phase == FastPayPhase.waiting;
-    final busy = _phase == FastPayPhase.dispatching;
+    final busy = _phase == FastPayPhase.dispatching || _restoring;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -991,16 +1213,17 @@ class _StatusView extends StatelessWidget {
 // JavaScript پێویستە، چونکە پەڕەی پارەدانی فاستپەیە.
 
 class _FastPayWebViewSheet extends StatefulWidget {
-  const _FastPayWebViewSheet({required this.url});
+  const _FastPayWebViewSheet({required this.url, required this.owner});
 
   final String url;
+  final String owner;
 
-  static Future<void> open(BuildContext context, {required String url}) {
+  static Future<void> open(BuildContext context, {required String url, required String owner}) {
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => _FastPayWebViewSheet(url: url),
+      builder: (_) => _FastPayWebViewSheet(url: url, owner: owner),
     );
   }
 
@@ -1010,17 +1233,31 @@ class _FastPayWebViewSheet extends StatefulWidget {
 
 class _FastPayWebViewSheetState extends State<_FastPayWebViewSheet> {
   late final WebViewController _controller;
+  StreamSubscription<dynamic>? _authSubscription;
 
   @override
   void initState() {
     super.initState();
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(NavigationDelegate(onNavigationRequest: (request) =>
+          supabase.auth.currentUser?.id == widget.owner && FastPayService.isCheckoutUrl(request.url)
+              ? NavigationDecision.navigate : NavigationDecision.prevent))
       ..loadRequest(Uri.parse(widget.url));
+    _authSubscription = supabase.auth.onAuthStateChange.listen((_) {
+      if (mounted && supabase.auth.currentUser?.id != widget.owner) setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _authSubscription?.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (supabase.auth.currentUser?.id != widget.owner) return const SizedBox.shrink();
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Container(
