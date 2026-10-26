@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:proxo_app/main.dart' as app;
@@ -253,14 +254,27 @@ void main() {
   });
 
   testWidgets('late ledger QR becomes available without replaying create', (tester) async {
+    const launcher = MethodChannel('plugins.flutter.io/url_launcher');
+    final launched = <Uri>[];
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(launcher, (call) async {
+      if (call.method == 'launch') {
+        launched.add(Uri.parse((call.arguments as Map)['url'] as String));
+      }
+      return false;
+    });
+    addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(launcher, null));
     await const FastPayPendingCheckoutStore().claim(userA,
         const FastPayPendingCheckout(orderId: order, amountIqd: 10000));
     await const FastPayPendingCheckoutStore().markDispatched(userA, order);
-    var rowAvailable = false;
-    database = (_) async => rowAvailable
-        ? jsonResponse({'gateway_status': 'CREATED', 'gateway_amount': 10000,
-            'qr_text': 'late-provider-token'})
-        : http.Response('null', 200, headers: {'content-type': 'application/json'});
+    var rowAvailable = false, lateReads = 0;
+    database = (_) async {
+      if (!rowAvailable) return http.Response('null', 200,
+          headers: {'content-type': 'application/json'});
+      lateReads++;
+      return jsonResponse({'gateway_status': 'CREATED', 'gateway_amount': 10000,
+        'expires_at': DateTime.now().add(const Duration(minutes: 5)).toUtc().toIso8601String(),
+        'qr_text': 'late-provider-token'});
+    };
     await http.runWithClient(() async {
       await mount(tester);
       await tester.ensureVisible(find.text('بەردەوامبە'));
@@ -270,11 +284,15 @@ void main() {
       rowAvailable = true;
       await tester.pump(const Duration(seconds: 3));
       await flush(tester);
+      expect(lateReads, greaterThan(0));
       await tester.ensureVisible(find.text('کردنەوەی فاستپەی دووبارە'));
+      await tester.pump();
       await tester.tap(find.text('کردنەوەی فاستپەی دووبارە'));
       await flush(tester);
-      // No launcher is installed in this fixture. Reaching the fallback proves
-      // the original late QR was hydrated instead of leaving a no-op button.
+      expect(launched, hasLength(1));
+      expect(launched.single.queryParameters['qrdata'], 'late-provider-token');
+      expect(launched.single.queryParameters['transactionId'], order);
+      // The mocked launcher returns false, exercising the unavailable fallback.
       expect(find.text('لینکی پارەدان بەردەست نییە'), findsOneWidget);
       expect((await const FastPayPendingCheckoutStore().read(userA))!.orderId, order);
       await tester.pumpWidget(const SizedBox());

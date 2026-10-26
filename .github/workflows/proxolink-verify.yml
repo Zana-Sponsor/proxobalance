@@ -186,6 +186,12 @@ jobs:
       - run: flutter pub get
       - name: Analyze changed ProxoLink code
         run: flutter analyze --no-fatal-infos lib/widgets/proxo_tab_stack.dart test/proxo_tab_stack_test.dart test/proxo_banner_lifecycle_test.dart lib/widgets/ad_validation_notifications.dart test/ad_notice_deadline_test.dart lib/screens/tools_screen.dart lib/screens/proxolink_create_page_screen.dart lib/widgets/proxo_refresh.dart lib/widgets/proxolink_design_selector.dart lib/screens/proxolink_page_editor.dart lib/screens/proxolink_page_editor_screen.dart lib/screens/proxolink_page_details_screen.dart lib/screens/card_webview_screen.dart lib/screens/proxo_cards_list_screen.dart lib/screens/ad_detail_screen.dart lib/widgets/proxolink_preview.dart lib/widgets/proxolink_page_card.dart lib/services/proxolink_service.dart lib/models/proxo_card.dart lib/models/proxolink_page_type.dart lib/models/proxolink_template_meta.dart lib/controllers/proxo_card_controller.dart lib/controllers/proxolink_pages_controller.dart
+      - name: Verify FastPay checkout and recovery regressions
+        run: >-
+          flutter test --reporter expanded
+          test/ad_fastpay_attempt_test.dart test/fastpay_wallet_checkout_test.dart
+          test/fastpay_pending_checkout_test.dart test/fastpay_transport_test.dart
+          test/deposit_screen_test.dart
       - name: Reproduce banner subscription lifecycle and verify fix
         run: |
           cp lib/widgets/proxo_banner.dart /tmp/proxo-banner-fixed.dart
