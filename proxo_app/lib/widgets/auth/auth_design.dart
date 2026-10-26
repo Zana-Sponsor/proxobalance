@@ -1,3 +1,4 @@
+import '../../screens/auth/auth_models.dart';
 import 'package:proxo_app/l10n/proxo_strings.dart';
 // auth_design.dart
 import 'package:flutter/material.dart';
