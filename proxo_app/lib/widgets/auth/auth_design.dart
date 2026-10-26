@@ -507,6 +507,18 @@ abstract final class AuthValidators {
       confirmation.isNotEmpty &&
       confirmation == password;
 
+  static bool phoneSignUpReady({
+    required String name,
+    required String phone,
+    required String password,
+    required String confirmation,
+  }) =>
+      fullName(name) == null &&
+      IraqPhone.isValid(phone) &&
+      newPassword(password) == null &&
+      confirmation.isNotEmpty &&
+      confirmation == password;
+
   static String? newPassword(String? v) {
     final String s = v ?? '';
     if (s.isEmpty) return AuthStrings.errEmptyField;
