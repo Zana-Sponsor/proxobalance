@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 
-import 'proxo_design_tokens.dart';
+import 'proxo_surface.dart';
 import 'ad_form_colors.dart';
 
-/// Approved TikTok geometry and price bar, backed by the shared app palette.
+/// Visual tokens for the open TikTok creation form. Auth's bundled regular
+/// face is retained; receipt, Meta, and navigation defaults stay independent.
 abstract final class TikTokAdTokens {
-  static const fontFamily = ProxoDesign.font;
-  static const ink = ProxoDesign.ink;
-  static const muted = ProxoDesign.muted;
-  static const blue = ProxoDesign.blue;
-  static const blueSoft = ProxoDesign.blueSoft;
-  static const line = ProxoDesign.line;
-  static const fieldLine = ProxoDesign.line;
-  static const fieldFill = ProxoDesign.surface;
+  static const fontFamily = ProxoSurface.fontFamily;
+  static const ink = Color(0xFF121215);
+  static const muted = Color(0xFF747578);
+  static const blue = Color(0xFF0278FE);
+  static const blueSoft = Color(0xFFEEF7FF);
+  static const line = Color(0xFFEEEEEE);
+  static const fieldLine = Color(0xFFEEEEEE);
+  static const fieldFill = Color(0xFFFFFFFF);
   // Sampled from the supplied JPEG's app screen; see the palette evidence.
-  static const secondaryBlue = ProxoDesign.secondaryBlue;
-  static const selectedLine = ProxoDesign.blueInk;
-  static const pageFill = ProxoDesign.softSurface;
+  static const secondaryBlue = Color(0xFF3D7EC2);
+  static const selectedLine = Color(0xFF2663B4);
+  static const pageFill = Color(0xFFF6F9FE);
   static const pageLine = Color(0xFFCCD9E6);
   static const newBadge = Color(0xFFFE6F61);
   static const colors = AdFormColors(
@@ -36,8 +37,8 @@ abstract final class TikTokAdTokens {
   static const controlHeight = 50.0;
   static const inputHeight = 56.0;
   static const controlRadius = BorderRadius.all(Radius.circular(12));
-  // Latest approved long rectangle: 10dp corners, directly above navigation.
-  static const priceRadius = BorderRadius.all(Radius.circular(10));
+  // The supplied final-price reference is a flush, edge-to-edge bottom bar.
+  static const priceRadius = BorderRadius.zero;
   static const priceNavGap = 0.0;
   static const priceCollapsedHeight = 64.0;
   static const transition = Duration(milliseconds: 180);

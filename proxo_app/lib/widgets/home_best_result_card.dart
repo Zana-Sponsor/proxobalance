@@ -93,8 +93,7 @@ class _HomeBestResultCardState extends State<HomeBestResultCard> {
                         SizedBox(
                             width: ResultsUi.thumbnailWidth,
                             height: ResultsUi.thumbnailHeight,
-                            child: ResultThumbnail(
-                                identity: ad.id, url: ad.thumbnailUrl)),
+                            child: ResultThumbnail(url: ad.thumbnailUrl)),
                         const SizedBox(width: 12),
                         Expanded(
                             child: Column(

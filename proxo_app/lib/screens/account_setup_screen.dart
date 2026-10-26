@@ -32,7 +32,8 @@ class _AccountSetupGateState extends State<AccountSetupGate> {
   @override
   void initState() {
     super.initState();
-    _service = widget.service ??
+    _service =
+        widget.service ??
         AccountSetupService.forClient(Supabase.instance.client);
     _scope = _service.scope;
     _ready = _service.isReady;
@@ -249,7 +250,7 @@ class AccountSetupView extends StatelessWidget {
                           child: Text(
                             title,
                             textAlign: TextAlign.center,
-                            style: AuthTokens.title,
+                            style: AuthTokens.title.copyWith(fontSize: 22),
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -327,10 +328,10 @@ class _SetupStep extends StatelessWidget {
     final color = failed
         ? AuthTokens.danger
         : complete
-            ? AuthTokens.success
-            : current
-                ? AuthTokens.accent
-                : AuthTokens.inkMuted;
+        ? AuthTokens.success
+        : current
+        ? AuthTokens.accent
+        : AuthTokens.inkMuted;
     return Semantics(
       liveRegion: current,
       child: Row(
@@ -343,18 +344,18 @@ class _SetupStep extends StatelessWidget {
               color: failed
                   ? AuthTokens.dangerBg
                   : complete
-                      ? AuthTokens.successBg
-                      : current
-                          ? AuthTokens.accentSoft
-                          : Colors.white,
+                  ? AuthTokens.successBg
+                  : current
+                  ? AuthTokens.accentSoft
+                  : Colors.white,
               borderRadius: BorderRadius.circular(12),
             ),
             child: AuthIcon(
               failed
                   ? 'error'
                   : complete
-                      ? 'check_circle'
-                      : icon,
+                  ? 'check_circle'
+                  : icon,
               size: 21,
               color: color,
             ),

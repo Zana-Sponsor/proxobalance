@@ -1,4 +1,3 @@
-import '../theme/proxo_design_tokens.dart';
 import '../l10n/proxo_strings.dart';
 import 'package:flutter/material.dart';
 
@@ -11,18 +10,16 @@ import 'proxo_text.dart';
 import 'receipt/receipt_kit.dart';
 
 abstract final class AdUi {
-  static const blue = ProxoDesign.blue;
-  static const ink = ProxoDesign.ink;
+  static const blue = ReceiptTokens.accent;
+  static const ink = ReceiptTokens.ink;
   static const secondary = AppColors.inkMuted;
   static const green = Color(0xFF157347);
   static const greenSoft = Color(0xFFECF8F0);
-  static const radius =
-      BorderRadius.all(Radius.circular(ProxoDesign.cardRadius));
-  static const controlRadius =
-      BorderRadius.all(Radius.circular(ProxoDesign.radius));
-  static const controlSurface = ProxoDesign.surface;
-  static const controlLine = ProxoDesign.line;
-  static const selectedLine = ProxoDesign.blueInk;
+  static const radius = BorderRadius.all(Radius.circular(18));
+  static const controlRadius = BorderRadius.all(Radius.circular(14));
+  static const controlSurface = Color(0xFFFCFDFF);
+  static const controlLine = Color(0xFFE8EDF4);
+  static const selectedLine = Color(0xFFCCDFFF);
   static const sectionGap = ProxoSurface.sectionGap;
   static const cardPadding = EdgeInsets.all(ProxoSurface.padding);
   static const cardShadow = [

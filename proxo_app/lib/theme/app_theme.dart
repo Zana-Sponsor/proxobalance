@@ -1,19 +1,44 @@
-import 'proxo_design_tokens.dart';
 import '../services/app_telemetry_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 
 class AppColors {
-  // Shared white surface and quiet neutral wells from the approved ad form.
-  static const Color surfaceBase = ProxoDesign.surface;
-  static const Color surfaceSection = ProxoDesign.softSurface;
-  static const Color surfaceCard = Color(0xFFFFFFFF);
-  static const Color surfaceRaised = Color(0xFFFFFFFF);
+  // ── Surface ramp ──────────────────────────────────────────────────────────
+  // One source of truth for every general section / content-area background.
+  // Chosen from the palette already in the app rather than an off-the-shelf
+  // neutral: `surfaceCard` is the tone this codebase previously used for the
+  // page background (#F8FAFD), promoted to the card surface — so cards now sit
+  // where the page used to, and the page steps down below them. That fixes the
+  // real problem, which was a #FEFEFE card (L* 99.7, effectively pure white)
+  // floating on a #F8FAFD page: only 1.45 L* of separation, and glaring.
+  //
+  //   surfaceBase     L* 95.1   screen background
+  //   surfaceSection  L* 96.8   grouped sections, recessed wells inside cards
+  //   surfaceCard     L* 98.2   standard content container
+  //   surfaceRaised   L* 99.3   sheets/menus that must sit above a card
+  //
+  // Steps are ~1.4 L* — perceptible as depth, never as a colour change. The
+  // cool cast (blue 5–9 points above red) carries the blue/indigo brand
+  // identity without reading as tinted, and eases off as the tone lightens so
+  // the top of the ramp stays neutral white rather than turning blue.
+  // ── پاشبنەما ئێستا #FAFAFAیە ──────────────────────────────────────────────
+  // پاشبنەمای پەڕە دەبێتە FAFAFA، بەڵام ڕووی کارتەکان سپی تەواو دەمێننەوە
+  // تا بە جوانی لەسەر ڕووی شاشەکە بە سێبەر و سنوور جیا ببنەوە.
+  static const Color surfaceBase    = Color(0xFFFAFAFA);
+  static const Color surfaceSection = Color(0xFFFAFAFA);
+  static const Color surfaceCard    = Color(0xFFFFFFFF);
+  static const Color surfaceRaised  = Color(0xFFFFFFFF);
 
-  // Shared subtle outline and separator.
-  static const Color surfaceBorder = ProxoDesign.line;
+  /// Card outline. Deliberately restrained — the ramp above now does most of
+  /// the separating (3.1 L* card-to-page, up from 1.45), so the border is a
+  /// hint rather than an outline, backed by the existing soft shadow.
+  // لەسەر سپی، سنووری کۆن (#E8EBF3) کەمێک لاواز بوو — ئەمە کەمێک تۆختترە
+  // بۆیە کارتەکان بەبێ جیاوازی پاشبنەما دیارن.
+  static const Color surfaceBorder   = Color(0xFFE3E7F0);
 
-  static const Color surfaceHairline = ProxoDesign.line;
+  /// In-card separator. Tuned to hold ~5.9 L* against `surfaceCard`, matching
+  /// the separation the old hairline had against the old near-white card.
+  static const Color surfaceHairline = Color(0xFFE4E7F0);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // تۆکنە سیمانتیکەکان — یەک سەرچاوەی ڕاستی بۆ هەموو ئەپەکە
@@ -29,55 +54,64 @@ class AppColors {
   //   ink       دەقی سەرەکی · inkMuted دەقی لاوەکی
   //   accent    شینی سیستەم — دوگمە، ئایکۆنی چالاک، لینک
   //   positive / negative / warning — دۆخەکان
-  static const Color page = surfaceBase;
-  static const Color surface = surfaceCard;
-  static const Color raised = surfaceRaised;
-  static const Color line = surfaceBorder;
-  static const Color hairline = surfaceHairline;
-  static const Color ink = ProxoDesign.ink;
+  static const Color page      = surfaceBase;
+  static const Color surface   = surfaceCard;
+  static const Color raised    = surfaceRaised;
+  static const Color line      = surfaceBorder;
+  static const Color hairline  = surfaceHairline;
+  /// ⚠ بوو #0B0B32. هەموو ئەپەکە لەسەر #0F172A یەکخرا (tools_screen،
+  /// دۆخە بەتاڵەکان، چیپەکانی فلتەر، دوگمەکانی CTA، کارتە خێراکانی
+  /// سەرەکی، و ئێستا وردەکاری ڕیکلامیش). دوو مەرەکەبی ڕەشی نزیک لێک
+  /// (#0B0B32 نەیڤی، #0F172A سلەیت) لە کاتی گواستنەوەی Heroدا وەک
+  /// هەڵەیەک دەخوێندرێتەوە، نەک وەک هەڵبژاردن.
+  static const Color ink       = Color(0xFF0F172A);
 
-  static const Color inkMuted = ProxoDesign.muted;
-  static const Color accent = ProxoDesign.blue;
-  static const Color accentSoft = ProxoDesign.blueSoft;
-  static const Color positive = Color(0xFF13A56A);
-  static const Color negative = Color(0xFFB74956);
-  static const Color warning = Color(0xFFB86A17);
+  /// ⚠ بوو #68687F. هەمان بەڵگە: #64748B ئەو تۆنەیە کە tools_screen،
+  /// دۆخە بەتاڵەکان و چیپەکان هەموویان بەکاری دەهێنن.
+  static const Color inkMuted  = Color(0xFF64748B);
+  /// ⚠ بوو #0365FF. ڕەنگی سەرەکیی نوێی ئەپەکە #0265FFـە.
+  static const Color accent    = Color(0xFF0265FF);
+  static const Color accentSoft= Color(0xFFEFF4FE);
+  static const Color positive  = Color(0xFF13A56A);
+  static const Color negative  = Color(0xFFB74956);
+  static const Color warning   = Color(0xFFB86A17);
 
   /// پاشبنەمای باری خوارەوە — بە ئەنقەست **هەمان** `page`ە، بۆیە باری
   /// خوارەوە و پەڕەکە یەک ڕووی یەکگرتوو دەردەکەون. جیاکردنەوەکە تەنها بە
   /// هێڵێکی مووی سەرەوە و سێبەرێکی زۆر سووکە.
   /// ئەگەر ڕۆژێک هەموو ئەپەکە سپی کرا، تەنها `surfaceBase` بگۆڕە.
-  static const Color navBg = page;
-  static const Color navLine = hairline;
+  static const Color navBg     = page;
+  static const Color navLine   = hairline;
   static const Color navActive = accent;
-  static const Color navIdle = Color(0xFF6B7280);
+  static const Color navIdle   = Color(0xFF6B7280);
 
-  static const Color bg =
-      surfaceBase; // Compatibility alias for the shared white surface
-  static const Color white = Color(0xFFFFFFFF);
-  static const Color dark = ProxoDesign.ink;
-  static const Color dark2 = ProxoDesign.ink;
-  static const Color muted = ProxoDesign.muted;
-  static const Color muted2 = ProxoDesign.muted;
+  static const Color bg      = surfaceBase; // was #F7F9FD — now on the ramp
+  static const Color white   = Color(0xFFFFFFFF);
+  static const Color dark    = Color(0xFF1C2333);
+  static const Color dark2   = Color(0xFF2E3A50);
+  // لەسەر پاشبنەمای سپی، #8B95A8ی کۆن تەنها 3.0:1 کۆنتراستی هەبوو — لە
+  // ژێر ئاستی خوێندنەوەی گونجاو. ئەمە 4.6:1ە، هێشتا لاوەکی دەردەکەوێت.
+  static const Color muted   = Color(0xFF6E7787);
+  static const Color muted2  = Color(0xFF6B7585);
   // border aliases — border == border1
-  static const Color border = ProxoDesign.line;
-  static const Color border1 = ProxoDesign.line;
+  static const Color border  = Color(0xFFE8EAF0);
+  static const Color border1 = Color(0xFFE8EAF0);
   static const Color border2 = Color(0xFFD0D4DE);
-  static const Color green = Color(0xFF16A34A);
-  static const Color red = Color(0xFFDC2626);
-  static const Color yellow = Color(0xFFD97706);
-  static const Color amber = Color(0xFFD97706);
-  static const Color blue = ProxoDesign.blue;
-  static const Color indigo = ProxoDesign.blueInk;
-  static const Color primary = ProxoDesign.blue;
+  static const Color green   = Color(0xFF16A34A);
+  static const Color red     = Color(0xFFDC2626);
+  static const Color yellow  = Color(0xFFD97706);
+  static const Color amber   = Color(0xFFD97706);
+  static const Color blue    = Color(0xFF2563EB);
+  static const Color indigo  = Color(0xFF6366F1);
+  static const Color primary = Color(0xFF0E78FF);
 
   // ── background gradient tones — a barely-there lift behind screen content.
   // The delta between the two stops is intentionally tiny (a few hex steps)
   // so it reads as depth, not as a visible gradient. See [AppBackground].
   // Both stops straddle `surfaceBase` so the gradient and the flat fill are
   // interchangeable — screens that use either land on the same tone.
-  // Default backgrounds stay white; the Home hero owns its explicit gradient.
-  static const Color bgGradientTop = surfaceBase;
+  // گرادیێنتەکە ئێستا تەخت و FAFAFAیە — هەمان تۆنی `surfaceBase`.
+  static const Color bgGradientTop    = surfaceBase;
   static const Color bgGradientBottom = surfaceBase;
 }
 
@@ -87,9 +121,16 @@ class AppColors {
 // یەک خێزانی فۆنت بۆ هەموو ئەپەکە: **Rabar**. (Bahij TheSansArabic بە
 // تەواوی لابرا — نە لە کۆد، نە لە pubspec، نە لە assets/fonts/.)
 //
-// RabarAuthRegular uses bundled Rabar_022.ttf, shared with authentication.
-// Medium/SemiBold roles use Flutter synthetic weights until separate files exist.
-const String kAppFont = ProxoDesign.font;
+// ⚠ تەنها یەک فایلی ڕاستەقینەی Rabar هەیە (`Rabar_021.ttf`)، بۆیە لە
+// pubspec تەنها w400 تۆمار کراوە و Flutter کێشە قورسەکان بە شێوەی
+// دەستکرد (synthetic bold) دروست دەکات. ئەگەر ڕۆژێک فایلی ڕاستەقینەی
+// Medium/Bold زیاد کرا، تەنها pubspec دەگۆڕێت — ئەم فایلە نا.
+//
+//     w400  Regular     w500/w600  Medium/SemiBold     w700  Bold
+//
+/// ناوی خێزانی فۆنت. هەموو ئەپەکە تەنها ئەمە بەکاردەهێنێت (§16) —
+/// **دەبێت دەقاودەق وەک `family:`ـەکەی pubspec.yaml بێت.**
+const String kAppFont = 'Rabar';
 
 /// ناوە کۆنەکان وەک ئەلیاس مانەوە **نەکراوە** — هەموو شوێنێک ڕاستەوخۆ
 /// `kAppFont` بەکاردەهێنێت، بۆیە مەحاڵە شاشەیەک لەسەر فۆنتێکی جیاواز
@@ -208,70 +249,50 @@ class AppBackground extends StatelessWidget {
 
 /// Global ThemeData — بەکاربهێنە لە MaterialApp
 abstract final class ProxoControls {
-  static const double radius = ProxoDesign.radius;
+  static const double radius = 18;
   static const shape = RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(Radius.circular(radius)));
+    borderRadius: BorderRadius.all(Radius.circular(radius)));
   static final ButtonStyle style = ButtonStyle(
     shape: const WidgetStatePropertyAll(shape),
     minimumSize: const WidgetStatePropertyAll(Size(48, 48)),
-    padding: const WidgetStatePropertyAll(
-        EdgeInsets.symmetric(horizontal: 18, vertical: 13)),
+    padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 18, vertical: 13)),
     animationDuration: const Duration(milliseconds: 180),
     elevation: const WidgetStatePropertyAll(0),
     overlayColor: WidgetStateProperty.resolveWith((states) =>
-        states.contains(WidgetState.pressed)
-            ? AppColors.accent.withValues(alpha: .10)
-            : null),
+      states.contains(WidgetState.pressed) ? AppColors.accent.withValues(alpha: .10) : null),
   );
 }
 
 class ProxoPageTransitions extends PageTransitionsBuilder {
   const ProxoPageTransitions();
   @override
-  Widget buildTransitions<T>(
-      PageRoute<T> route,
-      BuildContext context,
-      Animation<double> animation,
-      Animation<double> secondaryAnimation,
-      Widget child) {
+  Widget buildTransitions<T>(PageRoute<T> route, BuildContext context,
+      Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
     if (MediaQuery.disableAnimationsOf(context)) return child;
-    return const CupertinoPageTransitionsBuilder()
-        .buildTransitions(route, context, animation, secondaryAnimation, child);
+    return const CupertinoPageTransitionsBuilder().buildTransitions(
+      route, context, animation, secondaryAnimation, child);
   }
 }
 
 ThemeData buildAppTheme() => ThemeData(
-      fontFamily: kAppFont,
-      useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(seedColor: AppColors.accent).copyWith(
-          primary: ProxoDesign.blue,
-          onPrimary: Colors.white,
-          surface: Colors.white,
-          onSurface: ProxoDesign.ink,
-          onSurfaceVariant: ProxoDesign.muted,
-          outline: ProxoDesign.line,
-          outlineVariant: ProxoDesign.line),
-      scaffoldBackgroundColor: Colors.white,
-      textTheme: const TextTheme()
-          .apply(fontFamily: kAppFont, decoration: TextDecoration.none),
-      filledButtonTheme: FilledButtonThemeData(style: ProxoControls.style),
-      elevatedButtonTheme: ElevatedButtonThemeData(style: ProxoControls.style),
-      outlinedButtonTheme: OutlinedButtonThemeData(style: ProxoControls.style),
-      textButtonTheme: TextButtonThemeData(style: ProxoControls.style),
-      iconButtonTheme: const IconButtonThemeData(
-          style: ButtonStyle(
-              shape: WidgetStatePropertyAll(ProxoControls.shape),
-              minimumSize: WidgetStatePropertyAll(Size(48, 48)),
-              animationDuration: Duration(milliseconds: 180))),
-      pageTransitionsTheme: const PageTransitionsTheme(builders: {
-        TargetPlatform.android: ProxoPageTransitions(),
-        TargetPlatform.iOS: ProxoPageTransitions(),
-        TargetPlatform.macOS: ProxoPageTransitions(),
-        TargetPlatform.windows: ProxoPageTransitions(),
-        TargetPlatform.linux: ProxoPageTransitions(),
-        TargetPlatform.fuchsia: ProxoPageTransitions(),
-      }),
-    );
+  fontFamily: kAppFont, useMaterial3: true,
+  colorScheme: ColorScheme.fromSeed(seedColor: AppColors.accent),
+  scaffoldBackgroundColor: Colors.white,
+  textTheme: const TextTheme().apply(fontFamily: kAppFont, decoration: TextDecoration.none),
+  filledButtonTheme: FilledButtonThemeData(style: ProxoControls.style),
+  elevatedButtonTheme: ElevatedButtonThemeData(style: ProxoControls.style),
+  outlinedButtonTheme: OutlinedButtonThemeData(style: ProxoControls.style),
+  textButtonTheme: TextButtonThemeData(style: ProxoControls.style),
+  iconButtonTheme: const IconButtonThemeData(style: ButtonStyle(
+    shape: WidgetStatePropertyAll(ProxoControls.shape),
+    minimumSize: WidgetStatePropertyAll(Size(48, 48)),
+    animationDuration: Duration(milliseconds: 180))),
+  pageTransitionsTheme: const PageTransitionsTheme(builders: {
+    TargetPlatform.android: ProxoPageTransitions(), TargetPlatform.iOS: ProxoPageTransitions(),
+    TargetPlatform.macOS: ProxoPageTransitions(), TargetPlatform.windows: ProxoPageTransitions(),
+    TargetPlatform.linux: ProxoPageTransitions(), TargetPlatform.fuchsia: ProxoPageTransitions(),
+  }),
+);
 
 TextStyle rabar({
   double size = 14,
@@ -762,8 +783,8 @@ abstract final class ProxoInk {
   /// `gradient` وەک خۆی ماوەتەوە بۆ ئەوەی شوێنە بەکارهێنەرەکانی
   /// نەشکێن (`AuthSegmentedControl`)، بەڵام هەردوو ستۆپەکەی ئێستا
   /// هەمان ڕەنگن — واتە بە چاو ڕەنگێکی ڕەقە.
-  static const Color start = ProxoDesign.blue;
-  static const Color end = ProxoDesign.blue;
+  static const Color start = Color(0xFF0265FF);
+  static const Color end   = Color(0xFF0265FF);
 
   /// ڕەنگی دەق لەسەر `start` — سپی، بۆ کۆنتراستێکی ڕوون.
   static const Color onInk = Color(0xFFFFFFFF);
@@ -781,8 +802,7 @@ abstract final class ProxoInk {
   static const Color outlineText = start;
 
   /// ڕووی شینی ڕەق.
-  static BoxDecoration fill(
-          {double radius = ProxoControls.radius, bool elevated = true}) =>
+  static BoxDecoration fill({double radius = ProxoControls.radius, bool elevated = true}) =>
       BoxDecoration(
         color: start,
         borderRadius: BorderRadius.circular(radius),
@@ -797,22 +817,19 @@ abstract final class ProxoInk {
       );
 
   /// دوگمەی ناچالاک (کاتی ناردن).
-  static BoxDecoration disabled({double radius = ProxoControls.radius}) =>
-      BoxDecoration(
+  static BoxDecoration disabled({double radius = ProxoControls.radius}) => BoxDecoration(
         color: const Color(0xFFB9C9E6),
         borderRadius: BorderRadius.circular(radius),
       );
 
   /// هەڵبژاردەی خێرا: چالاک = شین، ناچالاک = سپی بە سنووری شینی کاڵ.
-  static BoxDecoration toggle(bool active,
-          {double radius = ProxoControls.radius}) =>
-      active
-          ? fill(radius: radius, elevated: false)
-          : BoxDecoration(
-              color: const Color(0xFFFFFFFF),
-              borderRadius: BorderRadius.circular(radius),
-              border: Border.all(color: const Color(0xFFCFE0FF)),
-            );
+  static BoxDecoration toggle(bool active, {double radius = ProxoControls.radius}) => active
+      ? fill(radius: radius, elevated: false)
+      : BoxDecoration(
+          color: const Color(0xFFFFFFFF),
+          borderRadius: BorderRadius.circular(radius),
+          border: Border.all(color: const Color(0xFFCFE0FF)),
+        );
 }
 
 // ═════════════════════════════════════════════════════════════════════════════

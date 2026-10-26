@@ -82,10 +82,11 @@ class _TikTokAdPriceCardState extends State<TikTokAdPriceCard> {
         final quote =
             widget.loading ? widget.quote ?? _geometryQuote : widget.quote;
         final rawTotal = quote == null ? '—' : adIqd(quote.totalIqd);
-        // The long card uses the form's 20dp outer gutters and 16dp inner padding.
-        final innerWidth =
-            math.min(box.maxWidth - 2 * TikTokAdTokens.gutter, 600.0);
-        final contentWidth = math.max(1.0, innerWidth - 32);
+        // The white surface spans the screen; tablet content still aligns with
+        // the form's 600dp maximum content width and 20dp phone gutters.
+        final innerWidth = math.min(box.maxWidth, 640.0);
+        final contentWidth =
+            math.max(1.0, innerWidth - 2 * TikTokAdTokens.gutter);
         final totalSize =
             _measure(context, rawTotal, TikTokAdTokens.totalAmount);
         final labelSize =
@@ -179,139 +180,130 @@ class _TikTokAdPriceCardState extends State<TikTokAdPriceCard> {
                         style: TikTokAdTokens.totalAmount)),
           ),
         );
-        return Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: TikTokAdTokens.gutter),
-            child: Container(
-              key: const ValueKey('sticky-ad-price'),
-              decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: TikTokAdTokens.priceRadius,
-                  boxShadow: TikTokAdTokens.priceShadow),
-              foregroundDecoration: const BoxDecoration(
-                  border: Border(top: BorderSide(color: TikTokAdTokens.line))),
-              child: Align(
+        return Container(
+          key: const ValueKey('sticky-ad-price'),
+          decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: TikTokAdTokens.priceRadius,
+              boxShadow: TikTokAdTokens.priceShadow),
+          foregroundDecoration: const BoxDecoration(
+              border: Border(top: BorderSide(color: TikTokAdTokens.line))),
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            heightFactor: 1,
+            child: SizedBox(
+              width: innerWidth,
+              child: AnimatedSize(
+                duration: duration,
+                curve: Curves.easeOutCubic,
                 alignment: Alignment.bottomCenter,
-                heightFactor: 1,
-                child: SizedBox(
-                  width: innerWidth,
-                  child: AnimatedSize(
-                    duration: duration,
-                    curve: Curves.easeOutCubic,
-                    alignment: Alignment.bottomCenter,
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(maxHeight: maxHeight),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              if (widget.expanded)
-                                Flexible(
-                                    child: Scrollbar(
-                                        controller: _detailsScroll,
-                                        thumbVisibility: stackRows,
-                                        thickness: 3,
-                                        child: SingleChildScrollView(
-                                          key: const ValueKey(
-                                              'sticky-price-details'),
-                                          controller: _detailsScroll,
-                                          padding:
-                                              const EdgeInsets.only(top: 16),
-                                          child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.stretch,
-                                              children: [
-                                                if (widget.error != null &&
-                                                    !widget.loading) ...[
-                                                  ProxoText(widget.error!,
-                                                      style: TikTokAdTokens
-                                                          .helper
-                                                          .copyWith(
-                                                              color: const Color(
-                                                                  0xFFB74956))),
-                                                  Align(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxHeight: maxHeight),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: TikTokAdTokens.gutter),
+                    child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          if (widget.expanded)
+                            Flexible(
+                                child: Scrollbar(
+                                    controller: _detailsScroll,
+                                    thumbVisibility: stackRows,
+                                    thickness: 3,
+                                    child: SingleChildScrollView(
+                                      key: const ValueKey(
+                                          'sticky-price-details'),
+                                      controller: _detailsScroll,
+                                      padding: const EdgeInsets.only(top: 16),
+                                      child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.stretch,
+                                          children: [
+                                            if (widget.error != null &&
+                                                !widget.loading) ...[
+                                              ProxoText(widget.error!,
+                                                  style: TikTokAdTokens.helper
+                                                      .copyWith(
+                                                          color: const Color(
+                                                              0xFFB74956))),
+                                              Align(
+                                                  alignment:
+                                                      AlignmentDirectional
+                                                          .centerEnd,
+                                                  child: TextButton(
+                                                      onPressed: widget.onRetry,
+                                                      child: const ProxoText(
+                                                          'دووبارە پشکنین',
+                                                          translate: true))),
+                                            ] else if (quote != null)
+                                              AdPriceDetails(
+                                                  quote: quote,
+                                                  showTotal: false,
+                                                  balanced: true,
+                                                  stackRows: stackRows,
+                                                  loading: widget.loading,
+                                                  amountWidth: amountWidth,
+                                                  leadingWidth: 0)
+                                            else
+                                              const SizedBox(
+                                                  height: 54,
+                                                  child: Align(
                                                       alignment:
-                                                          AlignmentDirectional
-                                                              .centerEnd,
-                                                      child: TextButton(
-                                                          onPressed:
-                                                              widget.onRetry,
-                                                          child: const ProxoText(
-                                                              'دووبارە پشکنین',
-                                                              translate:
-                                                                  true))),
-                                                ] else if (quote != null)
-                                                  AdPriceDetails(
-                                                      quote: quote,
-                                                      showTotal: false,
-                                                      balanced: true,
-                                                      stackRows: stackRows,
-                                                      loading: widget.loading,
-                                                      amountWidth: amountWidth,
-                                                      leadingWidth: 0)
-                                                else
-                                                  const SizedBox(
-                                                      height: 54,
-                                                      child: Align(
-                                                          alignment: Alignment
-                                                              .centerRight,
-                                                          child: ProxoText(
-                                                              'نرخ هێشتا بەردەست نییە',
-                                                              style:
-                                                                  TikTokAdTokens
-                                                                      .helper))),
+                                                          Alignment.centerRight,
+                                                      child: ProxoText(
+                                                          'نرخ هێشتا بەردەست نییە',
+                                                          style: TikTokAdTokens
+                                                              .helper))),
+                                          ]),
+                                    ))),
+                          if (widget.expanded)
+                            const Divider(
+                                key: ValueKey('sticky-price-divider'),
+                                height: 24,
+                                thickness: 1,
+                                color: TikTokAdTokens.fieldLine),
+                          ConstrainedBox(
+                              key: const ValueKey('sticky-price-header'),
+                              constraints:
+                                  BoxConstraints(minHeight: headerHeight),
+                              child: GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  excludeFromSemantics: true,
+                                  onTap: widget.onToggle,
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 8),
+                                    child: stacked
+                                        ? Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.stretch,
+                                            children: [
+                                                Row(children: [
+                                                  const Expanded(child: label),
+                                                  disclosure
+                                                ]),
+                                                const SizedBox(height: 4),
+                                                total
+                                              ])
+                                        : Row(
+                                            textDirection: TextDirection.ltr,
+                                            children: [
+                                                total,
+                                                disclosure,
+                                                const SizedBox(width: 12),
+                                                const Expanded(child: label)
                                               ]),
-                                        ))),
-                              if (widget.expanded)
-                                const Divider(
-                                    key: ValueKey('sticky-price-divider'),
-                                    height: 24,
-                                    thickness: 1,
-                                    color: TikTokAdTokens.fieldLine),
-                              ConstrainedBox(
-                                  key: const ValueKey('sticky-price-header'),
-                                  constraints:
-                                      BoxConstraints(minHeight: headerHeight),
-                                  child: GestureDetector(
-                                      behavior: HitTestBehavior.opaque,
-                                      excludeFromSemantics: true,
-                                      onTap: widget.onToggle,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 8),
-                                        child: stacked
-                                            ? Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.stretch,
-                                                children: [
-                                                    Row(children: [
-                                                      const Expanded(
-                                                          child: label),
-                                                      disclosure
-                                                    ]),
-                                                    const SizedBox(height: 4),
-                                                    total
-                                                  ])
-                                            : Row(
-                                                textDirection:
-                                                    TextDirection.ltr,
-                                                children: [
-                                                    total,
-                                                    disclosure,
-                                                    const SizedBox(width: 12),
-                                                    const Expanded(child: label)
-                                                  ]),
-                                      ))),
-                            ]),
-                      ),
-                    ),
+                                  ))),
+                        ]),
                   ),
                 ),
               ),
-            ));
+            ),
+          ),
+        );
       });
 }
