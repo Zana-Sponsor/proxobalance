@@ -243,10 +243,10 @@ void main() {
     await tester.ensureVisible(pageRow);
     await tester.pumpAndSettle();
     final body = tester.getRect(find.byKey(const ValueKey('ad-form-scroll')));
-    final price = tester.getRect(find.byKey(const ValueKey('sticky-ad-price')));
     final rowRect = tester.getRect(pageRow);
     final visibleTop = rowRect.top > body.top ? rowRect.top : body.top;
-    final visibleBottom = rowRect.bottom < price.top ? rowRect.bottom : price.top;
+    final visibleBottom =
+        rowRect.bottom < body.bottom ? rowRect.bottom : body.bottom;
     expect(visibleBottom, greaterThan(visibleTop));
     await tester.tapAt(Offset(rowRect.center.dx, (visibleTop + visibleBottom) / 2));
     await tester.pumpAndSettle();
@@ -394,8 +394,6 @@ void main() {
     await tester.drag(duration, const Offset(90, 0));
     await tester.pumpAndSettle();
     expect(repo.lastQuoteDraft!.days, greaterThan(1));
-    await tester.tap(find.byKey(const ValueKey('sticky-price-disclosure')));
-    await tester.pumpAndSettle();
     final quote =
         tester.widget<AdPriceDetails>(find.byType(AdPriceDetails)).quote;
     expect(quote.grossUsd,

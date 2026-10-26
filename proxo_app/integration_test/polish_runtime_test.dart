@@ -45,6 +45,7 @@ import 'package:proxo_app/services/ad_submission.dart';
 import 'package:proxo_app/services/proxolink_service.dart';
 import 'package:proxo_app/theme/app_locale.dart';
 import 'package:proxo_app/theme/app_theme.dart';
+import 'package:proxo_app/widgets/ad_form_components.dart';
 import 'package:proxo_app/widgets/auth/auth_design.dart';
 import 'package:proxo_app/widgets/auth/auth_otp_field.dart';
 import 'package:proxo_app/widgets/auth/auth_widgets.dart';
@@ -358,7 +359,40 @@ void main() {
                           label: AuthStrings.verifyButton,
                           onPressed: () async {}))))),
     };
-    for (final entry in screens.entries) await record(entry.key, entry.value);
+    for (final entry in screens.entries) {
+      await record(entry.key, entry.value,
+          action: entry.key != 'ad-create' ? null : () async {
+        final sections = t.widgetList<AdFormSection>(find.byType(AdFormSection));
+        expect(sections.first.title, 'زانیاری ڕیکلام');
+        expect(sections.every((section) => section.style == AdSectionStyle.card),
+            isTrue);
+        expect(find.byKey(const ValueKey('sticky-ad-price')), findsNothing);
+        expect(find.byKey(const ValueKey('bottom-nav-2')), findsNothing);
+        final scroll = find.descendant(
+            of: find.byKey(const ValueKey('ad-form-scroll')),
+            matching: find.byType(Scrollable)).first;
+        final information = find.byKey(const ValueKey('ad-section-زانیاری ڕیکلام'));
+        final pricing = find.byKey(const ValueKey('ad-section-پوختەی نرخ'));
+        final review = find.byKey(const ValueKey('review-ad'));
+        await capture('ad-create-restored-top');
+        await reveal(pricing, scroll);
+        expect(find.descendant(of: pricing, matching: find.byType(AdPriceDetails)),
+            findsOneWidget);
+        await capture('ad-create-restored-pricing');
+        await reveal(review, scroll);
+        expect(review.hitTestable(), findsOneWidget);
+        await capture('ad-create-restored-submission');
+        observations['create_ad_previous_card_design'] = {
+          'visual_baseline': '058f2f6',
+          'card_sections': true,
+          'in_scroll_pricing': true,
+          'submission_reachable': true,
+          'fixture_only': true,
+        };
+        await t.ensureVisible(information);
+        await settle();
+      });
+    }
     for (final required in [false, true]) {
       final service = AppUpdateService(
         preferences: await SharedPreferences.getInstance(),

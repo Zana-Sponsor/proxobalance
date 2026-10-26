@@ -88,10 +88,11 @@ void main() {
     await tester.pumpAndSettle();
     final sections =
         tester.widgetList<AdFormSection>(find.byType(AdFormSection)).toList();
-    expect(sections[0].title, 'جۆری ڕیکلام');
+    expect(sections[0].title, 'زانیاری ڕیکلام');
+    expect(sections.every((s) => s.style == AdSectionStyle.card), isTrue);
     expect(find.text('ناوی ڕیکلام'), findsOneWidget);
     expect(tester.getTopLeft(find.byKey(const ValueKey('ad-title'))).dy,
-        greaterThan(tester.getBottomLeft(find.byKey(const ValueKey('goal-app_download'))).dy));
+        lessThan(tester.getTopLeft(find.byKey(const ValueKey('goal-app_download'))).dy));
     final goals = find.byWidgetPredicate((w) =>
         w is AdChoice &&
         w.key is ValueKey &&
@@ -201,7 +202,10 @@ void main() {
       expect(tester.takeException(), isNull);
       final messages = find.byKey(const ValueKey('goal-contact'));
       final views = find.byKey(const ValueKey('goal-views'));
-      expect(tester.getSize(messages), tester.getSize(views));
+      for (final choice in [messages, views]) {
+        expect(tester.getSize(choice).height, greaterThanOrEqualTo(48));
+        expect(tester.getSize(choice).width, lessThanOrEqualTo(width - 72));
+      }
       await Scrollable.ensureVisible(tester.element(messages), alignment: .1);
       await tester.pumpAndSettle();
       await capturePng(tester,

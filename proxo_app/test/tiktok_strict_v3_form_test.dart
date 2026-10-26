@@ -63,10 +63,18 @@ class AvatarResponse extends Fake implements HttpClientResponse {
   HttpClientResponseCompressionState get compressionState =>
       HttpClientResponseCompressionState.notCompressed;
   @override
-  StreamSubscription<List<int>> listen(void Function(List<int>)? onData,
-          {Function? onError, void Function()? onDone, bool? cancelOnError}) =>
-      Stream<List<int>>.value(bytes).listen(onData,
-          onError: onError, onDone: onDone, cancelOnError: cancelOnError);
+  StreamSubscription<List<int>> listen(
+    void Function(List<int>)? onData, {
+    Function? onError,
+    void Function()? onDone,
+    bool? cancelOnError,
+  }) =>
+      Stream<List<int>>.value(bytes).listen(
+        onData,
+        onError: onError,
+        onDone: onDone,
+        cancelOnError: cancelOnError,
+      );
 }
 
 class DelayedStrictRepository extends StrictRepository {
@@ -139,7 +147,7 @@ void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
   testWidgets(
-    'strict hierarchy, four types, filtered accordion and stable authoritative total',
+    'restored cards retain four types, filtered pages and authoritative total',
     (tester) async {
       view(tester);
       final repo = StrictRepository();
@@ -153,7 +161,7 @@ void main() {
       expect(find.text('جۆری پۆل'), findsNothing);
       expect(find.text('جۆری ئامێر'), findsNothing);
       expect(find.text('بینینی وردەکاری'), findsNothing);
-      expect(find.byType(ProxoBottomNav), findsOneWidget);
+      expect(find.byType(ProxoBottomNav), findsNothing);
       final title = tester
           .widget<TextField>(find.byKey(const ValueKey('ad-title')))
           .controller!;
@@ -161,8 +169,9 @@ void main() {
       final sections = tester.widgetList<AdFormSection>(
         find.byType(AdFormSection),
       );
-      expect(sections.every((s) => s.style == AdSectionStyle.open), isTrue);
+      expect(sections.every((s) => s.style == AdSectionStyle.card), isTrue);
       await shot(tester, '01-main');
+      await reveal(tester, 'ad-section-جۆری ڕیکلام', alignment: .05);
       await shot(tester, '02-four-ad-types');
       await shot(tester, '07-primary-inactive');
       title.text = 'ناوی دەستکاریکراوی Proxo';
@@ -187,31 +196,43 @@ void main() {
       expect(find.byKey(ValueKey('contact-page-${page(2).id}')), findsNothing);
       expect(find.byKey(ValueKey('contact-page-${page(3).id}')), findsNothing);
       await reveal(tester, 'contact-page-disclosure', alignment: .05);
-      await tester.runAsync(() => precacheImage(
+      await tester.runAsync(
+        () => precacheImage(
           const AssetImage('assets/images/proxo_logo.png'),
-          tester
-              .element(find.byKey(const ValueKey('contact-page-disclosure')))));
+          tester.element(find.byKey(const ValueKey('contact-page-disclosure'))),
+        ),
+      );
       await tester.pumpAndSettle();
       await shot(tester, '16-page-expanded');
       await shot(tester, '18-contact-only-pages');
-      final avatar =
-          AvatarClient(File('assets/images/proxo_logo.png').readAsBytesSync());
+      final avatar = AvatarClient(
+        File('assets/images/proxo_logo.png').readAsBytesSync(),
+      );
       debugNetworkImageHttpClientProvider = () => avatar;
       try {
         const avatarUrl = 'https://fixture.invalid/contact/avatar.png';
         repo.assets.first['avatar_url'] = avatarUrl;
-        await tester.runAsync(() => precacheImage(
+        await tester.runAsync(
+          () => precacheImage(
             const NetworkImage(avatarUrl),
             tester.element(
-                find.byKey(const ValueKey('contact-page-disclosure')))));
+              find.byKey(const ValueKey('contact-page-disclosure')),
+            ),
+          ),
+        );
         await tapVisible(
-            tester, find.byKey(const ValueKey('contact-page-disclosure')));
+          tester,
+          find.byKey(const ValueKey('contact-page-disclosure')),
+        );
         await tapVisible(
-            tester, find.byKey(const ValueKey('contact-page-disclosure')));
+          tester,
+          find.byKey(const ValueKey('contact-page-disclosure')),
+        );
         await reveal(tester, 'contact-page-disclosure', alignment: .05);
         final rowImage = find.descendant(
-            of: find.byKey(ValueKey('contact-page-${page(1).id}')),
-            matching: find.byType(RawImage));
+          of: find.byKey(ValueKey('contact-page-${page(1).id}')),
+          matching: find.byType(RawImage),
+        );
         expect(tester.widget<RawImage>(rowImage).image, isNotNull);
         expect(avatar.requests, 1);
         await shot(tester, '17-page-image-name-status');
@@ -306,50 +327,57 @@ void main() {
       await tapVisible(tester, find.byKey(const ValueKey('gender-female')));
       await reveal(tester, 'gender-female');
       await shot(tester, '09-gender-active');
-      final nav = tester.getRect(find.byType(ProxoBottomNav));
-      final collapsed = tester.getRect(
-        find.byKey(const ValueKey('sticky-ad-price')),
+      await reveal(tester, 'ad-section-پوختەی نرخ', alignment: .05);
+      final pricing = find.byKey(const ValueKey('ad-section-پوختەی نرخ'));
+      expect(
+        find.descendant(of: pricing, matching: find.byType(AdPriceDetails)),
+        findsOneWidget,
       );
-      expect(collapsed.bottom, lessThanOrEqualTo(nav.top));
-      await shot(tester, '22-total-collapsed');
-      await tester.tap(find.byKey(const ValueKey('sticky-price-disclosure')));
-      await tester.pumpAndSettle();
-      final expanded = tester.getRect(
-        find.byKey(const ValueKey('sticky-ad-price')),
+      expect(find.byKey(const ValueKey('sticky-ad-price')), findsNothing);
+      await shot(tester, '22-total-in-card');
+      final beforeScroll = tester.getRect(pricing);
+      await tester.drag(
+        find.byKey(const ValueKey('ad-form-scroll')),
+        const Offset(0, 120),
       );
-      expect(tester.getRect(find.byType(ProxoBottomNav)), nav);
-      expect(expanded.bottom, collapsed.bottom);
-      expect(expanded.top, lessThan(collapsed.top));
-      await shot(tester, '23-total-expanded');
-      await tester.tap(find.byKey(const ValueKey('sticky-price-disclosure')));
       await tester.pumpAndSettle();
+      expect(tester.getRect(pricing).top, greaterThan(beforeScroll.top));
+      await shot(tester, '23-price-scrolls-with-form');
       repo.quoteCompletion = Completer<AdQuote>();
       tester
           .widget<Slider>(find.byKey(const ValueKey('duration-slider')))
           .onChanged!(3);
       await tester.pump(const Duration(milliseconds: 400));
-      expect(
-        find.byKey(const ValueKey('sticky-price-loading')),
-        findsOneWidget,
-      );
-      expect(find.byKey(const ValueKey('sticky-price-total')), findsNothing);
+      expect(find.byKey(const ValueKey('ad-price-loading')), findsOneWidget);
+      expect(find.byType(AdPriceDetails), findsNothing);
+      expect(find.byKey(const ValueKey('ad-total')), findsNothing);
       await shot(tester, '24-total-loading');
       repo.quoteCompletion!.complete(
         const AdQuote(grossUsd: 30, costUsd: 30, rate: 1800, balanceUsd: 1000),
       );
       repo.quoteCompletion = null;
       await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<AdPriceDetails>(find.byType(AdPriceDetails))
+            .quote
+            .totalIqd,
+        54000,
+      );
       await reveal(tester, 'review-ad', alignment: .4);
-      await shot(tester, '25-scrolled-sticky-total');
-      await shot(tester, '26-separate-sponsor');
+      await shot(tester, '25-submission-card');
       expect(
         find.descendant(
-          of: find.byKey(const ValueKey('sticky-ad-price')),
+          of: pricing,
           matching: find.byKey(const ValueKey('review-ad')),
         ),
         findsNothing,
       );
-      expect(tester.getRect(find.byType(ProxoBottomNav)), nav);
+      expect(
+        find.byKey(const ValueKey('review-ad')).hitTestable(),
+        findsOneWidget,
+      );
+      expect(find.byType(ProxoBottomNav), findsNothing);
     },
   );
 
@@ -370,12 +398,10 @@ void main() {
           .onChanged!(3);
       await tester.pump(const Duration(milliseconds: 200));
       expect(repo.requests.length, 2);
-      expect(find.byKey(const ValueKey('sticky-price-total')), findsNothing);
+      expect(find.byKey(const ValueKey('ad-total')), findsNothing);
       repo.requests[1].complete(
         const AdQuote(grossUsd: 30, costUsd: 30, rate: 1800, balanceUsd: 1000),
       );
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('sticky-price-disclosure')));
       await tester.pumpAndSettle();
       expect(
         tester
@@ -400,7 +426,7 @@ void main() {
   );
 
   testWidgets(
-    'expanded price preserves visible total at 300 percent text with keyboard',
+    'in-scroll price and submission stay reachable at 300 percent with keyboard',
     (tester) async {
       view(tester, width: 280, height: 700);
       for (final keyboard in [0.0, 240.0]) {
@@ -420,56 +446,29 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        final toggle = find.byKey(const ValueKey('sticky-price-disclosure'));
-        final total = find.byKey(const ValueKey('sticky-price-total'));
-        await tester.tap(toggle);
-        await tester.pumpAndSettle();
-        final panel = tester.getRect(
-          find.byKey(const ValueKey('sticky-ad-price')),
+        final total = find.byKey(const ValueKey('ad-total'));
+        await reveal(tester, 'ad-total', alignment: .5);
+        final body = tester.getRect(
+          find.byKey(const ValueKey('ad-form-scroll')),
         );
-        final totalRect = tester.getRect(total);
-        final toggleRect = tester.getRect(toggle);
-        expect(totalRect.top, greaterThanOrEqualTo(panel.top));
-        expect(totalRect.bottom, lessThanOrEqualTo(panel.bottom));
-        expect(toggleRect.top, greaterThanOrEqualTo(panel.top));
-        expect(toggleRect.bottom, lessThanOrEqualTo(panel.bottom));
-        expect(
-          panel.bottom,
-          lessThanOrEqualTo(tester.getRect(find.byType(ProxoBottomNav)).top),
-        );
+        expect(tester.getCenter(total).dy, greaterThan(body.top));
+        expect(tester.getCenter(total).dy, lessThan(body.bottom));
+        expect(find.byKey(const ValueKey('sticky-ad-price')), findsNothing);
+        expect(find.byType(ProxoBottomNav), findsNothing);
         expect(tester.takeException(), isNull, reason: 'keyboard=$keyboard');
-        await tester.tap(toggle);
-        await tester.pumpAndSettle();
-        await reveal(tester, 'review-ad', alignment: 0);
-        final body =
-            tester.getRect(find.byKey(const ValueKey('ad-form-scroll')));
-        final price =
-            tester.getRect(find.byKey(const ValueKey('sticky-ad-price')));
-        final exposed = Offset(12, body.top + (price.top - body.top) / 2);
-        expect(exposed.dy, greaterThan(body.top));
-        expect(exposed.dy, lessThan(price.top));
-        await tester.dragFrom(exposed, const Offset(0, -40));
-        await tester.pumpAndSettle();
+        await reveal(tester, 'review-ad', alignment: .5);
         final sponsor = find.byKey(const ValueKey('review-ad'));
-        for (var attempt = 0; attempt < 8; attempt++) {
-          final current = tester.getRect(sponsor);
-          if (current.center.dy > body.top &&
-              current.center.dy < price.top &&
-              sponsor.hitTestable().evaluate().isNotEmpty) break;
-          final delta = (exposed.dy - current.center.dy).clamp(-120.0, 120.0);
-          await tester.dragFrom(exposed, Offset(0, delta));
-          await tester.pumpAndSettle();
-        }
         expect(tester.getCenter(sponsor).dy, greaterThan(body.top));
-        final priceTop =
-            tester.getRect(find.byKey(const ValueKey('sticky-ad-price'))).top;
-        expect(tester.getCenter(sponsor).dy, lessThan(priceTop));
+        expect(tester.getCenter(sponsor).dy, lessThan(body.bottom));
         expect(sponsor.hitTestable(), findsOneWidget);
         await tester.tap(sponsor);
         await tester.pump(const Duration(milliseconds: 100));
         expect(find.byType(AdConfirmationScreen), findsNothing);
-        expect(tester.takeException(), isNull,
-            reason: 'reachable sponsor keyboard=$keyboard');
+        expect(
+          tester.takeException(),
+          isNull,
+          reason: 'reachable submission keyboard=$keyboard',
+        );
       }
     },
   );
@@ -604,7 +603,7 @@ void main() {
         AppLifecycleState.paused,
         AppLifecycleState.hidden,
         AppLifecycleState.inactive,
-        AppLifecycleState.resumed
+        AppLifecycleState.resumed,
       ]) {
         tester.binding.handleAppLifecycleStateChanged(state);
       }
@@ -614,7 +613,7 @@ void main() {
   );
 
   testWidgets(
-    'small screen keeps four types, navigation and validation usable',
+    'small screen keeps four types, back navigation and validation usable',
     (tester) async {
       view(tester, width: 280, height: 700);
       final repo = StrictRepository();

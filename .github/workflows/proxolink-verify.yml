@@ -192,6 +192,12 @@ jobs:
           test/ad_fastpay_attempt_test.dart test/fastpay_wallet_checkout_test.dart
           test/fastpay_pending_checkout_test.dart test/fastpay_transport_test.dart
           test/deposit_screen_test.dart
+      - name: Verify restored Create Ad cards and retained checkout behavior
+        run: >-
+          flutter test --reporter expanded
+          test/ad_creation_flow_test.dart test/responsive_ad_ui_test.dart
+          test/tiktok_balanced_ui_test.dart test/tiktok_strict_v3_form_test.dart
+          test/tiktok_dm_form_test.dart
       - name: Reproduce banner subscription lifecycle and verify fix
         run: |
           cp lib/widgets/proxo_banner.dart /tmp/proxo-banner-fixed.dart

@@ -15,8 +15,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../main.dart' show supabase, mainShellTabRequest;
-import '../widgets/bottom_nav.dart';
+import '../main.dart' show supabase;
 import '../models/proxo_card.dart';
 import '../models/proxolink_page_type.dart';
 import '../services/proxolink_service.dart';
@@ -30,7 +29,6 @@ import '../widgets/ad_form_components.dart';
 import '../widgets/proxo_symbol.dart';
 import '../theme/proxo_surface.dart';
 import '../theme/tiktok_ad_tokens.dart';
-import '../widgets/tiktok_ad_price_card.dart';
 import '../widgets/ad_validation_notifications.dart';
 import '../widgets/proxo_text.dart';
 import '../widgets/receipt/receipt_kit.dart';
@@ -59,12 +57,11 @@ class AdCreateScreen extends StatefulWidget {
 class _AdCreateScreenState extends State<AdCreateScreen>
     with WidgetsBindingObserver {
   bool get _isMeta => widget.platform == 'META';
-  Color get _ink => _isMeta ? AdUi.ink : TikTokAdTokens.ink;
-  Color get _muted => _isMeta ? AdUi.secondary : TikTokAdTokens.muted;
-  Color get _line => _isMeta ? AdUi.controlLine : TikTokAdTokens.line;
-  Color get _surface => _isMeta ? AdUi.controlSurface : TikTokAdTokens.pageFill;
-  double get _sectionGap =>
-      _isMeta ? AdUi.sectionGap : TikTokAdTokens.sectionGap;
+  Color get _ink => AdUi.ink;
+  Color get _muted => AdUi.secondary;
+  Color get _line => AdUi.controlLine;
+  Color get _surface => AdUi.controlSurface;
+  double get _sectionGap => AdUi.sectionGap;
   bool _metaAllowed = false, _accessLoading = true;
   bool _metaFastPayAllowed = false;
   bool _tiktokDmAllowed = false,
@@ -167,7 +164,7 @@ class _AdCreateScreenState extends State<AdCreateScreen>
   List<Map<String, dynamic>> _assets = [];
   bool _assetsLoading = true, _assetsFailed = false;
   String? _goal, _category, _assetId, _appliedCoupon, _adType;
-  bool _pagesExpanded = false, _priceExpanded = false, _openingPage = false;
+  bool _pagesExpanded = false, _openingPage = false;
   int _assetsRevision = 0;
   String get _pageKind => _adType == 'restaurant'
       ? 'order'
@@ -772,7 +769,7 @@ class _AdCreateScreenState extends State<AdCreateScreen>
         controller.clear();
       }
       _goal = _category = _assetId = _appliedCoupon = _adType = null;
-      _pagesExpanded = _priceExpanded = false;
+      _pagesExpanded = false;
       if (!_isMeta) _name.text = _newAdName();
       _messageDestination = 'external_contact';
       _tiktokSelection = null;
@@ -803,29 +800,12 @@ class _AdCreateScreenState extends State<AdCreateScreen>
 
   @override
   Widget build(BuildContext context) => Theme(
-        data: _isMeta
-            ? AdUi.theme(context)
-            : TikTokAdTokens.theme(AdUi.theme(context)),
+        data: AdUi.theme(context),
         child: Builder(
           builder: (context) => Directionality(
             textDirection: TextDirection.rtl,
             child: Scaffold(
               backgroundColor: Colors.white,
-              bottomNavigationBar: _isMeta
-                  ? null
-                  : ProxoBottomNav(
-                      currentIndex: 2,
-                      accentColor: TikTokAdTokens.blue,
-                      mutedColor: TikTokAdTokens.muted,
-                      dividerColor: TikTokAdTokens.line,
-                      onTap: (index) {
-                        if (index == 2) return;
-                        if (Navigator.of(context).canPop()) {
-                          Navigator.of(context).pop();
-                          mainShellTabRequest.value = index;
-                        }
-                      },
-                    ),
               body: SafeArea(
                 top: false,
                 bottom: false,
@@ -880,16 +860,13 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                                   ProxoSurface.gutter,
                                   16,
                                   ProxoSurface.gutter,
-                                  (_isMeta
-                                          ? 28
-                                          : TikTokAdPriceCard.clearance(context,
-                                              formConstraints.maxHeight)) +
-                                      MediaQuery.paddingOf(context).bottom,
+                                  28 + MediaQuery.paddingOf(context).bottom,
                                 ),
                                 child: Center(
                                   child: ConstrainedBox(
-                                    constraints:
-                                        const BoxConstraints(maxWidth: 600),
+                                    constraints: const BoxConstraints(
+                                      maxWidth: 600,
+                                    ),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.stretch,
@@ -902,8 +879,10 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                                                 ProxoText(
                                                   'داواکارییە پێشووەکە بار نەبوو؛ پێش داواکارییەکی نوێ دووبارە هەوڵ بدەرەوە.',
                                                   translate: true,
-                                                  style: AdUi.text(context,
-                                                      color: _ink),
+                                                  style: AdUi.text(
+                                                    context,
+                                                    color: _ink,
+                                                  ),
                                                 ),
                                                 TextButton(
                                                   onPressed: _pendingLoading
@@ -927,8 +906,10 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                                                 ProxoText(
                                                   'دەتوانیت زانیارییەکان دەستکاری بکەیت. پێش ناردنێکی نوێ، ئەنجامی داواکاریی پێشوو بپشکنە.',
                                                   translate: true,
-                                                  style: AdUi.text(context,
-                                                      color: _ink),
+                                                  style: AdUi.text(
+                                                    context,
+                                                    color: _ink,
+                                                  ),
                                                 ),
                                                 const SizedBox(height: 12),
                                                 FilledButton(
@@ -954,44 +935,24 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                                               CrossAxisAlignment.stretch,
                                           children: [
                                             AdHelpNotice(
-                                                platform: widget.platform,
-                                                balanced: !_isMeta),
+                                                platform: widget.platform),
+                                            _information(context),
+                                            SizedBox(height: _sectionGap),
                                             _objective(context),
                                             SizedBox(height: _sectionGap),
-                                            if (_isMeta)
-                                              _information(context)
-                                            else ...[
-                                              _field(
-                                                context,
-                                                'title',
-                                                _name,
-                                                'ناوی ڕیکلام',
-                                                keyboard: TextInputType.name,
-                                              ),
-                                              if (_adType == 'contact') ...[
-                                                SizedBox(
-                                                  height: _sectionGap,
-                                                ),
-                                                _destination(context),
-                                              ],
-                                              if (_needsPage) ...[
-                                                SizedBox(
-                                                  height: _sectionGap,
-                                                ),
-                                                _contactAsset(context),
-                                              ],
-                                              if (!_isTikTokDirect) ...[
-                                                SizedBox(
-                                                  height: _sectionGap,
-                                                ),
-                                                _media(context),
-                                              ],
+                                            if (!_isMeta &&
+                                                _adType == 'contact') ...[
+                                              _destination(context),
+                                              SizedBox(height: _sectionGap),
                                             ],
-                                            SizedBox(height: _sectionGap),
+                                            if (!_isMeta && _needsPage) ...[
+                                              _contactAsset(context),
+                                              SizedBox(height: _sectionGap),
+                                            ],
                                             if (_isTikTokDirect) ...[
                                               if (_tiktokDmAllowed)
                                                 TikTokDmAccountPicker(
-                                                  openSections: true,
+                                                  openSections: false,
                                                   repository: _tiktokRepository,
                                                   selectedAccountId:
                                                       _tiktokSelection
@@ -1032,32 +993,14 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                                             ],
                                             _forecast(context),
                                             SizedBox(height: _sectionGap),
-                                            if (_isMeta) ...[
-                                              _pricing(context),
-                                              SizedBox(height: _sectionGap),
-                                            ],
+                                            _pricing(context),
+                                            SizedBox(height: _sectionGap),
                                             _submission(context),
                                           ],
                                         ),
                                       ],
                                     ),
                                   ),
-                                ),
-                              ),
-                            if (!_isMeta)
-                              PositionedDirectional(
-                                start: 0,
-                                end: 0,
-                                bottom: TikTokAdTokens.priceNavGap,
-                                child: TikTokAdPriceCard(
-                                  quote: _quote,
-                                  loading: _quoteBusy,
-                                  error: _quoteError,
-                                  expanded: _priceExpanded,
-                                  onToggle: () => setState(
-                                      () => _priceExpanded = !_priceExpanded),
-                                  onRetry: _loadQuote,
-                                  viewportHeight: formConstraints.maxHeight,
                                 ),
                               ),
                             Positioned(
@@ -1095,16 +1038,13 @@ class _AdCreateScreenState extends State<AdCreateScreen>
       return ReceiptAppBar(
         translateTitle: true,
         title: 'دروستکردنی ڕیکلام',
-        titleStyle: _isMeta ? null : TikTokAdTokens.appBar,
-        iconColor: _isMeta ? null : TikTokAdTokens.ink,
-        dividerColor: _isMeta ? null : TikTokAdTokens.line,
         onBack: () => Navigator.of(context).maybePop(),
       );
     }
     final title = ProxoStrings.text('دروستکردنی ڕیکلام');
     final keyboardOpen = media.viewInsets.bottom > 0;
     final painter = TextPainter(
-      text: TextSpan(text: title, style: TikTokAdTokens.appBar),
+      text: TextSpan(text: title, style: ReceiptTokens.barTitle),
       textDirection: TextDirection.rtl,
       textScaler: media.textScaler,
       maxLines: keyboardOpen ? 1 : null,
@@ -1116,19 +1056,19 @@ class _AdCreateScreenState extends State<AdCreateScreen>
       padding: EdgeInsets.only(top: media.padding.top, left: 8, right: 8),
       decoration: const BoxDecoration(
           color: ReceiptTokens.bar,
-          border: Border(bottom: BorderSide(color: TikTokAdTokens.line))),
+          border: Border(bottom: BorderSide(color: ReceiptTokens.barLine))),
       child: Row(children: [
         IconButton(
             onPressed: () => Navigator.of(context).maybePop(),
             tooltip: ProxoStrings.text('گەڕانەوە'),
             icon: const Icon(Icons.arrow_forward_ios_rounded,
-                color: TikTokAdTokens.ink)),
+                color: ReceiptTokens.ink)),
         Expanded(
             child: ProxoText(title,
                 textAlign: TextAlign.center,
                 maxLines: keyboardOpen ? 1 : null,
                 overflow: keyboardOpen ? TextOverflow.ellipsis : null,
-                style: TikTokAdTokens.appBar)),
+                style: ReceiptTokens.barTitle)),
       ]),
     );
   }
@@ -1138,28 +1078,20 @@ class _AdCreateScreenState extends State<AdCreateScreen>
     required Widget child,
     String? subtitle,
   }) =>
-      !_isMeta && title.isEmpty
-          ? child
-          : AdFormSection(
-              key: ValueKey('ad-section-$title'),
-              title: title,
-              subtitle: subtitle,
-              style: _isMeta ? AdSectionStyle.card : AdSectionStyle.open,
-              child: child,
-            );
+      AdFormSection(
+        key: ValueKey('ad-section-$title'),
+        title: title,
+        subtitle: subtitle,
+        child: child,
+      );
   Widget _label(BuildContext context, String label, {bool input = false}) =>
       Padding(
-        padding:
-            EdgeInsets.only(bottom: _isMeta ? 10 : TikTokAdTokens.headingGap),
+        key: ValueKey('ad-label-$label'),
+        padding: const EdgeInsets.only(bottom: 12),
         child: ProxoText(
-          key: ValueKey('ad-label-$label'),
           label,
           translate: true,
-          style: _isMeta
-              ? AdUi.text(context, color: _ink)
-              : input
-                  ? TikTokAdTokens.label
-                  : TikTokAdTokens.heading,
+          style: AdUi.text(context, color: _ink),
           textAlign: TextAlign.right,
         ),
       );
@@ -1167,86 +1099,94 @@ class _AdCreateScreenState extends State<AdCreateScreen>
       ? const SizedBox.shrink()
       : Padding(
           padding: const EdgeInsets.only(top: 6),
-          child: ProxoText(_fieldErrors[key]!,
-              translate: true,
-              style: AdUi.text(context, color: const Color(0xFFB74956))));
-  Widget _field(BuildContext context, String id,
-          TextEditingController controller, String label,
-          {bool ltr = false, TextInputType? keyboard, int maxLines = 1}) =>
+          child: ProxoText(
+            _fieldErrors[key]!,
+            translate: true,
+            style: AdUi.text(context, color: const Color(0xFFB74956)),
+          ),
+        );
+  Widget _field(
+    BuildContext context,
+    String id,
+    TextEditingController controller,
+    String label, {
+    bool ltr = false,
+    TextInputType? keyboard,
+    int maxLines = 1,
+  }) =>
       Column(
-          key: ValueKey('ad-field-$id'),
+        key: ValueKey('ad-field-$id'),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _label(context, label, input: true),
+          ProxoDirectionalInput(
+            controller: controller,
+            forceLtr: ltr,
+            keyboardType: keyboard,
+            builder: (_, direction) => TextField(
+              key: ValueKey('ad-$id'),
+              controller: controller,
+              onTapOutside: (_) =>
+                  FocusManager.instance.primaryFocus?.unfocus(),
+              textDirection: direction,
+              textAlign: TextAlign.start,
+              keyboardType: keyboard,
+              maxLines: maxLines,
+              style: AdUi.text(context, color: _ink),
+              autocorrect: !ltr,
+              textInputAction: maxLines == 1
+                  ? TextInputAction.next
+                  : TextInputAction.newline,
+              onChanged: (_) {
+                if (_fieldErrors.containsKey(id)) {
+                  setState(() => _fieldErrors.remove(id));
+                }
+              },
+              decoration: const InputDecoration(),
+            ),
+          ),
+          _error(context, id),
+        ],
+      );
+  Widget _information(BuildContext context) => _section(
+        title: 'زانیاری ڕیکلام',
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _label(context, label, input: true),
-            ProxoDirectionalInput(
-                controller: controller,
-                forceLtr: ltr,
-                keyboardType: keyboard,
-                builder: (_, direction) => TextField(
-                    key: ValueKey('ad-$id'),
-                    controller: controller,
-                    onTapOutside: (_) =>
-                        FocusManager.instance.primaryFocus?.unfocus(),
-                    textDirection: direction,
-                    textAlign: TextAlign.start,
-                    keyboardType: keyboard,
-                    maxLines: maxLines,
-                    style: _isMeta
-                        ? AdUi.text(context, color: _ink)
-                        : TikTokAdTokens.field,
-                    autocorrect: !ltr,
-                    textInputAction: maxLines == 1
-                        ? TextInputAction.next
-                        : TextInputAction.newline,
-                    onChanged: (_) {
-                      if (_fieldErrors.containsKey(id)) {
-                        setState(() => _fieldErrors.remove(id));
-                      }
-                    },
-                    decoration: const InputDecoration())),
-            _error(context, id),
-          ]);
-  Widget _information(BuildContext context) => _section(
-      title: 'زانیاری ڕیکلام',
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        _field(context, 'title', _name, 'ناوی ڕیکلام',
-            keyboard: TextInputType.name),
-        if (!_isTikTokDirect) const SizedBox(height: 20),
-        if (!_isMeta && !_isTikTokDirect) ...[
-          _field(context, 'code', _code, 'کۆدی ڤیدیۆ', ltr: true),
-          const FormHelpActions(helpKey: 'ad_video_code'),
-          const SizedBox(height: 20),
-        ],
-        // Existing video processing and thumbnails require the URL as well as the authorization code.
-        if (!_isTikTokDirect)
-          _field(context, 'link', _link,
-              _isMeta ? 'لینکی پۆست / ڤیدیۆ' : 'بەستەری ڤیدیۆ',
-              ltr: true, keyboard: TextInputType.url),
-        if (!_isMeta && !_isTikTokDirect)
-          const FormHelpActions(
-              helpKey: 'ad_video_link',
-              exampleAsset: 'assets/images/ad_video_link_example.png',
-              exampleCaption:
-                  'سکرینشۆتی خانەی بەستەر لە ئەپی Proxo؛ بەستەری ڤیدیۆی خۆت دابنێ',
-              sampleValue:
-                  'https://www.tiktok.com/@scout2015/video/6718335390845095173'),
-        if (_isMeta) ...[
-          const SizedBox(height: 20),
-          _field(context, 'page', _page, 'لینکی پەیجی فەیسبووک',
-              ltr: true, keyboard: TextInputType.url),
-        ],
-        if (!_isMeta) ...[
-          const SizedBox(height: 8),
-          ExpansionTile(
-              tilePadding: EdgeInsets.zero,
-              childrenPadding: EdgeInsets.zero,
-              title: ProxoText('تێبینی (ئارەزوومەندانە)',
-                  translate: true, style: AdUi.text(context, color: _muted)),
-              children: [
-                _field(context, 'note', _note, 'تێبینی', maxLines: 3)
-              ]),
-        ],
-      ]));
+            _field(
+              context,
+              'title',
+              _name,
+              'ناوی ڕیکلام',
+              keyboard: TextInputType.name,
+            ),
+            if (!_isMeta && !_isTikTokDirect) ...[
+              const SizedBox(height: 20),
+              _media(context),
+            ],
+            if (_isMeta) ...[
+              const SizedBox(height: 20),
+              _field(
+                context,
+                'link',
+                _link,
+                'لینکی پۆست / ڤیدیۆ',
+                ltr: true,
+                keyboard: TextInputType.url,
+              ),
+              const SizedBox(height: 20),
+              _field(
+                context,
+                'page',
+                _page,
+                'لینکی پەیجی فەیسبووک',
+                ltr: true,
+                keyboard: TextInputType.url,
+              ),
+            ],
+          ],
+        ),
+      );
   Widget _choices(
     BuildContext context,
     String field,
@@ -1258,71 +1198,28 @@ class _AdCreateScreenState extends State<AdCreateScreen>
       LayoutBuilder(
         builder: (context, constraints) {
           double? choiceWidth;
-          var choiceHeight = _isMeta ? 48.0 : TikTokAdTokens.controlHeight;
-          if (_isMeta) {
-            if (field == 'goal' || field == 'contact-destination') {
-              var widest = 0.0;
-              for (final option in options) {
-                final painter = TextPainter(
-                  text: TextSpan(
-                      text: ProxoStrings.text(option.$2),
-                      style: AdUi.text(context, color: _ink)),
-                  textDirection: TextDirection.rtl,
-                  textScaler: MediaQuery.textScalerOf(context),
-                )..layout();
-                widest = math.max(widest, painter.width);
-                painter.dispose();
-              }
-              choiceWidth = math.min(
-                  constraints.maxWidth, widest + (field == 'goal' ? 62 : 34));
-            }
-          } else {
-            // A uniform grid grows to fewer columns before labels become
-            // cramped. Destination logos have reserved room, so selection
-            // cannot resize the controls after a page is chosen.
-            final iconSpace = field == 'goal'
-                ? 29.0
-                : field == 'contact-destination'
-                    ? 84.0
-                    : 0.0;
+          if (field == 'goal' || field == 'contact-destination') {
             var widest = 0.0;
+            final iconSpace = field == 'contact-destination' ? 84.0 : 29.0;
             for (final option in options) {
               final painter = TextPainter(
                 text: TextSpan(
-                    text: ProxoStrings.text(option.$2),
-                    style: TikTokAdTokens.choice),
+                  text: ProxoStrings.text(option.$2),
+                  style: AdUi.text(context, color: _ink),
+                ),
                 textDirection: TextDirection.rtl,
                 textScaler: MediaQuery.textScalerOf(context),
               )..layout();
-              widest = math.max(widest, painter.width + 26 + iconSpace);
+              widest = math.max(widest, painter.width);
               painter.dispose();
             }
-            final desiredColumns = field == 'contact-destination'
-                ? 1
-                : field == 'location' || field == 'gender' || field == 'age'
-                    ? 3
-                    : 2;
-            final columns = math.max(
-                1,
-                math.min(desiredColumns,
-                    ((constraints.maxWidth + 12) / (widest + 12)).floor()));
-            choiceWidth = (constraints.maxWidth - (columns - 1) * 12) / columns;
-            for (final option in options) {
-              final painter = TextPainter(
-                text: TextSpan(
-                    text: ProxoStrings.text(option.$2),
-                    style: TikTokAdTokens.choice),
-                textDirection: TextDirection.rtl,
-                textScaler: MediaQuery.textScalerOf(context),
-              )..layout(maxWidth: math.max(20, choiceWidth - 26 - iconSpace));
-              choiceHeight = math.max(choiceHeight, painter.height + 26);
-              painter.dispose();
-            }
+            choiceWidth =
+                math.min(constraints.maxWidth, widest + 32 + iconSpace);
           }
           return Wrap(
             key: ValueKey('ad-choices-$field'),
-            spacing: _isMeta ? 10 : TikTokAdTokens.controlGap,
-            runSpacing: _isMeta ? 10 : TikTokAdTokens.controlGap,
+            spacing: 10,
+            runSpacing: 10,
             textDirection: TextDirection.rtl,
             children: [
               for (final option in options)
@@ -1334,13 +1231,9 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                     children: [
                       AdChoice(
                         key: ValueKey('$field-${option.$1}'),
-                        minimumHeight: choiceHeight,
+                        minimumHeight: 48,
                         label: option.$2,
-                        style: _isMeta
-                            ? AdChoiceStyle.standard
-                            : field == 'contact-destination'
-                                ? AdChoiceStyle.secondary
-                                : AdChoiceStyle.primary,
+                        style: AdChoiceStyle.standard,
                         icon: field == 'goal'
                             ? (_isMeta
                                 ? AdObjectiveIcon(option.$1)
@@ -1383,10 +1276,11 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                             ),
                             child: ProxoText(
                               'نوێ',
-                              style: TikTokAdTokens.helper.copyWith(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500),
+                              style: ProxoSurface.secondary.copyWith(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                         ),
@@ -1626,13 +1520,21 @@ class _AdCreateScreenState extends State<AdCreateScreen>
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _field(context, 'code', _code, 'کۆدی ڤیدیۆ', ltr: true),
-          const SizedBox(height: TikTokAdTokens.helperGap),
+          const SizedBox(height: 8),
           const FormHelpActions(
-              key: ValueKey('ad-code-help'), helpKey: 'ad_video_code'),
-          const SizedBox(height: TikTokAdTokens.sectionGap),
-          _field(context, 'link', _link, 'بەستەری ڤیدیۆ',
-              ltr: true, keyboard: TextInputType.url),
-          const SizedBox(height: TikTokAdTokens.helperGap),
+            key: ValueKey('ad-code-help'),
+            helpKey: 'ad_video_code',
+          ),
+          const SizedBox(height: 20),
+          _field(
+            context,
+            'link',
+            _link,
+            'بەستەری ڤیدیۆ',
+            ltr: true,
+            keyboard: TextInputType.url,
+          ),
+          const SizedBox(height: 8),
           const FormHelpActions(
             key: ValueKey('ad-link-help'),
             helpKey: 'ad_video_link',
@@ -1642,16 +1544,17 @@ class _AdCreateScreenState extends State<AdCreateScreen>
             sampleValue:
                 'https://www.tiktok.com/@scout2015/video/6718335390845095173',
           ),
-          const SizedBox(height: TikTokAdTokens.sectionGap),
+          const SizedBox(height: 8),
           ExpansionTile(
             key: const ValueKey('ad-note-disclosure'),
             tilePadding: EdgeInsets.zero,
-            childrenPadding:
-                const EdgeInsets.only(top: TikTokAdTokens.headingGap),
+            childrenPadding: const EdgeInsets.only(top: 20),
             shape: const Border(),
             collapsedShape: const Border(),
-            title: const ProxoText('تێبینی (ئارەزوومەندانە)',
-                style: TikTokAdTokens.helper),
+            title: const ProxoText(
+              'تێبینی (ئارەزوومەندانە)',
+              style: ProxoSurface.secondary,
+            ),
             children: [_field(context, 'note', _note, 'تێبینی', maxLines: 3)],
           ),
         ],
@@ -1699,195 +1602,191 @@ class _AdCreateScreenState extends State<AdCreateScreen>
     final selected = _assets.where((a) => '${a['id']}' == _assetId).firstOrNull;
     final active = selected != null || _pagesExpanded;
     return _section(
-        title: 'پەڕەی پەیوەندی',
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Semantics(
-              button: true,
-              expanded: _pagesExpanded,
-              child: InkWell(
-                key: const ValueKey('contact-page-disclosure'),
-                borderRadius: TikTokAdTokens.controlRadius,
-                onTap: () => setState(() => _pagesExpanded = !_pagesExpanded),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 180),
-                  curve: Curves.easeOutCubic,
-                  constraints: const BoxConstraints(minHeight: 52),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: TikTokAdTokens.pageFill,
-                    borderRadius: TikTokAdTokens.controlRadius,
-                    border: Border.all(
-                      color: active
-                          ? TikTokAdTokens.selectedLine
-                          : TikTokAdTokens.pageLine,
-                    ),
-                    boxShadow: active
-                        ? TikTokAdTokens.selectedShadow
-                        : TikTokAdTokens.controlShadow,
-                  ),
-                  child: Row(
-                    children: [
-                      if (selected != null) ...[
-                        _pageAvatar(selected),
-                        const SizedBox(width: 10),
-                      ],
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AnimatedDefaultTextStyle(
-                              duration: MediaQuery.disableAnimationsOf(context)
-                                  ? Duration.zero
-                                  : TikTokAdTokens.transition,
-                              curve: Curves.easeOutCubic,
-                              style: TikTokAdTokens.choice.copyWith(
-                                  color: TikTokAdTokens.secondaryBlue),
-                              child: ProxoText(selected == null
-                                  ? 'پەڕە هەڵبژێرە'
-                                  : '${selected['name'] ?? ''}'),
-                            ),
-                            if (selected != null) ...[
-                              const SizedBox(height: 4),
-                              ProxoText(
-                                _pageStatus(selected),
-                                style: AdUi.text(
-                                  context,
-                                  color: _muted,
-                                ).copyWith(fontSize: 12),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                      AnimatedRotation(
-                        turns: _pagesExpanded ? .5 : 0,
-                        duration: const Duration(milliseconds: 180),
-                        curve: Curves.easeOutCubic,
-                        child: const Icon(
-                          Icons.expand_more,
-                          color: TikTokAdTokens.secondaryBlue,
-                        ),
-                      ),
-                    ],
+      title: 'پەڕەی پەیوەندی',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Semantics(
+            button: true,
+            expanded: _pagesExpanded,
+            child: InkWell(
+              key: const ValueKey('contact-page-disclosure'),
+              borderRadius: AdUi.controlRadius,
+              onTap: () => setState(() => _pagesExpanded = !_pagesExpanded),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                curve: Curves.easeOutCubic,
+                constraints: const BoxConstraints(minHeight: 52),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: AdUi.controlSurface,
+                  borderRadius: AdUi.controlRadius,
+                  border: Border.all(
+                    color: active ? AdUi.selectedLine : AdUi.controlLine,
                   ),
                 ),
-              ),
-            ),
-            AnimatedSize(
-              duration: const Duration(milliseconds: 180),
-              curve: Curves.easeOutCubic,
-              alignment: Alignment.topCenter,
-              child: !_pagesExpanded
-                  ? const SizedBox.shrink()
-                  : Padding(
-                      padding:
-                          const EdgeInsets.only(top: TikTokAdTokens.controlGap),
+                child: Row(
+                  children: [
+                    if (selected != null) ...[
+                      _pageAvatar(selected),
+                      const SizedBox(width: 10),
+                    ],
+                    Expanded(
                       child: Column(
-                        key: const ValueKey('contact-page-options'),
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (_assetsLoading)
-                            const LinearProgressIndicator(minHeight: 2)
-                          else if (_assetsFailed)
-                            TextButton(
-                              onPressed: _loadAssets,
-                              child: const ProxoText(
-                                'دووبارە بارکردنەوەی پەڕەکان',
-                                translate: true,
-                              ),
-                            )
-                          else if (_assets.isEmpty)
-                            ProxoText(
-                              'پەڕەی پەیوەندیت نییە؛ پەڕەیەکی نوێ دروست بکە.',
-                              key: const ValueKey('no-contact-page'),
-                              translate: true,
-                              style: AdUi.text(context, color: _muted),
-                            )
-                          else
-                            for (final page in _assets)
-                              InkWell(
-                                key: ValueKey('contact-page-${page['id']}'),
-                                borderRadius: BorderRadius.circular(10),
-                                onTap: () {
-                                  setState(() {
-                                    _assetId = '${page['id']}';
-                                    _fieldErrors.remove('asset');
-                                  });
-                                  _refreshQuote();
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 10,
-                                    horizontal: 8,
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      _pageAvatar(page),
-                                      const SizedBox(width: 10),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            ProxoText(
-                                              '${page['name'] ?? ''}',
-                                              style: AdUi.text(context,
-                                                      color: _ink)
-                                                  .copyWith(
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 3),
-                                            ProxoText(
-                                              _pageStatus(page),
-                                              style: AdUi.text(
-                                                context,
-                                                color: _muted,
-                                              ).copyWith(fontSize: 12),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Icon(
-                                        '${page['id']}' == _assetId
-                                            ? Icons.radio_button_checked
-                                            : Icons.radio_button_unchecked,
-                                        color: '${page['id']}' == _assetId
-                                            ? TikTokAdTokens.blue
-                                            : _muted,
-                                        size: 21,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                          Align(
-                            alignment: AlignmentDirectional.centerStart,
-                            child: TextButton.icon(
-                              key: const ValueKey('create-contact-page'),
-                              onPressed: _openingPage ? null : _createContact,
-                              icon: const Icon(Icons.add_rounded, size: 20),
-                              label: const ProxoText(
-                                'دروستکردنی پەڕەی نوێ',
-                                translate: true,
-                              ),
+                          AnimatedDefaultTextStyle(
+                            duration: MediaQuery.disableAnimationsOf(context)
+                                ? Duration.zero
+                                : TikTokAdTokens.transition,
+                            curve: Curves.easeOutCubic,
+                            style: ProxoSurface.body.copyWith(color: AdUi.blue),
+                            child: ProxoText(
+                              selected == null
+                                  ? 'پەڕە هەڵبژێرە'
+                                  : '${selected['name'] ?? ''}',
                             ),
                           ),
+                          if (selected != null) ...[
+                            const SizedBox(height: 4),
+                            ProxoText(
+                              _pageStatus(selected),
+                              style: AdUi.text(
+                                context,
+                                color: _muted,
+                              ).copyWith(fontSize: 12),
+                            ),
+                          ],
                         ],
                       ),
                     ),
+                    AnimatedRotation(
+                      turns: _pagesExpanded ? .5 : 0,
+                      duration: const Duration(milliseconds: 180),
+                      curve: Curves.easeOutCubic,
+                      child: const Icon(Icons.expand_more, color: AdUi.blue),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            _error(context, 'asset'),
-          ],
-        ));
+          ),
+          AnimatedSize(
+            duration: const Duration(milliseconds: 180),
+            curve: Curves.easeOutCubic,
+            alignment: Alignment.topCenter,
+            child: !_pagesExpanded
+                ? const SizedBox.shrink()
+                : Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: Column(
+                      key: const ValueKey('contact-page-options'),
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (_assetsLoading)
+                          const LinearProgressIndicator(minHeight: 2)
+                        else if (_assetsFailed)
+                          TextButton(
+                            onPressed: _loadAssets,
+                            child: const ProxoText(
+                              'دووبارە بارکردنەوەی پەڕەکان',
+                              translate: true,
+                            ),
+                          )
+                        else if (_assets.isEmpty)
+                          ProxoText(
+                            'پەڕەی پەیوەندیت نییە؛ پەڕەیەکی نوێ دروست بکە.',
+                            key: const ValueKey('no-contact-page'),
+                            translate: true,
+                            style: AdUi.text(context, color: _muted),
+                          )
+                        else
+                          for (final page in _assets)
+                            InkWell(
+                              key: ValueKey('contact-page-${page['id']}'),
+                              borderRadius: BorderRadius.circular(10),
+                              onTap: () {
+                                setState(() {
+                                  _assetId = '${page['id']}';
+                                  _fieldErrors.remove('asset');
+                                });
+                                _refreshQuote();
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 10,
+                                  horizontal: 8,
+                                ),
+                                child: Row(
+                                  children: [
+                                    _pageAvatar(page),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          ProxoText(
+                                            '${page['name'] ?? ''}',
+                                            style: AdUi.text(
+                                              context,
+                                              color: _ink,
+                                            ).copyWith(
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 3),
+                                          ProxoText(
+                                            _pageStatus(page),
+                                            style: AdUi.text(
+                                              context,
+                                              color: _muted,
+                                            ).copyWith(fontSize: 12),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Icon(
+                                      '${page['id']}' == _assetId
+                                          ? Icons.radio_button_checked
+                                          : Icons.radio_button_unchecked,
+                                      color: '${page['id']}' == _assetId
+                                          ? AdUi.blue
+                                          : _muted,
+                                      size: 21,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                        Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: TextButton.icon(
+                            key: const ValueKey('create-contact-page'),
+                            onPressed: _openingPage ? null : _createContact,
+                            icon: const Icon(Icons.add_rounded, size: 20),
+                            label: const ProxoText(
+                              'دروستکردنی پەڕەی نوێ',
+                              translate: true,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+          ),
+          _error(context, 'asset'),
+        ],
+      ),
+    );
   }
 
   Widget _audience(BuildContext context) => _section(
-        title: _isMeta ? 'ئامانجی بینەران' : '',
+        title: 'ئامانجی بینەران',
         child: Column(
           key: const ValueKey('ad-audience'),
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1912,7 +1811,7 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                     ],
               (v) => setState(() => _location = v),
             ),
-            SizedBox(height: _isMeta ? 24 : TikTokAdTokens.sectionGap),
+            SizedBox(height: AdUi.sectionGap),
             _label(context, 'تەمەن'),
             if (_isMeta) ...[
               AdValueRow(
@@ -1935,30 +1834,31 @@ class _AdCreateScreenState extends State<AdCreateScreen>
               ),
             ] else
               _choices(
-                  context,
-                  'age',
-                  '',
-                  const [
-                    ('all', 'هەموو'),
-                    ('18-24', '18-24'),
-                    ('25-34', '25-34'),
-                    ('35-44', '35-44'),
-                    ('45-54', '45-54'),
-                    ('55+', '55+'),
-                  ],
-                  (age) => setState(() {
-                        if (age == 'all') {
-                          _ages
-                            ..clear()
-                            ..add('all');
-                        } else {
-                          _ages.remove('all');
-                          if (!_ages.add(age)) _ages.remove(age);
-                          if (_ages.isEmpty) _ages.add('all');
-                        }
-                      }),
-                  selectedValues: _ages),
-            SizedBox(height: _isMeta ? 24 : TikTokAdTokens.sectionGap),
+                context,
+                'age',
+                '',
+                const [
+                  ('all', 'هەموو'),
+                  ('18-24', '18-24'),
+                  ('25-34', '25-34'),
+                  ('35-44', '35-44'),
+                  ('45-54', '45-54'),
+                  ('55+', '55+'),
+                ],
+                (age) => setState(() {
+                  if (age == 'all') {
+                    _ages
+                      ..clear()
+                      ..add('all');
+                  } else {
+                    _ages.remove('all');
+                    if (!_ages.add(age)) _ages.remove(age);
+                    if (_ages.isEmpty) _ages.add('all');
+                  }
+                }),
+                selectedValues: _ages,
+              ),
+            SizedBox(height: AdUi.sectionGap),
             _label(context, 'ڕەگەز'),
             _choices(
                 context,
@@ -1977,142 +1877,173 @@ class _AdCreateScreenState extends State<AdCreateScreen>
   String _budgetIqd(int usd) => adIqd(usd * (_quote?.rate ?? 1800));
 
   Widget _budget(BuildContext context) => _section(
-      title: 'بودجە و ماوەی ڕیکلام',
-      child: Column(children: [
-        AdValueRow(
-            label: 'بودجەی ڕۆژانە',
-            value: _budgetIqd(_daily),
-            valueColor: _isMeta ? AdUi.blue : TikTokAdTokens.blue),
-        const SizedBox(height: 6),
-        Directionality(
-            textDirection: TextDirection.ltr,
-            child: Slider(
+        title: 'بودجە و ماوەی ڕیکلام',
+        child: Column(
+          children: [
+            AdValueRow(
+              label: 'بودجەی ڕۆژانە',
+              value: _budgetIqd(_daily),
+              valueColor: AdUi.blue,
+            ),
+            const SizedBox(height: 6),
+            Directionality(
+              textDirection: TextDirection.ltr,
+              child: Slider(
                 key: const ValueKey('daily-budget-slider'),
                 min: 0,
                 max: (_budgetOptions.length - 1).toDouble(),
                 divisions: _budgetOptions.length - 1,
                 value: _budgetOptions.indexOf(_daily).toDouble(),
-                activeColor: _isMeta ? AdUi.blue : TikTokAdTokens.blue,
+                activeColor: AdUi.blue,
                 label: _budgetIqd(_daily),
                 onChanged: (v) {
                   setState(() => _daily = _budgetOptions[v.round()]);
                   _refreshQuote();
-                })),
-        AdValueRow(
-            label: _budgetIqd(_budgetOptions.last),
-            value: _budgetIqd(_budgetOptions.first),
-            color: _muted),
-        const SizedBox(height: 24),
-        AdValueRow(
-            label: 'ماوەی ڕیکلام',
-            value: ProxoStrings.format('{count} ڕۆژ', {'count': _days}),
-            valueColor: _isMeta ? AdUi.blue : TikTokAdTokens.blue),
-        const SizedBox(height: 6),
-        Directionality(
-            textDirection: TextDirection.ltr,
-            child: Slider(
+                },
+              ),
+            ),
+            AdValueRow(
+              label: _budgetIqd(_budgetOptions.last),
+              value: _budgetIqd(_budgetOptions.first),
+              color: _muted,
+            ),
+            const SizedBox(height: 24),
+            AdValueRow(
+              label: 'ماوەی ڕیکلام',
+              value: ProxoStrings.format('{count} ڕۆژ', {'count': _days}),
+              valueColor: AdUi.blue,
+            ),
+            const SizedBox(height: 6),
+            Directionality(
+              textDirection: TextDirection.ltr,
+              child: Slider(
                 key: const ValueKey('duration-slider'),
                 min: 1,
                 max: 7,
                 divisions: 6,
                 value: _days.toDouble(),
-                activeColor: _isMeta ? AdUi.blue : TikTokAdTokens.blue,
+                activeColor: AdUi.blue,
                 label: '$_days',
                 onChanged: (v) {
                   setState(() => _days = v.round());
                   _refreshQuote();
-                })),
-        AdValueRow(label: '7 ڕۆژ', value: '1 ڕۆژ', color: _muted),
-        Divider(height: 32, color: _line),
-        AdValueRow(
-            label: 'کۆی بودجە',
-            value: _budgetIqd(_daily * _days),
-            color: _isMeta ? AdUi.blue : TikTokAdTokens.blue),
-        _error(context, 'budget'),
-      ]));
+                },
+              ),
+            ),
+            AdValueRow(label: '7 ڕۆژ', value: '1 ڕۆژ', color: _muted),
+            Divider(height: 32, color: _line),
+            AdValueRow(
+              label: 'کۆی بودجە',
+              value: _budgetIqd(_daily * _days),
+              color: AdUi.blue,
+            ),
+            _error(context, 'budget'),
+          ],
+        ),
+      );
   Widget _schedule(BuildContext context) => _section(
-      title: 'بەروار و کاتی دەستپێک',
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        _choices(
-            context,
-            'schedule',
-            _immediate ? 'now' : 'later',
-            const [('now', 'ئێستا'), ('later', 'دیاریکردنی کات')],
-            (v) => setState(() => _immediate = v == 'now')),
-        AnimatedSize(
-            duration: _isMeta
-                ? const Duration(milliseconds: 240)
-                : TikTokAdTokens.transition,
-            curve: Curves.easeOutCubic,
-            alignment: Alignment.topRight,
-            child: _immediate
-                ? const SizedBox.shrink()
-                : Padding(
-                    padding: EdgeInsets.only(
-                        top: _isMeta ? 20 : TikTokAdTokens.controlGap),
-                    child: Wrap(spacing: 10, runSpacing: 10, children: [
-                      OutlinedButton(
-                          key: const ValueKey('ad-date'),
-                          onPressed: () async {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                            final date = await showAdDatePicker(
+        title: 'بەروار و کاتی دەستپێک',
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _choices(
+                context,
+                'schedule',
+                _immediate ? 'now' : 'later',
+                const [
+                  ('now', 'ئێستا'),
+                  ('later', 'دیاریکردنی کات'),
+                ],
+                (v) => setState(() => _immediate = v == 'now')),
+            AnimatedSize(
+              duration: _isMeta
+                  ? const Duration(milliseconds: 240)
+                  : TikTokAdTokens.transition,
+              curve: Curves.easeOutCubic,
+              alignment: Alignment.topRight,
+              child: _immediate
+                  ? const SizedBox.shrink()
+                  : Padding(
+                      padding: EdgeInsets.only(top: _isMeta ? 20 : 12),
+                      child: Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: [
+                          OutlinedButton(
+                            key: const ValueKey('ad-date'),
+                            onPressed: () async {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                              final date = await showAdDatePicker(
                                 context: context,
                                 now: _now,
-                                initialDate: _date);
-                            if (mounted && date != null) {
-                              setState(() {
-                                _date = date;
-                                _fieldErrors.remove('schedule');
-                                _validateSchedule();
-                              });
-                              _refreshQuote();
-                            }
-                          },
-                          child: ProxoText(
+                                initialDate: _date,
+                              );
+                              if (mounted && date != null) {
+                                setState(() {
+                                  _date = date;
+                                  _fieldErrors.remove('schedule');
+                                  _validateSchedule();
+                                });
+                                _refreshQuote();
+                              }
+                            },
+                            child: ProxoText(
                               translate: true,
                               _date == null
                                   ? 'بەروار هەڵبژێرە'
-                                  : '${_date!.day}/${_date!.month}/${_date!.year}')),
-                      OutlinedButton(
-                          key: const ValueKey('ad-time'),
-                          onPressed: () async {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                            final now = _now();
-                            final time = await showAdTimePicker(
+                                  : '${_date!.day}/${_date!.month}/${_date!.year}',
+                            ),
+                          ),
+                          OutlinedButton(
+                            key: const ValueKey('ad-time'),
+                            onPressed: () async {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                              final now = _now();
+                              final time = await showAdTimePicker(
                                 context: context,
                                 date: _date ?? now,
                                 now: _now,
-                                initialTime: _time);
-                            if (mounted && time != null) {
-                              setState(() {
-                                _date ??= DateUtils.dateOnly(now);
-                                _time = time;
-                                _validateSchedule();
-                              });
-                              _refreshQuote();
-                            }
-                          },
-                          child: ProxoText(
+                                initialTime: _time,
+                              );
+                              if (mounted && time != null) {
+                                setState(() {
+                                  _date ??= DateUtils.dateOnly(now);
+                                  _time = time;
+                                  _validateSchedule();
+                                });
+                                _refreshQuote();
+                              }
+                            },
+                            child: ProxoText(
                               translate: true,
                               _time == null
                                   ? 'کات هەڵبژێرە'
-                                  : '${_time!.hour.toString().padLeft(2, '0')}:${_time!.minute.toString().padLeft(2, '0')}')),
-                    ]))),
-        _error(context, 'schedule'),
-      ]));
+                                  : '${_time!.hour.toString().padLeft(2, '0')}:${_time!.minute.toString().padLeft(2, '0')}',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+            ),
+            _error(context, 'schedule'),
+          ],
+        ),
+      );
   Widget _couponSection(BuildContext context) => _section(
-      title: 'کۆدی داشکاندن',
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        ProxoDirectionalInput(
-            controller: _coupon,
-            forceLtr: true,
-            builder: (_, dir) => TextField(
+        title: 'کۆدی داشکاندن',
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ProxoDirectionalInput(
+              controller: _coupon,
+              forceLtr: true,
+              builder: (_, dir) => TextField(
                 key: const ValueKey('ad-coupon'),
                 onTapOutside: (_) =>
                     FocusManager.instance.primaryFocus?.unfocus(),
                 controller: _coupon,
                 textDirection: dir,
-                style: TikTokAdTokens.field,
+                style: ProxoSurface.body,
                 textCapitalization: TextCapitalization.characters,
                 autocorrect: false,
                 onChanged: (_) {
@@ -2124,23 +2055,39 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                   _refreshQuote(clearPromo: true);
                 },
                 decoration: const InputDecoration(
-                    hint: ProxoText('کۆدی داشکاندن (ئارەزوومەندانە)',
-                        style: TikTokAdTokens.helper, translate: true)))),
-        const SizedBox(height: TikTokAdTokens.controlGap),
-        Align(
-            alignment: Alignment.centerRight,
-            child: OutlinedButton(
+                  hint: ProxoText(
+                    'کۆدی داشکاندن (ئارەزوومەندانە)',
+                    style: ProxoSurface.secondary,
+                    translate: true,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Align(
+              alignment: Alignment.centerRight,
+              child: OutlinedButton(
                 onPressed: _couponBusy ? null : _applyCoupon,
-                child: ProxoText(_couponBusy ? 'پشکنین…' : 'بەکارهێنانی کۆد',
-                    translate: true))),
-        if (_couponMessage != null) ...[
-          const SizedBox(height: 8),
-          ProxoText(_couponMessage!,
-              translate: true,
-              style: AdUi.text(context,
-                  color: _couponValid ? AdUi.green : const Color(0xFFB74956)))
-        ],
-      ]));
+                child: ProxoText(
+                  _couponBusy ? 'پشکنین…' : 'بەکارهێنانی کۆد',
+                  translate: true,
+                ),
+              ),
+            ),
+            if (_couponMessage != null) ...[
+              const SizedBox(height: 8),
+              ProxoText(
+                _couponMessage!,
+                translate: true,
+                style: AdUi.text(
+                  context,
+                  color: _couponValid ? AdUi.green : const Color(0xFFB74956),
+                ),
+              ),
+            ],
+          ],
+        ),
+      );
   Widget _forecast(BuildContext context) {
     if (_isMeta || _isTikTokDirect) {
       return _section(
@@ -2229,50 +2176,68 @@ class _AdCreateScreenState extends State<AdCreateScreen>
   }
 
   Widget _pricing(BuildContext context) => _section(
-      title: 'پوختەی نرخ',
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        if (_quote != null) ...[
-          AdPriceDetails(quote: _quote!),
-          const SizedBox(height: 16),
-          Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              decoration: BoxDecoration(
-                  color: _surface, borderRadius: AdUi.controlRadius),
-              child: AdValueRow(
-                  label: 'باڵانسی بەردەست',
-                  value: adIqd(_quote!.balanceUsd * _quote!.rate),
-                  color: _muted,
-                  valueColor: _ink)),
-          if (_payment == 'app_balance' &&
-              _quote!.balanceUsd + 0.000001 < _quote!.costUsd) ...[
-            const SizedBox(height: 10),
-            ProxoText('باڵانسی پێویستت بەردەست نییە',
-                translate: true,
-                style: AdUi.text(context, color: const Color(0xFFB74956)))
-          ],
-        ],
-        if (_quoteBusy) ...[
-          const SizedBox(height: 12),
-          const LinearProgressIndicator(minHeight: 2)
-        ],
-        if (_quoteError != null) ...[
-          const SizedBox(height: 12),
-          ProxoText(_quoteError!,
-              translate: true,
-              style: AdUi.text(context, color: const Color(0xFFB74956))),
-          Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                  onPressed: _loadQuote,
-                  child: const ProxoText('دووبارە پشکنین', translate: true)))
-        ],
-      ]));
-  Widget _submission(BuildContext context) => _section(
-        title: _isMeta ? 'ناردنی ڕیکلام' : 'شێوازەکانی پارەدان',
+        title: 'پوختەی نرخ',
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (_isMeta) _label(context, 'شێوازەکانی پارەدان'),
+            if (!_quoteBusy && _quoteError == null && _quote != null) ...[
+              AdPriceDetails(quote: _quote!),
+              const SizedBox(height: 16),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                decoration: BoxDecoration(
+                  color: _surface,
+                  borderRadius: AdUi.controlRadius,
+                ),
+                child: AdValueRow(
+                  label: 'باڵانسی بەردەست',
+                  value: adIqd(_quote!.balanceUsd * _quote!.rate),
+                  color: _muted,
+                  valueColor: _ink,
+                ),
+              ),
+              if (_payment == 'app_balance' &&
+                  _quote!.balanceUsd + 0.000001 < _quote!.costUsd) ...[
+                const SizedBox(height: 10),
+                ProxoText(
+                  'باڵانسی پێویستت بەردەست نییە',
+                  translate: true,
+                  style: AdUi.text(context, color: const Color(0xFFB74956)),
+                ),
+              ],
+            ],
+            if (_quoteBusy) ...[
+              const SizedBox(height: 12),
+              const LinearProgressIndicator(
+                key: ValueKey('ad-price-loading'),
+                minHeight: 2,
+              ),
+            ],
+            if (_quoteError != null) ...[
+              const SizedBox(height: 12),
+              ProxoText(
+                _quoteError!,
+                translate: true,
+                style: AdUi.text(context, color: const Color(0xFFB74956)),
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: _loadQuote,
+                  child: const ProxoText('دووبارە پشکنین', translate: true),
+                ),
+              ),
+            ],
+          ],
+        ),
+      );
+  Widget _submission(BuildContext context) => _section(
+        title: 'ناردنی ڕیکلام',
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _label(context, 'شێوازەکانی پارەدان'),
             AdPaymentCard(
               balanced: !_isMeta,
               value: _payment,
@@ -2291,20 +2256,17 @@ class _AdCreateScreenState extends State<AdCreateScreen>
               },
             ),
             _error(context, 'payment'),
-            SizedBox(height: _isMeta ? 16 : TikTokAdTokens.sectionGap),
+            const SizedBox(height: 16),
             FilledButton(
               key: const ValueKey('review-ad'),
               style: FilledButton.styleFrom(
-                minimumSize: Size.fromHeight(
-                    _isMeta ? 48 : TikTokAdTokens.controlHeight),
-                elevation: _isMeta ? null : 1,
-                shadowColor: _isMeta ? null : const Color(0x180278FE),
+                minimumSize: const Size.fromHeight(48),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 shape: RoundedRectangleBorder(
-                    borderRadius: _isMeta
-                        ? BorderRadius.circular(ProxoSurface.controlRadius)
-                        : TikTokAdTokens.controlRadius),
+                  borderRadius:
+                      BorderRadius.circular(ProxoSurface.controlRadius),
+                ),
               ),
               onPressed: _openingConfirmation || _couponBusy || _pendingLoading
                   ? null
@@ -2331,12 +2293,8 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                     child: ProxoText(
                       _pending != null
                           ? 'پشکنینی داواکاریی پێشوو'
-                          : _isMeta
-                              ? 'سپۆنسەر بکە${_quote == null ? '' : ' — ${adIqd(_quote!.totalIqd)}'}'
-                              : 'سپۆنسەرکردن',
-                      style: _isMeta
-                          ? null
-                          : TikTokAdTokens.choice.copyWith(color: Colors.white),
+                          : 'پشکنین و ناردنی ڕیکلام',
+                      style: ProxoSurface.body.copyWith(color: Colors.white),
                       textAlign: TextAlign.center,
                     ),
                   ),

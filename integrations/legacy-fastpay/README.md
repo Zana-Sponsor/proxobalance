@@ -1,6 +1,6 @@
 # Durable legacy FastPay checkout — inactive sandbox draft
 
-This follow-up repairs the existing wallet/manual-checkout workflow offline. **Nothing here is imported, activated or payment-tested against FastPay.** The production workflow remains unchanged. The [sandbox export](proxo_fastpay_durable_sandbox.json) is inactive, uses separate webhook paths, requires an isolated Supabase project, and contains only unbound credential markers. Refund and Telegram nodes are disabled; refund acceptance is outside this checkout change.
+The repaired wallet/manual-checkout [sandbox draft](https://email.proxopages.com/workflow/pA8Zn5xnDitCmDiP) was imported into n8n on **27 October 2026** and remains inactive with unbound credentials. **It has not been activated or payment-tested against FastPay.** The published `FastPay Checkout + Supabase v12` workflow remains unchanged. The [sandbox export](proxo_fastpay_durable_sandbox.json) uses separate webhook paths and requires an isolated Supabase project. Refund and Telegram nodes are disabled; refund acceptance is outside this checkout change.
 
 ## Behavior
 
@@ -46,5 +46,18 @@ node scripts/test-legacy-fastpay-database.mjs
 ```
 
 The 22 Node checks execute the embedded contract/checkout/verification code with synthetic responses, validate graph gates and inspect the actual generated export, including continuing a polling batch after one unavailable binding. The database suite passes 86 PGlite assertions. GitHub additionally runs a real PostgreSQL concurrency suite; its result must be read from the current revision's CI. Local fixtures do not establish n8n import/runtime compatibility or provider acceptance.
+
+### Manual n8n runtime checks
+
+The separate [manual-only runtime harness](proxo_fastpay_runtime_harness.json) contains a Manual Trigger and one Code node. The [generator](runtime-harness.mjs) embeds the actual sandbox Code snippets, expressions and contract factories unchanged, then supplies synthetic responses. It contains no HTTP, webhook, schedule, credential or notification nodes and makes no provider request or ledger write. This permits checking n8n JavaScript runtime compatibility without selecting a database or merchant credential.
+
+```bash
+node integrations/legacy-fastpay/runtime-harness.mjs
+node --test test/legacy-fastpay-runtime-harness.test.js
+```
+
+On **27 October 2026**, the separate [runtime harness in n8n](https://email.proxopages.com/workflow/8fLksW8MXDWJQ810) ran manually and returned **PASS: 56 checks**. It remains inactive. The result includes the named checks and source-export digest, with `providerRequests:0`, `ledgerWrites:0` and `livePaymentAccepted:false`. It covers first-only dispatch authorization, original order/money/owner binding, malformed or mismatched provider evidence, callback independence, duplicate credit confirmation and nonterminal decline recovery. See the [runtime audit and screenshots](../../docs/fastpay-runtime-2026-10-27/README.md).
+
+For reproduction, import the harness as a separate inactive workflow and use its manual trigger only. This successful n8n run establishes Code/expression runtime compatibility for the synthetic cases. It does not establish HTTP-node transport, actual credential injection, database migration compatibility, callback delivery or real payment acceptance; those require the isolated integration test described above.
 
 Before any controlled activation, inspect the exact draft and credential map, confirm the main database cannot be selected, and test authenticated ownership, same-order duplicate requests, interruption before/after dispatch, lost QR response, callback-before-QR-save, restart, gate/merchant changes, expiry, decline followed by late payment, duplicate payment evidence, and forged/non-200/mismatched responses. Confirm exactly one wallet credit and the original receipt values. Never resume a historical execution with the old graph. Production rollout, domain changes, production routing and refunds require separate review.

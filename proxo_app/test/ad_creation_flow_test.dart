@@ -240,10 +240,13 @@ void main() {
         iq = find.byKey(const ValueKey('location-iraq'));
     expect(tester.getCenter(all).dx, greaterThan(tester.getCenter(ku).dx));
     expect(tester.getCenter(ku).dx, greaterThan(tester.getCenter(iq).dx));
-    expect(tester.getSize(all).height, tester.getSize(ku).height);
-    expect(tester.getSize(all).width, tester.getSize(ku).width);
+    for (final choice in [all, ku, iq]) {
+      expect(tester.getSize(choice).height, greaterThanOrEqualTo(48));
+    }
+    final beforeSelection = tester.getSize(ku);
     await tapVisible(tester, ku);
     expect(tester.widget<AdChoice>(ku).selected, isTrue);
+    expect(tester.getSize(ku), beforeSelection);
     await tapVisible(tester, find.byKey(const ValueKey('gender-female')));
     expect(find.byKey(const ValueKey('device-iphone')), findsNothing);
     await tapVisible(tester, find.byKey(const ValueKey('age-18-24')));
@@ -263,8 +266,6 @@ void main() {
           ),
         ),
       );
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('sticky-price-disclosure')));
       await tester.pumpAndSettle();
       final duration = find.byKey(const ValueKey('duration-slider'));
       for (final days in [2.0, 3.0, 5.0, 1.0, 7.0, 2.0]) {
@@ -328,8 +329,6 @@ void main() {
       await tester.enterText(input, 'VALID');
       await tester.pumpAndSettle();
       await tapVisible(tester, find.text('بەکارهێنانی کۆد'));
-      await tester.tap(find.byKey(const ValueKey('sticky-price-disclosure')));
-      await tester.pumpAndSettle();
       final row = find.byKey(const ValueKey('coupon-discount'));
       expect(row, findsOneWidget);
       final texts = find.descendant(of: row, matching: find.byType(ProxoText));
@@ -399,8 +398,6 @@ void main() {
     await tester.enterText(input, 'VALID');
     await tester.pumpAndSettle();
     await tapVisible(tester, find.text('بەکارهێنانی کۆد'));
-    await tester.tap(find.byKey(const ValueKey('sticky-price-disclosure')));
-    await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('coupon-discount')), findsOneWidget);
     repo.couponExpired = true;
     tester
@@ -975,8 +972,6 @@ void main() {
     );
     await tester.pumpAndSettle();
     await capturePng(tester, 'docs/create_ad_preview.png');
-    await tester.tap(find.byKey(const ValueKey('sticky-price-disclosure')));
-    await tester.pumpAndSettle();
     await tester.ensureVisible(find.byType(AdPriceDetails));
     await tester.pumpAndSettle();
     await capturePng(tester, 'docs/create_ad_pricing_preview.png');
