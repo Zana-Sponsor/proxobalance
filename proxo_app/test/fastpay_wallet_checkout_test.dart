@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:proxo_app/main.dart' as app;
 import 'package:proxo_app/services/fastpay_pending_checkout.dart';
+import 'package:proxo_app/services/fastpay_transport.dart';
 import 'package:proxo_app/theme/app_locale.dart';
 import 'package:proxo_app/widgets/fastpay_checkout_sheet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,6 +14,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'ad_repository_test.dart' show mockTransport, jsonResponse;
 import 'support/session_fixture.dart';
+import 'fastpay_transport_test.dart' show isolatedFastPayTransport;
 
 const order = 'PX-FICTIONAL-ORDER-01';
 Map<String, dynamic> created([String id = order]) => {
@@ -27,17 +29,20 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   late SupabaseClient client;
   late Future<http.Response> Function(http.Request) database;
-  setUp(() async {
-    SharedPreferences.setMockInitialValues({});
-    ProxoLocale.current.value = const Locale('ckb');
+  setUpAll(() {
     database = (_) async => throw StateError('Unexpected database request');
     client = SupabaseClient('https://wallet-fixture.invalid', 'fixture-public-key',
         authOptions: const AuthClientOptions(autoRefreshToken: false),
         httpClient: mockTransport((request) => database(request)));
     app.supabase = client;
+  });
+  setUp(() async {
+    SharedPreferences.setMockInitialValues({});
+    ProxoLocale.current.value = const Locale('ckb');
+    database = (_) async => throw StateError('Unexpected database request');
     await restoreFixture(client);
   });
-  tearDown(() async => client.dispose());
+  tearDownAll(() async => client.dispose());
 
   test('wallet success requires the committed credited ledger, not PAID alone', () {
     expect(FastPayService.walletCredited(credited(), amountIqd: 10000), isTrue);
@@ -148,9 +153,10 @@ void main() {
     expect(reads, 0);
   });
 
-  Future<void> mount(WidgetTester tester, {int amount = 10000, String? note}) async {
+  Future<void> mount(WidgetTester tester, {int amount = 10000, String? note,
+      FastPayTransport? transport}) async {
     await tester.pumpWidget(MaterialApp(home: Scaffold(body: FastPayCheckoutSheet(
-        amountIqd: amount, userId: userA, note: note))));
+        amountIqd: amount, userId: userA, note: note, transport: transport))));
     await tester.pumpAndSettle();
   }
   Future<void> flush(WidgetTester tester) async {
@@ -313,5 +319,187 @@ void main() {
       expect(calls, 0);
       await tester.pumpWidget(const SizedBox());
     }, () => mockTransport((_) async { calls++; throw StateError('Unexpected request'); }));
+  });
+
+  testWidgets('declined stays recoverable and a late credit resolves the original intent', (tester) async {
+    await const FastPayPendingCheckoutStore().claim(userA,
+        const FastPayPendingCheckout(orderId: order, amountIqd: 10000, note: 'original note'));
+    await const FastPayPendingCheckoutStore().markDispatched(userA, order);
+    var paid = false, statuses = 0;
+    database = (_) async => jsonResponse(paid ? credited() : {
+      'status': 'rejected', 'gateway_status': 'DECLINED', 'wallet_credited': false,
+      'gateway_amount': 10000, 'qr_text': 'declined-qr-must-not-open',
+    });
+    await http.runWithClient(() async {
+      await mount(tester, amount: 25000, note: 'edited note');
+      await tester.ensureVisible(find.text('بەردەوامبە'));
+      await tester.tap(find.text('بەردەوامبە'));
+      await flush(tester);
+      final firstStatuses = statuses;
+      await tester.pump(const Duration(seconds: 3));
+      await flush(tester);
+      expect(statuses, greaterThan(firstStatuses));
+      await tester.ensureVisible(find.text('کردنەوەی فاستپەی دووبارە'));
+      await tester.tap(find.text('کردنەوەی فاستپەی دووبارە'));
+      await flush(tester);
+      expect(find.text('لینکی پارەدان بەردەست نییە'), findsNothing);
+      await tester.ensureVisible(find.text('پاشگەزبوونەوە'));
+      await tester.tap(find.text('پاشگەزبوونەوە'));
+      await flush(tester);
+      await tester.ensureVisible(find.text('بەردەوامبوون لە پارەدان'));
+      await tester.tap(find.text('بەردەوامبوون لە پارەدان'));
+      await flush(tester);
+      final retained = (await const FastPayPendingCheckoutStore().read(userA))!;
+      expect(retained.orderId, order);
+      expect(retained.amountIqd, 10000);
+      expect(retained.note, 'original note');
+      await tester.ensureVisible(find.text('بەردەوامبە'));
+      await tester.tap(find.text('بەردەوامبە'));
+      await flush(tester);
+      paid = true;
+      await tester.pump(const Duration(seconds: 3));
+      await flush(tester);
+      expect(find.text('سەرکەوتوو بوو'), findsOneWidget);
+      expect(await const FastPayPendingCheckoutStore().read(userA), isNull);
+      await tester.pumpWidget(const SizedBox());
+    }, () => mockTransport((request) async {
+      expect(request.url.path, endsWith('/order-status'));
+      expect(jsonDecode(request.body), {'orderId': order});
+      statuses++;
+      return jsonResponse({'success': true});
+    }));
+  });
+
+  testWidgets('recovery never opens QR for a different original amount', (tester) async {
+    await const FastPayPendingCheckoutStore().claim(userA,
+        const FastPayPendingCheckout(orderId: order, amountIqd: 10000));
+    await const FastPayPendingCheckoutStore().markDispatched(userA, order);
+    database = (_) async => jsonResponse({'gateway_status': 'CREATED',
+        'gateway_amount': 25000, 'qr_text': 'wrong-amount-token'});
+    await http.runWithClient(() async {
+      await mount(tester, amount: 25000);
+      await tester.ensureVisible(find.text('بەردەوامبە'));
+      await tester.tap(find.text('بەردەوامبە'));
+      await flush(tester);
+      expect(find.text('بڕی پارەدان پشتڕاست نەکرایەوە'), findsOneWidget);
+      expect(find.text('لینکی پارەدان بەردەست نییە'), findsNothing);
+      final retained = (await const FastPayPendingCheckoutStore().read(userA))!;
+      expect(retained.orderId, order);
+      expect(retained.amountIqd, 10000);
+      await tester.pumpWidget(const SizedBox());
+    }, () => mockTransport((request) async {
+      expect(request.url.path, endsWith('/order-status'));
+      return jsonResponse({'success': true});
+    }));
+  });
+
+  testWidgets('durable staging resumes a pre-backend crash with the same frozen intent', (tester) async {
+    final transport = isolatedFastPayTransport();
+    await const FastPayPendingCheckoutStore().claim(userA, FastPayPendingCheckout(
+      orderId: order, amountIqd: 10000, note: 'original note', protocol: transport.protocol,
+      webhookBase: transport.webhookBase, backendOrigin: transport.backendOrigin));
+    await const FastPayPendingCheckoutStore().markDispatched(userA, order);
+    database = (_) async => http.Response('null', 200,
+        headers: {'content-type': 'application/json'});
+    final creates = <Map<String, dynamic>>[];
+    await http.runWithClient(() async {
+      for (var restart = 0; restart < 2; restart++) {
+        await mount(tester, amount: 25000, note: 'edited note', transport: transport);
+        expect(find.text('10,000 د.ع'), findsOneWidget);
+        await tester.ensureVisible(find.text('بەردەوامبە'));
+        await tester.tap(find.text('بەردەوامبە'));
+        await flush(tester);
+        expect(creates, hasLength(restart + 1));
+        expect(creates.last, {'purpose': 'wallet_deposit', 'orderId': order,
+          'billAmount': 10000, 'currency': 'IQD', 'note': 'original note'});
+        final retained = (await const FastPayPendingCheckoutStore().read(userA))!;
+        expect(retained.canRetryCreate(transport), isTrue);
+        expect(retained.orderId, order);
+        await tester.pumpWidget(const SizedBox());
+      }
+      expect(creates.first, creates.last);
+    }, () => mockTransport((request) async {
+      expect(request.url.host, 'email.proxopages.com');
+      expect(request.url.path, startsWith('/webhook/proxo-fastpay-staging/'));
+      expect(request.headers['authorization'], startsWith('Bearer '));
+      if (request.url.path.endsWith('/order-status')) return jsonResponse({'success': true});
+      creates.add(Map<String, dynamic>.from(jsonDecode(request.body) as Map));
+      // The durable worker may already own the provider boundary. A response
+      // requiring reconciliation has no QR and must keep the same identity.
+      return jsonResponse({'success': true, 'orderId': order, 'amountIqd': 10000,
+        'recoveryRequired': true, 'qrUrl': null, 'qrText': null});
+    }));
+  });
+
+  testWidgets('old legacy recovery is never routed through the new staging protocol', (tester) async {
+    SharedPreferences.setMockInitialValues({FastPayPendingCheckoutStore.key(userA):
+      jsonEncode({'order_id': order, 'amount_iqd': 10000, 'dispatched': true})});
+    var requests = 0;
+    await http.runWithClient(() async {
+      await mount(tester, transport: isolatedFastPayTransport());
+      await tester.ensureVisible(find.text('بەردەوامبە'));
+      await tester.tap(find.text('بەردەوامبە'));
+      await flush(tester);
+      expect(requests, 0);
+      final retained = (await const FastPayPendingCheckoutStore().read(userA))!;
+      expect(retained.protocol, FastPayTransport.legacyProtocol);
+      expect(retained.orderId, order);
+      expect(retained.canRetryCreate(isolatedFastPayTransport()), isFalse);
+      await tester.pumpWidget(const SizedBox());
+    }, () => mockTransport((_) async {
+      requests++;
+      throw StateError('Old payment must not cross transports');
+    }));
+  });
+
+  testWidgets('expired CREATED staging QR stays closed and later credit still reconciles', (tester) async {
+    final transport = isolatedFastPayTransport();
+    await const FastPayPendingCheckoutStore().claim(userA, FastPayPendingCheckout(
+      orderId: order, amountIqd: 10000, protocol: transport.protocol,
+      webhookBase: transport.webhookBase, backendOrigin: transport.backendOrigin));
+    await const FastPayPendingCheckoutStore().markDispatched(userA, order);
+    var paid = false;
+    database = (_) async => jsonResponse(paid ? credited() : {
+      'gateway_status': 'CREATED', 'gateway_amount': 10000,
+      'expires_at': DateTime.now().subtract(const Duration(minutes: 1)).toUtc().toIso8601String(),
+      'qr_text': 'expired-token-must-not-open',
+    });
+    await http.runWithClient(() async {
+      await mount(tester, transport: transport);
+      await tester.ensureVisible(find.text('بەردەوامبە'));
+      await tester.tap(find.text('بەردەوامبە'));
+      await flush(tester);
+      expect(find.text('بەسەرچوو'), findsOneWidget);
+      expect(find.text('لینکی پارەدان بەردەست نییە'), findsNothing);
+      expect(find.text('کردنەوەی فاستپەی دووبارە'), findsNothing);
+      expect((await const FastPayPendingCheckoutStore().read(userA))!.orderId, order);
+      paid = true;
+      await tester.ensureVisible(find.text('پشتڕاستکردنەوەی پارەدان'));
+      await tester.tap(find.text('پشتڕاستکردنەوەی پارەدان'));
+      await flush(tester);
+      await tester.ensureVisible(find.text('بەردەوامبە'));
+      await tester.tap(find.text('بەردەوامبە'));
+      await flush(tester);
+      expect(find.text('سەرکەوتوو بوو'), findsOneWidget);
+      expect(await const FastPayPendingCheckoutStore().read(userA), isNull);
+      await tester.pumpWidget(const SizedBox());
+    }, () => mockTransport((request) async {
+      expect(request.url, transport.statusUri);
+      return jsonResponse({'success': true});
+    }));
+  });
+
+  test('durable staging response binds IQD and never opens production QR', () async {
+    for (final response in [
+      {...created(), 'amountIqd': 25000},
+      {...created(), 'amountIqd': 10000, 'qrUrl': 'https://qr.fast-pay.iq/production-qr'},
+    ]) {
+      await expectLater(http.runWithClient(() => FastPayService.createOrder(
+        orderId: order, billAmountIqd: 10000, expectedUserId: userA,
+        transport: isolatedFastPayTransport()), () => mockTransport((_) async => jsonResponse(response))),
+        throwsA(isA<FastPayException>()));
+    }
+    expect(FastPayService.isCheckoutUrl('https://staging-qr.fast-pay.iq/sandbox-qr',
+        transport: isolatedFastPayTransport()), isTrue);
   });
 }

@@ -550,7 +550,8 @@ void main() {
         scrollable: verticalScroll);
     await t.tap(find.text('پاشگەزبوونەوە'));
     await settle(t);
-    expect(find.text('ڕەتکرایەوە'), findsWidgets);
+    expect(find.text('چاوەڕوانی پارەدان وەستێنرا'), findsOneWidget);
+    expect(find.text('ڕەتکرایەوە'), findsNothing);
     expect(t.renderObject<RenderParagraph>(key('fastpay-reference'))
         .text.toPlainText(), referenceValue);
     expect(requests, isEmpty);

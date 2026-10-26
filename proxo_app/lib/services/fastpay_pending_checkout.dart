@@ -1,27 +1,50 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'owner_storage_queue.dart';
+import '../config/backend_config.dart';
+import 'fastpay_transport.dart';
 
 /// Only checkout identity and the original intent are stored. Provider QR data,
 /// bearer tokens and merchant credentials never enter this recovery record.
 class FastPayPendingCheckout {
-  const FastPayPendingCheckout({required this.orderId, required this.amountIqd, this.note, this.dispatched = false});
+  const FastPayPendingCheckout({required this.orderId, required this.amountIqd,
+    this.note, this.dispatched = false,
+    this.protocol = FastPayTransport.legacyProtocol,
+    this.webhookBase = FastPayTransport.legacyBase,
+    this.backendOrigin = BackendConfig.productionSupabaseUrl});
   final String orderId;
   final int amountIqd;
   final String? note;
   final bool dispatched;
+  final String protocol, webhookBase, backendOrigin;
+
+  bool matchesTransport(FastPayTransport transport) => transport.matches(
+      protocol: protocol, webhookBase: webhookBase, backendOrigin: backendOrigin);
+  bool canRetryCreate(FastPayTransport transport) =>
+      matchesTransport(transport) && protocol == FastPayTransport.durableStagingProtocol;
 
   Map<String, dynamic> toJson() => {
     'order_id': orderId, 'amount_iqd': amountIqd, 'note': note, 'dispatched': dispatched,
+    'protocol': protocol, 'webhook_base': webhookBase, 'backend_origin': backendOrigin,
   };
   factory FastPayPendingCheckout.fromJson(Map<String, dynamic> value) {
     final order = value['order_id'], amount = value['amount_iqd'], note = value['note'];
+    final oldRecord = !value.containsKey('protocol') &&
+        !value.containsKey('webhook_base') && !value.containsKey('backend_origin');
+    final protocol = oldRecord ? FastPayTransport.legacyProtocol : value['protocol'];
+    final base = oldRecord ? FastPayTransport.legacyBase : value['webhook_base'];
+    final backend = oldRecord ? BackendConfig.productionSupabaseUrl : value['backend_origin'];
     if (order is! String || !RegExp(r'^PX[A-Za-z0-9_-]{6,30}$').hasMatch(order) ||
         amount is! int || amount < 5000 ||
-        (note != null && (note is! String || note.length > 500))) {
+        protocol is! String || base is! String || backend is! String ||
+        !FastPayTransport.validBinding(protocol, base, backend) ||
+        (note != null && (note is! String ||
+          note.length > (protocol == FastPayTransport.durableStagingProtocol ? 300 : 500)))) {
       throw StateError('fastpay_pending_record_invalid');
     }
-    return FastPayPendingCheckout(orderId: order, amountIqd: amount, note: note as String?, dispatched: value['dispatched'] != false);
+    return FastPayPendingCheckout(orderId: order, amountIqd: amount, note: note as String?,
+      dispatched: value['dispatched'] != false, protocol: protocol,
+      webhookBase: base, backendOrigin: backend);
   }
 }
 
@@ -53,14 +76,17 @@ class FastPayPendingCheckoutStore {
       }).timeout(const Duration(seconds: 10));
 
   /// Persist the outbound boundary before HTTP. A lost response (or a process
-  /// exit at this boundary) permits reconciliation only, never blind QR replay.
+  /// exit at this boundary) never permits blind legacy QR replay. A transport
+  /// with a server journal can separately authorize same-intent prepare retry.
   Future<bool> markDispatched(String owner, String orderId) => _queue.run(key(owner), () async {
     final prefs = await SharedPreferences.getInstance();
     final existing = _decode(prefs, owner);
     if (existing == null || existing.orderId != orderId) throw StateError('fastpay_pending_identity_changed');
     if (existing.dispatched) return false;
     final dispatched = FastPayPendingCheckout(orderId: existing.orderId,
-        amountIqd: existing.amountIqd, note: existing.note, dispatched: true);
+        amountIqd: existing.amountIqd, note: existing.note, dispatched: true,
+        protocol: existing.protocol, webhookBase: existing.webhookBase,
+        backendOrigin: existing.backendOrigin);
     if (!await prefs.setString(key(owner), jsonEncode(dispatched.toJson()))) {
       throw StateError('fastpay_dispatch_not_saved');
     }

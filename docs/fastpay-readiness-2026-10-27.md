@@ -18,7 +18,7 @@ The checkout and recovery fixes are prepared for review. **Live payment readines
 | Supabase availability | Only the main project `cojchkwssmasiejcgvbk` was available on 27 October; no isolated staging project was available. Earlier inspection found the new private finance/ad integration schemas absent. | An isolated database and reviewed migration preflight are required before sandbox testing. |
 | Existing public legacy FastPay RPCs | Execute permission is limited to `service_role`; `anon` and `authenticated` do not have it. | Preserve this boundary; clients must use authenticated backend routes. |
 
-The wallet still deliberately blocks its legacy production transport when the app is configured for staging. It needs an isolated legacy endpoint before staging acceptance. The published legacy graph creates the provider QR before its pending database transaction: a lost response with no ledger row therefore remains ambiguous. The app durably marks dispatch before HTTP and does not replay QR creation in this case; the original order requires backend/operator reconciliation. This revision does not establish automatic recovery for that legacy gap. No existing production webhook, gateway, credential or workflow was changed.
+The published legacy graph creates the provider QR before its pending database transaction. The new [offline durable checkout patch and inactive sandbox export](../integrations/legacy-fastpay/README.md) repair this with a persisted original receipt and first-only dispatch authorization, strict provider evidence, and late-payment reconciliation. Existing production/unknown pending records remain conservative; fresh explicitly configured staging records may safely repeat the same order against the durable protocol. The optional staging transport is disabled by default and needs the isolated target and protected credentials before testing. No existing production webhook, gateway, credential or workflow was changed.
 
 ## Database installation order
 
@@ -31,6 +31,7 @@ The minimum new payment dependency chain is:
 3. `20261023193522_tiktok_dm_private_v1.sql`
 4. `20261023202139_immutable_ad_fastpay_attempts.sql`
 5. `20261026213026_fastpay_unstarted_attempt_closure.sql`
+6. `20261026214905_legacy_fastpay_durable_checkout.sql` for the repaired legacy checkout draft; also requires the inspected deployed legacy create-order baseline.
 
 Full linked-TikTok acceptance also needs the branch's intervening migrations, in filename order before the new closure migration: `20261023202252_tiktok_oauth_private_lifecycle.sql`, `20261023202432_tiktok_activation_approval_journal.sql`, `20261023203029_tiktok_report_evidence_boundary.sql` and `20261025120000_tiktok_typed_page_eligibility.sql`. The last requires the existing ProxoLink typed-page baseline, including `20261006220119_proxolink_v6_independent_pages.sql` and its own prerequisites.
 
@@ -40,14 +41,16 @@ The secure financial baseline changes wallet representation and RPC authority. R
 
 | Check | Result for this working revision |
 |---|---|
-| `npm test` | 492 tests passed; includes 25 immutable FastPay API/worker tests. |
+| `npm test` | 514 tests passed; includes 25 immutable FastPay API/worker tests and 22 legacy checkout/verification/export tests. |
 | `node scripts/test-ad-payments-database.mjs` | 128 PostgreSQL assertions passed. |
 | `node scripts/test-meta-database.mjs` | 77 PostgreSQL assertions passed. |
 | `node scripts/test-tiktok-dm-database.mjs` | 130 PostgreSQL assertions passed. |
 | `node scripts/test-tiktok-report-database.mjs` | 29 PostgreSQL assertions passed. |
-| Flutter tests, analyzer and APK | Pending GitHub CI for this revision. Added coverage includes 14 immutable closure/malformed-proof cases, 14 wallet cases and 6 pending-order storage cases. Earlier revision results do not establish these checks. |
+| `node scripts/test-legacy-fastpay-database.mjs` | 86 PostgreSQL assertions passed. |
+| Real PostgreSQL concurrency | Added as a dedicated GitHub CI job; current-revision result pending. |
+| Flutter tests, analyzer and APK | Pending GitHub CI for this revision. Coverage includes 14 new immutable closure/malformed-proof cases plus 20 wallet, 8 pending-order storage and 4 isolated-transport cases. Earlier revision results do not establish these checks. |
 
-The database scripts run against disposable PGlite PostgreSQL fixtures. This revision pins `@electric-sql/pglite` to `0.5.12` and adds all four scripts to ProxoLink CI; those CI results remain pending. The local runs used `PGLITE_MODULE` pointing to the installed module. The scripts use synthetic records and make no provider requests. Closure tests cover both serialized lock-winner orders, permission denial, rollback and post-closure mutation rejection; they do not simulate two simultaneous PostgreSQL sessions. Local Flutter dependency bootstrap was blocked by automatic approval review, so it was not retried through another path.
+The database scripts run against disposable PGlite PostgreSQL fixtures. This revision pins `@electric-sql/pglite` to `0.5.12` and includes all five scripts in ProxoLink CI. They now run locally without a module override, use synthetic records and make no provider requests. PGlite closure tests cover both serialized lock-winner orders, permission denial, rollback and post-closure mutation rejection; the separate real PostgreSQL CI job supplies simultaneous-session coverage. Local Flutter dependency bootstrap was blocked by automatic approval review, so it was not retried through another path.
 
 ## Remaining sandbox setup and acceptance
 

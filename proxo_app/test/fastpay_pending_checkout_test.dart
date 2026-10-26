@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:proxo_app/services/fastpay_pending_checkout.dart';
+import 'package:proxo_app/services/fastpay_transport.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'fastpay_transport_test.dart' show isolatedFastPayTransport, isolatedFastPayBackend;
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -56,5 +58,31 @@ void main() {
       expect(await store.read('owner-a'), isNull);
     }
     expect((await store.claim('owner-a', original)).orderId, original.orderId);
+  });
+  test('historical records never inherit a new transport replay capability', () {
+    final old = FastPayPendingCheckout.fromJson({
+      'order_id': original.orderId, 'amount_iqd': 10000, 'dispatched': true,
+    });
+    expect(old.protocol, FastPayTransport.legacyProtocol);
+    expect(old.canRetryCreate(isolatedFastPayTransport()), isFalse);
+    expect(old.matchesTransport(isolatedFastPayTransport()), isFalse);
+    expect(() => FastPayPendingCheckout.fromJson({...old.toJson(),
+      'protocol': FastPayTransport.durableStagingProtocol}), throwsStateError);
+  });
+  test('durable retry rights are frozen to the original isolated transport', () async {
+    final transport = isolatedFastPayTransport();
+    final staged = FastPayPendingCheckout(orderId: original.orderId, amountIqd: 10000,
+      note: original.note, protocol: transport.protocol, webhookBase: transport.webhookBase,
+      backendOrigin: transport.backendOrigin);
+    await store.claim('owner-a', staged);
+    await store.markDispatched('owner-a', staged.orderId);
+    final restored = (await const FastPayPendingCheckoutStore().read('owner-a'))!;
+    expect(restored.canRetryCreate(transport), isTrue);
+    expect(restored.dispatched, isTrue);
+    final otherProject = FastPayTransport.fromValues(
+      backendConfig: isolatedFastPayBackend(ref: 'bcdefghijklmnopqrstu'),
+      stagingWebhookBase: FastPayTransport.stagingBase);
+    expect(restored.canRetryCreate(otherProject), isFalse);
+    expect((await store.claim('owner-a', edited)).toJson(), restored.toJson());
   });
 }

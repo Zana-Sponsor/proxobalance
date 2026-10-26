@@ -3,7 +3,7 @@ on:
   push:
     branches: [feat/proxolink-private-renderer-migration]
   pull_request:
-    paths: ['api/**', 'proxo_app/**', 'test/**', 'vercel.json', '.github/workflows/proxolink-verify.yml']
+    paths: ['api/**', 'proxo_app/**', 'test/**', 'scripts/**', 'integrations/**', 'package.json', 'package-lock.json', 'vercel.json', '.github/workflows/proxolink-verify.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -49,6 +49,7 @@ jobs:
       - name: Verify isolated payment and provider database contracts
         run: |
           node scripts/test-ad-payments-database.mjs
+          node scripts/test-legacy-fastpay-database.mjs
           node scripts/test-meta-database.mjs
           node scripts/test-tiktok-dm-database.mjs
           node scripts/test-tiktok-report-database.mjs
@@ -104,6 +105,31 @@ jobs:
           psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261026000100_app_release_policy.sql
           psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261026000100_app_release_policy.sql
           psql -v ON_ERROR_STOP=1 -f test/sql/app_release_policy.sql
+  payment-concurrency:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: isolated-fixture
+          POSTGRES_DB: fastpay_concurrency_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: isolated-fixture
+      PGDATABASE: fastpay_concurrency_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm ci
+      - name: Verify concurrent payment creation, closure and credit
+        run: node scripts/test-fastpay-postgres-concurrency.mjs
   responsive:
     runs-on: ubuntu-latest
     steps:
