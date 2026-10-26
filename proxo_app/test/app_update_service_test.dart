@@ -4,6 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:proxo_app/services/app_update_service.dart';
 import 'package:proxo_app/widgets/app_update_host.dart';
+import 'package:proxo_app/widgets/proxo_symbol.dart';
+import 'package:proxo_app/widgets/proxo_text.dart';
 import 'package:proxo_app/theme/app_theme.dart';
 
 Map<String, Object?> policy(
@@ -127,9 +129,41 @@ void main() {
             body: TextButton(
                 onPressed: () => taps++,
                 child: const Text('Application action'))));
+    // New update behavior must use the restored app's regular typography,
+    // compact SVG glyph and 48dp controls in both optional and required modes.
+    void expectPreviousDesign(bool required) {
+      final card = t.widget<Container>(find.byKey(
+          ValueKey(required ? 'required-update' : 'optional-update')));
+      final decoration = card.decoration! as BoxDecoration;
+      expect(card.padding, const EdgeInsets.all(16));
+      expect(decoration.color, Colors.white);
+      expect(decoration.borderRadius, BorderRadius.circular(16));
+      final glyph = t.widget<ProxoSymbol>(find.byType(ProxoSymbol));
+      expect(glyph.symbol, ProxoSymbolName.download);
+      expect(glyph.size, 24);
+      expect(glyph.color, const Color(0xFF0265FF));
+      expect(find.byType(Image), findsNothing);
+      final title = t.widget<ProxoText>(find.byWidgetPredicate((w) =>
+          w is ProxoText &&
+          w.data == (required
+              ? 'تکایە ئەپەکە نوێ بکەرەوە'
+              : 'نوێکردنەوە بەردەستە')));
+      expect(title.style!.fontFamily, 'RabarAuthRegular');
+      expect(title.style!.fontWeight, FontWeight.w400);
+      expect(title.style!.fontSize, 16);
+      expect(title.style!.color, const Color(0xFF0F172A));
+      final action = t.widget<FilledButton>(
+          find.byKey(const ValueKey('update-now')));
+      expect(action.style!.minimumSize!.resolve({})!.height, 48);
+      expect(action.style!.backgroundColor!.resolve({}),
+          const Color(0xFF0265FF));
+      expect(t.takeException(), isNull);
+    }
+
     await t.pumpWidget(host(const ValueKey('optional')));
     await t.pumpAndSettle();
     expect(find.byKey(const ValueKey('optional-update')), findsOneWidget);
+    expectPreviousDesign(false);
     await t.tap(find.byKey(const ValueKey('update-later')));
     await t.pumpAndSettle();
     await t.tap(find.text('Application action'));
@@ -138,6 +172,7 @@ void main() {
     await t.pumpWidget(host(const ValueKey('required')));
     await t.pumpAndSettle();
     expect(find.byKey(const ValueKey('required-update')), findsOneWidget);
+    expectPreviousDesign(true);
     expect(find.byKey(const ValueKey('update-later')), findsNothing);
     expect(find.text('Application action'), findsNothing);
     await t.binding.handlePopRoute();

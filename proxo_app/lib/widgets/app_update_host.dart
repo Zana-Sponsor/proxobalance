@@ -6,9 +6,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../services/app_update_service.dart';
 import '../theme/app_locale.dart';
-import '../theme/proxo_design_tokens.dart';
+import '../theme/app_theme.dart';
+import '../theme/proxo_chrome.dart';
+import '../theme/proxo_surface.dart';
 import 'proxo_text.dart';
-import 'proxo_png_icon.dart';
 import 'proxo_symbol.dart';
 
 /// Above the application's Navigator: auth redirects and nested navigation
@@ -141,13 +142,13 @@ class _AppUpdateHostState extends State<AppUpdateHost>
       if (policy != null) ...[
         const ModalBarrier(dismissible: false, color: Color(0x38000000)),
         Material(
-          color: required ? Colors.white : Colors.transparent,
+          color: required ? AppColors.page : Colors.transparent,
           child: SafeArea(
               child: Directionality(
             textDirection: ProxoLocale.directionOf(ProxoLocale.watch(context)),
             child: Center(
               child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(ProxoDesign.gutter),
+                  padding: const EdgeInsets.all(ProxoSurface.gutter),
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 440),
                     child: AppUpdateCard(
@@ -185,50 +186,43 @@ class AppUpdateCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
       key: ValueKey(required ? 'required-update' : 'optional-update'),
-      padding: const EdgeInsets.all(ProxoDesign.cardPadding),
+      padding: const EdgeInsets.all(ProxoSurface.padding),
       decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: ProxoDesign.border,
-          boxShadow: ProxoDesign.shadow),
+          color: AppColors.surface,
+          borderRadius: BorderRadius.all(Radius.circular(ProxoSurface.radius)),
+          boxShadow: kProxoCardShadow),
       child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: [
             const Align(
                 alignment: AlignmentDirectional.centerStart,
-                child: ProxoPngIcon(ProxoSymbolName.download,
-                    size: 28, color: ProxoDesign.blue)),
-            const SizedBox(height: ProxoDesign.headingGap),
+                child: ProxoSymbol(ProxoSymbolName.download,
+                    size: ProxoChrome.iconSize, color: ProxoSurface.accent)),
+            const SizedBox(height: ProxoSurface.padding),
             ProxoText(
                 required ? 'تکایە ئەپەکە نوێ بکەرەوە' : 'نوێکردنەوە بەردەستە',
                 translate: true,
-                style: ProxoDesign.heading),
-            const SizedBox(height: ProxoDesign.headingGap),
+                style: ProxoSurface.section),
+            const SizedBox(height: ProxoSurface.padding),
             Text('Proxo ${policy.version}',
-                textDirection: TextDirection.ltr, style: ProxoDesign.body),
+                textDirection: TextDirection.ltr, style: ProxoSurface.body),
             if (policy.message.isNotEmpty) ...[
-              const SizedBox(height: ProxoDesign.helperGap),
-              ProxoText(policy.message, style: ProxoDesign.body),
+              const SizedBox(height: 8),
+              ProxoText(policy.message, style: ProxoSurface.body),
             ],
             if (launchFailed) ...[
-              const SizedBox(height: ProxoDesign.helperGap),
+              const SizedBox(height: 8),
               const ProxoText(
                   'بەستەرەکە نەکرایەوە. تکایە دووبارە هەوڵ بدەرەوە.',
                   translate: true,
-                  style: ProxoDesign.helper),
+                  style: ProxoSurface.secondary),
             ],
-            const SizedBox(height: ProxoDesign.sectionGap),
+            const SizedBox(height: ProxoSurface.sectionGap),
             FilledButton(
                 key: const ValueKey('update-now'),
                 onPressed: busy ? null : onUpdate,
-                style: FilledButton.styleFrom(
-                    backgroundColor: ProxoDesign.blue,
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(0, ProxoDesign.controlHeight),
-                    padding: const EdgeInsets.all(12),
-                    textStyle: ProxoDesign.button,
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: ProxoDesign.border)),
+                style: ProxoSurface.actionStyle(),
                 child: busy
                     ? const SizedBox(
                         width: 20,
@@ -236,14 +230,14 @@ class AppUpdateCard extends StatelessWidget {
                         child: CircularProgressIndicator(
                             strokeWidth: 2, color: Colors.white))
                     : const ProxoText('نوێکردنەوە', translate: true)),
-            const SizedBox(height: ProxoDesign.controlGap),
+            const SizedBox(height: 12),
             TextButton(
                 key: ValueKey(required ? 'update-check-again' : 'update-later'),
                 onPressed: checking ? null : (required ? onRetry : onLater),
                 style: TextButton.styleFrom(
-                    minimumSize: const Size(0, ProxoDesign.tapTarget),
-                    foregroundColor: ProxoDesign.blue,
-                    textStyle: ProxoDesign.button),
+                    minimumSize: const Size(0, ProxoChrome.actionSize),
+                    foregroundColor: ProxoSurface.accent,
+                    textStyle: ProxoSurface.body),
                 child: ProxoText(required ? 'دووبارە پشکنین بکە' : 'دواتر',
                     translate: true)),
           ]));
