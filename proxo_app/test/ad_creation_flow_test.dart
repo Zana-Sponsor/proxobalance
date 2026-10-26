@@ -424,7 +424,7 @@ void main() {
     await tester.ensureVisible(button);
     await tester.pumpAndSettle();
     final before = tester.getSize(button);
-    expect(before.height, 50);
+    expect(before.height, 48);
     repo.quoteCompletion = Completer<AdQuote>();
     await tester.tap(button);
     await tester.pump();

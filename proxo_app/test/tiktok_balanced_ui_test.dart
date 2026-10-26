@@ -293,6 +293,12 @@ void main() {
       AdUi.blue.toARGB32(),
     );
     await tapVisible(tester, key('payment-fastpay'));
+    // The selected Material changes on tap while its InkWell ripple can still
+    // paint. Capture the settled state, as for the initial wallet selection.
+    await tester.pumpAndSettle();
+    final fastPayMaterial = tester.widget<Material>(find.descendant(
+        of: key('payment-fastpay'), matching: find.byType(Material)).first);
+    expect(fastPayMaterial.color, AppColors.accentSoft);
     await shot(tester, '35-payment-sheet-fastpay');
     final fastPayRect = tester.getRect(key('payment-fastpay'));
     await paintedColor(
