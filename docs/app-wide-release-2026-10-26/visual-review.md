@@ -26,4 +26,6 @@ Corrections found during review and recaptured:
 
 Accepted responsive differences: large text increases content height; filter/navigation rows can scroll horizontally; long identifiers/titles use existing bounded ellipsis with full detail/copy routes. Images use their declared photo/thumbnail framing. Screenshot fixture IDs, amounts and simulated provider states are not live customer records or provider proof.
 
+Native follow-up: the first Android run passed behavior but exposed faint rectangular seams around PNG icons at fractional physical scale. The icon now decodes near its physical draw size with bilinear sampling; 121 focused checks passed and affected widget captures/sheets were refreshed. Empty-state wells now center their smaller glyph, with a measured-center regression check. The next Android artifact must be visually checked before accepting this correction. See [native record](native-validation.md).
+
 Physical Android, production OTP/provider/payment actions and authenticated production page persistence remain separate release gates. Native CI captures and performance results must be assessed on the final PR source, not substituted from a prior commit.

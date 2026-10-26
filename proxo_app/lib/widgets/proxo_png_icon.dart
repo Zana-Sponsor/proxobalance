@@ -64,6 +64,10 @@ class ProxoPngIcon extends StatelessWidget {
     }
     final scale =
         size * (22 / 24) / math.max(asset.bounds.width, asset.bounds.height);
+    // Decode close to the physical draw size. Android profile captures exposed
+    // faint rectangular seams when the full-size PNG used mipmap filtering.
+    final decodeSize =
+        (240 * scale * MediaQuery.devicePixelRatioOf(context)).ceil();
     final art = SizedBox.square(
         dimension: size,
         child: Stack(clipBehavior: Clip.hardEdge, children: [
@@ -75,7 +79,9 @@ class ProxoPngIcon extends StatelessWidget {
               width: 240 * scale,
               height: 240 * scale,
               child: Image.asset('assets/icons/proxo_png/${asset.name}.png',
-                  filterQuality: FilterQuality.medium,
+                  cacheWidth: decodeSize,
+                  cacheHeight: decodeSize,
+                  filterQuality: FilterQuality.low,
                   fit: BoxFit.fill,
                   color:
                       color ?? IconTheme.of(context).color ?? ProxoDesign.muted,
@@ -88,7 +94,7 @@ class ProxoPngIcon extends StatelessWidget {
         child: Transform.flip(
             flipX: symbol == ProxoSymbolName.logout &&
                 Directionality.of(context) == TextDirection.rtl,
-            child: art));
+            child: Center(widthFactor: 1, heightFactor: 1, child: art)));
   }
 }
 

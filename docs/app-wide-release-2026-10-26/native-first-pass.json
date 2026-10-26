@@ -1,0 +1,18 @@
+{
+  "source_revision": "092c56e082faa7f30d037c98aa3df2abab699976",
+  "run_id": 40245553396,
+  "result": "success",
+  "artifact_id": 12618947388,
+  "artifact_zip_sha256": "e12f3ae7856315a9d894412ed45c9584a186287f3c0e4e955eec6a9120960362",
+  "fixture_only": true,
+  "android": "15",
+  "native_pngs": 60,
+  "all_pngs": 64,
+  "measurements": 47,
+  "runtime_exit_code": 0,
+  "screenshot_transfer_exit_code": 0,
+  "cleanup_errors": {},
+  "unexpected_backend_requests": [],
+  "visual_findings": "Faint image-edge seams in Home/Profile/update PNG icons; sampling follow-up requires fresh native review.",
+  "performance_limit": "Software GPU measurements are retained, including missed raster budgets; this is not a physical-device frame-rate acceptance."
+}

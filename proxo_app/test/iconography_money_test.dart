@@ -128,9 +128,12 @@ void main() {
           await t.pumpAndSettle();
           expect(find.byType(Image), findsNWidgets(3));
           expect(
-              t
-                  .widgetList<Image>(find.byType(Image))
-                  .every((image) => image.image is AssetImage),
+              t.widgetList<Image>(find.byType(Image)).every((image) {
+                final provider = image.image;
+                return (provider is ResizeImage
+                    ? provider.imageProvider
+                    : provider) is AssetImage;
+              }),
               isTrue);
           // Original PNG icons use normalized visible bounds. Labels must never be
           // scaled down by a FittedBox instead of respecting system text size.
@@ -163,6 +166,27 @@ void main() {
       );
     }
   }
+  testWidgets(
+    'PNG paint remains centered when its icon well has tight larger constraints',
+    (t) async {
+      const wellKey = ValueKey('icon-well');
+      await t.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: SizedBox.square(
+              key: wellKey,
+              dimension: 48,
+              child: const ProxoPngIcon(ProxoSymbolName.user, size: 24),
+            ),
+          ),
+        ),
+      ));
+      final image = find.byType(Image);
+      expect(t.getSize(image), const Size(22, 22));
+      expect(t.getCenter(image), t.getCenter(find.byKey(wellKey)));
+      expect(t.takeException(), isNull);
+    },
+  );
   testWidgets(
     'unavailable quick action uses disabled color and has no tap handler',
     (t) async {

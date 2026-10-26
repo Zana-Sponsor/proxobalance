@@ -49,5 +49,25 @@
       "log_sha256": "af97ac05fe4e039000f57e74f977b36667c9315148a70a71aecd2e4e67b5c763"
     }
   },
-  "note": "The complete final Flutter source suite passed after the Ads accessibility and PNG capture corrections. The separate guarded-staging transport run passed all 6 checks. GitHub repeats verification and native Android on the published commit."
+  "note": "The complete final Flutter source suite passed after the Ads accessibility and PNG capture corrections. The separate guarded-staging transport run passed all 6 checks. GitHub repeats verification and native Android on the published commit.",
+  "png_sampling_followup": {
+    "reason": "Android native review exposed faint PNG edge seams",
+    "baseline_full_suite_revision": "092c56e082faa7f30d037c98aa3df2abab699976",
+    "focused_passed": 121,
+    "fresh_native_status": "Pending final PR run and visual review",
+    "logs": {
+      "app-wide-icon-focused-final.log": {
+        "sha256": "45883aca608c39b632d1cd4b688b387b74d65fab931bf71ef40ed104354b197e",
+        "passed": true
+      },
+      "app-wide-icon-main-capture.log": {
+        "sha256": "bce67c09f508a4324b6e1678de24bff03ad2e60a3864a4e19f0f6e66e8b659b4",
+        "passed": true
+      },
+      "app-wide-icon-analyze.log": {
+        "sha256": "2bd2844121821539d20c6de880399661779158cbb2a90283bbd14dac48bd2556",
+        "passed": true
+      }
+    }
+  }
 }

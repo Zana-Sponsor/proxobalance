@@ -122,8 +122,10 @@ void main() {
     expect(t.getSize(logout), const Size(24, 24));
     final bitmap = t.widget<Image>(
         find.descendant(of: logout, matching: find.byType(Image)));
-    expect((bitmap.image as AssetImage).assetName,
-        'assets/icons/proxo_png/log-out-2.png');
+    final provider = bitmap.image;
+    final asset = (provider is ResizeImage ? provider.imageProvider : provider)
+        as AssetImage;
+    expect(asset.assetName, 'assets/icons/proxo_png/log-out-2.png');
     expect(t.getSize(find.byKey(const ValueKey('profile-sign-out'))).height,
         greaterThanOrEqualTo(48));
     expect(t.takeException(), isNull);
