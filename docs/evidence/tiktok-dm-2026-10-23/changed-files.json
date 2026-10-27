@@ -1,0 +1,283 @@
+{
+  "base_commit": "88287b3aa2dd7036003ea58d505f3e2590d85a77",
+  "scope": "Continuation implementation and subsequent screenshot/publication-readiness follow-up relative to the audited starting commit; excludes earlier PR implementation.",
+  "files": [
+    {
+      "path": "api/_lib/payments/backend.js",
+      "status": "added"
+    },
+    {
+      "path": "api/_lib/payments/fastpay.js",
+      "status": "added"
+    },
+    {
+      "path": "api/_lib/payments/handler.js",
+      "status": "added"
+    },
+    {
+      "path": "api/_lib/payments/worker.js",
+      "status": "added"
+    },
+    {
+      "path": "api/_lib/tiktok/activation.js",
+      "status": "added"
+    },
+    {
+      "path": "api/_lib/tiktok/handler.js",
+      "status": "modified"
+    },
+    {
+      "path": "api/_lib/tiktok/oauth.js",
+      "status": "added"
+    },
+    {
+      "path": "api/_lib/tiktok/provider.js",
+      "status": "modified"
+    },
+    {
+      "path": "api/_lib/tiktok/settlement.js",
+      "status": "added"
+    },
+    {
+      "path": "api/_lib/tiktok/worker.js",
+      "status": "modified"
+    },
+    {
+      "path": "api/meta-ads.js",
+      "status": "modified"
+    },
+    {
+      "path": "docs/evidence/tiktok-dm-2026-10-23/README.md",
+      "status": "added"
+    },
+    {
+      "path": "docs/evidence/tiktok-dm-2026-10-23/changed-files.json",
+      "status": "added"
+    },
+    {
+      "path": "docs/evidence/tiktok-dm-2026-10-23/historical/payment-sheet-280-2x-before.png",
+      "status": "added"
+    },
+    {
+      "path": "docs/evidence/tiktok-dm-2026-10-23/local-validation.json",
+      "status": "added"
+    },
+    {
+      "path": "docs/evidence/tiktok-dm-2026-10-23/n8n-import-inventory.json",
+      "status": "added"
+    },
+    {
+      "path": "docs/evidence/tiktok-dm-2026-10-23/n8n-imports-verified.jpg",
+      "status": "added"
+    },
+    {
+      "path": "docs/evidence/tiktok-dm-2026-10-23/n8n-production-config-blocked-2026-10-24.jpg",
+      "status": "added"
+    },
+    {
+      "path": "docs/evidence/tiktok-dm-2026-10-23/n8n-unpublished-after-check-2026-10-24.jpg",
+      "status": "added"
+    },
+    {
+      "path": "docs/evidence/tiktok-dm-2026-10-23/production-readiness-2026-10-24.json",
+      "status": "added"
+    },
+    {
+      "path": "docs/evidence/tiktok-dm-2026-10-23/screenshots-inventory.json",
+      "status": "added"
+    },
+    {
+      "path": "docs/evidence/tiktok-dm-2026-10-23/screenshots.md",
+      "status": "added"
+    },
+    {
+      "path": "docs/tiktok-dm-completion-status-2026-10-23.md",
+      "status": "added"
+    },
+    {
+      "path": "docs/tiktok-dm/README.md",
+      "status": "modified"
+    },
+    {
+      "path": "docs/tiktok-dm/backend-config.md",
+      "status": "modified"
+    },
+    {
+      "path": "docs/tiktok-dm/mobile-components.md",
+      "status": "modified"
+    },
+    {
+      "path": "docs/tiktok-dm/requirements.md",
+      "status": "modified"
+    },
+    {
+      "path": "docs/tiktok-dm/validation.md",
+      "status": "modified"
+    },
+    {
+      "path": "integrations/fastpay-ad/README.md",
+      "status": "added"
+    },
+    {
+      "path": "integrations/fastpay-ad/build-workflow.mjs",
+      "status": "added"
+    },
+    {
+      "path": "integrations/fastpay-ad/proxo_fastpay_ad_reconcile.json",
+      "status": "added"
+    },
+    {
+      "path": "integrations/legacy-isolation/README.md",
+      "status": "added"
+    },
+    {
+      "path": "integrations/legacy-isolation/prepare-patches.mjs",
+      "status": "added"
+    },
+    {
+      "path": "integrations/legacy-isolation/reviewed-isolation-patches.json",
+      "status": "added"
+    },
+    {
+      "path": "integrations/tiktok-dm/README.md",
+      "status": "modified"
+    },
+    {
+      "path": "integrations/tiktok-dm/build-workflows.mjs",
+      "status": "modified"
+    },
+    {
+      "path": "integrations/tiktok-dm/proxo_tiktok_account_connect.json",
+      "status": "modified"
+    },
+    {
+      "path": "integrations/tiktok-dm/proxo_tiktok_account_disconnect.json",
+      "status": "modified"
+    },
+    {
+      "path": "integrations/tiktok-dm/proxo_tiktok_account_videos.json",
+      "status": "modified"
+    },
+    {
+      "path": "integrations/tiktok-dm/proxo_tiktok_conversation_fulfill.json",
+      "status": "modified"
+    },
+    {
+      "path": "integrations/tiktok-dm/proxo_tiktok_conversation_spend_guard.json",
+      "status": "modified"
+    },
+    {
+      "path": "integrations/tiktok-dm/proxo_tiktok_status_metrics_sync.json",
+      "status": "modified"
+    },
+    {
+      "path": "proxo_app/docs/meta_ads_evidence/payment_sheet_280_2x.png",
+      "status": "modified"
+    },
+    {
+      "path": "proxo_app/integration_test/support/actual_screen_fixtures.dart",
+      "status": "modified"
+    },
+    {
+      "path": "proxo_app/lib/services/ad_submission.dart",
+      "status": "modified"
+    },
+    {
+      "path": "proxo_app/lib/widgets/ad_help_notice.dart",
+      "status": "modified"
+    },
+    {
+      "path": "proxo_app/lib/widgets/ad_payment_card.dart",
+      "status": "modified"
+    },
+    {
+      "path": "proxo_app/supabase/migrations/20261023202139_immutable_ad_fastpay_attempts.sql",
+      "status": "added"
+    },
+    {
+      "path": "proxo_app/supabase/migrations/20261023202252_tiktok_oauth_private_lifecycle.sql",
+      "status": "added"
+    },
+    {
+      "path": "proxo_app/supabase/migrations/20261023202432_tiktok_activation_approval_journal.sql",
+      "status": "added"
+    },
+    {
+      "path": "proxo_app/supabase/migrations/20261023203029_tiktok_report_evidence_boundary.sql",
+      "status": "added"
+    },
+    {
+      "path": "proxo_app/test/actual_screen_backend_boundary_test.dart",
+      "status": "modified"
+    },
+    {
+      "path": "proxo_app/test/ad_fastpay_attempt_test.dart",
+      "status": "added"
+    },
+    {
+      "path": "proxo_app/test/ad_help_notice_test.dart",
+      "status": "added"
+    },
+    {
+      "path": "proxo_app/test/ad_payment_card_responsive_test.dart",
+      "status": "added"
+    },
+    {
+      "path": "scripts/test-ad-payments-database.mjs",
+      "status": "added"
+    },
+    {
+      "path": "scripts/test-tiktok-activation-database.mjs",
+      "status": "added"
+    },
+    {
+      "path": "scripts/test-tiktok-oauth-database.mjs",
+      "status": "added"
+    },
+    {
+      "path": "scripts/test-tiktok-report-database.mjs",
+      "status": "added"
+    },
+    {
+      "path": "server.js",
+      "status": "modified"
+    },
+    {
+      "path": "test/fastpay-ad-payments.test.js",
+      "status": "added"
+    },
+    {
+      "path": "test/legacy-workflow-isolation.test.js",
+      "status": "added"
+    },
+    {
+      "path": "test/tiktok-dm-activation.test.js",
+      "status": "added"
+    },
+    {
+      "path": "test/tiktok-dm-oauth.test.js",
+      "status": "added"
+    },
+    {
+      "path": "test/tiktok-dm-provider.test.js",
+      "status": "modified"
+    },
+    {
+      "path": "test/tiktok-dm-routing.test.js",
+      "status": "added"
+    },
+    {
+      "path": "test/tiktok-dm-settlement.test.js",
+      "status": "added"
+    },
+    {
+      "path": "test/tiktok-dm-workflows.test.js",
+      "status": "modified"
+    },
+    {
+      "path": "vercel.json",
+      "status": "modified"
+    }
+  ],
+  "file_count": 69
+}

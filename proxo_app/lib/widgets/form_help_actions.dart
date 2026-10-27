@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../l10n/proxo_strings.dart';
 import '../services/context_help_service.dart';
 import '../theme/app_theme.dart';
+import '../theme/ad_form_colors.dart';
 import 'proxo_text.dart';
 import 'proxo_toast.dart';
 import 'proxo_symbol.dart';
@@ -139,9 +140,11 @@ class _FormHelpActionsState extends State<FormHelpActions> {
                               textDirection: TextDirection.ltr,
                               child: SelectableText(widget.sampleValue!,
                                   textAlign: TextAlign.left,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                       fontSize: 13,
-                                      color: AppColors.primary,
+                                      color:
+                                          AdFormColors.of(context)?.primary ??
+                                              AppColors.primary,
                                       fontWeight: FontWeight.w400)))
                         ],
                       ]))),

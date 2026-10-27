@@ -1,0 +1,352 @@
+{
+  "version": 1,
+  "captured_on": "2026-10-25",
+  "source_baseline": "4e755dd8c48b248df6b6534f63388d4cb693e376",
+  "published_parent": "d1e1eba6d5d0dc6a95c399263a5061064d8ad713",
+  "renderer": "Flutter 3.47.8 / Dart 3.13.7, Linux flutter_tester",
+  "count": 34,
+  "live_provider_verified": false,
+  "physical_android_verified": false,
+  "captures": [
+    {
+      "state": 1,
+      "file": "01-main.png",
+      "label": "Main TikTok Create Ad",
+      "width": 786,
+      "height": 1704,
+      "sha256": "3e2e9e85b98bcdf3f9b11cbe7b1d0fe6cfdb4585385a076f35286fec8e341dc7",
+      "test": "hierarchy_types_pages_price",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 2,
+      "file": "02-four-ad-types.png",
+      "label": "Four exact ad types",
+      "width": 786,
+      "height": 1704,
+      "sha256": "3e2e9e85b98bcdf3f9b11cbe7b1d0fe6cfdb4585385a076f35286fec8e341dc7",
+      "test": "hierarchy_types_pages_price",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 3,
+      "file": "03-contact-active.png",
+      "label": "Contact active",
+      "width": 786,
+      "height": 1704,
+      "sha256": "6ca35b9c333c6aea8080bea707cd8d021f05368b83093f8ff2f6bcc4d84e5416",
+      "test": "hierarchy_types_pages_price",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 4,
+      "file": "04-views-active.png",
+      "label": "Views active",
+      "width": 786,
+      "height": 1704,
+      "sha256": "8fb203cab2cd527e752de0df1fe72f2e5997dac6097113d78fb2b1fa041e49c1",
+      "test": "hierarchy_types_pages_price",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 5,
+      "file": "05-restaurant-active.png",
+      "label": "Restaurant active",
+      "width": 786,
+      "height": 1704,
+      "sha256": "80ee10e14ad6b09174209016a99406d985591b6cae67fdc0841430f5289d6aec",
+      "test": "hierarchy_types_pages_price",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 6,
+      "file": "06-app-download-active.png",
+      "label": "App download active",
+      "width": 786,
+      "height": 1704,
+      "sha256": "9e47eb4454f396d022d9d940636fe7500ad300eee8e5a85864b2f0f46febcde3",
+      "test": "hierarchy_types_pages_price",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 7,
+      "file": "07-primary-inactive.png",
+      "label": "Primary inactive state",
+      "width": 786,
+      "height": 1704,
+      "sha256": "3e2e9e85b98bcdf3f9b11cbe7b1d0fe6cfdb4585385a076f35286fec8e341dc7",
+      "test": "hierarchy_types_pages_price",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 8,
+      "file": "08-age-active.png",
+      "label": "Age active state",
+      "width": 786,
+      "height": 1704,
+      "sha256": "b07731058392f63776858395e02dc41ac47867847c6b1bf4c60c0fa0f132f2cf",
+      "test": "hierarchy_types_pages_price",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 9,
+      "file": "09-gender-active.png",
+      "label": "Gender active state",
+      "width": 786,
+      "height": 1704,
+      "sha256": "1fd05d26cd1d2f7b4f5ba16dd095b54de90b089c505fb1e922c02b87c63df5cf",
+      "test": "hierarchy_types_pages_price",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 10,
+      "file": "10-contact-destinations.png",
+      "label": "Two contact destinations",
+      "width": 786,
+      "height": 1704,
+      "sha256": "0fccab99fb0f1f8e4e782885ed03bd9d48b0affa14b1852b7a29e878cb67e685",
+      "test": "hierarchy_types_pages_price",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 11,
+      "file": "11-all-platforms-inactive.png",
+      "label": "All platforms inactive",
+      "width": 786,
+      "height": 1704,
+      "sha256": "76d3028ec25e89857d2ed0b3ad276bcd55f21edbd5b73f18bd87261e59616dd1",
+      "test": "hierarchy_types_pages_price",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 12,
+      "file": "12-all-platforms-active.png",
+      "label": "All platforms active with supported icons",
+      "width": 786,
+      "height": 1704,
+      "sha256": "43b57ccabbfc05b5f96b6e1268e07d9e5effafa167f043d17ccaf7e09e68cdfd",
+      "test": "hierarchy_types_pages_price",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 13,
+      "file": "13-tiktok-message-inactive.png",
+      "label": "TikTok messages inactive",
+      "width": 786,
+      "height": 1704,
+      "sha256": "0fccab99fb0f1f8e4e782885ed03bd9d48b0affa14b1852b7a29e878cb67e685",
+      "test": "hierarchy_types_pages_price",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 14,
+      "file": "14-tiktok-message-active.png",
+      "label": "TikTok messages active",
+      "width": 786,
+      "height": 1704,
+      "sha256": "76d3028ec25e89857d2ed0b3ad276bcd55f21edbd5b73f18bd87261e59616dd1",
+      "test": "hierarchy_types_pages_price",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 15,
+      "file": "15-page-collapsed.png",
+      "label": "Page disclosure collapsed",
+      "width": 786,
+      "height": 1704,
+      "sha256": "acfb3af363702e4ae53aea157a67d834ec5637753a91d5ca8b9b5be3f164a9e8",
+      "test": "hierarchy_types_pages_price",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 16,
+      "file": "16-page-expanded.png",
+      "label": "Page disclosure expanded with fallback",
+      "width": 786,
+      "height": 1704,
+      "sha256": "17cb538be9457776a304fce6693b5720373e3d7b12fb0e817d1a5f2d7d90c1f5",
+      "test": "hierarchy_types_pages_price",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 17,
+      "file": "17-page-image-name-status.png",
+      "label": "Loaded image, stored name and status",
+      "width": 786,
+      "height": 1704,
+      "sha256": "54f6a1dcde530c81a48dd5b6566c7bead01a714c1369dca3011fed88efa5096e",
+      "test": "hierarchy_types_pages_price",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 18,
+      "file": "18-contact-only-pages.png",
+      "label": "Contact-only resources",
+      "width": 786,
+      "height": 1704,
+      "sha256": "17cb538be9457776a304fce6693b5720373e3d7b12fb0e817d1a5f2d7d90c1f5",
+      "test": "hierarchy_types_pages_price",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 19,
+      "file": "19-restaurant-only-pages.png",
+      "label": "Restaurant-only resources",
+      "width": 786,
+      "height": 1704,
+      "sha256": "5b6d44fb3e9b3db01b2548e11443e296f99bba9d94dd8ffcc383428d008057d5",
+      "test": "hierarchy_types_pages_price",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 20,
+      "file": "20-app-download-only-pages.png",
+      "label": "App-download-only resources",
+      "width": 786,
+      "height": 1704,
+      "sha256": "449fc0550344ed86be32c484bb3e20a569d4ff257b4c0b88bd96ab3c099564f2",
+      "test": "hierarchy_types_pages_price",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 21,
+      "file": "21-views-content.png",
+      "label": "Views content without page picker",
+      "width": 786,
+      "height": 1704,
+      "sha256": "09a4de61b6b5541f115ab4ee785ce18cef0936a97c866e9f60fe43aba3b82c7d",
+      "test": "hierarchy_types_pages_price",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 22,
+      "file": "22-total-collapsed.png",
+      "label": "Collapsed final price",
+      "width": 786,
+      "height": 1704,
+      "sha256": "1fd05d26cd1d2f7b4f5ba16dd095b54de90b089c505fb1e922c02b87c63df5cf",
+      "test": "hierarchy_types_pages_price",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 23,
+      "file": "23-total-expanded.png",
+      "label": "Expanded final price",
+      "width": 786,
+      "height": 1704,
+      "sha256": "efdd5c19618e6d262a9b8460bfd86609016871aa7e10e485f444e89d6c0fd4dc",
+      "test": "hierarchy_types_pages_price",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 24,
+      "file": "24-total-loading.png",
+      "label": "Authoritative quote loading",
+      "width": 786,
+      "height": 1704,
+      "sha256": "f5f9297e5fe7fec5190c76066d03d57babf796f089b4882a05ef776016d34840",
+      "test": "hierarchy_types_pages_price",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 25,
+      "file": "25-scrolled-sticky-total.png",
+      "label": "Scrolled content beneath fixed total",
+      "width": 786,
+      "height": 1704,
+      "sha256": "48805a63e8e2fb2248ae2adfd0671f8d2d5fd2a1cb91ef201f04905176d260b3",
+      "test": "hierarchy_types_pages_price",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 26,
+      "file": "26-separate-sponsor.png",
+      "label": "Separate Sponsor button",
+      "width": 786,
+      "height": 1704,
+      "sha256": "48805a63e8e2fb2248ae2adfd0671f8d2d5fd2a1cb91ef201f04905176d260b3",
+      "test": "hierarchy_types_pages_price",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 27,
+      "file": "27-no-page.png",
+      "label": "No-page state",
+      "width": 786,
+      "height": 1704,
+      "sha256": "15e8ef65af12abb300bcbec7153a7e9ecea5633152faa2483af7121b63bb36e9",
+      "test": "create_page_return",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 28,
+      "file": "28-direct-create-page.png",
+      "label": "Direct Create Page route",
+      "width": 786,
+      "height": 1704,
+      "sha256": "908e2c09190f68f77d7d6e83d28da7748883a8dd83b51d804ead4a359aa161a0",
+      "test": "create_page_return",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 29,
+      "file": "29-back-to-preserved-ad.png",
+      "label": "Back returns with edited title",
+      "width": 786,
+      "height": 1704,
+      "sha256": "0c36fa7e95fb0797ea8c2adb22c56e0472f2b35115e0161996ace5679e01d979",
+      "test": "create_page_return",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 30,
+      "file": "30-new-page-visible.png",
+      "label": "New saved fixture page selected",
+      "width": 786,
+      "height": 1704,
+      "sha256": "932bd30f15f1542c3e93068ab8b1ef71d51db1be0518faec94050de7b1a6f32e",
+      "test": "create_page_return",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 31,
+      "file": "31-definitive-failure.png",
+      "label": "Definitive submission failure",
+      "width": 786,
+      "height": 1704,
+      "sha256": "48932ad103ca331997bb40c7f878ed618c8168077396de34525d28eb297f7b31",
+      "test": "failure_reopen",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 32,
+      "file": "32-fresh-after-failure.png",
+      "label": "Fresh form after leaving failure",
+      "width": 786,
+      "height": 1704,
+      "sha256": "3e2e9e85b98bcdf3f9b11cbe7b1d0fe6cfdb4585385a076f35286fec8e341dc7",
+      "test": "failure_reopen",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 33,
+      "file": "33-small-screen-280-2x.png",
+      "label": "280px screen with 200% text",
+      "width": 560,
+      "height": 1400,
+      "sha256": "ee90b3df586280a23cd4188576906a6295b70316ce74eb64ea15e7669fc8612e",
+      "test": "small_screen_validation",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    },
+    {
+      "state": 34,
+      "file": "34-validation-error.png",
+      "label": "Validation error",
+      "width": 560,
+      "height": 1400,
+      "sha256": "845bec3710aa5623f138bbf8223521fba9b49871cd2642583dc1fae7a26de50f",
+      "test": "small_screen_validation",
+      "evidence": "actual Flutter widget render; controlled repositories"
+    }
+  ]
+}

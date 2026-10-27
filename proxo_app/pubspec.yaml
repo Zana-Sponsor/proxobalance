@@ -1,7 +1,7 @@
 name: proxo_app
 description: Proxo — TikTok Ad Manager for Kurdistan & Iraq
 publish_to: 'none'
-version: 1.0.11+11
+version: 1.0.12+12
 
 environment:
   # ⚠ بوو '>=3.3.0'. solar_iconkit داوای Dart >= 3.6.0 (Flutter >= 3.27)
@@ -34,6 +34,8 @@ dependencies:
   # ── Backend: Supabase
   supabase_flutter: 2.5.0
   http: ^1.2.1
+  # Uses the already-resolved encoder to draw official authorization URLs locally.
+  qr: 3.0.2
   # Tutorial downloads use path_provider directly.
   path_provider: ^2.1.3
   # ── Backend: Firebase
@@ -87,10 +89,13 @@ flutter:
     - assets/images/
     - assets/images/auth/
     - assets/icons/
+    - assets/icons/proxo_png/
     - assets/icons/solar/
     - assets/icons/auth/
     - assets/icons/results/
     - assets/icons/ad_card/
+    - assets/icons/objectives/
+    - assets/logos/ads/
     - assets/icons/nav/
     - assets/icons/home/
     - assets/icons/detail/

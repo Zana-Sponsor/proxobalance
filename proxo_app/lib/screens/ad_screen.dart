@@ -1,4 +1,7 @@
 import '../services/ad_snapshot_cache.dart';
+import '../services/ad_platform.dart';
+import '../services/ad_feature_config.dart';
+import '../widgets/ad_brand_logo.dart';
 import '../services/app_telemetry_service.dart';
 import '../services/account_cache.dart';
 import 'package:proxo_app/theme/app_locale.dart';
@@ -688,6 +691,10 @@ class AdScreen extends StatefulWidget {
 class _AdScreenState extends State<AdScreen>
     with TickerProviderStateMixin, WidgetsBindingObserver {
   AdFilter _filter = AdFilter.all;
+  AdPlatformFilter _platformFilter = AdPlatformFilter.all;
+  bool _metaFiltersEnabled = false;
+  int _capabilityRevision = 0;
+  Timer? _realtimeSyncTimer;
   List<Map<String, dynamic>> _ads = [];
   late final AdSnapshotCache _cache;
   int _loadRevision = 0;
@@ -805,6 +812,7 @@ class _AdScreenState extends State<AdScreen>
     }
     if (widget.initialAdId != null) _highlightId = widget.initialAdId;
     _loadAds();
+    unawaited(_loadCapabilities());
     _startMetricsRealtime();
 
     _scrollCtrl.addListener(_onScroll);
@@ -817,6 +825,7 @@ class _AdScreenState extends State<AdScreen>
     // و تەنها سینکێکی بێدەنگ لە پشتەوە دەکرێت. هیچ سکێلیتۆن یان
     // دواخستنێکی دەستکرد لە ناو گواستنەوەی BottomNavدا نییە.
     if (widget.isActive && !oldWidget.isActive) {
+      unawaited(_loadCapabilities());
       unawaited(_syncAdsSilently());
     }
   }
@@ -824,6 +833,8 @@ class _AdScreenState extends State<AdScreen>
   @override
   void dispose() {
     ++_loadRevision;
+    ++_capabilityRevision;
+    _realtimeSyncTimer?.cancel();
     AppDataCache.forClient(supabase).financialRevision.removeListener(_financialChanged);
     WidgetsBinding.instance.removeObserver(this);
     _cache.clearMemory();
@@ -835,9 +846,43 @@ class _AdScreenState extends State<AdScreen>
   }
 
   @override void didHaveMemoryPressure() => _cache.clearMemory();
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      unawaited(_loadCapabilities());
+      unawaited(_syncAdsSilently());
+    }
+  }
+
+  Future<void> _loadCapabilities() async {
+    final revision = ++_capabilityRevision;
+    final capability = await AdFeatureConfig.load(supabase);
+    if (!mounted || revision != _capabilityRevision ||
+        supabase.auth.currentUser?.id != _owner) return;
+    setState(() => _metaFiltersEnabled = capability.meta);
+    if (!capability.meta && _platformFilter != AdPlatformFilter.all) {
+      _setPlatformFilter(AdPlatformFilter.all);
+    }
+  }
+
+  void _scheduleRealtimeSync() {
+    // Any older page may predate this mutation. Reject it and reconcile the
+    // current complete scope; a burst of provider updates shares one fetch.
+    ++_loadRevision;
+    _silentSync = null;
+    _loadingMore = false;
+    _realtimeSyncTimer?.cancel();
+    _realtimeSyncTimer = Timer(const Duration(milliseconds: 120), () {
+      if (mounted && supabase.auth.currentUser?.id == _owner) {
+        unawaited(_syncAdsSilently());
+      }
+    });
+  }
+
   void _financialChanged() {
     unawaited(_cache.invalidate().then((_) {
-      if (mounted && supabase.auth.currentUser?.id == _owner) unawaited(_syncAdsSilently());
+      if (mounted && supabase.auth.currentUser?.id == _owner) _scheduleRealtimeSync();
     }));
   }
 
@@ -858,7 +903,7 @@ class _AdScreenState extends State<AdScreen>
     _metricsChannel?.unsubscribe();
     _metricsChannel = supabase.channel('ads_metrics_rt_${user.id}')
       ..onPostgresChanges(
-        event: PostgresChangeEvent.update,
+        event: PostgresChangeEvent.all,
         schema: 'public',
         table: 'pa_ads',
         filter: PostgresChangeFilter(
@@ -869,8 +914,17 @@ class _AdScreenState extends State<AdScreen>
         callback: (payload) {
           final changed = payload.newRecord;
           final old = payload.oldRecord;
-          if (changed.isEmpty) return;
+          if (changed.isEmpty) {
+            // Deletes may only carry the primary key; the server applies owner scope.
+            if (mounted && _ads.any((ad) => ad['id'] == old['id'])) {
+              _scheduleRealtimeSync();
+            }
+            return;
+          }
           final metricsChanged =
+              old['provider_metrics_available'].toString() != changed['provider_metrics_available'].toString() ||
+              old['platform']      != changed['platform'] ||
+              old['payment_status'] != changed['payment_status'] ||
               old['spend']         != changed['spend'] ||
               old['clicks']        != changed['clicks'] ||
               old['impressions']   != changed['impressions'] ||
@@ -888,27 +942,32 @@ class _AdScreenState extends State<AdScreen>
           if (!exists) {
             // ڕیکلامێک لە دۆخێکی ترەوە هاتە ناو فلتەری چالاک؛ چونکە لە
             // پەڕەی ئێستا نەبوو، سینکی بێدەنگ شوێنی دروستی دەدۆزێتەوە.
-            if (_matchesFilter(changed, _filter)) {
-              unawaited(_syncAdsSilently());
-            }
+            if (_matchesFilter(changed, _filter)) _scheduleRealtimeSync();
             return;
           }
           _applyLocalAdPatch(changedId, changed);
+          _scheduleRealtimeSync();
           _queueLegacyThumbnailMigrations(<Map<String, dynamic>>[changed]);
         },
       )
       ..subscribe();
   }
 
-  String _snapshotKey(AdFilter filter) => '${_dateRangeLabel.replaceAll(' ', '_')}_${filter.name}_${_sortAscending}';
-  Future<void> _saveCache(List<Map<String, dynamic>> ads, {AdFilter? filter}) async {
-    try { await _cache.write(_snapshotKey(filter ?? _filter), ads); } catch (_) {}
+  String _snapshotKey(AdFilter filter, AdPlatformFilter platform) =>
+      '${_dateRangeLabel.replaceAll(' ', '_')}_${filter.name}_${platform.name}_${_sortAscending}';
+  Future<void> _saveCache(List<Map<String, dynamic>> ads, {
+    AdFilter? filter, AdPlatformFilter? platform,
+  }) async {
+    final key = _snapshotKey(filter ?? _filter, platform ?? _platformFilter);
+    try { await _cache.write(key, ads); } catch (_) {}
   }
-  Future<bool> _loadCached({AdFilter? filter}) async {
+  Future<bool> _loadCached({AdFilter? filter, AdPlatformFilter? platform}) async {
     final target = filter ?? _filter;
-    final revision = _loadRevision, key = _snapshotKey(target);
+    final targetPlatform = platform ?? _platformFilter;
+    final revision = _loadRevision, key = _snapshotKey(target, targetPlatform);
     final rows = await _cache.read(key);
-    if (!_current(revision) || rows == null || key != _snapshotKey(_filter)) return false;
+    if (!_current(revision) || rows == null ||
+        key != _snapshotKey(_filter, _platformFilter)) return false;
     setState(() { _ads = rows; _hasMore = rows.length >= _pageSize; _isOffline = true; });
     return true;
   }
@@ -930,19 +989,22 @@ class _AdScreenState extends State<AdScreen>
 
   Future<void> _loadAds({bool refresh = false}) async {
     final revision = ++_loadRevision;
+    _silentSync = null;
+    _loadingMore = false;
     final AdFilter requestedFilter = _filter;
+    final AdPlatformFilter requestedPlatform = _platformFilter;
     if (refresh) {
       setState(() => _hasMore = true);
       // گۆڕینی فلتەری ماوە بە `refresh: true` دێت. ئەگەر کاشێکی نوێی ئەو
       // ماوەیە هەبێت، دەستبەجێ نیشان دەدرێت و داواکاریەکە لە پشتەوە
       // دەڕوات — بۆیە گۆڕینی فلتەر شاشەیەکی بەتاڵ نانوێنێت.
-      await _loadCached(filter: requestedFilter);
+      await _loadCached(filter: requestedFilter, platform: requestedPlatform);
     } else {
       setState(() => _loading = true);
-      final bool cached = await _loadCached(filter: requestedFilter);
+      final bool cached = await _loadCached(filter: requestedFilter, platform: requestedPlatform);
       // کاش ئامادەیە → دەستبەجێ نمایش بدە. داواکاریی تۆڕ لە خوارەوە
       // بەردەوامە، بەڵام هیچ دواخستنی دەستکرد یان سکێلیتۆنی زۆرەملێ نییە.
-      if (mounted && requestedFilter == _filter && cached) {
+      if (_current(revision) && requestedFilter == _filter && requestedPlatform == _platformFilter && cached) {
         setState(() => _loading = false);
       }
     }
@@ -958,6 +1020,8 @@ class _AdScreenState extends State<AdScreen>
           .from('pa_ads')
           .select(_adColumns)
           .eq('user_id', user.id);
+      final platformPredicate = adPlatformPredicate(requestedPlatform);
+      if (platformPredicate != null) query = query.or(platformPredicate);
       if (requestedFilter == AdFilter.completed) {
         query = query.inFilter('status', const <String>['completed', 'done']);
       } else if (requestedFilter != AdFilter.all) {
@@ -968,12 +1032,13 @@ class _AdScreenState extends State<AdScreen>
       }
       final res = await query
           .order('created_at', ascending: _sortAscending)
+          .order('id', ascending: _sortAscending)
           .limit(_pageSize);
 
       final fresh = List<Map<String, dynamic>>.from(res);
       if (!_current(revision)) return;
-      await _saveCache(fresh, filter: requestedFilter);
-      if (_current(revision) && requestedFilter == _filter) {
+      await _saveCache(fresh, filter: requestedFilter, platform: requestedPlatform);
+      if (_current(revision) && requestedFilter == _filter && requestedPlatform == _platformFilter) {
         setState(() {
           _ads = fresh;
           _isOffline = false;
@@ -990,8 +1055,8 @@ class _AdScreenState extends State<AdScreen>
     } catch (e) {
       AppTelemetryService.active?.event('error', 'ads_load_failed', outcome: 'failure');
       if (_current(revision)) {
-        final cached = await _loadCached(filter: requestedFilter);
-        if (!_current(revision) || requestedFilter != _filter) return;
+        final cached = await _loadCached(filter: requestedFilter, platform: requestedPlatform);
+        if (!_current(revision) || (requestedFilter != _filter || requestedPlatform != _platformFilter)) return;
         if (!cached && _ads.isEmpty) {
           // The offline / general split stays here, in the screen that knows
           // what it was doing. What changed is that the exception itself is
@@ -1022,7 +1087,7 @@ class _AdScreenState extends State<AdScreen>
         }
       }
     } finally {
-      if (_current(revision) && requestedFilter == _filter) {
+      if (_current(revision) && requestedFilter == _filter && requestedPlatform == _platformFilter) {
         setState(() => _loading = false);
       }
     }
@@ -1069,7 +1134,9 @@ class _AdScreenState extends State<AdScreen>
     required bool announceErrors,
   }) async {
     final revision = ++_loadRevision;
+    _loadingMore = false;
     final AdFilter requestedFilter = _filter;
+    final AdPlatformFilter requestedPlatform = _platformFilter;
     try {
       final user = supabase.auth.currentUser;
       if (user == null) return false;
@@ -1082,6 +1149,8 @@ class _AdScreenState extends State<AdScreen>
           .from('pa_ads')
           .select(_adColumns)
           .eq('user_id', user.id);
+      final platformPredicate = adPlatformPredicate(requestedPlatform);
+      if (platformPredicate != null) query = query.or(platformPredicate);
       if (requestedFilter == AdFilter.completed) {
         query = query.inFilter('status', const <String>['completed', 'done']);
       } else if (requestedFilter != AdFilter.all) {
@@ -1092,16 +1161,17 @@ class _AdScreenState extends State<AdScreen>
       }
       final res = await query
           .order('created_at', ascending: _sortAscending)
+          .order('id', ascending: _sortAscending)
           .limit(wanted);
 
       final fresh = List<Map<String, dynamic>>.from(res);
       if (applyAfter != null) await applyAfter;
       if (!_current(revision) || supabase.auth.currentUser?.id != user.id) return false;
 
-      unawaited(_saveCache(fresh, filter: requestedFilter));
+      unawaited(_saveCache(fresh, filter: requestedFilter, platform: requestedPlatform));
       // بەکارهێنەر لە ماوەی داواکارییەکەدا فلتەری گۆڕیوە؛ وەڵامی کۆن
       // تەنها لە کاشی فلتەری خۆیدا هەڵدەگیرێت و UI ـی نوێ نانووسێتەوە.
-      if (requestedFilter != _filter) return false;
+      if ((requestedFilter != _filter || requestedPlatform != _platformFilter)) return false;
 
       // هیچ نەگۆڕاوە → هیچ کارێک. ئەمە باوترین حاڵەتە (بەکارهێنەر تەنها
       // سەیری وردەکارییەکی کرد و گەڕایەوە)، بۆیە گەڕانەوە دەبێتە سفر کار.
@@ -1175,6 +1245,12 @@ class _AdScreenState extends State<AdScreen>
         ..write('|')
         ..write(ad['updated_at'])
         ..write('|')
+        ..write(ad['platform'])
+        ..write('|')
+        ..write(ad['provider_metrics_available'])
+        ..write('|')
+        ..write(ad['payment_status'])
+        ..write('|')
         ..write(ad['status'])
         ..write('|')
         ..write(ad['title'])
@@ -1230,6 +1306,7 @@ class _AdScreenState extends State<AdScreen>
   void _queueLegacyThumbnailMigrations(List<Map<String, dynamic>> rows) {
     final List<String> ids = <String>[];
     for (final row in rows) {
+      if (!isManualTikTokAd(row)) continue;
       final String id = (row['id'] ?? '').toString().trim();
       final String thumbnail =
           (row['thumbnail_url'] ?? '').toString().trim();
@@ -1247,6 +1324,7 @@ class _AdScreenState extends State<AdScreen>
   Future<void> _migrateLegacyThumbnails(List<String> adIds) async {
     for (final id in adIds) {
       final sourceRows = _ads.where((ad) => (ad['id'] ?? '').toString() == id);
+      if (sourceRows.isEmpty || !isManualTikTokAd(sourceRows.first)) continue;
       final String? requestedVideo = sourceRows.isEmpty
           ? null : sourceRows.first['video_link']?.toString();
       try {
@@ -1283,7 +1361,7 @@ class _AdScreenState extends State<AdScreen>
   }
 
   static const String _adColumns =
-    'id,title,status,spend,clicks,impressions,'
+    'id,title,platform,service_type,fulfillment_kind,provider_metrics_available,status,spend,clicks,impressions,'
     'conversions,cpm,prev_spend,prev_impressions,tiktok_ad_id,'
     'start_date,start_time,end_date,daily_budget,total_budget,'
     'budget,days,video_link,reject_reason,'
@@ -1299,6 +1377,7 @@ class _AdScreenState extends State<AdScreen>
   Future<void> _loadMore() async {
     if (_loadingMore || !_hasMore) return;
     final AdFilter requestedFilter = _filter;
+    final AdPlatformFilter requestedPlatform = _platformFilter;
     final revision = _loadRevision;
     final int start = _ads.length;
     setState(() => _loadingMore = true);
@@ -1310,6 +1389,8 @@ class _AdScreenState extends State<AdScreen>
           .from('pa_ads')
           .select(_adColumns)
           .eq('user_id', user.id);
+      final platformPredicate = adPlatformPredicate(requestedPlatform);
+      if (platformPredicate != null) query = query.or(platformPredicate);
       if (requestedFilter == AdFilter.completed) {
         query = query.inFilter('status', const <String>['completed', 'done']);
       } else if (requestedFilter != AdFilter.all) {
@@ -1320,20 +1401,22 @@ class _AdScreenState extends State<AdScreen>
       }
       final res = await query
           .order('created_at', ascending: _sortAscending)
+          .order('id', ascending: _sortAscending)
           .range(start, start + _pageSize - 1);
-      if (_current(revision) && requestedFilter == _filter) {
+      if (_current(revision) && requestedFilter == _filter && requestedPlatform == _platformFilter) {
         final more = List<Map<String, dynamic>>.from(res);
         setState(() {
-          _ads.addAll(more);
+          final existing = _ads.map((ad) => ad['id']).toSet();
+          _ads.addAll(more.where((ad) => existing.add(ad['id'])));
           _hasMore = more.length >= _pageSize;
         });
-        unawaited(_saveCache(_ads, filter: requestedFilter));
+        unawaited(_saveCache(_ads, filter: requestedFilter, platform: requestedPlatform));
         _queueLegacyThumbnailMigrations(more);
       }
     } catch (_) {
       AppTelemetryService.active?.event('error', 'ads_page_failed', outcome: 'failure');
     } finally {
-      if (mounted) {
+      if (_current(revision)) {
         setState(() => _loadingMore = false);
       }
     }
@@ -1352,6 +1435,7 @@ class _AdScreenState extends State<AdScreen>
   }) async {
     onLoading();
     try {
+      if (!isManualTikTokAd(ad)) return;
       final user = supabase.auth.currentUser;
       if (user == null) throw Exception('تکایە دووبارە بچۆ ژوورەوە');
 
@@ -1427,6 +1511,7 @@ class _AdScreenState extends State<AdScreen>
   }
 
   bool _matchesFilter(Map<String, dynamic> ad, AdFilter filter) {
+    if (!matchesAdPlatform(ad, _platformFilter)) return false;
     if (filter == AdFilter.all) return true;
     final String status = (ad['status'] ?? '').toString().trim().toLowerCase();
     if (filter == AdFilter.completed) {
@@ -1436,11 +1521,13 @@ class _AdScreenState extends State<AdScreen>
   }
 
   List<Map<String, dynamic>> get _filtered =>
-      _filter == AdFilter.all
-          ? _ads
-          : _ads.where((ad) => _matchesFilter(ad, _filter)).toList();
+      _ads.where((ad) => _matchesFilter(ad, _filter)).toList();
 
   void _scrollToAd(String adId) {
+    if (_platformFilter != AdPlatformFilter.all) {
+      _setPlatformFilter(AdPlatformFilter.all);
+      return;
+    }
     if (_filter != AdFilter.all) {
       _setFilter(0, AdFilter.all);
       return;
@@ -1483,6 +1570,24 @@ class _AdScreenState extends State<AdScreen>
     }));
   }
 
+  void _setPlatformFilter(AdPlatformFilter platform) {
+    if (platform == _platformFilter ||
+        (platform != AdPlatformFilter.all && !_metaFiltersEnabled)) return;
+    if (_scrollCtrl.hasClients && _scrollCtrl.offset > 0) _scrollCtrl.jumpTo(0);
+    setState(() {
+      _platformFilter = platform;
+      _ads = <Map<String, dynamic>>[];
+      _loadingMore = false;
+      _hasMore = true;
+      _hasError = false;
+      _offlineError = false;
+      _errorMsg = '';
+    });
+    unawaited(_loadAds().whenComplete(() {
+      if (mounted && _platformFilter == platform) _entranceCtrl.forward(from: 0);
+    }));
+  }
+
   // ═══════════════════════════════════════════════════════════
   // ڕەتکردنەوەی ڕیکلام
   // ═══════════════════════════════════════════════════════════
@@ -1502,7 +1607,8 @@ class _AdScreenState extends State<AdScreen>
   Future<bool> _openCancelAdDialog(Map<String, dynamic> ad) async {
     final status     = (ad['status'] ?? '').toString();
     final tiktokAdId = ad['tiktok_ad_id']?.toString();
-    if (!(status == 'pending' && (tiktokAdId == null || tiktokAdId.isEmpty))) {
+    if (!isManualTikTokAd(ad) ||
+        !(status == 'pending' && (tiktokAdId == null || tiktokAdId.isEmpty))) {
       showProxoToast(context, 'ئەم ڕیکلامە ناتوانرێت ڕەت بکرێتەوە', type: ProxoToastType.error);
       return false;
     }
@@ -1749,6 +1855,7 @@ class _AdScreenState extends State<AdScreen>
   // بانگکەرەکە دەتوانێت دۆخی خۆی نوێ بکاتەوە بەبێ داواکارییەکی نوێ.
   // `null` = بەکارهێنەر پاشگەز بووەوە یان شکستی هێنا.
   Future<Map<String, dynamic>?> _openAdFixSheet(Map<String, dynamic> ad) async {
+    if (!isManualTikTokAd(ad)) return null;
     final String field = (ad[_kAdcColUpdateField] ?? '').toString().trim();
     if (field.isEmpty) {
       showProxoToast(context, 'خانەی داواکراو دیاری نەکراوە',
@@ -2247,7 +2354,8 @@ class _AdScreenState extends State<AdScreen>
     final String status     = (ad['status'] ?? '').toString();
     final String tiktokAdId = (ad['tiktok_ad_id'] ?? '').toString();
     // هەمان مەرجی `isCancellable`ی کارتەکە — نەک مەرجێکی نوێ.
-    final bool isCancellable = status == 'pending' && tiktokAdId.isEmpty;
+    final bool isCancellable = isManualTikTokAd(ad) &&
+        status == 'pending' && tiktokAdId.isEmpty;
 
     final AdDetailsOutcome outcome = AdDetailsOutcome();
 
@@ -2260,7 +2368,8 @@ class _AdScreenState extends State<AdScreen>
           onRepeat: ({required onLoading, required onDone}) =>
               _duplicateAd(ad, onLoading: onLoading, onDone: onDone),
           onCancel: isCancellable ? () => _openCancelAdDialog(ad) : null,
-          onFix: () => _openAdFixSheet(ad),
+          onFix: isManualTikTokAd(ad)
+              ? () => _openAdFixSheet(ad) : null,
           onCopyId: _copyText,
         ),
       );
@@ -2294,10 +2403,6 @@ class _AdScreenState extends State<AdScreen>
           // زۆر سووک لە سەرەوە بۆ خوارەوە بۆ قووڵییەکی زیاتر — هیچ
           // شتێکی تر (کارت، سێبەر، سنوور، بۆشایی) نەگۆڕدراوە.
           backgroundColor: _dsPageBg,
-          // ── سنووردارکردنی textScaler — ڕێگری لە شکانی proportion-ی
-          // کارتەکان دەکات ئەگەر یوزەر فۆنتی زۆر گەورە هەڵبژاردبێت لە
-          // ڕێکخستنەکانی ئامێر، بەبێ ئەوەی پێشوازی لە هەڵبژاردنی یوزەر
-          // بکەین بە تەواوی — تەنها لەناو سنوورێکی سەلامەتدا (٪90-١٢٥).
           // Shared components — ad_screen.dart owns Campaigns content only.
           appBar: ProxoTopBar(
             topPadding: MediaQuery.paddingOf(context).top,
@@ -2307,13 +2412,7 @@ class _AdScreenState extends State<AdScreen>
           ),
           body: MediaQuery(
             data: MediaQuery.of(context).copyWith(
-              textScaler: MediaQuery.textScalerOf(context)
-                  // The v4 measurements assume textScaler 1.0. Allowing 1.18
-                  // inflated every label ~18%, which wrapped "Impressions",
-                  // the card title, the ID and both filter chips. Capped at
-                  // 1.0 so the card matches the reference; raise this again if
-                  // system font scaling matters more than exact geometry.
-                  .clamp(minScaleFactor: 0.9, maxScaleFactor: 1.0),
+              textScaler: MediaQuery.textScalerOf(context),
             ),
             child: SafeArea(
               top: false,
@@ -2457,7 +2556,35 @@ class _AdScreenState extends State<AdScreen>
                       bottom: BorderSide(color: _kFbTrack, width: 1),
                     ),
                   ),
-                  child: SizedBox(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (_metaFiltersEnabled) SizedBox(
+                        height: _kFbChipH * s,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          physics: const BouncingScrollPhysics(),
+                          padding: EdgeInsets.zero,
+                          itemCount: AdPlatformFilter.values.length,
+                          separatorBuilder: (_, __) => SizedBox(width: _kFbChipGap * s),
+                          itemBuilder: (_, i) {
+                            final platform = AdPlatformFilter.values[i];
+                            return _StatusChip(
+                              scale: s,
+                              selected: platform == _platformFilter,
+                              label: switch (platform) {
+                                AdPlatformFilter.all => 'هەموو',
+                                AdPlatformFilter.meta => 'مێتا',
+                                AdPlatformFilter.tiktok => 'تیک تۆک',
+                              },
+                              leading: platform == AdPlatformFilter.all ? null
+                                  : AdBrandLogo(platform.name, size: 18 * s),
+                              onTap: () => _setPlatformFilter(platform),
+                            );
+                          },
+                        ),
+                      ),
+                      SizedBox(
                     height: _kFbChipH * s,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
@@ -2476,6 +2603,8 @@ class _AdScreenState extends State<AdScreen>
                         );
                       },
                     ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -2638,7 +2767,8 @@ class _AdScreenState extends State<AdScreen>
                       isHighlighted: _highlightId == ad['id']?.toString(),
                       onTap: () => _openAdDetails(ad),
                       onCopyId: _copyText,
-                      onFix: () => _openAdFixSheet(ad),
+                      onFix: isManualTikTokAd(ad)
+              ? () => _openAdFixSheet(ad) : null,
                       onFeedback: () => _openAdFeedback(ad),
                     ),
                   ),
@@ -2739,7 +2869,9 @@ class _AdScreenState extends State<AdScreen>
     try {
       await Navigator.of(context).push<String>(ProxoPageRoute(
         settings: const RouteSettings(name: 'create_ad'),
-        builder: (_) => const AdCreateScreen(),
+        builder: (_) => AdCreateScreen(
+          platform: _platformFilter == AdPlatformFilter.meta ? 'META' : 'TIKTOK',
+        ),
       ));
       // Returning from the form refreshes the list without a second route or
       // a stale response from a previously signed-in account.
@@ -2752,26 +2884,36 @@ class _AdScreenState extends State<AdScreen>
   }
 
   Widget _buildEmpty() {
-    final filtered = _filter != AdFilter.all;
+    final platformFiltered = _platformFilter != AdPlatformFilter.all;
+    final filtered = _filter != AdFilter.all || platformFiltered;
     return _stateList(
       ProxoEmptyState(
         key: ValueKey(filtered ? 'ads-filter-empty-state' : 'ads-empty-state'),
         symbol: filtered ? ProxoSymbolName.search : ProxoSymbolName.ads,
-        title: filtered
-            ? 'هیچ ڕیکلامێک لەم دۆخەدا نییە'
+        title: platformFiltered
+            ? 'هیچ ڕیکلامێک لەم فلتەرەدا نییە'
+            : filtered ? 'هیچ ڕیکلامێک لەم دۆخەدا نییە'
             : 'هێشتا هیچ ڕیکلامێک نییە!',
-        body: filtered
-            ? 'بۆ بینینی ڕیکلامەکانت هەموو دۆخەکان هەڵبژێرە.'
+        body: platformFiltered
+            ? 'بۆ بینینی ڕیکلامەکانت هەموو هەڵبژێرە.'
+            : filtered ? 'بۆ بینینی ڕیکلامەکانت هەموو دۆخەکان هەڵبژێرە.'
             : 'کاتێک ڕیکلامێک تۆمار دەکەیت، لێرە دەردەکەوێت.',
         action: FilledButton.icon(
           key: ValueKey(filtered ? 'ads-clear-filter' : 'ads-create-empty'),
           onPressed: filtered
-              ? () => _setFilter(0, AdFilter.all)
+              ? () {
+                  if (platformFiltered) {
+                    setState(() { _filter = AdFilter.all; _pillIndex = 0; });
+                    _setPlatformFilter(AdPlatformFilter.all);
+                  } else {
+                    _setFilter(0, AdFilter.all);
+                  }
+                }
               : _createFromEmpty,
           style: ProxoSurface.actionStyle(),
           icon: ProxoSymbol(filtered ? ProxoSymbolName.ads : ProxoSymbolName.add,
               size: 20, color: Colors.white),
-          label: ProxoText(filtered ? 'هەموو دۆخەکان' : 'ڕیکلامێک بکە',
+          label: ProxoText(platformFiltered ? 'هەموو' : filtered ? 'هەموو دۆخەکان' : 'ڕیکلامێک بکە',
               translate: true),
         ),
       ),
@@ -2872,7 +3014,7 @@ double _adcMetricHeight(BuildContext context, double scale) {
   final labelHeight = scaler.scale(_kAdcMetricLabelSlotBase * t) * 1.3 * 2;
   final valueHeight = scaler.scale(_kAdcFsStatValue * t) * 1.25;
   return max(_kAdcStatTileH * scale,
-      labelHeight + valueHeight + (2 * _kAdcTilePadV + 4) * scale);
+      labelHeight + valueHeight + (2 * _kAdcTilePadV + 4) * scale).ceilToDouble();
 }
 
 Duration _adcMotionDuration(BuildContext context) =>
@@ -3184,9 +3326,13 @@ class _AdCardState extends State<_AdCard> {
         status == 'completed' ||
         status == 'paused' ||
         status == 'done';
-    final isActive =
-        !isTerminal && (tiktokAdId != null && tiktokAdId.isNotEmpty);
-    final hasRealData = isActive || isTerminal;
+    final isActive = !isTerminal &&
+        (persistedAdPlatform(widget.ad) == 'META'
+            ? status == 'active'
+            : (tiktokAdId != null && tiktokAdId.isNotEmpty));
+    final hasRealData = isProviderManagedAd(widget.ad)
+        ? (widget.ad['provider_metrics_available'] as List?)?.isNotEmpty == true
+        : isActive || isTerminal;
 
     final prevSpend = _asNum(widget.ad['prev_spend'])?.toDouble() ?? 0;
     final curSpend = _asNum(widget.ad['spend'])?.toDouble() ?? 0;
@@ -3195,12 +3341,16 @@ class _AdCardState extends State<_AdCard> {
 
     // ⚠ `null` = هێشتا خزمەت نەکراوە/داتای ڕاستەقینەی نییە → «—».
     // پێشتر لەو حاڵەتەدا سفر نمایش دەکرا؛ سفری ساختە لابرا.
-    final double? spend = hasRealData ? (prevSpend + curSpend) : null;
+    final double? spend = hasRealData && hasAdMetricEvidence(widget.ad, 'spend')
+        ? (prevSpend + curSpend) : null;
     final int? clicks =
-        hasRealData ? (_asNum(widget.ad['clicks'])?.toInt() ?? 0) : null;
-    final int? impressions = hasRealData ? (prevImpr + curImpr) : null;
+        hasRealData && hasAdMetricEvidence(widget.ad, 'clicks')
+            ? (_asNum(widget.ad['clicks'])?.toInt() ?? 0) : null;
+    final int? impressions = hasRealData && hasAdMetricEvidence(widget.ad, 'impressions')
+        ? (prevImpr + curImpr) : null;
     final int? conversions =
-        hasRealData ? _asNum(widget.ad['conversions'])?.toInt() : null;
+        hasRealData && hasAdMetricEvidence(widget.ad, 'conversions')
+            ? _asNum(widget.ad['conversions'])?.toInt() : null;
     final double? totalBudget =
         _asNum(widget.ad['total_budget'])?.toDouble() ??
             _asNum(widget.ad['budget'])?.toDouble();
@@ -4443,12 +4593,14 @@ class _AdcExpandToggle extends StatelessWidget {
 /// یەک تابی دۆخ؛ کاردانەوەکە تەنها ڕەنگێکی زۆر سووکە، بەبێ سکەیڵ و ripple.
 class _StatusChip extends StatefulWidget {
   final String label;
+  final Widget? leading;
   final bool selected;
   final double scale;
   final VoidCallback onTap;
 
   const _StatusChip({
     required this.label,
+    this.leading,
     required this.selected,
     required this.scale,
     required this.onTap,
@@ -4495,7 +4647,7 @@ class _StatusChipState extends State<_StatusChip> {
             children: [
               Padding(
                 padding: EdgeInsets.only(bottom: 2 * s),
-                child: ProxoText(
+                child: widget.leading == null ? ProxoText(
                   widget.label,
                   maxLines: 1,
                   softWrap: false,
@@ -4506,6 +4658,24 @@ class _StatusChipState extends State<_StatusChip> {
                     color: ink,
                     height: 1.0,
                   ),
+                ) : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    widget.leading!,
+                    SizedBox(width: 6 * s),
+                    ProxoText(
+                      widget.label,
+                      maxLines: 1,
+                      softWrap: false,
+                      style: TextStyle(
+                        fontFamily: _kAdCardFont,
+                        fontSize: _kFbChipFs * t,
+                        fontWeight: FontWeight.w500,
+                        color: ink,
+                        height: 1.0,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               PositionedDirectional(

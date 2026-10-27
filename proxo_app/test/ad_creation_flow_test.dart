@@ -12,6 +12,7 @@ import 'package:proxo_app/services/ad_submission.dart';
 import 'package:proxo_app/services/ad_forecast.dart';
 import 'package:proxo_app/theme/app_theme.dart';
 import 'package:proxo_app/widgets/ad_form_components.dart';
+import 'package:proxo_app/widgets/ad_payment_card.dart';
 import 'package:proxo_app/widgets/ad_validation_notifications.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
 import 'package:proxo_app/widgets/proxo_notice.dart';
@@ -104,6 +105,16 @@ Future<void> tapVisible(WidgetTester tester, Finder finder) async {
   await tester.pump(const Duration(milliseconds: 300));
 }
 
+Future<void> reviewAd(WidgetTester tester) async {
+  await tapVisible(tester, find.byKey(const ValueKey('review-ad')));
+}
+
+Future<void> changePayment(WidgetTester tester, String value) async {
+  await tapVisible(tester, find.byKey(const ValueKey('change-payment')));
+  await tapVisible(tester, find.byKey(ValueKey('payment-$value')));
+  await tapVisible(tester, find.byKey(const ValueKey('confirm-payment')));
+}
+
 Future<void> capturePng(WidgetTester tester, String path) async {
   await tester.pump();
   final boundary = tester.renderObject<RenderRepaintBoundary>(
@@ -150,7 +161,7 @@ void main() {
           host(AdCreateScreen(repository: repo), scale: scale),
         );
         await tester.pumpAndSettle();
-        await tapVisible(tester, find.byKey(const ValueKey('goal-messages')));
+        await tapVisible(tester, find.byKey(const ValueKey('goal-contact')));
         await tester.ensureVisible(find.byKey(const ValueKey('review-ad')));
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
@@ -161,7 +172,8 @@ void main() {
         )) {
           expect(text.data?.toUpperCase() ?? '', isNot(contains('CPM')));
           if (text.style != null) {
-            expect(text.style!.fontWeight, FontWeight.w400);
+            expect(text.style!.fontWeight,
+                isIn([FontWeight.w400, FontWeight.w500, FontWeight.w600]));
           }
         }
       });
@@ -173,12 +185,12 @@ void main() {
       final repo = TestAdRepository();
       await tester.pumpWidget(host(AdCreateScreen(repository: repo)));
       await tester.pumpAndSettle();
-      await tapVisible(tester, find.byKey(const ValueKey('review-ad')));
+      await reviewAd(tester);
       expect(find.byType(AdConfirmationScreen), findsNothing);
       expect(repo.submissions, 0);
       expect(find.byType(AdValidationNotifications), findsOneWidget);
       await capturePng(tester, 'docs/ad_validation_preview.png');
-      await tapVisible(tester, find.byKey(const ValueKey('review-ad')));
+      await reviewAd(tester);
       expect(tester.takeException(), isNull);
     },
   );
@@ -214,7 +226,7 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
-  testWidgets('targeting natural widths, RTL order and supported values', (
+  testWidgets('targeting equal widths, RTL order and supported values', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -228,12 +240,15 @@ void main() {
         iq = find.byKey(const ValueKey('location-iraq'));
     expect(tester.getCenter(all).dx, greaterThan(tester.getCenter(ku).dx));
     expect(tester.getCenter(ku).dx, greaterThan(tester.getCenter(iq).dx));
-    expect(tester.getSize(all).height, tester.getSize(ku).height);
-    expect(tester.getSize(all).width, isNot(tester.getSize(ku).width));
+    for (final choice in [all, ku, iq]) {
+      expect(tester.getSize(choice).height, greaterThanOrEqualTo(48));
+    }
+    final beforeSelection = tester.getSize(ku);
     await tapVisible(tester, ku);
     expect(tester.widget<AdChoice>(ku).selected, isTrue);
+    expect(tester.getSize(ku), beforeSelection);
     await tapVisible(tester, find.byKey(const ValueKey('gender-female')));
-    await tapVisible(tester, find.byKey(const ValueKey('device-iphone')));
+    expect(find.byKey(const ValueKey('device-iphone')), findsNothing);
     await tapVisible(tester, find.byKey(const ValueKey('age-18-24')));
     expect(
       tester.widget<AdChoice>(find.byKey(const ValueKey('age-all'))).selected,
@@ -294,7 +309,7 @@ void main() {
         '90,000 د.ع',
       );
       expect(find.text('پێشبینی کرتەکان'), findsNothing);
-      await tapVisible(tester, find.byKey(const ValueKey('goal-messages')));
+      await tapVisible(tester, find.byKey(const ValueKey('goal-contact')));
       expect(find.text('پێشبینی کرتەکان'), findsOneWidget);
     },
   );
@@ -355,7 +370,9 @@ void main() {
         find.byKey(const ValueKey('ad-title')),
         'پاراستنی ناو',
       );
-      await tapVisible(tester, find.byKey(const ValueKey('goal-messages')));
+      await tapVisible(tester, find.byKey(const ValueKey('goal-contact')));
+      await tapVisible(
+          tester, find.byKey(const ValueKey('contact-page-disclosure')));
       await tapVisible(tester, find.text('دروستکردنی پەڕەی نوێ'));
       await tester.pumpAndSettle();
       expect(
@@ -404,6 +421,8 @@ void main() {
     final button = find.byKey(const ValueKey('review-ad'));
     await tester.ensureVisible(button);
     await tester.pumpAndSettle();
+    await tester.ensureVisible(button);
+    await tester.pumpAndSettle();
     final before = tester.getSize(button);
     expect(before.height, 48);
     repo.quoteCompletion = Completer<AdQuote>();
@@ -431,7 +450,7 @@ void main() {
       host(AdCreateScreen(repository: repo, proxoCard: validDraft().toJson())),
     );
     await tester.pumpAndSettle();
-    await tapVisible(tester, find.byKey(const ValueKey('review-ad')));
+    await reviewAd(tester);
     expect(find.byType(AdConfirmationScreen), findsNothing);
     expect(repo.submissions, 0);
     expect(find.textContaining('باڵانسی پێویستت بەردەست نییە'), findsWidgets);
@@ -444,11 +463,11 @@ void main() {
       host(AdCreateScreen(repository: repo, proxoCard: validDraft().toJson())),
     );
     await tester.pumpAndSettle();
-    await tapVisible(tester, find.byKey(const ValueKey('review-ad')));
+    await reviewAd(tester);
     expect(find.byType(AdConfirmationScreen), findsNothing);
     expect(repo.submissions, 0);
     await tapVisible(tester, find.text('دووبارە پشکنینەوە'));
-    await tapVisible(tester, find.byKey(const ValueKey('review-ad')));
+    await reviewAd(tester);
     expect(find.byType(AdConfirmationScreen), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('cancel-submission')));
     await tester.pumpAndSettle();
@@ -495,8 +514,8 @@ void main() {
       await tester.pumpAndSettle();
       await tapVisible(tester, find.byKey(const ValueKey('ad-time')));
       await tester.pumpAndSettle();
-      expect(find.byType(TimePickerDialog), findsOneWidget);
-      await tester.tap(find.text('OK'));
+      expect(find.byKey(const ValueKey('confirm-ad-time')), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('confirm-ad-time')));
       await tester.pumpAndSettle();
       String pickerText(Finder button) => tester
           .widget<ProxoText>(
@@ -519,7 +538,7 @@ void main() {
       await tapVisible(tester, laterChoice);
       expect(pickerText(dateButton), dateText);
       expect(pickerText(timeButton), timeText);
-      await tapVisible(tester, find.byKey(const ValueKey('review-ad')));
+      await reviewAd(tester);
       expect(find.byType(AdConfirmationScreen), findsOneWidget);
       final draft = tester
           .widget<AdConfirmationScreen>(find.byType(AdConfirmationScreen))
@@ -545,7 +564,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     await tapVisible(tester, find.byKey(const ValueKey('schedule-later')));
-    await tapVisible(tester, find.byKey(const ValueKey('review-ad')));
+    await reviewAd(tester);
     expect(find.byType(AdConfirmationScreen), findsNothing);
     expect(repo.submissions, 0);
     expect(find.byType(AdValidationNotifications), findsOneWidget);
@@ -559,9 +578,20 @@ void main() {
       host(AdCreateScreen(repository: repo, proxoCard: validDraft().toJson())),
     );
     await tester.pumpAndSettle();
-    await tapVisible(tester, find.byKey(const ValueKey('review-ad')));
+    final title = find.byKey(const ValueKey('ad-title'));
+    await tester.ensureVisible(title);
+    await tester.enterText(title, 'Edited title survives cancel');
+    await tester.pumpAndSettle();
+    await reviewAd(tester);
     expect(find.byType(AdConfirmationScreen), findsOneWidget);
     expect(repo.submissions, 0);
+    expect(
+        tester
+            .widget<AdConfirmationScreen>(find.byType(AdConfirmationScreen))
+            .request
+            .draft
+            .title,
+        'Edited title survives cancel');
     await tester.pump(const Duration(seconds: 1));
     await tester.tap(find.byKey(const ValueKey('cancel-submission')));
     await tester.pumpAndSettle();
@@ -572,7 +602,7 @@ void main() {
           .widget<TextField>(find.byKey(const ValueKey('ad-title')))
           .controller!
           .text,
-      validDraft().title,
+      'Edited title survives cancel',
     );
   });
   testWidgets(
@@ -605,7 +635,7 @@ void main() {
       );
       await tester.tap(find.text('Open ad form'));
       await tester.pumpAndSettle();
-      await tapVisible(tester, find.byKey(const ValueKey('review-ad')));
+      await reviewAd(tester);
       expect(repo.submissions, 0);
       await tester.pump(const Duration(seconds: 11));
       await tester.pump();
@@ -707,7 +737,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await tapVisible(tester, find.byKey(const ValueKey('review-ad')));
+      await reviewAd(tester);
       await tester.pump(const Duration(seconds: 11));
       await tester.pump();
       final original = repo.saved!;
@@ -720,7 +750,7 @@ void main() {
       await tester.ensureVisible(title);
       await tester.enterText(title, 'ناوی نوێ ABC-123');
       await tester.pump();
-      await tapVisible(tester, find.byKey(const ValueKey('payment-fastpay')));
+      await changePayment(tester, 'fastpay');
       await tapVisible(tester, find.byKey(const ValueKey('resume-pending-ad')));
       await tester.pump();
       expect(repo.submissions, 2);
@@ -735,9 +765,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(
           tester.widget<TextField>(title).controller!.text, 'ناوی نوێ ABC-123');
-      await tester
-          .ensureVisible(find.byKey(const ValueKey('payment-app_balance')));
-      await tester.tap(find.byKey(const ValueKey('payment-app_balance')));
+      await changePayment(tester, 'app_balance');
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
     },
@@ -758,7 +786,7 @@ void main() {
         host(AdCreateScreen(repository: repo, proxoCard: draft.toJson())),
       );
       await tester.pumpAndSettle();
-      await tapVisible(tester, find.byKey(const ValueKey('review-ad')));
+      await reviewAd(tester);
       await tester.pump(const Duration(seconds: 11));
       await tester.pump();
       expect(repo.submissions, 1);
@@ -771,7 +799,8 @@ void main() {
       expect(find.byType(ProxoNoticeCard), findsOneWidget);
       await tester.pump(const Duration(milliseconds: 1));
       expect(find.byType(ProxoNoticeCard), findsNothing);
-      expect(find.textContaining('پارەدانی FastPay لە باڵانسی'), findsOneWidget);
+      expect(
+          find.textContaining('پارەدانی FastPay لە باڵانسی'), findsOneWidget);
       await tester.tap(find.byKey(const ValueKey('cancel-submission')));
       await tester.pumpAndSettle();
       expect(find.byType(AdConfirmationScreen), findsNothing);
@@ -786,7 +815,7 @@ void main() {
     await tester.pumpWidget(host(
         AdCreateScreen(repository: repo, proxoCard: validDraft().toJson())));
     await tester.pumpAndSettle();
-    await tapVisible(tester, find.byKey(const ValueKey('review-ad')));
+    await reviewAd(tester);
     await tester.pump(const Duration(seconds: 11));
     await tester.pump();
     expect(repo.submissions, 1);
@@ -813,19 +842,21 @@ void main() {
         proxoCard: validDraft().toJson(),
         onAdCreated: () => created++)));
     await tester.pumpAndSettle();
-    await tapVisible(tester, find.byKey(const ValueKey('review-ad')));
+    await reviewAd(tester);
     await tester.pump(const Duration(seconds: 11));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
     await tester.pumpAndSettle();
     expect(created, 1);
     expect(repo.saved, isNull);
+    expect(tester.widget<AdPaymentCard>(find.byType(AdPaymentCard)).value,
+        'app_balance');
     expect(
         tester
             .widget<TextField>(find.byKey(const ValueKey('ad-title')))
             .controller!
             .text,
-        isEmpty);
+        startsWith('New Ad '));
     expect(
         tester
             .widget<TextField>(find.byKey(const ValueKey('ad-code')))

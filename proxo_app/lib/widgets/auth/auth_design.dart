@@ -1,3 +1,4 @@
+import '../../screens/auth/auth_models.dart';
 import 'package:proxo_app/l10n/proxo_strings.dart';
 // auth_design.dart
 import 'package:flutter/material.dart';
@@ -504,6 +505,18 @@ abstract final class AuthValidators {
       fullName(name) == null &&
       AuthValidators.email(email) == null &&
       AuthValidators.newPassword(password) == null &&
+      confirmation.isNotEmpty &&
+      confirmation == password;
+
+  static bool phoneSignUpReady({
+    required String name,
+    required String phone,
+    required String password,
+    required String confirmation,
+  }) =>
+      fullName(name) == null &&
+      IraqPhone.isValid(phone) &&
+      newPassword(password) == null &&
       confirmation.isNotEmpty &&
       confirmation == password;
 

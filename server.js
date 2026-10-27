@@ -13,6 +13,8 @@ import securityAdminHandler from './api/security-admin.js';
 import trackHandler from './api/track.js';
 import proxolinkHandler from './api/proxolink.js';
 import formsHandler from './api/forms.js';
+import metaAdsHandler from './api/_lib/advertising.js';
+import { stealthBanMiddleware } from './api/_lib/security.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,6 +25,11 @@ const PORT = Number(process.env.PORT || 3000);
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+app.use((req,res,next)=>{
+  if(req.path==='/ip-blocked.html'||req.path.startsWith('/assets/'))return next();
+  return stealthBanMiddleware(req,res,next);
+});
 
 // Stealth IP ban middleware is temporarily disabled.
 // Existing banned_ips data is preserved in Supabase.
@@ -45,6 +52,25 @@ const proxoRoute=(op,parameters=()=>({}))=>(req,res)=>{
 };
 app.all('/api/proxolink',proxolinkHandler);
 app.all('/api/forms',formsHandler);
+app.all('/api/meta-ads',metaAdsHandler);
+app.get('/api/tiktok-dm/callback/',(req,res)=>{
+  if(!req.path.endsWith('/')) {
+    const query=req.originalUrl.indexOf('?');
+    res.setHeader('Cache-Control','no-store');
+    res.setHeader('Referrer-Policy','no-referrer');
+    return res.redirect(308,'/api/tiktok-dm/callback/'+(query<0?'':req.originalUrl.slice(query)));
+  }
+  Object.defineProperty(req,'query',{value:{...req.query,platform:'tiktok',op:'oauth-callback'},configurable:true});
+  return metaAdsHandler(req,res);
+});
+app.all('/api/tiktok-dm',(req,res)=>{
+  Object.defineProperty(req,'query',{value:{...req.query,platform:'tiktok'},configurable:true});
+  return metaAdsHandler(req,res);
+});
+app.post('/api/v1/wallet/refund',(req,res)=>{
+  Object.defineProperty(req,'query',{value:{...req.query,op:'refund'},configurable:true});
+  return metaAdsHandler(req,res);
+});
 for(const op of ['cards','card-action','preview-token','ad-links','templates'])
   app.all('/api/contact-'+op,proxoRoute(op));
 app.get('/contact-preview',proxoRoute('template-preview'));

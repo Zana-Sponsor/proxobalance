@@ -1,0 +1,223 @@
+{
+  "393px": {
+    "screen": {
+      "width": 393,
+      "height": 852,
+      "text_scale": 1
+    },
+    "gaps_dp": {
+      "ad type → name": 32.0,
+      "name → code": 32.0,
+      "title label → input": 16.0,
+      "code label → input": 16.0,
+      "link label → input": 16.0,
+      "code → helper": 8.0,
+      "helper → link": 32.0,
+      "link → helper": 8.0,
+      "helper → optional note": 32.0,
+      "media → audience": 32.0,
+      "location heading → controls": 16.0,
+      "location → age": 32.0,
+      "age heading → controls": 16.0,
+      "age → gender": 32.0,
+      "gender heading → controls": 16.0,
+      "audience → budget": 32.0,
+      "budget → schedule": 32.0,
+      "schedule → coupon": 32.0,
+      "coupon → forecast": 32.0,
+      "forecast → payment": 32.0,
+      "payment heading → card": 16.0,
+      "payment → Sponsor": 32.0,
+      "ad type heading → controls": 16.0,
+      "name → destination": 32.0,
+      "destination → page": 32.0,
+      "page heading → disclosure": 16.0,
+      "page → media": 32.0
+    },
+    "input": {
+      "left": 20.0,
+      "top": 295.0,
+      "width": 353.0,
+      "height": 56.0,
+      "bottom": 351.0
+    },
+    "objective_button": {
+      "left": 202.5,
+      "top": 112.0,
+      "width": 170.5,
+      "height": 50.0,
+      "bottom": 162.0
+    },
+    "price_collapsed": {
+      "left": 0.0,
+      "top": 707.0,
+      "width": 393.0,
+      "height": 64.0,
+      "bottom": 771.0
+    },
+    "bottom_navigation": {
+      "left": 0.0,
+      "top": 771.0,
+      "width": 393.0,
+      "height": 81.0,
+      "bottom": 852.0
+    },
+    "price_navigation_gap_dp": 0.0,
+    "typography": {
+      "family": "RabarAuthRegular",
+      "app_bar_sp": 18.0,
+      "app_bar_weight": 500,
+      "heading_sp": 16.0,
+      "heading_weight": 500,
+      "input_label_sp": 15.0,
+      "input_label_weight": 500,
+      "field_sp": 15.0,
+      "field_weight": 400,
+      "choice_sp": 14.0,
+      "choice_weight": 500,
+      "helper_sp": 13.0,
+      "helper_weight": 400,
+      "price_row_label_sp": 13,
+      "price_row_amount_sp": 14,
+      "price_total_label_sp": 15,
+      "price_total_amount_sp": 16
+    },
+    "button_radius_dp": 12,
+    "input_radius_dp": 12,
+    "input_horizontal_padding_dp": 16,
+    "price_radius_dp": 0
+  },
+  "393px_expanded_price": {
+    "left": 0.0,
+    "top": 613.0,
+    "width": 393.0,
+    "height": 158.0,
+    "bottom": 771.0
+  },
+  "19-layout-320": {
+    "width": 320.0,
+    "height": 800.0,
+    "text_scale": 1.0,
+    "price_collapsed": {
+      "left": 0.0,
+      "top": 655.0,
+      "width": 320.0,
+      "height": 64.0,
+      "bottom": 719.0
+    },
+    "price_expanded": {
+      "left": 0.0,
+      "top": 561.0,
+      "width": 320.0,
+      "height": 158.0,
+      "bottom": 719.0
+    },
+    "navigation_gap_dp": 0.0,
+    "sponsor_visible_above_price": true
+  },
+  "20-layout-280": {
+    "width": 280.0,
+    "height": 700.0,
+    "text_scale": 1.0,
+    "price_collapsed": {
+      "left": 0.0,
+      "top": 555.0,
+      "width": 280.0,
+      "height": 64.0,
+      "bottom": 619.0
+    },
+    "price_expanded": {
+      "left": 0.0,
+      "top": 461.0,
+      "width": 280.0,
+      "height": 158.0,
+      "bottom": 619.0
+    },
+    "navigation_gap_dp": 0.0,
+    "sponsor_visible_above_price": true
+  },
+  "21-large-text-393": {
+    "width": 393.0,
+    "height": 852.0,
+    "text_scale": 2.0,
+    "price_collapsed": {
+      "left": 0.0,
+      "top": 697.0,
+      "width": 393.0,
+      "height": 64.0,
+      "bottom": 761.0
+    },
+    "price_expanded": {
+      "left": 0.0,
+      "top": 561.0,
+      "width": 393.0,
+      "height": 200.0,
+      "bottom": 761.0
+    },
+    "navigation_gap_dp": 0.0,
+    "sponsor_visible_above_price": true
+  },
+  "27-large-text-320": {
+    "width": 320.0,
+    "height": 800.0,
+    "text_scale": 2.0,
+    "price_collapsed": {
+      "left": 0.0,
+      "top": 593.0,
+      "width": 320.0,
+      "height": 116.0,
+      "bottom": 709.0
+    },
+    "price_expanded": {
+      "left": 0.0,
+      "top": 421.0,
+      "width": 320.0,
+      "height": 288.0,
+      "bottom": 709.0
+    },
+    "navigation_gap_dp": 0.0,
+    "sponsor_visible_above_price": true
+  },
+  "28-large-text-280": {
+    "width": 280.0,
+    "height": 700.0,
+    "text_scale": 2.0,
+    "price_collapsed": {
+      "left": 0.0,
+      "top": 493.0,
+      "width": 280.0,
+      "height": 116.0,
+      "bottom": 609.0
+    },
+    "price_expanded": {
+      "left": 0.0,
+      "top": 308.3,
+      "width": 280.0,
+      "height": 300.7,
+      "bottom": 609.0
+    },
+    "navigation_gap_dp": 0.0,
+    "sponsor_visible_above_price": true
+  },
+  "33-tablet-768": {
+    "width": 768.0,
+    "height": 1024.0,
+    "text_scale": 1.0,
+    "price_collapsed": {
+      "left": 0.0,
+      "top": 879.0,
+      "width": 768.0,
+      "height": 64.0,
+      "bottom": 943.0
+    },
+    "price_expanded": {
+      "left": 0.0,
+      "top": 785.0,
+      "width": 768.0,
+      "height": 158.0,
+      "bottom": 943.0
+    },
+    "navigation_gap_dp": 0.0,
+    "sponsor_visible_above_price": true
+  }
+}

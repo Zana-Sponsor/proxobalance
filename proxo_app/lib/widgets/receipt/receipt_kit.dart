@@ -159,6 +159,10 @@ class ReceiptAppBar extends StatelessWidget {
   final String? backTooltip;
   final Widget? action;
 
+  /// Optional screen-specific typography; receipt defaults remain unchanged.
+  final TextStyle? titleStyle;
+  final Color? iconColor, dividerColor;
+
   const ReceiptAppBar({
     super.key,
     required this.title,
@@ -166,6 +170,9 @@ class ReceiptAppBar extends StatelessWidget {
     required this.onBack,
     this.backTooltip,
     this.action,
+    this.titleStyle,
+    this.iconColor,
+    this.dividerColor,
   });
 
   @override
@@ -179,8 +186,9 @@ class ReceiptAppBar extends StatelessWidget {
     ProxoLocale.watch(context);
     final displayTitle = translateTitle ? ProxoStrings.text(title) : title;
     final double top = MediaQuery.paddingOf(context).top;
+    final effectiveTitleStyle = titleStyle ?? ReceiptTokens.barTitle;
     final titlePainter = TextPainter(
-      text: TextSpan(text: displayTitle, style: ReceiptTokens.barTitle),
+      text: TextSpan(text: displayTitle, style: effectiveTitleStyle),
       textDirection: receiptDirOf(displayTitle),
       textScaler: MediaQuery.textScalerOf(context),
     )..layout(
@@ -196,10 +204,11 @@ class ReceiptAppBar extends StatelessWidget {
     return Container(
       height: barHeight + top,
       padding: EdgeInsets.only(top: top),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: ReceiptTokens.bar,
         border: Border(
-          bottom: BorderSide(color: ReceiptTokens.barLine, width: 1),
+          bottom: BorderSide(
+              color: dividerColor ?? ReceiptTokens.barLine, width: 1),
         ),
       ),
       child: Stack(
@@ -216,7 +225,7 @@ class ReceiptAppBar extends StatelessWidget {
                 displayTitle,
                 textDirection: TextDirection.rtl,
                 textAlign: TextAlign.center,
-                style: ReceiptTokens.barTitle,
+                style: effectiveTitleStyle,
               ),
             ),
           ),
@@ -237,7 +246,7 @@ class ReceiptAppBar extends StatelessWidget {
                       Directionality.of(context) == TextDirection.ltr
                           ? Icons.arrow_back_ios_rounded
                           : Icons.arrow_forward_ios_rounded,
-                      color: ReceiptTokens.ink,
+                      color: iconColor ?? ReceiptTokens.ink,
                     ),
                   ),
                 ),

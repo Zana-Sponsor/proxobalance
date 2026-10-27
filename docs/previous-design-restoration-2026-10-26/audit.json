@@ -1,0 +1,44 @@
+{
+  "baseline": "3e96d569",
+  "restoration_commit": "6f4b93ff52583228da66ec4a05d218a12ff8aba8",
+  "exact_baseline_ui_files": [
+    "proxo_app/lib/screens/account_setup_screen.dart",
+    "proxo_app/lib/screens/home_screen.dart",
+    "proxo_app/lib/screens/profile_screen.dart",
+    "proxo_app/lib/screens/proxolink_create_page_screen.dart",
+    "proxo_app/lib/theme/app_theme.dart",
+    "proxo_app/lib/theme/proxo_chrome.dart",
+    "proxo_app/lib/theme/proxo_surface.dart",
+    "proxo_app/lib/theme/tiktok_ad_tokens.dart",
+    "proxo_app/lib/widgets/ad_form_components.dart",
+    "proxo_app/lib/widgets/auth/auth_widgets.dart",
+    "proxo_app/lib/widgets/best_metrics_home_section.dart",
+    "proxo_app/lib/widgets/best_results_design.dart",
+    "proxo_app/lib/widgets/home_best_result_card.dart",
+    "proxo_app/lib/widgets/home_quick_actions.dart",
+    "proxo_app/lib/widgets/proxo_app_bar.dart",
+    "proxo_app/lib/widgets/proxo_banner.dart",
+    "proxo_app/lib/widgets/proxo_empty_state.dart",
+    "proxo_app/lib/widgets/proxo_sidebar.dart",
+    "proxo_app/lib/widgets/tiktok_ad_price_card.dart"
+  ],
+  "functional_differences": [
+    "proxo_app/lib/screens/ad_screen.dart",
+    "proxo_app/lib/widgets/auth/auth_design.dart",
+    "proxo_app/lib/widgets/result_metrics.dart"
+  ],
+  "screenshots": {
+    "source_commit": "196e207c622d96177b9b5f7030b9942ae0490f3d",
+    "run_id": 40346471571,
+    "artifact_id": 12662256614,
+    "archive_sha256": "5541a141d563b8307e4963983fa43df512a3dfcd31995d486f20b6def5065041",
+    "fixture": "isolated fictional widgets; not a physical device",
+    "sha256": {
+      "home.png": "9490c80ea3d6151f6b33ddf029a75aa41f260a9b2645926069f377fd5f842597",
+      "profile.png": "94b7dce6bdbbb2e6c0ed6f583f537a8f37da3359d54873b11555c3b3aaf9865e",
+      "menu.png": "8e36913ca34dfeaf98660076c74bc3ec151e170d2e1b6be3d1972aceff850714",
+      "create-ad.png": "9b2812298247dc0fe0a814c40dd19e10b7f510b2b163af6e467caa13e892f607",
+      "ads-empty.png": "c3c12dec9a87f8e17b997ff1ead5a731cadeb6391e5414fe078bee3f45b24e73"
+    }
+  }
+}

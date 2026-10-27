@@ -1,5 +1,6 @@
 import { createHmac } from 'node:crypto';
 import { isIP } from 'node:net';
+import {readFileSync} from 'node:fs';
 
 const SUPABASE_URL = (process.env.SUPABASE_URL || 'https://pycxuugoblkslvwebxuu.supabase.co').replace(/\/$/, '');
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -126,7 +127,7 @@ export async function verifyBearer(req, { base, key }) {
   const auth = header(req, 'authorization');
   const match = auth.match(/^Bearer\s+(.+)$/i);
   if (!match) return null;
-  if (!key) throw Object.assign(new Error('Server configuration incomplete'), { status: 503 });
+  if (!key || !base) throw Object.assign(new Error('Server configuration incomplete'), { status: 503 });
   try {
     return await parseResponse(await fetch(`${base}/auth/v1/user`, {
       signal: AbortSignal.timeout(10000),
@@ -147,10 +148,11 @@ export async function isSecurityAdmin(userId) {
   if (!userId) return false;
   try {
     const rows = await serviceFetch(
-      `/rest/v1/ex_profiles?id=eq.${encodeURIComponent(userId)}&select=is_admin,is_banned&limit=1`
+      `/rest/v1/ex_profiles?id=eq.${encodeURIComponent(userId)}&select=is_admin,is_banned,role,staff_permissions&limit=1`
     );
     const row = Array.isArray(rows) ? rows[0] : null;
-    return !!row && row.is_admin === true && row.is_banned !== true;
+    return !!row && row.is_admin === true && row.is_banned !== true &&
+      row.role==='super_admin';
   } catch {
     return false;
   }
@@ -328,16 +330,22 @@ function throttled(key) {
   return false;
 }
 
+function parseJsonInput(raw) {
+  try { return raw ? JSON.parse(raw) : {}; }
+  catch { throw Object.assign(new SyntaxError('Invalid JSON'), { status: 400, code: 'invalid_request' }); }
+}
+
 export async function readJson(req, maxBytes = 64 * 1024) {
-  const declared = Number(header(req, 'content-length') || 0);
-  if (declared > maxBytes) throw Object.assign(new Error('Payload too large'), { status: 413 });
-  if (req.body && typeof req.body === 'object') {
-    if(Buffer.byteLength(JSON.stringify(req.body))>maxBytes)throw Object.assign(new Error('Payload too large'),{status:413});
-    return req.body;
+  const rawLength = header(req, 'content-length');
+  const declared = rawLength ? Number(rawLength) : 0;
+  if (!Number.isFinite(declared) || declared < 0) {
+    throw Object.assign(new Error('Invalid Content-Length'), { status: 400, code: 'invalid_request' });
   }
-  if (typeof req.body === 'string') {
-    if(Buffer.byteLength(req.body)>maxBytes)throw Object.assign(new Error('Payload too large'),{status:413});
-    return JSON.parse(req.body || '{}');
+  if (declared > maxBytes) throw Object.assign(new Error('Payload too large'), { status: 413 });
+  if (req.body !== undefined && req.body !== null) {
+    const raw = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
+    if (Buffer.byteLength(raw, 'utf8') > maxBytes) throw Object.assign(new Error('Payload too large'), { status: 413 });
+    return typeof req.body === 'string' ? parseJsonInput(raw || '{}') : req.body;
   }
   let size = 0;
   const chunks = [];
@@ -347,7 +355,7 @@ export async function readJson(req, maxBytes = 64 * 1024) {
     chunks.push(chunk);
   }
   const raw = Buffer.concat(chunks).toString('utf8');
-  return raw ? JSON.parse(raw) : {};
+  return parseJsonInput(raw);
 }
 
 export function json(res, status, body) {
@@ -364,6 +372,14 @@ export function stealth404(res) {
   res.end('Not Found');
 }
 
+export function blockedResponse(req,res){
+ if(!String(req.url||'').startsWith('/api/')){
+  res.statusCode=403;res.setHeader('Content-Type','text/html; charset=utf-8');res.setHeader('Cache-Control','no-store');
+  return res.end(readFileSync(new URL('../../ip-blocked.html',import.meta.url),'utf8'));
+ }
+ return json(res,403,{error:'IP_BLOCKED',blocked:true,redirect:'/ip-blocked.html'});
+}
+
 // Express/Node adapter: mount this before static files and before every route
 // (`app.use(stealthBanMiddleware)`) when the whole site is served by Node.
 export async function stealthBanMiddleware(req, res, next) {
@@ -375,7 +391,7 @@ export async function stealthBanMiddleware(req, res, next) {
       if (!throttled(`blocked|${context.ip || '-'}`)) {
         await recordEvent(context, { type: 'blocked_request', detail: gate.reason, risk: 0 }).catch(() => {});
       }
-      return stealth404(res);
+      return blockedResponse(req,res);
     }
     req.securityContext = context;
     return next();
@@ -422,7 +438,7 @@ export function withSecurity(handler, {
         if (!throttled(`blocked|${context.ip || '-'}`)) {
           await recordEvent(context, { type: 'blocked_request', detail: gate.reason, risk: 0 });
         }
-        return stealth404(res);
+        return blockedResponse(req,res);
       }
 
       user = auth === 'none' ? null : await resolveUser(req);

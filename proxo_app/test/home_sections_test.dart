@@ -1,3 +1,4 @@
+import 'package:proxo_app/widgets/proxo_symbol.dart';
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -18,7 +19,6 @@ import 'package:proxo_app/widgets/home_best_result_card.dart';
 import 'package:proxo_app/widgets/best_results_design.dart';
 import 'package:proxo_app/widgets/home_quick_actions.dart';
 import 'package:proxo_app/widgets/proxo_text.dart';
-import 'package:proxo_app/widgets/proxo_symbol.dart';
 
 import 'ad_creation_flow_test.dart' show TestAdRepository;
 import 'text_direction_test.dart' show expectLtrToken, paragraphOf;

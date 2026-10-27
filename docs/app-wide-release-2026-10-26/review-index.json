@@ -1,0 +1,381 @@
+[
+  {
+    "sheet": "review-sheets/app-states-01.jpg",
+    "screenshots": [
+      "screenshots/app-states/ads-empty-280-s1.0.png",
+      "screenshots/app-states/ads-empty-280-s2.0.png",
+      "screenshots/app-states/ads-empty-320-s1.0.png",
+      "screenshots/app-states/ads-empty-393-s1.0.png",
+      "screenshots/app-states/best-results-expanded-280-s1.0-bottom.png",
+      "screenshots/app-states/best-results-expanded-280-s1.0.png",
+      "screenshots/app-states/best-results-expanded-280-s2.0-bottom.png",
+      "screenshots/app-states/best-results-expanded-280-s2.0.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/app-states-02.jpg",
+    "screenshots": [
+      "screenshots/app-states/best-results-expanded-320-s1.0-bottom.png",
+      "screenshots/app-states/best-results-expanded-320-s1.0.png",
+      "screenshots/app-states/best-results-expanded-393-s1.0-bottom.png",
+      "screenshots/app-states/best-results-expanded-393-s1.0.png",
+      "screenshots/app-states/menu-280-s1.0.png",
+      "screenshots/app-states/menu-280-s2.0-bottom.png",
+      "screenshots/app-states/menu-280-s2.0.png",
+      "screenshots/app-states/menu-320-s1.0.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/app-states-03.jpg",
+    "screenshots": [
+      "screenshots/app-states/menu-393-s1.0.png",
+      "screenshots/app-states/page-error-280-s1.0.png",
+      "screenshots/app-states/page-error-280-s2.0.png",
+      "screenshots/app-states/page-error-320-s1.0.png",
+      "screenshots/app-states/page-error-393-s1.0.png",
+      "screenshots/app-states/update-optional-280-s1.0.png",
+      "screenshots/app-states/update-optional-280-s2.0.png",
+      "screenshots/app-states/update-optional-320-s1.0.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/app-states-04.jpg",
+    "screenshots": [
+      "screenshots/app-states/update-optional-393-s1.0.png",
+      "screenshots/app-states/update-required-280-s1.0.png",
+      "screenshots/app-states/update-required-280-s2.0.png",
+      "screenshots/app-states/update-required-320-s1.0.png",
+      "screenshots/app-states/update-required-393-s1.0.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/create-ad-01.jpg",
+    "screenshots": [
+      "screenshots/create-ad/01-top-create-ad.png",
+      "screenshots/create-ad/02-ad-types.png",
+      "screenshots/create-ad/03-ad-name.png",
+      "screenshots/create-ad/04-media.png",
+      "screenshots/create-ad/05-contact-destination.png",
+      "screenshots/create-ad/06-contact-page-collapsed.png",
+      "screenshots/create-ad/07-contact-page-expanded.png",
+      "screenshots/create-ad/08-age.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/create-ad-02.jpg",
+    "screenshots": [
+      "screenshots/create-ad/09-gender.png",
+      "screenshots/create-ad/10-budget.png",
+      "screenshots/create-ad/11-schedule.png",
+      "screenshots/create-ad/12-payment.png",
+      "screenshots/create-ad/13-separate-sponsor.png",
+      "screenshots/create-ad/14-price-collapsed.png",
+      "screenshots/create-ad/15-price-expanded.png",
+      "screenshots/create-ad/16-price-loading.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/create-ad-03.jpg",
+    "screenshots": [
+      "screenshots/create-ad/17-scroll-behind-price.png",
+      "screenshots/create-ad/18-price-and-bottom-navigation.png",
+      "screenshots/create-ad/19-layout-320-expanded.png",
+      "screenshots/create-ad/19-layout-320.png",
+      "screenshots/create-ad/20-layout-280-expanded.png",
+      "screenshots/create-ad/20-layout-280.png",
+      "screenshots/create-ad/21-large-text-393-expanded.png",
+      "screenshots/create-ad/21-large-text-393.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/create-ad-04.jpg",
+    "screenshots": [
+      "screenshots/create-ad/22-contact-selected-platform-logos.png",
+      "screenshots/create-ad/23-price-expanded-loading.png",
+      "screenshots/create-ad/24-restaurant-resources.png",
+      "screenshots/create-ad/25-app-resources.png",
+      "screenshots/create-ad/26-direct-message-open-sections.png",
+      "screenshots/create-ad/27-large-text-320-expanded.png",
+      "screenshots/create-ad/27-large-text-320.png",
+      "screenshots/create-ad/28-large-text-280-expanded.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/create-ad-05.jpg",
+    "screenshots": [
+      "screenshots/create-ad/28-large-text-280.png",
+      "screenshots/create-ad/29-price-with-discount.png",
+      "screenshots/create-ad/30-price-error.png",
+      "screenshots/create-ad/31-price-recovered.png",
+      "screenshots/create-ad/32-narrow-price-details-scrolled.png",
+      "screenshots/create-ad/33-tablet-768-expanded.png",
+      "screenshots/create-ad/33-tablet-768.png",
+      "screenshots/create-ad/34-payment-sheet-wallet.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/create-ad-06.jpg",
+    "screenshots": [
+      "screenshots/create-ad/35-payment-sheet-fastpay.png",
+      "screenshots/create-ad/36-direct-account-selected.png",
+      "screenshots/create-ad/37-direct-video-selected.png",
+      "screenshots/create-ad/38-direct-video-sheet.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/create-ad-flow-01.jpg",
+    "screenshots": [
+      "screenshots/create-ad-flow/01-main.png",
+      "screenshots/create-ad-flow/02-four-ad-types.png",
+      "screenshots/create-ad-flow/03-contact-active.png",
+      "screenshots/create-ad-flow/04-views-active.png",
+      "screenshots/create-ad-flow/05-restaurant-active.png",
+      "screenshots/create-ad-flow/06-app-download-active.png",
+      "screenshots/create-ad-flow/07-primary-inactive.png",
+      "screenshots/create-ad-flow/08-age-active.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/create-ad-flow-02.jpg",
+    "screenshots": [
+      "screenshots/create-ad-flow/09-gender-active.png",
+      "screenshots/create-ad-flow/10-contact-destinations.png",
+      "screenshots/create-ad-flow/11-all-platforms-inactive.png",
+      "screenshots/create-ad-flow/12-all-platforms-active.png",
+      "screenshots/create-ad-flow/13-tiktok-message-inactive.png",
+      "screenshots/create-ad-flow/14-tiktok-message-active.png",
+      "screenshots/create-ad-flow/15-page-collapsed.png",
+      "screenshots/create-ad-flow/16-page-expanded.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/create-ad-flow-03.jpg",
+    "screenshots": [
+      "screenshots/create-ad-flow/17-page-image-name-status.png",
+      "screenshots/create-ad-flow/18-contact-only-pages.png",
+      "screenshots/create-ad-flow/19-restaurant-only-pages.png",
+      "screenshots/create-ad-flow/20-app-download-only-pages.png",
+      "screenshots/create-ad-flow/21-views-content.png",
+      "screenshots/create-ad-flow/22-total-collapsed.png",
+      "screenshots/create-ad-flow/23-total-expanded.png",
+      "screenshots/create-ad-flow/24-total-loading.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/create-ad-flow-04.jpg",
+    "screenshots": [
+      "screenshots/create-ad-flow/25-scrolled-sticky-total.png",
+      "screenshots/create-ad-flow/26-separate-sponsor.png",
+      "screenshots/create-ad-flow/27-no-page.png",
+      "screenshots/create-ad-flow/28-direct-create-page.png",
+      "screenshots/create-ad-flow/29-back-to-preserved-ad.png",
+      "screenshots/create-ad-flow/30-new-page-visible.png",
+      "screenshots/create-ad-flow/31-definitive-failure.png",
+      "screenshots/create-ad-flow/32-fresh-after-failure.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/create-ad-flow-05.jpg",
+    "screenshots": [
+      "screenshots/create-ad-flow/33-small-screen-280-2x.png",
+      "screenshots/create-ad-flow/34-validation-error.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/create-page-01.jpg",
+    "screenshots": [
+      "screenshots/create-page/create-320.0.png",
+      "screenshots/create-page/create-page-unavailable-320-2x.png",
+      "screenshots/create-page/create-style-bottom-contact-320.0.png",
+      "screenshots/create-page/create-style-bottom-download-320.0.png",
+      "screenshots/create-page/create-style-bottom-order-320.0.png",
+      "screenshots/create-page/create-style-contact-320.0.png",
+      "screenshots/create-page/create-style-download-320.0.png",
+      "screenshots/create-page/create-style-order-320.0.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/create-page-02.jpg",
+    "screenshots": [
+      "screenshots/create-page/page-contact-280-s1.0-d1.0-bottom.png",
+      "screenshots/create-page/page-contact-280-s1.0-d1.0.png",
+      "screenshots/create-page/page-contact-393-s1.0-d3.0-bottom.png",
+      "screenshots/create-page/page-contact-393-s1.0-d3.0.png",
+      "screenshots/create-page/page-contact-393-s2.0-d1.0-bottom.png",
+      "screenshots/create-page/page-contact-393-s2.0-d1.0.png",
+      "screenshots/create-page/page-download-280-s1.0-d1.0-bottom.png",
+      "screenshots/create-page/page-download-280-s1.0-d1.0.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/create-page-03.jpg",
+    "screenshots": [
+      "screenshots/create-page/page-download-393-s1.0-d3.0-bottom.png",
+      "screenshots/create-page/page-download-393-s1.0-d3.0.png",
+      "screenshots/create-page/page-download-393-s2.0-d1.0-bottom.png",
+      "screenshots/create-page/page-download-393-s2.0-d1.0.png",
+      "screenshots/create-page/page-order-280-s1.0-d1.0-bottom.png",
+      "screenshots/create-page/page-order-280-s1.0-d1.0.png",
+      "screenshots/create-page/page-order-393-s1.0-d3.0-bottom.png",
+      "screenshots/create-page/page-order-393-s1.0-d3.0.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/create-page-04.jpg",
+    "screenshots": [
+      "screenshots/create-page/page-order-393-s2.0-d1.0-bottom.png",
+      "screenshots/create-page/page-order-393-s2.0-d1.0.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/details-and-success-01.jpg",
+    "screenshots": [
+      "screenshots/details-and-success/ad-receipt-320-s2-bottom.png",
+      "screenshots/details-and-success/ad-receipt-320-s2-middle.png",
+      "screenshots/details-and-success/ad-receipt-320-s2.png",
+      "screenshots/details-and-success/ad-receipt-393-s1-bottom.png",
+      "screenshots/details-and-success/ad-receipt-393-s1.png",
+      "screenshots/details-and-success/tools-create-flow-320-s2-contact-filled.png",
+      "screenshots/details-and-success/tools-create-flow-320-s2-contact-form.png",
+      "screenshots/details-and-success/tools-create-flow-320-s2-created-in-memory.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/details-and-success-02.jpg",
+    "screenshots": [
+      "screenshots/details-and-success/tools-create-flow-320-s2-designs-submit.png",
+      "screenshots/details-and-success/tools-create-flow-320-s2-download-form.png",
+      "screenshots/details-and-success/tools-create-flow-320-s2-order-form.png",
+      "screenshots/details-and-success/tools-create-flow-320-s2.png",
+      "screenshots/details-and-success/tools-create-flow-393-s1-contact-filled.png",
+      "screenshots/details-and-success/tools-create-flow-393-s1-contact-form.png",
+      "screenshots/details-and-success/tools-create-flow-393-s1-created-in-memory.png",
+      "screenshots/details-and-success/tools-create-flow-393-s1-designs-submit.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/details-and-success-03.jpg",
+    "screenshots": [
+      "screenshots/details-and-success/tools-create-flow-393-s1-download-form.png",
+      "screenshots/details-and-success/tools-create-flow-393-s1-order-form.png",
+      "screenshots/details-and-success/tools-create-flow-393-s1.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/main-01.jpg",
+    "screenshots": [
+      "screenshots/main/ads-ckb-280-s1.0-d2.0.png",
+      "screenshots/main/ads-ckb-280-s2.0-d2.0.png",
+      "screenshots/main/ads-ckb-320-s1.0-d2.0.png",
+      "screenshots/main/ads-ckb-393-s1.0-d3.0.png",
+      "screenshots/main/deposit-ckb-280-s1.0-d2.0.png",
+      "screenshots/main/deposit-ckb-280-s2.0-d2.0-bottom.png",
+      "screenshots/main/deposit-ckb-280-s2.0-d2.0.png",
+      "screenshots/main/deposit-ckb-320-s1.0-d2.0.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/main-02.jpg",
+    "screenshots": [
+      "screenshots/main/deposit-ckb-393-s1.0-d3.0.png",
+      "screenshots/main/home-ckb-280-s1.0-d2.0.png",
+      "screenshots/main/home-ckb-280-s2.0-d2.0-bottom.png",
+      "screenshots/main/home-ckb-280-s2.0-d2.0.png",
+      "screenshots/main/home-ckb-320-s1.0-d2.0.png",
+      "screenshots/main/home-ckb-393-s1.0-d3.0.png",
+      "screenshots/main/login-ckb-280-s1.0-d2.0.png",
+      "screenshots/main/login-ckb-280-s2.0-d2.0-bottom.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/main-03.jpg",
+    "screenshots": [
+      "screenshots/main/login-ckb-280-s2.0-d2.0.png",
+      "screenshots/main/login-ckb-320-s1.0-d2.0.png",
+      "screenshots/main/login-ckb-393-s1.0-d3.0.png",
+      "screenshots/main/login-phone-ckb-280-s1.0-d2.0.png",
+      "screenshots/main/login-phone-ckb-280-s2.0-d2.0-bottom.png",
+      "screenshots/main/login-phone-ckb-280-s2.0-d2.0.png",
+      "screenshots/main/login-phone-ckb-320-s1.0-d2.0.png",
+      "screenshots/main/login-phone-ckb-393-s1.0-d3.0.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/main-04.jpg",
+    "screenshots": [
+      "screenshots/main/notifications-ckb-280-s1.0-d2.0.png",
+      "screenshots/main/notifications-ckb-280-s2.0-d2.0.png",
+      "screenshots/main/notifications-ckb-320-s1.0-d2.0.png",
+      "screenshots/main/notifications-ckb-393-s1.0-d3.0.png",
+      "screenshots/main/otp-ckb-280-s1.0-d2.0.png",
+      "screenshots/main/otp-ckb-280-s2.0-d2.0.png",
+      "screenshots/main/otp-ckb-320-s1.0-d2.0.png",
+      "screenshots/main/otp-ckb-393-s1.0-d3.0.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/main-05.jpg",
+    "screenshots": [
+      "screenshots/main/otp-filled-ckb-280-s1.0-d2.0.png",
+      "screenshots/main/otp-filled-ckb-280-s2.0-d2.0.png",
+      "screenshots/main/otp-filled-ckb-320-s1.0-d2.0.png",
+      "screenshots/main/otp-filled-ckb-393-s1.0-d3.0.png",
+      "screenshots/main/profile-ckb-280-s1.0-d2.0-bottom.png",
+      "screenshots/main/profile-ckb-280-s1.0-d2.0.png",
+      "screenshots/main/profile-ckb-280-s2.0-d2.0-bottom.png",
+      "screenshots/main/profile-ckb-280-s2.0-d2.0.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/main-06.jpg",
+    "screenshots": [
+      "screenshots/main/profile-ckb-320-s1.0-d2.0-bottom.png",
+      "screenshots/main/profile-ckb-320-s1.0-d2.0.png",
+      "screenshots/main/profile-ckb-393-s1.0-d3.0-bottom.png",
+      "screenshots/main/profile-ckb-393-s1.0-d3.0.png",
+      "screenshots/main/results-ckb-280-s1.0-d2.0-bottom.png",
+      "screenshots/main/results-ckb-280-s1.0-d2.0.png",
+      "screenshots/main/results-ckb-280-s2.0-d2.0-bottom.png",
+      "screenshots/main/results-ckb-280-s2.0-d2.0.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/main-07.jpg",
+    "screenshots": [
+      "screenshots/main/results-ckb-320-s1.0-d2.0-bottom.png",
+      "screenshots/main/results-ckb-320-s1.0-d2.0.png",
+      "screenshots/main/results-ckb-393-s1.0-d3.0-bottom.png",
+      "screenshots/main/results-ckb-393-s1.0-d3.0.png",
+      "screenshots/main/results-empty-ckb-280-s1.0-d2.0.png",
+      "screenshots/main/results-empty-ckb-280-s2.0-d2.0.png",
+      "screenshots/main/results-empty-ckb-320-s1.0-d2.0.png",
+      "screenshots/main/results-empty-ckb-393-s1.0-d3.0.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/main-08.jpg",
+    "screenshots": [
+      "screenshots/main/signup-ckb-280-s1.0-d2.0-bottom.png",
+      "screenshots/main/signup-ckb-280-s1.0-d2.0.png",
+      "screenshots/main/signup-ckb-280-s2.0-d2.0-bottom.png",
+      "screenshots/main/signup-ckb-280-s2.0-d2.0.png",
+      "screenshots/main/signup-ckb-320-s1.0-d2.0-bottom.png",
+      "screenshots/main/signup-ckb-320-s1.0-d2.0.png",
+      "screenshots/main/signup-ckb-393-s1.0-d3.0-bottom.png",
+      "screenshots/main/signup-ckb-393-s1.0-d3.0.png"
+    ]
+  },
+  {
+    "sheet": "review-sheets/main-09.jpg",
+    "screenshots": [
+      "screenshots/main/signup-filled-ckb-280-s1.0-d2.0-bottom.png",
+      "screenshots/main/signup-filled-ckb-280-s1.0-d2.0.png",
+      "screenshots/main/signup-filled-ckb-280-s2.0-d2.0-bottom.png",
+      "screenshots/main/signup-filled-ckb-280-s2.0-d2.0.png",
+      "screenshots/main/signup-filled-ckb-320-s1.0-d2.0-bottom.png",
+      "screenshots/main/signup-filled-ckb-320-s1.0-d2.0.png",
+      "screenshots/main/signup-filled-ckb-393-s1.0-d3.0-bottom.png",
+      "screenshots/main/signup-filled-ckb-393-s1.0-d3.0.png"
+    ]
+  }
+]

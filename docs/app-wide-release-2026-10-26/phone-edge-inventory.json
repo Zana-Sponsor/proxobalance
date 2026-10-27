@@ -1,0 +1,16 @@
+{
+  "project": "cojchkwssmasiejcgvbk",
+  "function": "phone-otp-session",
+  "status": "ACTIVE",
+  "version": 2,
+  "verify_jwt": false,
+  "local_sha256": "9ed460413f149b2318b830841cbd682d61ed380b5ae19165cb0630cbe60f20d8",
+  "production_sha256": "2556ee8c7b0d1b69869b1971ec3701f5008105205e44d3f6509c4838b621520a",
+  "source_equivalent": true,
+  "live_otp_verification": false,
+  "required_rpcs_present": [
+    "pa_profile_by_phone(p_phone text)",
+    "pa_verify_whatsapp_otp(p_phone text, p_code text, p_purpose text)",
+    "pa_record_signup_whatsapp_marketing(p_user_id uuid, p_opted_in boolean, p_version text, p_locale text)"
+  ]
+}

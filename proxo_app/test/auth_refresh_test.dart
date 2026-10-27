@@ -120,36 +120,21 @@ void main() {
   }
 
   testWidgets(
-      'single signup form uses custom email delivery, opens separate OTP and Back retains values',
+      'phone-only signup requests normalized OTP before identity creation and Back retains values',
       (t) async {
     final requests = <http.Request>[];
     final transport = MockClient((request) async {
       requests.add(request);
-      if (request.url.host == 'signup-email-api-fixture.invalid') {
-        expect(request.url.path, '/webhook/send_otp');
-        expect(jsonDecode(request.body), {
-          'action': 'request_otp',
-          'purpose': 'signup',
-          'email': 'fixture@example.com',
-          'name': 'Fixture User',
-          'user_id': '00000000-0000-4000-8000-000000000088',
-        });
-        return http.Response('{"success":true}', 200,
-            headers: {'content-type': 'application/json'});
-      }
-      expect(request.url.host, 'signup-fixture.invalid');
-      expect(request.url.path, '/auth/v1/signup');
-      return http.Response(
-          jsonEncode({
-            'id': '00000000-0000-4000-8000-000000000088',
-            'aud': 'authenticated',
-            'role': 'authenticated',
-            'email': 'fixture@example.com',
-            'created_at': '2026-10-18T12:00:00Z',
-            'app_metadata': {},
-            'user_metadata': {},
-          }),
-          200,
+      expect(request.url.host, 'signup-phone-api-fixture.invalid');
+      expect(request.url.path, '/webhook/send_otp');
+      final body = jsonDecode(request.body);
+      expect(body['purpose'], 'signup');
+      expect(body['phone'], '+9647501234567');
+      expect(body['locale'], 'ckb');
+      expect(body['clientMessageId'], startsWith('proxo-'));
+      expect(body.containsKey('email'), isFalse);
+      expect(body.containsKey('password'), isFalse);
+      return http.Response('{"success":true}', 200,
           headers: {'content-type': 'application/json'});
     });
     final client = (await t.runAsync(() async => SupabaseClient(
@@ -159,8 +144,10 @@ void main() {
             autoRefreshToken: false, pkceAsyncStorage: MemoryAuthStorage()))))!;
     final service = AuthService(
         supabase: client,
-        emailOtpUrl: 'https://signup-email-api-fixture.invalid/webhook/send_otp',
-        whatsappOtpUrl: 'https://unused.invalid',
+        emailOtpUrl:
+            'https://signup-email-api-fixture.invalid/webhook/send_otp',
+        whatsappOtpUrl:
+            'https://signup-phone-api-fixture.invalid/webhook/send_otp',
         httpClient: transport);
     await t.pumpWidget(host(AuthShell(authService: service)));
     await settle(t);
@@ -173,14 +160,14 @@ void main() {
     expect(fields, findsNWidgets(4));
     expect(find.byType(OtpScreen), findsNothing);
     await t.enterText(fields.at(0), 'Fixture User');
-    await t.enterText(fields.at(1), 'invalid-email');
+    await t.enterText(fields.at(1), '123');
     await t.enterText(fields.at(2), 'Strong#123');
     await t.enterText(fields.at(3), 'Strong#123');
     await t.pump();
     final submit = find.byKey(const ValueKey('signup-submit'));
     expect(t.widget<AuthPrimaryButton>(submit).enabled, isFalse);
     expect(requests, isEmpty);
-    await t.enterText(fields.at(1), ' Fixture@Example.com ');
+    await t.enterText(fields.at(1), '٠٧٥٠١٢٣٤٥٦٧');
     await t.pump();
     expect(t.widget<AuthPrimaryButton>(submit).enabled, isTrue);
     FocusManager.instance.primaryFocus?.unfocus();
@@ -193,17 +180,15 @@ void main() {
     await settle(t);
     expect(find.byType(OtpScreen), findsOneWidget);
     expect(find.byKey(const ValueKey('signup-submit')), findsNothing);
-    expect(requests.map((r) => r.url.path),
-        ['/auth/v1/signup', '/webhook/send_otp']);
-    expect(jsonDecode(requests.first.body)['email'], 'fixture@example.com');
+    expect(requests.map((r) => r.url.path), ['/webhook/send_otp']);
+    expect(jsonDecode(requests.first.body)['phone'], '+9647501234567');
     expect(client.auth.currentSession, isNull);
     await t.binding.handlePopRoute();
     await settle(t);
     expect(fields, findsNWidgets(4));
     expect(find.byType(OtpScreen), findsNothing);
     expect(t.widget<TextField>(fields.at(0)).controller!.text, 'Fixture User');
-    expect(t.widget<TextField>(fields.at(1)).controller!.text,
-        'fixture@example.com');
+    expect(t.widget<TextField>(fields.at(1)).controller!.text, '7501234567');
     expect(t.widget<TextField>(fields.at(2)).controller!.text, 'Strong#123');
     expect(t.widget<TextField>(fields.at(3)).controller!.text, 'Strong#123');
     expect(t.takeException(), isNull);
@@ -227,7 +212,7 @@ void main() {
       await t.tap(signup);
       await settle(t);
       await t.enterText(find.byType(TextField).at(0), 'Fixture User');
-      await t.enterText(find.byType(TextField).at(1), 'fixture@example.com');
+      await t.enterText(find.byType(TextField).at(1), '7501234567');
       await t.enterText(find.byType(TextField).at(2), 'Strong#123');
       await t.enterText(find.byType(TextField).at(3), 'Strong#123');
       FocusManager.instance.primaryFocus?.unfocus();
@@ -245,7 +230,7 @@ void main() {
       );
       expect(
         t.widget<TextField>(find.byType(TextField).at(1)).controller!.text,
-        'fixture@example.com',
+        '7501234567',
       );
       expect(find.byType(TextField), findsNWidgets(4));
       expect(t.widget<TextField>(find.byType(TextField).at(2)).controller!.text,
@@ -335,7 +320,11 @@ void main() {
             texts.every(
               (e) =>
                   e['font_family'] == AuthTokens.fontFamily &&
-                  e['font_weight'] == FontWeight.w400.index,
+                  {
+                    FontWeight.w400.index,
+                    FontWeight.w500.index,
+                    FontWeight.w600.index
+                  }.contains(e['font_weight']),
             ),
             isTrue,
           );

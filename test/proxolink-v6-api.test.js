@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
-import {localService,pagePayload,OWNER,OTHER,invoke,configFromHtml} from './fixtures/proxolink-v6-service.mjs';
+import {localService,pagePayload,OWNER,OTHER,invoke,configFromHtml,response} from './fixtures/proxolink-v6-service.mjs';
 import {PAGE_TYPES,PREPARED_DESIGNS,PROVIDER_REGISTRY,providerDestination,registryMetadata} from '../api/_lib/proxolink-pages.js';
 process.env.PROXO_SUPABASE_URL='https://v6-isolated.supabase.co';
 process.env.PROXO_SUPABASE_SERVICE_ROLE_KEY='isolated-fixture-key';
@@ -16,6 +16,31 @@ let fixture;
 test.beforeEach(()=>{fixture=localService();global.fetch=fixture.fetcher;process.env.PROXO_V6_WRITE_MODE='isolated';});
 test.afterEach(()=>{global.fetch=original;});
 const call=(op,options)=>invoke(handler,op,options);
+test('malformed page JSON is a validation error and never saves a page',async()=>{
+  for(const streamed of [false,true]) {
+    const req={method:'POST',query:{op:'cards'},url:'/api/proxolink',
+      headers:{authorization:'Bearer user-token'},socket:{remoteAddress:'127.0.0.1'}};
+    if(streamed)req[Symbol.asyncIterator]=async function*(){yield Buffer.from('{"page_kind":');};
+    else req.body='{"page_kind":';
+    const res=response();await handler(req,res);
+    assert.equal(res.statusCode,422);assert.equal(JSON.parse(res.body).error,'invalid_request');
+  }
+  assert.equal(fixture.rows.length,0);assert.equal(fixture.writes.length,0);
+});
+test('invalid page request length and oversized UTF-8 input never reach persistence',async()=>{
+  const large=pagePayload('contact',['telegram'],{bio:'ە'.repeat(40000)});
+  for(const [body,headers,status] of [
+    [{},{'content-length':'-1'},422],
+    [{},{'content-length':'invalid'},422],
+    [large,{},413],
+    [JSON.stringify(large),{},413],
+  ]) {
+    const res=response();await handler({method:'POST',query:{op:'cards'},url:'/api/proxolink',body,
+      headers:{authorization:'Bearer user-token',...headers},socket:{remoteAddress:'127.0.0.1'}},res);
+    assert.equal(res.statusCode,status);
+  }
+  assert.equal(fixture.rows.length,0);assert.equal(fixture.writes.length,0);
+});
 test('owner details GET is scoped before reading; archive and unknown/other UUIDs are unavailable',async()=>{
   const created=await call('cards',{method:'POST',body:pagePayload('contact',['telegram'])});
   const id=created.json().card.id;
@@ -270,4 +295,21 @@ test('delete dependency race returns safe conflict and never substitutes an arch
  const result=await call('card-action',{method:'POST',body:{card_id:made.json().card.id,action:'delete'}});
  assert.equal(result.status,409);assert.equal(result.json().error,'ad_dependency');
  assert.equal(fixture.rows.length,1);assert.equal(fixture.rows[0].archived_at,undefined);
+});
+
+test('failed first publish is persisted; explicit corrected edit publishes that same page, ready inactive pages remain inactive',async()=>{
+  const body=pagePayload('contact',['telegram']);
+  body.avatar_path=`${OWNER}/${body.client_request_id}/avatar.png`;
+  const failed=await call('cards',{method:'POST',body});
+  assert.equal(failed.status,422);assert.equal(failed.json().error,'publish_failed');
+  assert.equal(fixture.rows.length,1);assert.equal(failed.json().card.publish_status,'failed');
+  const saved=fixture.rows[0],id=saved.id;
+  const corrected=await call('cards',{method:'PATCH',query:{id},body:{avatar_path:null,name:'Corrected page',expected_updated_at:saved.updated_at}});
+  assert.equal(corrected.status,200,corrected.body);assert.equal(corrected.json().card.id,id);
+  assert.equal(corrected.json().card.status,'active');assert.equal(corrected.json().card.publish_status,'ready');
+  assert.equal(fixture.rows.length,1);assert.equal(fixture.rows[0].name,'Corrected page');
+  assert.equal((await call('cards',{query:{id}})).json().card.name,'Corrected page');
+  await call('card-action',{method:'POST',body:{card_id:id,action:'deactivate'}});
+  const edited=await call('cards',{method:'PATCH',query:{id},body:{name:'Intentionally inactive',expected_updated_at:fixture.rows[0].updated_at}});
+  assert.equal(edited.status,200);assert.equal(edited.json().card.status,'inactive');
 });

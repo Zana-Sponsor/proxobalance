@@ -107,24 +107,25 @@ class _AdValidationNotificationsState extends State<AdValidationNotifications> {
   }
 
   @override
-  Widget build(BuildContext context) => IgnorePointer(
-        child: ListenableBuilder(
-          listenable: widget.controller,
-          builder: (context, _) {
-            final controller = widget.controller;
-            if (!_canShow()) {
-              controller._detach(controller._generation);
-              return const SizedBox.shrink();
-            }
-            final message = controller._message;
-            if (message == null) return const SizedBox.shrink();
-            final generation = controller._generation;
-            return ProxoTimedNotice(
-                key: ValueKey((controller, generation)),
-                onExpired: () => controller._expire(generation),
-                onDisposed: () => controller._detach(generation),
-                child: ProxoNoticeCard(message: message));
-          },
-        ),
+  Widget build(BuildContext context) => ListenableBuilder(
+        listenable: widget.controller,
+        builder: (context, _) {
+          final controller = widget.controller;
+          if (!_canShow()) {
+            controller._detach(controller._generation);
+            return const SizedBox.shrink();
+          }
+          final message = controller._message;
+          if (message == null) return const SizedBox.shrink();
+          final generation = controller._generation;
+          return ProxoTimedNotice(
+              key: ValueKey((controller, generation)),
+              duration: proxoNoticeReadingTime(message),
+              onExpired: () => controller._expire(generation),
+              onDisposed: () => controller._detach(generation),
+              child: ProxoNoticeCard(
+                  message: message,
+                  onDismiss: () => controller._expire(generation)));
+        },
       );
 }

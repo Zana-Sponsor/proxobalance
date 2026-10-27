@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "engine": "PGlite 0.5.11 / PostgreSQL",
+  "migration_sha256": "f2c785f0d71860bb36bc113dfbcc6a323d88516a3a7bc4ce02152a2fdf38fef7",
+  "checks": [
+    "disabled by default",
+    "RLS enabled",
+    "anon/authenticated direct writes denied",
+    "anon direct table reads denied",
+    "anonymous RPC allowed",
+    "unverified force rejected",
+    "future release hidden",
+    "platform/channel separation",
+    "verified required policy",
+    "withdrawal",
+    "bounded message",
+    "migration applied twice idempotently"
+  ],
+  "production_applied": true,
+  "verified_at": "2026-10-25T23:03:26.397Z",
+  "production_migration": "app_release_policy_disabled_verified"
+}

@@ -1,3 +1,4 @@
+import 'package:proxo_app/widgets/proxo_png_icon.dart';
 import 'package:proxo_app/widgets/proxo_symbol.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -126,6 +127,11 @@ void main() {
           );
           await t.pumpAndSettle();
           expect(find.byType(Image), findsNothing);
+          expect(find.byType(ProxoSymbol), findsNWidgets(3));
+          expect(
+              t.widgetList<ProxoSymbol>(find.byType(ProxoSymbol))
+                  .map((glyph) => glyph.symbol),
+              [ProxoSymbolName.ads, ProxoSymbolName.wallet, ProxoSymbolName.tools]);
           // SVG icons scale within their viewBox. Labels must never be
           // scaled down by a FittedBox instead of respecting system text size.
           expect(
@@ -157,6 +163,27 @@ void main() {
       );
     }
   }
+  testWidgets(
+    'PNG paint remains centered when its icon well has tight larger constraints',
+    (t) async {
+      const wellKey = ValueKey('icon-well');
+      await t.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: SizedBox.square(
+              key: wellKey,
+              dimension: 48,
+              child: const ProxoPngIcon(ProxoSymbolName.user, size: 24),
+            ),
+          ),
+        ),
+      ));
+      final image = find.byType(Image);
+      expect(t.getSize(image), const Size(22, 22));
+      expect(t.getCenter(image), t.getCenter(find.byKey(wellKey)));
+      expect(t.takeException(), isNull);
+    },
+  );
   testWidgets(
     'unavailable quick action uses disabled color and has no tap handler',
     (t) async {

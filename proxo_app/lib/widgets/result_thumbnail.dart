@@ -10,19 +10,24 @@ class ResultThumbnail extends StatelessWidget {
   const ResultThumbnail({
     super.key,
     this.url,
+    this.identity,
     this.radius = ResultsUi.thumbnailRadius,
   });
   final String? url;
+
+  /// Advertisement identity prevents a recycled cell retaining another image.
+  final String? identity;
   final double radius;
   @override
   Widget build(BuildContext context) => ClipRRect(
         borderRadius: BorderRadius.circular(radius),
         child: FeaturedImageCache.validUrl(url)
             ? Image(
+                key: ValueKey((identity, url)),
                 image: FeaturedImageCache.provider(url!),
                 fit: BoxFit.cover,
                 semanticLabel: ProxoStrings.text('ئەنجامی ڕیکلامی هەڵبژێردراو'),
-                gaplessPlayback: true,
+                gaplessPlayback: false,
                 frameBuilder: (context, child, frame, synchronous) =>
                     synchronous
                         ? child

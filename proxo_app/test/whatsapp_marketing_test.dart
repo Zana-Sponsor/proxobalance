@@ -192,7 +192,7 @@ void main() {
     },
   );
   testWidgets(
-    'email signup does not ask for phone marketing consent',
+    'phone signup does not opt customers into marketing or send before submit',
     (t) async {
       await t.pumpWidget(host(const AuthShell()));
       await settle(t);
@@ -205,7 +205,7 @@ void main() {
       final fields = find.byType(TextField);
       expect(fields, findsNWidgets(4));
       await t.enterText(fields.at(0), 'Fixture User');
-      await t.enterText(fields.at(1), 'fixture@example.com');
+      await t.enterText(fields.at(1), '٠٧٥٠١٢٣٤٥٦٧');
       await t.enterText(fields.at(2), 'Example#9');
       await t.enterText(fields.at(3), 'Example#9');
       await t.pump();
@@ -214,7 +214,8 @@ void main() {
       final button = find.byKey(const ValueKey('signup-submit'));
       expect(t.widget<AuthPrimaryButton>(button).enabled, true);
       expect(requests, isEmpty,
-          reason: 'Entering email details sends no WhatsApp request');
+          reason:
+              'Entering phone details sends no WhatsApp request before submit');
       await t.pumpWidget(const SizedBox());
       await t.pump();
     },

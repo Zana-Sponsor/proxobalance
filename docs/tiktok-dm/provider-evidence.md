@@ -1,0 +1,104 @@
+# TikTok Direct Message provider evidence
+
+Checked 2026-10-23 against the owner's v15 prompt. This is documentation research, not proof of a configured TikTok account, authorization session or paid campaign. No credential, account mutation, authorization request or live ad call was made.
+
+## Findings that govern implementation
+
+1. **A returned BC QR URL is not a verified Proxo-user connection.** Neither documented QR-producing endpoint returns a provider authorization-session identifier, callback state, expiry or completion result correlated to a particular Proxo user. Their `request_id` is a request log identifier. Do not invent a polling endpoint or bind the newest BC identity to the user who most recently opened a QR.
+2. **Choose an account-supported DM API flow explicitly.** The manual guide restricts Conversation creatives to `TT_USER`; the newer Upgraded Smart+ guide describes a BC identity route with additional feature eligibility. Applying manual campaign fields to a BC identity is not verified support. Iraq availability must be verified for the chosen advertiser/flow.
+3. **Native spend guards are conditional and delayed.** Automated Rules API documentation excludes SaaS/technology companies managing multiple advertisers; native rules run at half-hour intervals. Reporting also lags. A 95% threshold is an early-stop policy, not a precise spending cap. v15's accepted slight provider overrun must never trigger another customer charge.
+4. **Current docs exceed the generated SDK.** The official SDK snapshot omits several current BC and identity endpoints. Do not infer that unsupported SDK methods are nonexistent APIs, or invent missing response fields from models.
+
+## How the primary sources were inspected
+
+TikTok's public portal serves document bodies dynamically. Ordinary page retrieval often returned only a title/description. Its publicly served JavaScript identifies the unauthenticated documentation-content endpoint:
+
+`GET https://business-api.tiktok.com/gateway/api/doc/client/node/get/v2/?content_slug=<document-slug>&version=1.3&language=ENGLISH`
+
+Successful `code:0` responses supplied the official document ID and complete `content_data`. This is documentation retrieval, not an authenticated Marketing API operation. Links below point to the ordinary official pages. The official repository was inspected at [commit f809c396520df2d7b201a9ccc5378d822b728ed3](https://github.com/tiktok/tiktok-business-api-sdk/tree/f809c396520df2d7b201a9ccc5378d822b728ed3), dated 2026-02-28.
+
+The same public documentation endpoint accepts `doc_id=<ID>` instead of `content_slug`; exact endpoint reference bodies were retrieved with their published IDs as well. No provider account credentials were used.
+
+The [v2.0 API reference](https://business-api.tiktok.com/portal/docs/api-reference/v2.0) now describes v2.0 authentication/reporting endpoints. The documented BC, identity and DM creation routes below remain explicitly v1.3. The portal also publishes a January 1, 2027 transition notice for non-Search legacy manual Sales/App Promotion/Lead Generation creation toward Upgraded Smart+; do not treat a legacy manual route as indefinitely supported. Verify the applicable release notice again before deployment.
+
+## Authorization and account linkage
+
+All paths in this table are relative to `https://business-api.tiktok.com/open_api/v1.3`; authenticated calls use the `Access-Token` header. JSON writes use `Content-Type: application/json`. Authorization and BC/advertiser assignment are distinct operations.
+
+| Official source | Verified request/result | Consequence |
+| --- | --- | --- |
+| [Ad-delivery authorization URL](https://business-api.tiktok.com/portal/docs/obtain-a-tiktok-account-ad-delivery-authorization-url/v1.3), doc `1846868897541122` | `POST /bc/asset/account/authorization/`; `bc_id`, optional `is_ads_only_mode` (default false). BC Admin required. Response `data.bc_auth_qr_code` is a URL to encode as QR. | Describes existing-post and publish permissions, not a session-correlated DM completion callback. No documented `state`, session ID or expiry. |
+| [Request BC account link](https://business-api.tiktok.com/portal/docs/request-to-link-a-tiktok-account-to-a-business-center/v1.3), doc `1879660350792706` | `POST /bc/asset/tt_account/link/`; `bc_id`, `linking_method`, `permission_level`, `permission_detail.tt_account_roles`; optional existing `asset_id`. `LINK` returns `data.link_url`. `DELIVER_ADS` supports roles including `POST`, `DIRECT_MESSAGE`. | Newer explicit DM permission request. `MANAGE_ACCOUNT` grants broader management and has separate publishing-role requirements; do not request it merely to imitate an ad-only link. |
+| Same BC link source | `HANDLE` requires exact `tt_account_handle` without `@`; only verified, non-self-serve DIRECT/AGENCY BCs are eligible. It sends an in-app request and returns no QR URL. | Potentially different authorization path, not a substitute to silently impose on the requested QR flow. No per-Proxo completion proof was established. |
+| [Link advertiser](https://business-api.tiktok.com/portal/docs/link-a-tiktok-account-to-an-ad-account-in-business-center/v1.3), doc `1846868953025538` | `POST /bc/asset/advertiser/assign/`; `bc_id`, `asset_id`, `advertiser_id`; `asset_type` defaults `TT_ACCOUNT`, also supports `MANAGED_BUSINESS_ACCOUNT`. BC Admin and same-BC advertiser required. | A BC grant alone does not establish advertiser linkage. |
+| [Read linked advertisers](https://business-api.tiktok.com/portal/docs/get-ad-accounts-linked-to-a-tiktok-account-in-business-center/v1.3), doc `1855027294743554` | `GET /bc/asset/advertiser/assigned/`; `bc_id`, `asset_id`, `asset_type`, optional page/page_size (1–50, default 10). Returns `data.list` and `page_info`. | Re-read the exact intended advertiser relationship; do not accept success of an unrelated assignment. |
+| [Unlink advertiser](https://business-api.tiktok.com/portal/docs/unlink-a-tiktok-account-from-an-ad-account-in-business-center/v1.3), doc `1855027260369921` | `POST /bc/asset/advertiser/unassign/`; `bc_id`, `asset_id`, `asset_type`, `advertiser_id`; BC Admin required. | Removes that advertiser's delivery access. Read back linkage after an ambiguous response; an HTTP timeout is not confirmed unlink. |
+| [Unlink BC account](https://business-api.tiktok.com/portal/docs/unlink-a-tiktok-account-from-a-business-center/v1.3), doc `1879660354954833` | `POST /bc/asset/tt_account/unlink/`; `bc_id`, `asset_ids` (maximum one). BC Admin required. | Broader than advertiser unlink: existing ads may pause and Business Suite access may be lost. Do not use as incidental cleanup of an unproven mismatch. |
+
+The official [Spark Ads Push/Pull guide](https://ads.tiktok.com/business/library/Generate_SparkAds_on_TTAM_via_PushnPull.pdf) explicitly describes its BC QR as account-agnostic and reusable. **Inference:** a local nonce plus polling an account list cannot prove who approved that generic QR. Username matching, a unique database binding and a successful BC query are necessary safeguards but are not cryptographic authorization-session correlation. Keep connection finalization blocked until a supported provider-correlated flow or independently verified owner-binding procedure is established. Never treat the requested username or QR dismissal as verified identity.
+
+## Identity and public video evidence
+
+| Official source | Verified contract |
+| --- | --- |
+| [Get identity list](https://business-api.tiktok.com/portal/docs/get-the-identity-list/v1.3), doc `1740218420781057` | `GET /identity/get/`; required `advertiser_id`; specify `identity_type=BC_AUTH_TT` plus `identity_authorized_bc_id` for BC. The latter is the **Business Center ID**, not the identity ID (older SDK wording is misleading). Page size 1–100, default 20. Returns `identity_list`; correct pagination requires `identity_type`. BC query may return all linked identities, so check each returned identity's actual BC/account relationship. |
+| [Get identity info](https://business-api.tiktok.com/portal/docs/get-info-about-an-identity/v1.3), doc `1740218453385217` | `GET /identity/info/`; `advertiser_id`, `identity_id`, `identity_type`, conditional BC ID. Returns `identity_info.username`, `profile_image_url`, `can_pull_video`, `can_manage_message`, `is_gpppa`, `available_status`. Allowed availability includes `AVAILABLE`, `NO_VALID_BIND_ACCOUNT`, `SCOPE_UNAVAILABLE`, `IS_PRIVATE_ACCOUNT`, `NOT_BUSINESS_ACCOUNT`. Require actual `AVAILABLE`, required permissions and non-GPPPA; preserve verified username. |
+| [Get identity posts](https://business-api.tiktok.com/portal/docs/get-posts-under-an-identity/v1.3), doc `1740218475032577` | `GET /identity/video/get/`; advertiser/identity/type/conditional BC ID, `item_type=VIDEO`, `count` 1–20, cursor. Returns `video_list`, string `cursor`, `has_more`. `exclude_adsonly=true` limits to a maximum 500 recent organic posts; it is not “all lifetime videos.” Default false includes ads-only posts. Public visibility is `status=ITEM_STATUS_HESITATE_RECOMMEND`; friends/private are `STATUS_ONLY_FRIEND_SEE` / `ITEM_STATUS_ONLY_AUTHOR_SEE`. There is no documented `PUBLIC` enum here. Preview URL expires after one hour; poster expiry is in `x-expires`. |
+| [Get post info](https://business-api.tiktok.com/portal/docs/get-info-about-tiktok-posts/v1.3), doc `1740218522178562` | `GET /identity/video/info/`; advertiser/identity/type/conditional BC ID and `item_id` or `item_ids` (max 20). Returns `video_detail` or `video_details`, including item/type/visibility. Revalidate the selected item through the stored identity immediately before creation. `auth_info` is documented only for `AUTH_CODE`; its absence for BC does not imply no authorization. |
+| [Music authorization](https://business-api.tiktok.com/portal/docs/get-music-authorization-info-of-a-video/v1.3), doc `1740218495869954` | `GET /identity/music/authorization/`; identity, post, advertiser, same target `locations`, UTC start/end. Returns `music_authorization` with `WITHOUT_SONG_ID`, `AUTHORIZATION_MISSING`, `WITH_FULL_AUTHORIZATION`. Public visibility alone does not prove commercial music eligibility. |
+
+The [API reference](https://business-api.tiktok.com/portal/docs/api-reference/v1.3) places BC linkage under **Ad Account Management → Business Center → Business Center Asset** and identity/video/music reads under **Creative Management → TikTok Posts Management → Query Identity**. The [permission-scope table](https://business-api.tiktok.com/portal/docs/permission-scope/v1.3) identifies Query Identity as scope `693`, automated-rule writes as `17010000`, and rule/results reads as `17020000`. Actual app grants, account permissions and feature allowlists still need server verification; a configured scope string is not proof of access.
+
+## Conversation creation: verified differences between flows
+
+The [manual DM guide](https://business-api.tiktok.com/portal/docs/create-a-lead-generation-ad-with-optimization-location-as-tiktok-direct-messages/v1.3) documents this tuple:
+
+| Layer | Exact supported values in that guide |
+| --- | --- |
+| Campaign | `/campaign/create/`, `objective_type=LEAD_GENERATION`; Smart+ disabled |
+| Ad group | `/adgroup/create/`, `promotion_type=LEAD_GEN_CLICK_TO_TT_DIRECT_MESSAGE`; omit `promotion_target_type`; `PLACEMENT_TYPE_NORMAL`, `placements=["PLACEMENT_TIKTOK"]` |
+| Optimization/billing | `CONVERSATION`; `optimization_event=MESSAGE` or omitted; `billing_event=OCPM` |
+| Bid/pacing | `BID_TYPE_NO_BID` + `PACING_MODE_SMOOTH`, or supported custom bid with `conversion_bid_price` |
+| Existing-post creative | `/ad/create/`; Spark `TT_USER`, verified `identity_id`, `tiktok_item_id`, `SINGLE_VIDEO`, `SEND_MESSAGE` |
+
+Conversation is allowlist-only in the manual guide; `BC_AUTH_TT` is listed for Click, not Conversation. Under-18 targeting is excluded. Its explicit targeting list omits Iraq. A welcome-message table requires valid `auto_message_id`, although the sample omits it: follow the reference/account validation, not that incomplete example. Do not fall back to Click.
+
+The [Upgraded Smart+ DM guide](https://business-api.tiktok.com/portal/docs/create-an-upgraded-smart-lead-generation-campaign-with-optimization-location-as-tiktok-direct-messages/v1.3) documents a distinct non-catalog route using `/smart_plus/campaign/create/`, `/smart_plus/adgroup/create/`, `/smart_plus/ad/create/`, `catalog_enabled=false`, Conversation/MESSAGE/OCPM, and structured `creative_list`/welcome-message configuration. It explicitly supports `TT_USER` or `BC_AUTH_TT` at ad-group level for advertisers allowlisted for selecting identity there; BC requires `identity_authorized_bc_id` and matching creative identity. It offers `targeting_optimization_mode=MANUAL` or `AUTOMATIC`; exact age/gender/language/location control eligibility must still be verified. This is a possible documented BC route, not proof Proxo's account supports it. Its catalog-specific section is outside the existing-video non-catalog requirement.
+
+## Budget, targeting, status and automatic stop
+
+| Official source | Evidence and implementation limit |
+| --- | --- |
+| [Currency budget ranges](https://business-api.tiktok.com/portal/docs/budget-verification-ratio-and-value-range-for-each-currency/v1.3) | API USD daily lower bounds are inclusive $50 campaign / $20 ordinary ad group, precision $0.01. The applicable flow/budget mode and account exceptions need verification. These are provider declarations, not permission to increase the customer's Proxo quote. v15 retains the separate Proxo TikTok $10 minimum. |
+| [Get languages](https://business-api.tiktok.com/portal/docs/get-languages/v1.3) | `GET /tool/language/` with authenticated advertiser; `data.languages[{code,name}]` supplies targeting codes. English `en` is illustrated. Turkish's current returned targeting code was not verified against an account. Do not substitute locale guesses. |
+| [Available locations](https://business-api.tiktok.com/portal/docs/get-available-locations-by-different-settings/v1.3) | Retrieve allowed provider locations for the actual objective/placement/account. “Kurdistan” product scope must map to verified supported locations. No Iraq/city provider IDs or DM-Iraq eligibility were established here. |
+| [Create automated rules](https://business-api.tiktok.com/portal/docs/create-rules/v1.3) | `POST /optimizer/rule/create/` is expressly limited to direct advertisers and excludes SaaS/technology platforms managing multiple advertisers. Verified pieces: selected `ADGROUP`, `COST`/`LIFETIME`/`GT`, string threshold, `OF_EACH_OBJECT`, action `TURN_OFF`, `PER_HALF_HOUR`. Confirm Proxo eligibility before depending on native guards; do not label a merely persisted local rule as active provider enforcement. |
+| [Reporting latency](https://business-api.tiktok.com/portal/docs/data-latency-for-reports/v1.3) | Ordinary basic metrics usually lag 30 minutes, can lag at least two hours, and may be adjusted next day. Reporting is not instantaneous enforcement. A 95% stop threshold cannot guarantee the spend ceiling or quantify the eventual overrun. Final refund calculation needs settled trusted spend. |
+| [Ad-group status update](https://business-api.tiktok.com/portal/docs?id=1739591716326402) | `POST /adgroup/status/update/`; advertiser, 1–20 string ad-group IDs, `operation_status=ENABLE|DISABLE|DELETE`; `allow_partial_success` defaults false. `DISABLE` is pause/suspend, not inherently completion. An uncertain write requires observation/reconciliation. |
+| [Secondary statuses](https://business-api.tiktok.com/portal/docs/supported-secondary-statuses-for-a-primary-status/v1.3) | Delivery: `ADGROUP_STATUS_DELIVERY_OK` / `AD_STATUS_DELIVERY_OK`; scheduled: `*_NOT_START`; review: `*_AUDIT` / `*_REAUDIT`; rejection: `*_AUDIT_DENY`; inactive: `*_DISABLE`; ended: `ADGROUP_STATUS_TIME_DONE` / `AD_STATUS_DONE`. Budget exhaustion, balance and authorization failures are separate states. Proxo's budget-stop “completed” label requires durable evidence that its intended stop caused the disable. |
+
+## Exact Upgraded Smart+ endpoint and reporting reference checks
+
+The following additional endpoint bodies were checked during implementation review. They establish field spelling, not the advertiser's entitlement.
+
+| Official reference | Verified detail |
+| --- | --- |
+| [Campaign create](https://business-api.tiktok.com/portal/docs?id=1843312852800706), [ad-group create](https://business-api.tiktok.com/portal/docs?id=1843314887930946), [ad create](https://business-api.tiktok.com/portal/docs?id=1843317390059522) | All explicitly accept `operation_status=DISABLE`; all default to ENABLE if omitted. Returned IDs are `data.campaign_id`, `data.adgroup_id`, `data.smart_plus_ad_id`. Existing-video ad requires `creative_list[].creative_info` with identity, `SINGLE_VIDEO`, `tiktok_item_id`; DM requires `auto_message_list[].auto_message_id`. |
+| [Campaign get](https://business-api.tiktok.com/portal/docs?id=1843312818332930), [ad-group get](https://business-api.tiktok.com/portal/docs?id=1843314879617026), [ad get](https://business-api.tiktok.com/portal/docs?id=1843317378982914) | GET with advertiser, `filtering.campaign_ids`, `filtering.adgroup_ids` or **`filtering.smart_plus_ad_ids`**, respectively. Responses have `data.list` and `page_info`; compare exact IDs and parents. Campaign-name matching is fuzzy, so name reconciliation must recheck full semantics. |
+| [Smart+ ad-group status](https://business-api.tiktok.com/portal/docs?id=1843314908153858) | POST `/smart_plus/adgroup/status/update/`; advertiser, 1–20 `adgroup_ids`, `operation_status=DISABLE`. Response can contain success/failure entries. Read back exact group state after uncertain or partial writes. |
+| [Advertiser information](https://business-api.tiktok.com/portal/docs?id=1739593083610113) | GET `/advertiser/info/`, `advertiser_ids` and requested fields; `data.list[].timezone` may be offset or TZ name, `display_timezone` is TZ name. Currency/timezone must match verified account configuration. |
+| [Welcome messages](https://business-api.tiktok.com/portal/docs?id=1822106498804738) | GET `/creative/auto_message/get/` requires advertiser and `auto_message_type=WELCOME_MESSAGE`; filter exact `auto_message_id`. Require returned ID/type and `audit_status=PASS`. **Documentation inconsistency:** response table says `data.list`; example says `data.auto_message_list`. Safely support these documented array variants, not an unbounded object search. |
+| [Integrated report](https://business-api.tiktok.com/portal/docs?id=1740302848100353), [dimensions](https://business-api.tiktok.com/portal/docs?id=1751443956638721), [filters](https://business-api.tiktok.com/portal/docs?id=1751443975608321) | GET `/report/integrated/get/`; `BASIC`, `AUCTION_ADGROUP`, dimensions `adgroup_id`, metrics `spend`, `query_lifetime=true`. Filter array uses `field_name=adgroup_ids`, `filter_type=IN`, `filter_value` as a JSON-encoded string array. Include `adgroup_status=STATUS_ALL` to retain deleted-group spend. Exact returned dimension and numeric spend required; empty/missing data is not proved zero. Official examples include Upgraded Smart+ groups. |
+
+The report schema supplies **no finality marker**. Two equal samples after two hours do not independently establish settled spend. The implementation must keep refunds pending until the agreed, account-specific settlement evidence is available and matches the exact job/latest report; a real automatic settlement integration remains an external gate.
+
+## Unverified external prerequisites
+
+- A provider-supported, owner-bound authorization completion mechanism for the requested QR flow; authenticated cross-user ownership and safe duplicate/mismatch handling.
+- App grants, BC Admin rights, actual asset assignments, advertiser linkage and exact verified username/identity permissions.
+- The actual advertiser's supported manual/Upgraded Smart+ DM route, Conversation and identity allowlists, Iraq targeting and required targeting controls.
+- Current account-specific declared-budget minimum and safe native-rule eligibility; tested stop behavior with no additional customer charge.
+- Welcome-message availability, exact creative compatibility, music eligibility, real pagination and expired/private post behavior.
+- Controlled non-delivering integration verification, target n8n configuration/import, provider response/retry/status/refund evidence. Documentation and mocks do not satisfy those checks.
+
+No fake QR, fabricated token, invented permission/enum, sample geographic ID, client username claim, paid test activation or fallback objective is justified by this evidence. Until the relevant readiness checks are proven, return a precise unavailable/connection/eligibility result and preserve the requested configuration.

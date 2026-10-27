@@ -178,6 +178,45 @@ void main() {
     }
   }
 
+  testWidgets('recycled ad never shows an old image while the new URL loads',
+      (tester) async {
+    final old = await FeaturedThumbnailFixture.pending(
+        'https://fixtures.invalid/race-old.jpg');
+    final next = await FeaturedThumbnailFixture.pending(
+        'https://fixtures.invalid/race-new.jpg');
+    addTearDown(old.dispose);
+    addTearDown(next.dispose);
+    Widget cell(String id, String url) => _host(
+        SizedBox(
+            width: 120,
+            height: 80,
+            child: ResultThumbnail(identity: id, url: url)),
+        reduced: true);
+    await tester
+        .pumpWidget(cell('ad-a', 'https://fixtures.invalid/race-old.jpg'));
+    await tester.runAsync(old.succeed);
+    await tester.pumpAndSettle();
+    expect(find.byType(ProxoThumbnailFallback), findsNothing);
+    await tester
+        .pumpWidget(cell('ad-b', 'https://fixtures.invalid/race-new.jpg'));
+    await tester.pump();
+    expect(find.byType(ProxoThumbnailFallback), findsOneWidget);
+    expect(
+        tester
+            .widgetList<RawImage>(find.byType(RawImage))
+            .where((w) => w.image != null),
+        isEmpty);
+    await tester.runAsync(next.succeed);
+    await tester.pumpAndSettle();
+    final current = tester.widget<RawImage>(find.byType(RawImage)).image;
+    // A late frame from the old provider must not overwrite the new ad.
+    await tester.runAsync(old.succeed);
+    await tester.pumpAndSettle();
+    expect(tester.widget<RawImage>(find.byType(RawImage)).image, same(current));
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   testWidgets('failed image is replaced when the advertised image URL changes',
       (tester) async {
     const failedUrl = 'https://fixtures.invalid/old-ad-image.jpg';

@@ -1,0 +1,44 @@
+[
+  {
+    "brand": "meta",
+    "source": "https://www.meta.com",
+    "hex": "0467DF",
+    "license": "Simple Icons CC0; trademarks belong to their respective owners",
+    "package": "simple-icons@16.0.0"
+  },
+  {
+    "brand": "facebook",
+    "source": "https://about.meta.com/brand/resources/facebook/logo",
+    "hex": "0866FF",
+    "license": "Simple Icons CC0; trademarks belong to their respective owners",
+    "package": "simple-icons@16.0.0"
+  },
+  {
+    "brand": "instagram",
+    "source": "https://about.meta.com/brand/resources/instagram",
+    "hex": "FF0069",
+    "license": "Simple Icons CC0; trademarks belong to their respective owners",
+    "package": "simple-icons@16.0.0"
+  },
+  {
+    "brand": "messenger",
+    "source": "https://about.meta.com/brand/resources/facebook/messenger-icon",
+    "hex": "0866FF",
+    "license": "Simple Icons CC0; trademarks belong to their respective owners",
+    "package": "simple-icons@16.0.0"
+  },
+  {
+    "brand": "whatsapp",
+    "source": "https://about.meta.com/brand/resources/whatsapp/whatsapp-brand",
+    "hex": "25D366",
+    "license": "Simple Icons CC0; trademarks belong to their respective owners",
+    "package": "simple-icons@16.0.0"
+  },
+  {
+    "brand": "tiktok",
+    "source": "https://tiktok.com",
+    "hex": "000000",
+    "license": "Simple Icons CC0; trademarks belong to their respective owners",
+    "package": "simple-icons@16.0.0"
+  }
+]

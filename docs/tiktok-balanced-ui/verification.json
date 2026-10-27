@@ -1,0 +1,93 @@
+{
+  "source_baseline": "57af051fcf85ab911d96c729be5cdbbeceaa0038",
+  "specification_sha256": "b00095a9ff00326fbe517946518f0cc191de2e86542fb487f8931c92f05e0e18",
+  "date": "2026-10-25",
+  "runtime": {
+    "flutter": "3.47.8",
+    "dart": "3.13.7",
+    "render_pixel_ratio": 2
+  },
+  "full_flutter_suite": {
+    "command": "flutter test --no-pub --concurrency=2 --reporter expanded",
+    "passed": 1331,
+    "skipped": 1,
+    "failed": 0,
+    "duration_seconds": 371,
+    "skip_reason": "Guarded staging case requires complete build defines and has a separate CI invocation.",
+    "log_file": "balanced-final-full-tests.log",
+    "log_sha256": "1e7a9690510872b798bd05e79ed0bf5d3904f419b8df69ab85618c6c51d7b4cb",
+    "note": "Final functional implementation; followed only by Dart formatting and two const constructor annotations."
+  },
+  "final_source_capture_suite": {
+    "command": "flutter test --no-pub --reporter expanded test/tiktok_balanced_ui_test.dart",
+    "passed": 7,
+    "failed": 0,
+    "log_file": "balanced-final-format-check.log",
+    "log_sha256": "14f077d7ee5fc7cef0680f1a462af90c635ea9f5781e02a135be60ce9d8ad723",
+    "screenshots_byte_identical_to_reviewed_set": true,
+    "note": "Overlaps the full suite; counts must not be added."
+  },
+  "analysis": {
+    "command": "flutter analyze --no-pub --no-fatal-infos [11 changed source/test files]",
+    "errors": 0,
+    "warnings": 0,
+    "infos": 1,
+    "info": "Existing prefer_interpolation_to_compose_strings at ad_create_screen.dart:671.",
+    "log_file": "balanced-final-analyze.log",
+    "log_sha256": "43f03db5e93000157088badd376309fc4167af1a883568d33ebe6aba684d43b4"
+  },
+  "visual_review": {
+    "fresh_pngs": 37,
+    "review_sheets": 7,
+    "all_manifest_images_visually_reviewed": true,
+    "actual_measurements": "../evidence/tiktok-balanced-2026-10-25/measurements.json",
+    "measured_form_transitions": 27,
+    "logical_widths": [
+      393,
+      320,
+      280
+    ],
+    "text_scales": [
+      1,
+      2
+    ],
+    "normal_price_height_dp": 72,
+    "price_corner_radius_dp": 10,
+    "price_navigation_gap_dp": 2,
+    "screen_gutter_dp": 20,
+    "heading_control_gap_dp": 16,
+    "section_gap_dp": 32,
+    "choice_height_dp": 50,
+    "input_height_dp": 56,
+    "requirement_map_count": 69,
+    "requested_final_report_item_count": 20
+  },
+  "preserved": {
+    "receipt_reference_golden": "passed: receipt_reference_match_test.dart",
+    "meta_capture_outputs": "byte-identical after full rerender; only six TikTok images in the shared meta_ads_evidence folder changed",
+    "historical_images_restored_without_overwrite": 47,
+    "backend_provider_payment_service_files": "unchanged in this visual revision",
+    "font_assets": "unchanged",
+    "bottom_navigation_implementation": "unchanged",
+    "receipt_default_typography": "unchanged; optional screen-specific AppBar style added"
+  },
+  "review_fixes": [
+    "equal age grid columns",
+    "explicit coupon helper font",
+    "word-aware narrow title/payment layout",
+    "consistent stacked price rows at large text",
+    "scrolling details with pinned divider and total",
+    "white base under the 2dp nav gap",
+    "no cached amounts when authoritative quote is missing",
+    "intrinsic sizing fixes 2px extreme-size header overflow",
+    "green discount label restored"
+  ],
+  "limits": [
+    "Widget captures use actual app widgets with deterministic fictional data.",
+    "No new external raster reference was provided; visual review uses the supplied specification.",
+    "Visual review is not user design approval.",
+    "Physical-device performance and live TikTok/FastPay transactions are not certified by these tests.",
+    "Production workflows remain blocked by previously documented backend origins, credentials and other release prerequisites."
+  ],
+  "ci": "Publication-triggered CI is recorded on PR #46 for its final source commit."
+}

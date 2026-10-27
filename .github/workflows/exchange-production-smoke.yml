@@ -9,16 +9,33 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: Wait for the current admin bundle to finish deploying
+      - name: Wait for the current customer and admin bundles to finish deploying
         shell: bash
         run: |
           set -euo pipefail
           for attempt in $(seq 1 24); do
-            if curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin' -o current-admin.html &&
-               grep -q 'assets/js/admin.js?v=17' current-admin.html &&
-               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/app.js?v=40' -o current-app.js &&
+            if curl -fLsS --max-time 15 'https://www.proxobalance.app/' -o current-index.html &&
+               grep -q 'app.js?v=47' current-index.html &&
+               grep -q 'exchange-payout-rounding.js?v=1' current-index.html &&
+               grep -q 'exchange-customer-polish.css?v=2' current-index.html &&
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin' -o current-admin.html &&
+               grep -q 'assets/js/admin.js?v=26' current-admin.html &&
+               grep -q 'exchange-payout-rounding.js?v=1' current-admin.html &&
+               grep -q 'exchange-balance-admin.js?v=8' current-admin.html &&
+               grep -q 'exchange-refund-report.js?v=2' current-admin.html &&
+               grep -q 'exchange-staff.js?v=8' current-admin.html &&
+               grep -q 'exchange-balance.css?v=5' current-admin.html &&
+               grep -q 'id="balanceRefundReportBtn"' current-admin.html &&
+               ! grep -q 'id="balanceShortfallReference"' current-admin.html &&
+               grep -q 'assets/js/exchange-insights.js?v=6' current-admin.html &&
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-insights.js?v=6' -o current-insights.js &&
+               grep -q 'handling_admin_name' current-insights.js &&
+               grep -q 'exchange-profit.js?v=5' current-admin.html &&
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-profit.js?v=5' -o current-profit.js &&
+               grep -q 'ex_admin_deduction_stats_filtered' current-profit.js &&
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/app.js?v=47' -o current-app.js &&
                grep -q 'accountBalanceSourceOption' current-app.js &&
-               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-balance.js?v=3' -o current-balance.js &&
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-balance.js?v=6' -o current-balance.js &&
                grep -q 'openAccountBalanceSend' current-balance.js; then
               exit 0
             fi
@@ -34,6 +51,20 @@ jobs:
           curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/" -o index.html
           grep -q 'id="balanceSendSection"' index.html
           grep -q 'id="rewardBanner"' index.html
+          grep -q 'id="welcomeReward"' index.html
+          if grep -q 'id="txSummary"' index.html; then
+            echo 'FAIL: completed transactions summary is still published.'
+            exit 1
+          fi
+          grep -q 'app.js?v=47' index.html
+          grep -q 'exchange-payout-rounding.js?v=1' index.html
+          grep -q 'receipt-download.js?v=5' index.html
+          grep -q 'exchange-customer-polish.css?v=2' index.html
+          curl -fLsS --max-time 25 "$root/assets/css/exchange-customer-polish.css?v=2" -o customer-polish.css
+          grep -q 'tx-card-content' customer-polish.css
+          grep -q 'id="recipientSheet"' index.html
+          grep -q 'id="savedRecipientsShortcut"' index.html
+          grep -q 'exchange-customer-features.js?v=3' index.html
           grep -q '/assets/js/exchange-balance.js' index.html
           grep -q '/assets/js/exchange-reward-pricing.js?v=2' index.html
           curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/exchange-admin" -o exchange-admin.html
@@ -41,24 +72,83 @@ jobs:
           grep -q 'id="pgRewards"' exchange-admin.html
           grep -q 'id="rewardAmountCap"' exchange-admin.html
           grep -q 'id="rewardScope"' exchange-admin.html
+          grep -q 'id="walletBadge"' exchange-admin.html
+          grep -q 'id="moStaffPermissions"' exchange-admin.html
+          grep -q 'id="staffDirectoryButton"' exchange-admin.html
           grep -q 'ڕەتکردنەوە و گەڕاندنەوە بۆ باڵانس' exchange-admin.html
-          grep -q 'exchange-balance-admin.js?v=3' exchange-admin.html
-          grep -q 'admin.js?v=17' exchange-admin.html
-          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/admin.js?v=17" -o admin.js
+          grep -q 'exchange-balance-admin.js?v=8' exchange-admin.html
+          grep -q 'exchange-refund-report.js?v=2' exchange-admin.html
+          grep -q 'exchange-staff.js?v=8' exchange-admin.html
+          grep -q 'exchange-balance.css?v=5' exchange-admin.html
+          grep -q 'id="balanceRefundReportBtn"' exchange-admin.html
+          grep -q 'id="balanceRefundReportFrom"' exchange-admin.html
+          grep -q 'id="balanceRefundReportTo"' exchange-admin.html
+          grep -q 'admin.js?v=26' exchange-admin.html
+          grep -q 'exchange-payout-rounding.js?v=1' exchange-admin.html
+          grep -q 'exchange-insights.js?v=6' exchange-admin.html
+          grep -q 'exchange-profit.js?v=5' exchange-admin.html
+          grep -q 'id="profitAdminSummary"' exchange-admin.html
+          grep -q 'id="profitAdmin"' exchange-admin.html
+          grep -q 'id="exAdmin"' exchange-admin.html
+          curl -fLsS --max-time 25 "$root/assets/js/exchange-profit.js?v=5" -o profit.js
+          grep -q 'handling_admin_name' profit.js
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/admin.js?v=26" -o admin.js
           grep -q 'accountBalanceCell' admin.js
           grep -q 'accountBalanceDetails' admin.js
           grep -q "'account_balances'" admin.js
-          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance.js?v=3" -o exchange-balance.js
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance.js?v=6" -o exchange-balance.js
           grep -q 'requestBalancePayout' exchange-balance.js
           grep -q 'refreshVisibleBalance' exchange-balance.js
-          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance-admin.js?v=3" -o exchange-balance-admin.js
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance-admin.js?v=8" -o exchange-balance-admin.js
           grep -q 'creditVerifiedRefund' exchange-balance-admin.js
+          grep -q 'creditOrderShortfall' exchange-balance-admin.js
+          grep -q 'balance_credit_shortfall' exchange-balance-admin.js
+          grep -q 'balanceRefundAmounts' exchange-balance-admin.js
+          grep -q 'payout_rounding' exchange-balance-admin.js
+          grep -q 'balanceFullRefundTable' exchange-balance-admin.js
+          curl -fLsS --max-time 25 "$root/assets/js/exchange-refund-report.js?v=2" -o refund-report.js
+          grep -q 'exportBalanceRefundPdf' refund-report.js
+          grep -q 'balance_refund_report' refund-report.js
+          grep -q 'balanceCreateRefundPdf' refund-report.js
+          curl -fLsS --max-time 25 "$root/assets/js/exchange-payout-rounding.js?v=1" -o payout-rounding.js
+          grep -q 'ProxoPayoutRounding' payout-rounding.js
+          grep -q 'payout_settlement_id' payout-rounding.js
+          grep -q 'id="balanceShortfallAmount"' exchange-admin.html
+          if grep -q 'id="balanceShortfallReference"' exchange-admin.html; then
+            echo 'FAIL: the removed shortfall reference field is still published.'
+            exit 1
+          fi
           grep -q 'startBalancePayout' exchange-balance-admin.js
           grep -q 'abortProcessingPayout' exchange-balance-admin.js
           curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-reward-pricing.js?v=2" -o exchange-reward-pricing.js
           grep -q 'ProxoRewardPricing' exchange-reward-pricing.js
           grep -q 'routeScope' exchange-reward-pricing.js
+          curl -fLsS --max-time 25 "$root/assets/js/exchange-customer-features.js?v=3" -o customer-features.js
+          grep -q 'observeWalletBadges' customer-features.js
+          grep -q 'saveRecipient' customer-features.js
+          grep -q 'ex_refresh_reward_alerts' customer-features.js
+          curl -fLsS --max-time 25 "$root/assets/js/exchange-staff.js?v=8" -o staff.js
+          grep -q "exportBalanceRefundPdf:'refunds'" staff.js
+          grep -q 'staffPageAllowed' staff.js
+          grep -q 'staffDirectoryAction' staff.js
+          grep -q 'staffPasswordAllowed' staff.js
+          curl -fLsS --max-time 25 "$root/assets/js/exchange-live.js?v=1" -o live.js
+          grep -q 'postgres_changes' live.js
+          grep -q 'ex_staff_save_wallet' admin.js
+          grep -q 'startCustomerLive' customer-features.js
           echo "PASS: customer balance and reward UI, admin refund and reward UI, and both balance modules are live."
+      - name: Verify app authentication and IP block release
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="https://www.proxobalance.app"
+          grep -q 'exchange-auth-app.css?v=1' index.html
+          grep -q 'id="myMonthlyActivity"' exchange-admin.html
+          grep -q 'data-wallet-tab="routes"' exchange-admin.html
+          curl -fLsS --max-time 25 "$root/ip-blocked.html" -o blocked.html
+          grep -q 'ئایپی ئامێرەکەت بلۆک کراوە' blocked.html
+          curl -fLsS --max-time 25 "$root/api/track" -o access.json
+          grep -q '"ok":true' access.json
       - name: Verify unauthorized clients cannot read balances
         shell: bash
         run: |
@@ -76,3 +166,21 @@ jobs:
             exit 1
           fi
           echo "PASS: per-user admin balance lookup requires authentication (HTTP 401)."
+          http="$(curl -sS -L --max-time 25 -o shortfall-response.json -w '%{http_code}' -H 'Content-Type: application/json' --data '{"action":"balance_credit_shortfall","payload":{}}' 'https://www.proxobalance.app/api/admin')"
+          if [ "$http" != "401" ]; then
+            echo "FAIL: unauthenticated shortfall action returned HTTP $http; expected 401"
+            exit 1
+          fi
+          echo "PASS: shortfall balance credits require authentication (HTTP 401)."
+          http="$(curl -sS -L --max-time 25 -o refund-report-response.json -w '%{http_code}' -H 'Content-Type: application/json' --data '{"action":"balance_refund_report","payload":{}}' 'https://www.proxobalance.app/api/admin')"
+          if [ "$http" != "401" ]; then
+            echo "FAIL: unauthenticated refund report returned HTTP $http; expected 401"
+            exit 1
+          fi
+          echo "PASS: refund PDF report data requires authentication (HTTP 401)."
+          http="$(curl -sS -L --max-time 25 -o approval-response.json -w '%{http_code}' -H 'Content-Type: application/json' --data '{"action":"approve_order","payload":{}}' 'https://www.proxobalance.app/api/admin')"
+          if [ "$http" != "401" ]; then
+            echo "FAIL: unauthenticated approval returned HTTP $http; expected 401"
+            exit 1
+          fi
+          echo "PASS: rounded payout approval requires authentication (HTTP 401)."

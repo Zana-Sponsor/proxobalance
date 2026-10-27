@@ -1,0 +1,72 @@
+{
+  "recorded_at_utc": "2026-10-25T20:35:51.897241+00:00",
+  "baseline_design_commit": "e97aa84bc72a55e1bcfc95a8543310bcdb81c8b7",
+  "integrated_main_commit": "c407dc7c8058213943718205ef9ef45ffadf1161",
+  "full_node_tests": {
+    "passed": 484,
+    "failed": 0,
+    "skipped": 0
+  },
+  "pre_merge_node_tests": {
+    "passed": 315,
+    "superseded": true
+  },
+  "local_build": {
+    "passed": true,
+    "referenced_assets": 25
+  },
+  "lint_passed": true,
+  "template_source_isolation_scan_passed": true,
+  "flutter_application_source_unchanged": true,
+  "approved_screenshot_directory_unchanged": true,
+  "production_critical_files_equal_ignoring_trailing_newlines": {
+    "api/admin.js": true,
+    "api/forms.js": true,
+    "api/orders.js": true,
+    "api/balance.js": true,
+    "api/notify-order.js": true,
+    "assets/js/app.js": true,
+    "assets/js/admin.js": true,
+    "assets/js/exchange-balance-admin.js": true,
+    "assets/js/exchange-refund-report.js": true,
+    "assets/js/exchange-payout-rounding.js": true,
+    "index.html": true,
+    "exchange-admin.html": true
+  },
+  "fresh_local_flutter_run": {
+    "completed": false,
+    "reason": "SDK tool snapshot absent; bootstrap stalled resolving dependencies. Stopped without claiming a test result."
+  },
+  "log_sha256": {
+    "runtime-release-merged-node-tests.log": "d30ce5ee72080fa489e1b1b1595ebc51f9e0d99e4c3fb468189e63a315793b0d",
+    "runtime-release-build.log": "6aebf3aab6de8381c41286d29617c33a1113778a359d593cd5742b4742e95808",
+    "runtime-release-flutter-pub.log": "c272ec7e2fceedc901033fbb04af1ffde86b5f7e479fde1b5dfd4554845e538f"
+  },
+  "new_head_ci": "not yet run when recorded",
+  "production_api_probe": {
+    "checked_at_utc": "2026-10-25T20:23:20.339220+00:00",
+    "authenticated": false,
+    "results": [
+      {
+        "method": "GET",
+        "path": "/api/page-providers",
+        "status": 404
+      },
+      {
+        "method": "POST",
+        "path": "/api/tiktok-dm?op=accounts",
+        "status": 404
+      },
+      {
+        "method": "GET",
+        "path": "/api/contact-cards",
+        "status": 401
+      }
+    ]
+  },
+  "production_page_writes_tested": false,
+  "live_tiktok_connection_verified": false,
+  "paid_ad_activated": false,
+  "n8n_full_workflows_executed": false,
+  "production_backend_deployed": false
+}

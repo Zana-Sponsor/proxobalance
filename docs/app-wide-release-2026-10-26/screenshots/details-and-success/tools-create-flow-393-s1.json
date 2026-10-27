@@ -1,0 +1,305 @@
+{
+  "fixture": "Fictional records; actual production widgets; no external writes",
+  "runtime": "Flutter widget test on Linux; not a device performance test",
+  "viewport_dp": [
+    393.0,
+    852.0
+  ],
+  "capture_pixel_ratio": 2,
+  "device_pixel_ratio": 2,
+  "text_scale": 1.0,
+  "safe_area_dp": {
+    "top": 24,
+    "bottom": 16
+  },
+  "keyboard_inset_dp": 0.0,
+  "mounted_images_decoded": 1,
+  "intentional_failed_image_providers": 0,
+  "layout_exceptions": 0,
+  "nodes": [
+    {
+      "widget": "Navigator",
+      "key": "[GlobalObjectKey<NavigatorState> _WidgetsAppState#528e4]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "Overlay",
+      "key": "[LabeledGlobalKey<OverlayState>#c0162]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_OverlayEntryWidget",
+      "key": "[LabeledGlobalKey<_OverlayEntryWidgetState>#63461]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_OverlayEntryWidget",
+      "key": "[LabeledGlobalKey<_OverlayEntryWidgetState>#cc05e]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_ModalScope<dynamic>",
+      "key": "[LabeledGlobalKey<_ModalScopeState<dynamic>>#3d32f]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "RepaintBoundary",
+      "key": "[GlobalKey#3f145]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_InkFeatures",
+      "key": "[GlobalKey#b326c ink renderer]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "LayoutId",
+      "key": "[<_ScaffoldSlot.body>]",
+      "bounds_dp": [
+        0.0,
+        0.0,
+        393.0,
+        852.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "ProxoText",
+      "key": null,
+      "bounds_dp": [
+        166.16455078125,
+        39.0,
+        60.6708984375,
+        25.0
+      ],
+      "intersects_viewport": true,
+      "text": "ئامرازەکان",
+      "font_family": "RabarAuthRegular",
+      "font_size": 18.0,
+      "text_scale": 1.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "ListView",
+      "key": "[String <'tools-owner-pages'>]",
+      "bounds_dp": [
+        0.0,
+        80.0,
+        393.0,
+        772.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_ScrollSemantics",
+      "key": "[GlobalKey#7ea8c]",
+      "bounds_dp": [
+        0.0,
+        80.0,
+        393.0,
+        772.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "RawGestureDetector",
+      "key": "[LabeledGlobalKey<RawGestureDetectorState>#4f27e]",
+      "bounds_dp": [
+        0.0,
+        80.0,
+        393.0,
+        772.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "IgnorePointer",
+      "key": "[GlobalKey#677b8]",
+      "bounds_dp": [
+        0.0,
+        80.0,
+        393.0,
+        772.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "KeyedSubtree",
+      "key": "[Key <[<'tools-primary'>]>]",
+      "bounds_dp": [
+        20.0,
+        104.0,
+        353.0,
+        250.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "Align",
+      "key": "[<'tools-primary'>]",
+      "bounds_dp": [
+        20.0,
+        104.0,
+        353.0,
+        250.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "ProxoEmptyState",
+      "key": "[<'tools-empty-state'>]",
+      "bounds_dp": [
+        20.0,
+        104.0,
+        353.0,
+        234.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "Image",
+      "key": null,
+      "bounds_dp": [
+        173.5,
+        129.0,
+        22.0,
+        22.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "ProxoText",
+      "key": null,
+      "bounds_dp": [
+        36.0,
+        192.0,
+        321.0,
+        24.0
+      ],
+      "intersects_viewport": true,
+      "text": "هێشتا هیچ پەڕەیەکت دروست نەکردووە",
+      "font_family": "RabarAuthRegular",
+      "font_size": 16.0,
+      "text_scale": 1.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "ProxoText",
+      "key": null,
+      "bounds_dp": [
+        36.0,
+        224.0,
+        321.0,
+        20.0
+      ],
+      "intersects_viewport": true,
+      "text": "پەڕەیەک دروستبکە و بەستەرەکەت بەکاربهێنە.",
+      "font_family": "RabarAuthRegular",
+      "font_size": 13.0,
+      "text_scale": 1.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "FilledButton",
+      "key": "[<'tools-create-page'>]",
+      "bounds_dp": [
+        36.0,
+        264.0,
+        321.0,
+        50.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "_InkFeatures",
+      "key": "[GlobalKey#acea3 ink renderer]",
+      "bounds_dp": [
+        36.0,
+        264.0,
+        321.0,
+        50.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "SvgPicture",
+      "key": null,
+      "bounds_dp": [
+        226.24169921875,
+        279.0,
+        20.0,
+        20.0
+      ],
+      "intersects_viewport": true
+    },
+    {
+      "widget": "Flexible",
+      "key": null,
+      "bounds_dp": [
+        146.75830078125,
+        278.5,
+        71.4833984375,
+        21.0
+      ],
+      "intersects_viewport": true,
+      "text": "پەڕە دروستبکە",
+      "font_family": "RabarAuthRegular",
+      "font_size": 14.0,
+      "text_scale": 1.0,
+      "exceeded_max_lines": false
+    },
+    {
+      "widget": "LayoutId",
+      "key": "[<_ScaffoldSlot.floatingActionButton>]",
+      "bounds_dp": [
+        16.0,
+        836.0,
+        0.0,
+        0.0
+      ],
+      "intersects_viewport": true
+    }
+  ]
+}

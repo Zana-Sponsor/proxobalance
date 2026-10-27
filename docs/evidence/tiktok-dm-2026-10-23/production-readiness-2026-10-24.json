@@ -1,0 +1,54 @@
+{
+  "observed_at": "2026-10-24T00:14:14.209702+03:00",
+  "timezone": "Asia/Baghdad",
+  "implementation_commit": "4e755dd8c48b248df6b6534f63388d4cb693e376",
+  "request": "Upload review screenshots to GitHub and publish the seven new workflows to production.",
+  "n8n_version": "2.23.4",
+  "production_operational": false,
+  "publication_attempt": {
+    "workflow_id": "5hn0cuwYvezL8r0G",
+    "version_id": "b8d640ad-1c57-4ab7-903a-f2fc4026b71a",
+    "version_name": "PR46 production release 4e755dd8",
+    "publish_accepted": true,
+    "ui_confirmation": "Workflow published; schedule trigger will now trigger executions.",
+    "configuration_step_executed": true,
+    "configuration_result": "TIKTOK_DM_BACKEND_ORIGIN_NOT_CONFIGURED",
+    "observed_input_timestamp": "2026-10-24T00:11:41.830+03:00",
+    "worker_http_reached_by_configuration_check": false,
+    "unpublished_after_failure": true,
+    "final_active": false,
+    "final_credential_bound": false,
+    "download_sha256": "58b9801c80382a2f36056909debcf6b22620d01239e705b2b4011e6ab993bb42",
+    "scheduled_execution_count": "Not established; execution payload/history saving remains disabled."
+  },
+  "other_six_new_workflows": "Remain unpublished; no publication attempted after the shared production prerequisite failure.",
+  "existing_published_workflows_changed": false,
+  "paid_activation_enabled": false,
+  "missing_n8n_configuration": {
+    "variables": [
+      "PROXO_TIKTOK_DM_BACKEND_ORIGIN",
+      "PROXO_AD_PAYMENTS_BACKEND_ORIGIN"
+    ],
+    "credentials": [
+      "Proxo TikTok DM worker — Authorization bearer matching TIKTOK_DM_WORKER_SECRET",
+      "Proxo FastPay ad worker — Authorization bearer matching FASTPAY_AD_WORKER_SECRET"
+    ]
+  },
+  "backend_dependency": "Verified deployed backend with reviewed database migrations, isolated data boundaries and protected provider/payment configuration. Existing completion-ledger runtime blockers remain unresolved.",
+  "vercel_project_recheck": {
+    "project_id": "prj_TCDpM3JNJAZNREZAVyxBLfiZGFxq",
+    "team_id": "team_8HiDsaKfcCegaE9FgXwmVrUJ",
+    "status": 404,
+    "code": "not_found"
+  },
+  "screenshots": [
+    {
+      "path": "n8n-production-config-blocked-2026-10-24.jpg",
+      "sha256": "f0552f7999c69a3b93c5e557dc9e59d4b07f9d2433b4fa718f59dadeb829e027"
+    },
+    {
+      "path": "n8n-unpublished-after-check-2026-10-24.jpg",
+      "sha256": "047f852d5afa6877bae72a301d2885516ca4767ce33df819aa043b8d058ed09a"
+    }
+  ]
+}

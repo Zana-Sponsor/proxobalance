@@ -3,7 +3,7 @@ on:
   push:
     branches: [feat/proxolink-private-renderer-migration]
   pull_request:
-    paths: ['api/**', 'proxo_app/**', 'test/**', 'vercel.json', '.github/workflows/proxolink-verify.yml']
+    paths: ['api/**', 'proxo_app/**', 'test/**', 'scripts/**', 'integrations/**', 'package.json', 'package-lock.json', 'vercel.json', '.github/workflows/proxolink-verify.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -46,6 +46,13 @@ jobs:
           node-version: '24'
       - run: npm ci
       - run: psql -v ON_ERROR_STOP=1 -f test/fixtures/proxolink-v5-database.sql
+      - name: Verify isolated payment and provider database contracts
+        run: |
+          node scripts/test-ad-payments-database.mjs
+          node scripts/test-legacy-fastpay-database.mjs
+          node scripts/test-meta-database.mjs
+          node scripts/test-tiktok-dm-database.mjs
+          node scripts/test-tiktok-report-database.mjs
       - name: Verify migration transaction rollback
         run: |
           psql -v ON_ERROR_STOP=1 <<'SQL'
@@ -93,6 +100,36 @@ jobs:
           psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261009131901_proxolink_tools_moderation.sql
           psql -v ON_ERROR_STOP=1 -f test/proxolink-tools-moderation.sql
       - run: node scripts/proxolink-v6-database.mjs
+      - name: Verify disabled release policy, RLS and update rollback
+        run: |
+          psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261026000100_app_release_policy.sql
+          psql -v ON_ERROR_STOP=1 -f proxo_app/supabase/migrations/20261026000100_app_release_policy.sql
+          psql -v ON_ERROR_STOP=1 -f test/sql/app_release_policy.sql
+  payment-concurrency:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: isolated-fixture
+          POSTGRES_DB: fastpay_concurrency_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: isolated-fixture
+      PGDATABASE: fastpay_concurrency_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm ci
+      - name: Verify concurrent payment creation, closure and credit
+        run: node scripts/test-fastpay-postgres-concurrency.mjs
   responsive:
     runs-on: ubuntu-latest
     steps:
@@ -149,6 +186,18 @@ jobs:
       - run: flutter pub get
       - name: Analyze changed ProxoLink code
         run: flutter analyze --no-fatal-infos lib/widgets/proxo_tab_stack.dart test/proxo_tab_stack_test.dart test/proxo_banner_lifecycle_test.dart lib/widgets/ad_validation_notifications.dart test/ad_notice_deadline_test.dart lib/screens/tools_screen.dart lib/screens/proxolink_create_page_screen.dart lib/widgets/proxo_refresh.dart lib/widgets/proxolink_design_selector.dart lib/screens/proxolink_page_editor.dart lib/screens/proxolink_page_editor_screen.dart lib/screens/proxolink_page_details_screen.dart lib/screens/card_webview_screen.dart lib/screens/proxo_cards_list_screen.dart lib/screens/ad_detail_screen.dart lib/widgets/proxolink_preview.dart lib/widgets/proxolink_page_card.dart lib/services/proxolink_service.dart lib/models/proxo_card.dart lib/models/proxolink_page_type.dart lib/models/proxolink_template_meta.dart lib/controllers/proxo_card_controller.dart lib/controllers/proxolink_pages_controller.dart
+      - name: Verify FastPay checkout and recovery regressions
+        run: >-
+          flutter test --reporter expanded
+          test/ad_fastpay_attempt_test.dart test/fastpay_wallet_checkout_test.dart
+          test/fastpay_pending_checkout_test.dart test/fastpay_transport_test.dart
+          test/deposit_screen_test.dart
+      - name: Verify restored Create Ad cards and retained checkout behavior
+        run: >-
+          flutter test --reporter expanded
+          test/ad_creation_flow_test.dart test/responsive_ad_ui_test.dart
+          test/tiktok_balanced_ui_test.dart test/tiktok_strict_v3_form_test.dart
+          test/tiktok_dm_form_test.dart test/meta_ad_form_test.dart
       - name: Reproduce banner subscription lifecycle and verify fix
         run: |
           cp lib/widgets/proxo_banner.dart /tmp/proxo-banner-fixed.dart
@@ -223,6 +272,9 @@ jobs:
           lib/screens/auth/auth_service.dart lib/widgets/fastpay_checkout_sheet.dart lib/services/ad_submission.dart
           test/staging_transport_test.dart test/actual_screen_backend_boundary_test.dart
           integration_test/polish_runtime_test.dart
+          lib/services/app_update_service.dart lib/widgets/app_update_host.dart
+          lib/widgets/proxo_png_icon.dart lib/widgets/proxo_home_hero.dart lib/theme/proxo_design_tokens.dart
+          test/app_update_service_test.dart test/app_wide_capture_test.dart
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -231,8 +283,10 @@ jobs:
             proxo_app/build/ui-verification/*.png
             proxo_app/build/ui-verification/actual-screen-measurements.json
             proxo_app/build/pr44-current-evidence/**
+            proxo_app/build/polish-evidence/**
             proxo_app/build/home-balance-evidence/**
             proxo_app/build/receipt-redesign-evidence/**
+            docs/app-wide-release-2026-10-26/screenshots/**
           retention-days: 7
       - uses: gradle/actions/setup-gradle@v4
         with:

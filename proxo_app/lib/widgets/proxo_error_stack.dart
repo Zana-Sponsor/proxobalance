@@ -17,7 +17,7 @@ class ProxoErrorStack {
   static void show(
     BuildContext context,
     String message, {
-    // Kept for source compatibility. All temporary notices use the shared 2s.
+    // Temporary notices use a short readable lifetime; actions stay available.
     Duration duration = proxoNoticeDuration,
     TextStyle? textStyle,
     String? actionLabel,
@@ -57,23 +57,24 @@ class ProxoErrorStack {
                 constraints: const BoxConstraints(maxWidth: 440),
                 child: ProxoTimedNotice(
                   key: ValueKey(generation),
+                  duration: onAction != null && actionLabel != null
+                      ? null
+                      : proxoNoticeReadingTime(text),
                   onExpired: dismiss,
                   onDisposed: () => _detach(generation),
-                  child: IgnorePointer(
-                    ignoring: onAction == null || actionLabel == null,
-                    child: ProxoNoticeCard(
-                      message: text,
-                      tone: tone,
-                      direction: direction,
-                      textStyle: textStyle,
-                      actionLabel: actionLabel,
-                      onAction: onAction == null
-                          ? null
-                          : () {
-                              dismiss();
-                              onAction();
-                            },
-                    ),
+                  child: ProxoNoticeCard(
+                    onDismiss: dismiss,
+                    message: text,
+                    tone: tone,
+                    direction: direction,
+                    textStyle: textStyle,
+                    actionLabel: actionLabel,
+                    onAction: onAction == null
+                        ? null
+                        : () {
+                            dismiss();
+                            onAction();
+                          },
                   ),
                 ),
               )),

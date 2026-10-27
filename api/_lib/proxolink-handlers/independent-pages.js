@@ -70,7 +70,10 @@ export async function editPage(res,owner,body,current) {
   await ready(data); // Preserve a currently published document on failure.
   const {id,user_id,page_kind,client_request_id,...fields}=data;
   const updated=await proxoWrite('proxolink_cards','PATCH',{
-    ...fields,style:data.template_key,publish_status:'ready',last_publish_error_code:null,
+    ...fields,style:data.template_key,publish_status:'ready',
+    // A failed first publish remains on Create Page; an explicit corrected
+    // retry completes that same page. Intentionally inactive ready pages stay inactive.
+    ...(current.publish_status==='failed'?{status:'active',published_at:new Date().toISOString()}:{}),last_publish_error_code:null,
     last_publish_error_at:null,updated_at:new Date().toISOString(),
   },'id=eq.'+id+'&user_id=eq.'+owner+'&updated_at=eq.'+encodeURIComponent(current.updated_at)
     +'&select='+managementColumns);

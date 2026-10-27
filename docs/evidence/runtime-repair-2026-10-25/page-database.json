@@ -1,0 +1,58 @@
+{
+  "verified_at_utc": "2026-10-25",
+  "project_id": "cojchkwssmasiejcgvbk",
+  "applied_migration": "proxolink_v6_independent_pages_management_release",
+  "migration_succeeded": true,
+  "transactional": true,
+  "source_migrations": [
+    {
+      "name": "proxolink_v6_independent_pages",
+      "path": "proxo_app/supabase/migrations/20261006220119_proxolink_v6_independent_pages.sql",
+      "sha256": "ae2729543bcc87042bb14a08fb19aaa69884f8c0b8ee225087ed967730485646"
+    },
+    {
+      "name": "proxolink_page_management_contract",
+      "path": "proxo_app/supabase/migrations/20261008234009_proxolink_page_management_contract.sql",
+      "sha256": "7f87a1f9329bbd87103c82397abab0e4c1c6d210735bc70c0d20aa87971dfdba"
+    },
+    {
+      "name": "proxolink_tools_moderation",
+      "path": "proxo_app/supabase/migrations/20261009131901_proxolink_tools_moderation.sql",
+      "sha256": "ac764922719a67f8f4e2f5b98fddaebb690cdfbefe99a30ab82c5ebfb6acf8af"
+    }
+  ],
+  "preflight": {
+    "schema_constraints_policies_triggers_reviewed": true,
+    "postgres_logs_and_advisors_reviewed": true,
+    "isolated_sql_suites": [
+      "test/proxolink-v6-database.sql",
+      "test/proxolink-page-management.sql",
+      "test/proxolink-tools-moderation.sql"
+    ],
+    "isolated_sql_suites_result": "passed"
+  },
+  "verification": {
+    "page_count_before": 23,
+    "page_count_after": 23,
+    "existing_data_digest_before": "a362776cf885b98b805e36755b7c6eb3",
+    "existing_data_digest_after": "a362776cf885b98b805e36755b7c6eb3",
+    "digest_excludes_new_columns": true,
+    "new_columns": [
+      "page_kind",
+      "settings",
+      "archived_at",
+      "moderation_status"
+    ],
+    "new_typed_pages": 0,
+    "moderation_default_pending": true,
+    "rls_enabled": true,
+    "anonymous_read": false,
+    "anonymous_insert": false,
+    "no_new_security_advisor_findings": true
+  },
+  "limitations": [
+    "No customer page was created or changed during this operation.",
+    "The live API release is still absent. Authenticated page create/save/reopen remains unverified.",
+    "Finance, TikTok, OAuth, activation and reporting migrations were not applied."
+  ]
+}

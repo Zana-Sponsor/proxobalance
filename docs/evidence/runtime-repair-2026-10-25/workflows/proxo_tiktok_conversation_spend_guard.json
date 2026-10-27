@@ -1,0 +1,172 @@
+{
+  "name": "Proxo TikTok — Conversation spend guard",
+  "nodes": [
+    {
+      "id": "proxo_tiktok_conversation_spend_guard-schedule",
+      "name": "Scheduled poll",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "notes": "Keep inactive until target configuration and controlled verification are complete."
+    },
+    {
+      "id": "proxo_tiktok_conversation_spend_guard-manual",
+      "name": "Controlled manual test",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        200
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "proxo_tiktok_conversation_spend_guard-configuration",
+      "name": "Validate backend configuration",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        100
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Scheduled input cannot select a user, identity, order, spend or refund amount.\nconst origin=\"https://www.proxobalance.app\";\nif(typeof origin!=='string'\n  || !/^https:\\/\\/(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z]{2,63}$/.test(origin)\n  || /\\.(?:localhost|local|internal|invalid|test)$/.test(origin))\n  throw new Error('TIKTOK_DM_BACKEND_ORIGIN_NOT_CONFIGURED');\nreturn {json:{origin}};"
+      }
+    },
+    {
+      "id": "proxo_tiktok_conversation_spend_guard-worker-budget",
+      "name": "Poll trusted budget worker",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        100
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Validate backend configuration').item.json.origin + \"/api/tiktok-dm?op=worker-budget\" }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{}",
+        "options": {
+          "timeout": 60000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": null,
+          "name": "UNCONFIGURED — Proxo TikTok DM worker"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput",
+      "notes": "Only transport failures retry here. The backend owns durable claims, bounded stage backoff and uncertain-outcome reconciliation."
+    },
+    {
+      "id": "proxo_tiktok_conversation_spend_guard-worker-budget-result",
+      "name": "Check budget result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        100
+      ],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Do not return authorization URLs, provider payloads, headers or customer records.\nconst response=$json;\nif(!response || response.error || !Number.isInteger(response.statusCode))\n  throw new Error('TIKTOK_DM_WORKER_TRANSPORT_UNAVAILABLE');\nif(response.statusCode===401 || response.statusCode===403)\n  throw new Error('TIKTOK_DM_WORKER_AUTHORIZATION_FAILED');\nif(response.statusCode===429 || response.statusCode>=500)\n  throw new Error('TIKTOK_DM_WORKER_TEMPORARILY_UNAVAILABLE');\nif(response.statusCode<200 || response.statusCode>=300)\n  throw new Error('TIKTOK_DM_WORKER_REQUEST_REJECTED');\nlet body=response.body;\nif(typeof body==='string') {\n  try { body=JSON.parse(body); }\n  catch { throw new Error('TIKTOK_DM_WORKER_INVALID_RESPONSE'); }\n}\nif(!body || body.ok!==true || ![0,1].includes(body.processed)\n  || !['idle','blocked','paused','observed','reconcile','refunded','connected','disconnected','videos_ready','guarded','refreshed','revoked'].includes(body.status))\n  throw new Error('TIKTOK_DM_WORKER_INVALID_RESPONSE');\nconst result={ok:true,processed:body.processed,status:body.status};\nif(typeof body.error_code==='string' && /^[A-Z][A-Z0-9_]{0,99}$/.test(body.error_code))\n  result.error_code=body.error_code;\nreturn {json:result};"
+      }
+    }
+  ],
+  "connections": {
+    "Scheduled poll": {
+      "main": [
+        [
+          {
+            "node": "Validate backend configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Controlled manual test": {
+      "main": [
+        [
+          {
+            "node": "Validate backend configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate backend configuration": {
+      "main": [
+        [
+          {
+            "node": "Poll trusted budget worker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Poll trusted budget worker": {
+      "main": [
+        [
+          {
+            "node": "Check budget result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Baghdad",
+    "executionTimeout": 240,
+    "saveDataErrorExecution": "none",
+    "saveDataSuccessExecution": "none",
+    "saveManualExecutions": false,
+    "saveExecutionProgress": false
+  },
+  "pinData": {},
+  "tags": [],
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "description": "Observe authoritative spend and enforce the stored 95% early-stop policy through the backend. Never reactivate or charge an overrun."
+}

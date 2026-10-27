@@ -1,0 +1,9 @@
+# Native Android validation
+
+The first app-wide revision `092c56e` passed all six GitHub workflows. Its [Android profile artifact](https://github.com/Zana-Sponsor/proxobalance/actions/runs/40245553396/artifacts/12618947388) contains 64 PNGs, including 60 native captures, and 47 measured screen/action sequences. Runtime and screenshot transfer exit codes are zero; there were no cleanup errors, unexpected backend requests or recorded screen exceptions. [Machine-readable record](native-first-pass.json).
+
+Manual inspection of Home, Profile and the update surfaces found faint rectangular lines around some PNG icons that were absent from the local widget captures. The follow-up decodes the original PNG near its physical display size and uses bilinear sampling; icon dimensions, alpha-bound normalization, semantic mappings, source files and license hashes remain unchanged. Empty-state icon wells also now center the 24dp glyph correctly inside their larger tight constraints; a regression check measures the actual image center and paint size. The existing local-asset assertions now recognize Flutter's decode-size wrapper.
+
+The correction passed 101 icon/Home/app-state/balance/navigation checks and 20 affected Sorani screen captures. Their Home, Profile, Menu, empty and update screenshots, manifests and review sheets were refreshed. The final Android rerun and visual comparison are recorded in [PR #46](https://github.com/Zana-Sponsor/proxobalance/pull/46); a prior successful test run does not close the visual finding.
+
+These are isolated fictional fixtures on an Android 15 emulator with a software GPU. The artifact records missed raster budgets and does not establish smooth rendering on physical devices, network latency, OTP delivery, production persistence or provider/payment acceptance. Production remains blocked as described in the main report.

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../theme/app_theme.dart';
+import '../../theme/ad_form_colors.dart';
 import '../../theme/proxo_surface.dart';
 import '../proxo_symbol.dart';
 import '../proxo_text.dart';
@@ -16,6 +17,9 @@ class PaymentOption extends StatelessWidget {
     required this.selected,
     required this.onTap,
     this.tapKey,
+    this.grouped = false,
+    this.minimumHeight = 72,
+    this.selectedOnlyCheck = false,
   });
 
   final String label;
@@ -24,6 +28,9 @@ class PaymentOption extends StatelessWidget {
   final bool selected;
   final VoidCallback? onTap;
   final Key? tapKey;
+  final bool grouped;
+  final double minimumHeight;
+  final bool selectedOnlyCheck;
 
   @override
   Widget build(BuildContext context) => Semantics(
@@ -31,20 +38,28 @@ class PaymentOption extends StatelessWidget {
         selected: selected,
         enabled: onTap != null,
         child: Material(
-          color: selected ? AppColors.accentSoft : Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(ProxoSurface.controlRadius),
-            side: BorderSide(
-              color: selected ? AppColors.accent : ProxoSurface.line,
-              width: selected ? 1.5 : 1,
-            ),
-          ),
+          color: selected
+              ? (AdFormColors.of(context)?.selectedFill ?? AppColors.accentSoft)
+              : Colors.white,
+          shape: grouped
+              ? null
+              : RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(ProxoSurface.controlRadius),
+                  side: BorderSide(
+                    color: selected
+                        ? (AdFormColors.of(context)?.primary ??
+                            AppColors.accent)
+                        : (AdFormColors.of(context)?.line ?? ProxoSurface.line),
+                    width: selected ? 1.5 : 1,
+                  ),
+                ),
           clipBehavior: Clip.antiAlias,
           child: InkWell(
             key: tapKey,
             onTap: onTap,
             child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 72),
+              constraints: BoxConstraints(minHeight: minimumHeight),
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Row(children: [
@@ -57,11 +72,15 @@ class PaymentOption extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ProxoText(label,
-                            translate: true, style: ProxoSurface.body),
+                            translate: true,
+                            style: ProxoSurface.body.copyWith(
+                                color: AdFormColors.of(context)?.ink)),
                         if (subtitle != null) ...[
                           const SizedBox(height: 4),
                           ProxoText(subtitle!,
-                              translate: true, style: ProxoSurface.secondary),
+                              translate: true,
+                              style: ProxoSurface.secondary.copyWith(
+                                  color: AdFormColors.of(context)?.muted)),
                         ],
                       ],
                     ),
@@ -71,17 +90,23 @@ class PaymentOption extends StatelessWidget {
                     dimension: 24,
                     child: Center(
                       child: selected
-                          ? const ProxoSymbol(ProxoSymbolName.check,
-                              size: 22, color: AppColors.accent)
-                          : Container(
-                              width: 20,
-                              height: 20,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                    color: ProxoSurface.line, width: 1.5),
-                              ),
-                            ),
+                          ? ProxoSymbol(ProxoSymbolName.check,
+                              size: 22,
+                              color: AdFormColors.of(context)?.primary ??
+                                  AppColors.accent)
+                          : selectedOnlyCheck
+                              ? const SizedBox.shrink()
+                              : Container(
+                                  width: 20,
+                                  height: 20,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                        color: AdFormColors.of(context)?.line ??
+                                            ProxoSurface.line,
+                                        width: 1.5),
+                                  ),
+                                ),
                     ),
                   ),
                 ]),

@@ -74,6 +74,8 @@ test('the real customer calculation shows 50k covered, 10k excess and a 200 IQD 
   c.MY_REWARDS[0].used_count=2;c.amount='60000';c.calc();
   assert.equal(element('rewardBanner').hidden,true);
   assert.equal(element('bdFee').textContent,'1,200 IQD');
+  assert.equal(element('feeDisplay').innerText,'حمولە: 1,200 IQD');
+  assert.equal(element('totalDisplay').innerText,'58,800 IQD');
   c.RATES['Korek>FIB']={type:'fee_percent',value:20};
   c.RATES['Asiacell>FIB']={type:'multiplier',value:0.86};
   const reward=(id,scope,percent,cap)=>({id,reward_scope:scope,kind:'fee_discount',discount_percent:percent,
@@ -92,4 +94,15 @@ test('the real customer calculation shows 50k covered, 10k excess and a 200 IQD 
   assert.equal(element('bdFee').textContent,'6,300 IQD');
   assert.equal(element('totalDisplay').innerText,'53,700 IQD');
   assert.match(element('rewardBanner').textContent,/ئاسیاسێڵ/);
+});
+
+test('refreshing consumed rewards recalculates the customer quote without stale quota',async()=>{
+  const app=readFileSync(new URL('../assets/js/app.js',import.meta.url),'utf8');
+  let recalculated=0;
+  const exhausted={id:'reward',kind:'free_transactions',active:true,max_uses:1,used_count:1};
+  const builder={select(){return this;},eq(){return this;},order:async()=>({data:[exhausted]})};
+  const c=vm.createContext({curUser:{id:'fixture'},MY_REWARDS:[{...exhausted,used_count:0}],
+    sb:{from:()=>builder},calc(){recalculated++;}});
+  vm.runInContext(app.slice(app.indexOf('let _rewardLoadId=0;'),app.indexOf('function availableFeeReward(')),c);
+  await c.loadMyRewards();assert.equal(c.MY_REWARDS[0].used_count,1);assert.equal(recalculated,1);
 });

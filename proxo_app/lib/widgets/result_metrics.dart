@@ -33,6 +33,8 @@ class ResultMetrics extends StatelessWidget {
             width(m.$3, 15) <= available &&
             width(ProxoStrings.text(m.$2), 12) <= available);
         Widget amount((ProxoSymbolName, String, String) m) => ProxoText(m.$3,
+            maxLines: 1,
+            softWrap: false,
             textDirection: TextDirection.ltr,
             textAlign: TextAlign.center,
             style: ResultsUi.text(size: 15));
@@ -45,21 +47,47 @@ class ResultMetrics extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: ResultsUi.text(size: 12, color: ResultsUi.muted)),
             ]);
-        Widget row((ProxoSymbolName, String, String) m) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              child:
-                  Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                ProxoSymbol(m.$1, size: 20, color: ResultsUi.muted),
-                const SizedBox(width: 8),
-                Expanded(
-                    child: ProxoText(m.$2,
-                        translate: true,
-                        style:
-                            ResultsUi.text(size: 12, color: ResultsUi.muted))),
-                const SizedBox(width: 8),
-                Flexible(child: amount(m)),
-              ]),
-            );
+        Widget row((ProxoSymbolName, String, String) m) {
+          final amountWidth = width(m.$3, 15);
+          final labelWidth = width(ProxoStrings.text(m.$2), 12);
+          final stacked =
+              amountWidth + labelWidth + 36 > constraints.maxWidth - 24;
+          final label = Row(children: [
+            ProxoSymbol(m.$1, size: 20, color: ResultsUi.muted),
+            const SizedBox(width: 8),
+            Expanded(
+                child: ProxoText(m.$2,
+                    translate: true,
+                    style: ResultsUi.text(size: 12, color: ResultsUi.muted))),
+          ]);
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: stacked
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                        label,
+                        const SizedBox(height: 6),
+                        Align(
+                            alignment: Alignment.centerLeft,
+                            child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: amount(m)))
+                      ])
+                : Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                    ProxoSymbol(m.$1, size: 20, color: ResultsUi.muted),
+                    const SizedBox(width: 8),
+                    Expanded(
+                        child: ProxoText(m.$2,
+                            translate: true,
+                            style: ResultsUi.text(
+                                size: 12, color: ResultsUi.muted))),
+                    const SizedBox(width: 8),
+                    SizedBox(width: amountWidth, child: amount(m)),
+                  ]),
+          );
+        }
+
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(

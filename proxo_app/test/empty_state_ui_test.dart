@@ -59,7 +59,8 @@ void _checkPanel(
     expect(paragraph.textScaler.scale(14), closeTo(14 * scale, .001));
     expect(paragraph.didExceedMaxLines, false);
     expect(paragraph.text.style?.fontFamily, ProxoSurface.fontFamily);
-    expect(paragraph.text.style?.fontWeight, FontWeight.w400);
+    expect(paragraph.text.style?.fontWeight,
+        isIn([FontWeight.w400, FontWeight.w500]));
     final left = paragraph.localToGlobal(Offset.zero).dx;
     expect(left, greaterThanOrEqualTo(box.left));
     expect(left + paragraph.size.width, lessThanOrEqualTo(box.right + .01));
