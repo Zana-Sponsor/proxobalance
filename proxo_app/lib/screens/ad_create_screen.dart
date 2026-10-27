@@ -1198,9 +1198,19 @@ class _AdCreateScreenState extends State<AdCreateScreen>
       LayoutBuilder(
         builder: (context, constraints) {
           double? choiceWidth;
+          var choiceHeight = 48.0;
           if (field == 'goal' || field == 'contact-destination') {
             var widest = 0.0;
-            final iconSpace = field == 'contact-destination' ? 84.0 : 29.0;
+            // Standard choices have 16dp padding plus a 1dp border per side.
+            // Include both borders and the actual icon box before measuring
+            // the label; otherwise a one-pixel shortfall wraps the longest
+            // Meta objective and gives equal-width options different heights.
+            const horizontalInsets = 34.0;
+            final iconSpace = field == 'contact-destination'
+                ? 85.0 // Four 17dp logos, three 3dp gaps, and the 8dp label gap.
+                : _isMeta
+                    ? 28.0 // 20dp objective artwork plus the label gap.
+                    : 29.0; // 21dp icon plus the label gap.
             for (final option in options) {
               final painter = TextPainter(
                 text: TextSpan(
@@ -1213,8 +1223,22 @@ class _AdCreateScreenState extends State<AdCreateScreen>
               widest = math.max(widest, painter.width);
               painter.dispose();
             }
-            choiceWidth =
-                math.min(constraints.maxWidth, widest + 32 + iconSpace);
+            choiceWidth = math.min(constraints.maxWidth,
+                widest.ceilToDouble() + horizontalInsets + iconSpace);
+            final labelWidth =
+                math.max(1.0, choiceWidth - horizontalInsets - iconSpace);
+            for (final option in options) {
+              final painter = TextPainter(
+                text: TextSpan(
+                  text: ProxoStrings.text(option.$2),
+                  style: AdUi.text(context, color: _ink),
+                ),
+                textDirection: TextDirection.rtl,
+                textScaler: MediaQuery.textScalerOf(context),
+              )..layout(maxWidth: labelWidth);
+              choiceHeight = math.max(choiceHeight, painter.height + 26);
+              painter.dispose();
+            }
           }
           return Wrap(
             key: ValueKey('ad-choices-$field'),
@@ -1231,7 +1255,7 @@ class _AdCreateScreenState extends State<AdCreateScreen>
                     children: [
                       AdChoice(
                         key: ValueKey('$field-${option.$1}'),
-                        minimumHeight: 48,
+                        minimumHeight: choiceHeight,
                         label: option.$2,
                         style: AdChoiceStyle.standard,
                         icon: field == 'goal'

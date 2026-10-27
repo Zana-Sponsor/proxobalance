@@ -14,13 +14,23 @@ All five immutable `AP…` isolation guards remain in the graph. Callbacks carry
 
 Apply the [reviewed financial dependency chain](../../docs/fastpay-readiness-2026-10-27.md#database-installation-order), including `20261026213026_fastpay_unstarted_attempt_closure.sql`, then `20261026214905_legacy_fastpay_durable_checkout.sql`, on the isolated database after preflight. The latter requires the inspected legacy `fastpay_create_order` baseline; it is not a substitute for existing checkout tables/functions. Keep legacy provider credentials separate from the immutable-ad worker credentials.
 
-Set these nonsecret **n8n Variables** before controlled testing:
+The connected n8n plan rejected saving Variables with `Plan lacks license for this feature`. The sandbox export therefore uses ordinary **compile-time Code/expression constants**, with no dependency on n8n Variables, environment access or a paid upgrade. It does not read configuration from webhook bodies or input items. The default export leaves the isolated URL and merchant reference empty and fails closed before any external request.
 
-| Variable | Required value |
+When the isolated target and protected credentials are available, create a local JSON file containing only these three **nonsecret** fields:
+
+| Public configuration field | Required value |
 |---|---|
-| `PROXO_LEGACY_FASTPAY_SUPABASE_URL` | Isolated `https://<20-character-project-ref>.supabase.co` origin. The main project is rejected. Inspect the target and grants independently. |
-| `PROXO_LEGACY_FASTPAY_PUBLIC_ORIGIN` | `https://email.proxopages.com`; the draft uses only the dedicated paths below. |
-| `PROXO_LEGACY_FASTPAY_MERCHANT_REFERENCE` | Exact sandbox store ID matching the protected FastPay Custom Auth credential. This is a binding reference, not a password. |
+| `supabaseUrl` | Isolated `https://<20-character-project-ref>.supabase.co` origin. The main project is rejected. Inspect the target and grants independently. |
+| `publicOrigin` | `https://email.proxopages.com`; the draft uses only the dedicated paths below. |
+| `merchantReference` | Exact sandbox store ID matching the protected FastPay Custom Auth credential. This is a binding reference, not a password. |
+
+Pass that file as the optional final builder argument:
+
+```bash
+node integrations/legacy-fastpay/build-patch.mjs /absolute/path/legacy-snapshot.json /absolute/path/review-output /absolute/path/sandbox-public-config.json
+```
+
+The builder rejects unknown fields, incomplete configuration and the main database, then stamps the same checked object into all 30 configuration expressions. Review the generated inactive file and import it through the normal n8n UI. Do not edit copies independently or place store passwords, service keys or tokens in this file. Credentials are still selected separately in n8n's protected credential UI. The generic production review patch retains its existing `$vars` contract; only the isolated sandbox export uses these constants.
 
 The export forces the provider environment to sandbox, even if an unrelated environment variable selects production. It uses `https://staging-qr.fast-pay.iq`, and permits QR URLs only at that reviewed origin. A different real sandbox QR hosting origin requires evidence and explicit review before changing the allowlist.
 
@@ -45,18 +55,18 @@ node --test test/legacy-fastpay-checkout.test.js test/legacy-fastpay-contracts.t
 node scripts/test-legacy-fastpay-database.mjs
 ```
 
-The 22 Node checks execute the embedded contract/checkout/verification code with synthetic responses, validate graph gates and inspect the actual generated export, including continuing a polling batch after one unavailable binding. The database suite passes 86 PGlite assertions. GitHub additionally runs a real PostgreSQL concurrency suite; its result must be read from the current revision's CI. Local fixtures do not establish n8n import/runtime compatibility or provider acceptance.
+The 26 Node checks execute the embedded contract/checkout/verification code with synthetic responses, validate graph gates and inspect the actual generated export, including continuing a polling batch after one unavailable binding. They also verify the manual-only harness boundary and strict compile-time configuration. The database suite passes 86 PGlite assertions. GitHub additionally runs a real PostgreSQL concurrency suite; its result must be read from the current revision's CI. Local fixtures do not establish n8n import/runtime compatibility or provider acceptance.
 
 ### Manual n8n runtime checks
 
-The separate [manual-only runtime harness](proxo_fastpay_runtime_harness.json) contains a Manual Trigger and one Code node. The [generator](runtime-harness.mjs) embeds the actual sandbox Code snippets, expressions and contract factories unchanged, then supplies synthetic responses. It contains no HTTP, webhook, schedule, credential or notification nodes and makes no provider request or ledger write. This permits checking n8n JavaScript runtime compatibility without selecting a database or merchant credential.
+The separate [manual-only runtime harness](proxo_fastpay_runtime_harness.json) contains a Manual Trigger and one Code node. The [generator](runtime-harness.mjs) derives a configured synthetic fixture from the actual sandbox export, replacing only the marked nonsecret constants. It embeds those Code snippets, expressions and original contract factories without changing validation logic, then supplies synthetic responses. It first checks that the default blank template fails closed, and records separate template and configured-fixture digests. It contains no HTTP, webhook, schedule, credential or notification nodes and makes no provider request or ledger write. This permits checking n8n JavaScript runtime compatibility without selecting a database or merchant credential.
 
 ```bash
 node integrations/legacy-fastpay/runtime-harness.mjs
 node --test test/legacy-fastpay-runtime-harness.test.js
 ```
 
-On **27 October 2026**, the separate [runtime harness in n8n](https://email.proxopages.com/workflow/8fLksW8MXDWJQ810) ran manually and returned **PASS: 56 checks**. It remains inactive. The result includes the named checks and source-export digest, with `providerRequests:0`, `ledgerWrites:0` and `livePaymentAccepted:false`. It covers first-only dispatch authorization, original order/money/owner binding, malformed or mismatched provider evidence, callback independence, duplicate credit confirmation and nonterminal decline recovery. See the [runtime audit and screenshots](../../docs/fastpay-runtime-2026-10-27/README.md).
+On **27 October 2026**, the updated constant-based export was reimported into the inactive sandbox draft, and the updated [runtime harness in n8n](https://email.proxopages.com/workflow/8fLksW8MXDWJQ810) ran manually and visibly returned **PASS: 56 checks**. Its code also requires the blank-template guard before producing PASS; local rehearsal confirms `defaultConfigurationRejected:true`. The exported draft was verified to retain 152 nodes, exact Code snippets/connections, zero bound credentials and no `$vars`/`$env` dependency. The harness emits named checks and both source digests, with `providerRequests:0`, `ledgerWrites:0` and `livePaymentAccepted:false`. See the [runtime audit and screenshots](../../docs/fastpay-runtime-2026-10-27/README.md).
 
 For reproduction, import the harness as a separate inactive workflow and use its manual trigger only. This successful n8n run establishes Code/expression runtime compatibility for the synthetic cases. It does not establish HTTP-node transport, actual credential injection, database migration compatibility, callback delivery or real payment acceptance; those require the isolated integration test described above.
 

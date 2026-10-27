@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import {legacyCheckoutContract} from '../integrations/legacy-fastpay/checkout-contract.mjs';
+import {configureSandboxWorkflow,sandboxPublicConfiguration} from '../integrations/legacy-fastpay/build-patch.mjs';
 
 const contract=legacyCheckoutContract();
 const vars={PROXO_LEGACY_FASTPAY_ENVIRONMENT:'production',PROXO_LEGACY_FASTPAY_SUPABASE_URL:'https://abcdefghijklmnopqrst.supabase.co',PROXO_LEGACY_FASTPAY_PUBLIC_ORIGIN:'https://email.proxopages.com',PROXO_LEGACY_FASTPAY_MERCHANT_REFERENCE:'fixture-store'};
@@ -12,7 +13,9 @@ const input={orderId:'PX123456789',userId:user,billAmount:10000,currency:'IQD',p
 const receipt={ok:true,create_authorized:true,must_reconcile:false,transaction_id:tx,user_id:user,order_id:input.orderId,amount_iqd:10000,currency:'IQD',wallet_credited:false,status:'pending',gateway_status:'CREATED',journaled:true,environment:'sandbox',merchant_reference:'fixture-store',request_hash:'a'.repeat(64),qr_url:null,qr_text:null,expires_at:new Date(Date.now()+600000).toISOString()};
 const response=body=>({statusCode:200,body:JSON.stringify(body)});
 const plain=v=>JSON.parse(JSON.stringify(v));
-const draft=()=>JSON.parse(fs.readFileSync(new URL('../integrations/legacy-fastpay/proxo_fastpay_durable_sandbox.json',import.meta.url),'utf8'));
+const publicConfiguration={supabaseUrl:vars.PROXO_LEGACY_FASTPAY_SUPABASE_URL,publicOrigin:vars.PROXO_LEGACY_FASTPAY_PUBLIC_ORIGIN,merchantReference:vars.PROXO_LEGACY_FASTPAY_MERCHANT_REFERENCE};
+const template=()=>JSON.parse(fs.readFileSync(new URL('../integrations/legacy-fastpay/proxo_fastpay_durable_sandbox.json',import.meta.url),'utf8'));
+const draft=()=>configureSandboxWorkflow(template(),publicConfiguration);
 const node=(w,name)=>{const n=w.nodes.find(n=>n.name===name);assert(n,name);return n;};
 const expr=(value,scope)=>vm.runInNewContext(`(${value.slice(3,-2).trim()})`,scope);
 const run=(w,name,value,refs={})=>plain(vm.runInNewContext(`(function(){${node(w,name).parameters.jsCode}})()`,{$vars:vars,$input:{item:{json:value},all:()=>[{json:value}]},$:name=>({item:{json:refs[name]}})}))[0].json;
@@ -24,6 +27,29 @@ test('sandbox configuration rejects the main database and pins dedicated sandbox
     assert.throws(()=>contract.config({...vars,PROXO_LEGACY_FASTPAY_SUPABASE_URL:url},true));
   assert.throws(()=>contract.config({...vars,PROXO_LEGACY_FASTPAY_MERCHANT_REFERENCE:''},true));
   assert.throws(()=>contract.config({...vars,PROXO_LEGACY_FASTPAY_PUBLIC_ORIGIN:'https://www.proxobalance.app'},true));
+});
+
+test('unconfigured sandbox uses no paid Variables feature and fails closed before external requests',()=>{
+  const w=template();
+  assert.doesNotMatch(JSON.stringify(w),/\$(?:vars|env)\b/);
+  assert.throws(()=>run(w,'FastPay Config',{}, {'Resolve Checkout Amount':input}),/LEGACY_FASTPAY_ORIGIN_INVALID/);
+  assert.throws(()=>expr(node(w,'Legacy Reserve Checkout').parameters.url,{}),/LEGACY_FASTPAY_ORIGIN_INVALID/);
+  assert.deepEqual(sandboxPublicConfiguration(),{PROXO_LEGACY_FASTPAY_SUPABASE_URL:'',PROXO_LEGACY_FASTPAY_PUBLIC_ORIGIN:'https://email.proxopages.com',PROXO_LEGACY_FASTPAY_MERCHANT_REFERENCE:''});
+});
+
+test('compile-time public configuration rejects secrets, production targets and incomplete files',()=>{
+  for(const invalid of [null,[],{}, {...publicConfiguration,storePassword:'not-a-real-secret'},
+    {...publicConfiguration,supabaseUrl:'https://cojchkwssmasiejcgvbk.supabase.co'},
+    {...publicConfiguration,publicOrigin:'https://www.proxobalance.app'},
+    {...publicConfiguration,merchantReference:''},
+    {...publicConfiguration,merchantReference:'/* END_PROXO_FASTPAY_PUBLIC_CONFIG */'}])
+    assert.throws(()=>configureSandboxWorkflow(template(),invalid));
+  assert.throws(()=>configureSandboxWorkflow({...template(),active:true},publicConfiguration));
+  const a=draft(),b=configureSandboxWorkflow(a,publicConfiguration);
+  assert.deepEqual(a,b);
+  const configured=run(a,'FastPay Config',{body:{supabaseUrl:'https://cojchkwssmasiejcgvbk.supabase.co',merchantReference:'forged'}},{'Resolve Checkout Amount':input});
+  assert.equal(configured.supabaseUrl,publicConfiguration.supabaseUrl);
+  assert.equal(configured.merchantReference,publicConfiguration.merchantReference);
 });
 
 test('reservation binds original owner/order/money and freezes only reviewed request fields',()=>{
@@ -112,8 +138,8 @@ test('inactive export has isolated targets, unbound credentials and disabled ref
     if(n.type==='n8n-nodes-base.httpRequest'){
       assert.equal(n.parameters.options.redirect.redirect.followRedirects,false,n.name);assert.equal(n.retryOnFail,false,n.name);
       if(n.parameters.url.includes('.supabaseUrl')){
-        const url=expr(n.parameters.url,{$vars:vars});assert.match(url,/^https:\/\/abcdefghijklmnopqrst\.supabase\.co\//,n.name);
-        assert.throws(()=>expr(n.parameters.url,{$vars:{...vars,PROXO_LEGACY_FASTPAY_SUPABASE_URL:'https://cojchkwssmasiejcgvbk.supabase.co'}}),n.name);
+        const url=expr(n.parameters.url,{});assert.match(url,/^https:\/\/abcdefghijklmnopqrst\.supabase\.co\//,n.name);
+        assert.equal(expr(n.parameters.url,{$vars:{...vars,PROXO_LEGACY_FASTPAY_SUPABASE_URL:'https://cojchkwssmasiejcgvbk.supabase.co'}}),url,n.name+' must ignore runtime Variables');
       }
     }
   }

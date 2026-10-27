@@ -6,6 +6,10 @@ import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { legacyCheckoutContract } from './checkout-contract.mjs';
 import { legacyProviderContract } from './contracts.mjs';
+import { configureSandboxWorkflow } from './build-patch.mjs';
+
+const syntheticConfiguration = { supabaseUrl: 'https://abcdefghijklmnopqrst.supabase.co',
+  publicOrigin: 'https://email.proxopages.com', merchantReference: 'synthetic-runtime-store' };
 
 const embeddedNodes = [
   'FastPay Config', 'Legacy Dispatch Verified', 'Legacy Restore Dispatch',
@@ -53,12 +57,12 @@ export function runRuntimeCases(nodes, expressions, checkout, provider, provenan
     purpose: 'wallet_deposit', note: 'Synthetic runtime fixture; never dispatched', expiresIn: 10 };
   const response = body => ({ statusCode: 200, body: JSON.stringify(body) });
   const providerResponse = data => response({ code: 200, errors: [], data });
-  const run = (name, value, refs = {}, selectedVars = vars) => {
+  const run = (name, value, refs = {}) => {
     const lookup = key => {
       if (!Object.prototype.hasOwnProperty.call(refs, key)) throw new Error('Unexpected node reference: ' + key);
       return { item: { json: refs[key] } };
     };
-    const output = nodes[name]({ item: { json: value }, all: () => [{ json: value }] }, lookup, selectedVars);
+    const output = nodes[name]({ item: { json: value }, all: () => [{ json: value }] }, lookup);
     if (!Array.isArray(output) || output.length !== 1 || !output[0].json) throw new Error('Unexpected Code node item shape');
     return output[0].json;
   };
@@ -76,9 +80,11 @@ export function runRuntimeCases(nodes, expressions, checkout, provider, provenan
   const credit = { ok: true, duplicate: false, transaction_id: transactionId, user_id: owner,
     status: 'approved', gateway_status: 'PAID', amount_iqd: 10000, currency: 'IQD', wallet_credited: true };
 
-  check('sandbox environment overrides a production variable', () => equal(config.environment, 'sandbox'));
-  check('main Supabase project is rejected before any request', () => rejects(() => run('FastPay Config', {},
-    { 'Resolve Checkout Amount': input }, { ...vars, PROXO_LEGACY_FASTPAY_SUPABASE_URL: 'https://cojchkwssmasiejcgvbk.supabase.co' }), 'LEGACY_FASTPAY_ISOLATED_TARGET_REQUIRED'));
+  check('sandbox environment ignores production configuration input', () => {
+    equal(config.environment, 'sandbox'); equal(checkout.config(vars, true).environment, 'sandbox');
+  });
+  check('main Supabase project is rejected before any request', () => rejects(() => checkout.config(
+    { ...vars, PROXO_LEGACY_FASTPAY_SUPABASE_URL: 'https://cojchkwssmasiejcgvbk.supabase.co' }, true), 'LEGACY_FASTPAY_ISOLATED_TARGET_REQUIRED'));
   check('missing merchant binding is rejected', () => rejects(() => checkout.config({ ...vars, PROXO_LEGACY_FASTPAY_MERCHANT_REFERENCE: '' }, true), 'LEGACY_FASTPAY_MERCHANT_REQUIRED'));
   check('reservation retains the exact owner, order and money', () => {
     equal(config.request.p_user_id, owner); equal(config.request.p_order_id, input.orderId);
@@ -172,8 +178,11 @@ export function runRuntimeCases(nodes, expressions, checkout, provider, provenan
 
 export function buildRuntimeHarness(source) {
   assert.equal(source.active, false, 'The harness must derive from the inactive sandbox export');
+  // Compile-time synthetic constants only. They cannot be changed by an n8n
+  // input item, webhook body or runtime configuration source.
+  const configuredFixture = configureSandboxWorkflow(source, syntheticConfiguration);
   const find = name => {
-    const values = source.nodes.filter(node => node.name === name);
+    const values = configuredFixture.nodes.filter(node => node.name === name);
     assert.equal(values.length, 1, 'Expected one source node ' + name);
     return values[0];
   };
@@ -181,7 +190,7 @@ export function buildRuntimeHarness(source) {
     const node = find(name);
     assert.equal(node.type, 'n8n-nodes-base.code');
     assert.equal(typeof node.parameters.jsCode, 'string');
-    return JSON.stringify(name) + ': function($input, $, $vars) {\n' + node.parameters.jsCode + '\n}';
+    return JSON.stringify(name) + ': function($input, $) {\n' + node.parameters.jsCode + '\n}';
   });
   const expressions = embeddedExpressions.map(([name, nodeName, field]) => {
     const node = find(nodeName);
@@ -191,13 +200,23 @@ export function buildRuntimeHarness(source) {
   });
   const provenance = { source: 'proxo_fastpay_durable_sandbox.json',
     sourceSha256: createHash('sha256').update(JSON.stringify(source)).digest('hex'),
+    configuredFixtureSha256: createHash('sha256').update(JSON.stringify(configuredFixture)).digest('hex'),
+    configuration: 'Only compile-time nonsecret constants are replaced with synthetic fixture values; validation logic is unchanged.',
     codeNodes: embeddedNodes, expressionNodes: embeddedExpressions.map(([, name]) => name) };
-  const jsCode = '// Synthetic fixtures only. Original Code node snippets and module factories are embedded unchanged.\n' +
+  const blankNode=source.nodes.find(node=>node.name==='FastPay Config');
+  assert.equal(blankNode?.type,'n8n-nodes-base.code');
+  const defaultConfigurationCheck = `\nconst blankConfigurationNode = function($input, $) {\n${blankNode.parameters.jsCode}\n};\n` +
+    `let blankConfigurationRejected=false;\ntry { blankConfigurationNode({item:{json:{}}},()=>({item:{json:{}}})); } catch (error) {\n` +
+    ` if(error.message!=='LEGACY_FASTPAY_ORIGIN_INVALID') throw error; blankConfigurationRejected=true;\n}\n` +
+    `if(!blankConfigurationRejected) throw new Error('DEFAULT_SANDBOX_CONFIGURATION_MUST_FAIL_CLOSED');\n`;
+  const jsCode = '// Synthetic fixtures only. Actual Code snippets use compile-time fixture configuration; validation logic and module factories are unchanged.\n' +
+    defaultConfigurationCheck +
     'const nodes = {\n' + wrappers.join(',\n') + '\n};\n' +
     'const expressions = {\n' + expressions.join(',\n') + '\n};\n' +
     'const checkout = (' + legacyCheckoutContract.toString() + ')();\n' +
     'const provider = (' + legacyProviderContract.toString() + ')();\n' +
-    'return (' + runRuntimeCases.toString() + ')(nodes, expressions, checkout, provider, ' + JSON.stringify(provenance) + ');\n';
+    'const summary = (' + runRuntimeCases.toString() + ')(nodes, expressions, checkout, provider, ' + JSON.stringify(provenance) + ');\n' +
+    'summary[0].json.defaultConfigurationRejected = blankConfigurationRejected;\nreturn summary;\n';
   return {
     name: 'Proxo FastPay runtime contract checks — MANUAL ONLY', active: false,
     settings: { executionOrder: 'v1', saveDataSuccessExecution: 'none', saveDataErrorExecution: 'none',

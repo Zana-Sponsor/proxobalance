@@ -22,6 +22,7 @@ test('runtime harness remains a reproducible manual-only artifact without extern
   assert.equal(harness.settings.saveDataSuccessExecution, 'none');
   const code = harness.nodes[1].parameters.jsCode;
   assert.doesNotMatch(code, /\b(?:require|import|eval|fetch)\s*\(|new\s+Function\b|\$helpers\b|\$http\b|\$getWorkflowStaticData\b/);
+  assert.doesNotMatch(code,/\$(?:vars|env)\b/);
   const sourceNode = source.nodes.find(node => node.name === 'Legacy Dispatch Verified');
   assert(code.includes(sourceNode.parameters.jsCode), 'Actual source snippet must be embedded without rewriting');
 });
@@ -39,6 +40,9 @@ test('runtime harness locally rehearses synthetic scenarios and never reports li
   assert.equal(summary.providerRequests, 0);
   assert.equal(summary.ledgerWrites, 0);
   assert.equal(summary.livePaymentAccepted, false);
+  assert.equal(summary.defaultConfigurationRejected, true);
   assert.match(summary.provenance.sourceSha256, /^[a-f0-9]{64}$/);
+  assert.match(summary.provenance.configuredFixtureSha256, /^[a-f0-9]{64}$/);
+  assert.notEqual(summary.provenance.sourceSha256,summary.provenance.configuredFixtureSha256);
   assert.equal(summary.provenance.codeNodes.length, 16);
 });

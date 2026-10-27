@@ -15,6 +15,8 @@ const pointer=v=>v.replace(/~/g,'~0').replace(/\//g,'~1');
 const checkout=`(${legacyCheckoutContract.toString()})()`;
 const provider=`(${legacyProviderContract.toString()})()`;
 const cfg=`${checkout}.config($vars, false)`;
+const publicConfigStart='/* PROXO_FASTPAY_PUBLIC_CONFIG */';
+const publicConfigEnd='/* END_PROXO_FASTPAY_PUBLIC_CONFIG */';
 const sqlUrl=path=>`={{ ${cfg}.supabaseUrl + ${JSON.stringify(path)} }}`;
 const body=code=>`={{ ${code} }}`;
 const credential={httpCustomAuth:{id:null,name:'UNCONFIGURED — Proxo legacy FastPay Supabase service'}};
@@ -155,15 +157,62 @@ export function prepareDurablePatch(source) {
   return patch;
 }
 
-export function inactiveSandboxWorkflow(patched) {
+export function sandboxPublicConfiguration(input) {
+  const selected=input===undefined?{supabaseUrl:'',publicOrigin:'https://email.proxopages.com',merchantReference:''}:input;
+  assert(selected&&typeof selected==='object'&&!Array.isArray(selected),'Expected a nonsecret sandbox configuration object');
+  assert.deepEqual(Object.keys(selected).sort(),['merchantReference','publicOrigin','supabaseUrl'],'Only supabaseUrl, publicOrigin and merchantReference are allowed; credentials do not belong in this file');
+  for(const value of Object.values(selected))assert(typeof value==='string'&&!value.includes(publicConfigStart)&&!value.includes(publicConfigEnd),'Invalid public configuration value');
+  const vars={PROXO_LEGACY_FASTPAY_SUPABASE_URL:selected.supabaseUrl,PROXO_LEGACY_FASTPAY_PUBLIC_ORIGIN:selected.publicOrigin,PROXO_LEGACY_FASTPAY_MERCHANT_REFERENCE:selected.merchantReference};
+  // Empty defaults are deliberately unconfigured. A supplied file must be
+  // complete and pass the same sandbox-only target guard used at runtime.
+  if(input!==undefined)legacyCheckoutContract().config(vars,true);
+  return vars;
+}
+const publicConfigExpression=input=>'('+publicConfigStart+JSON.stringify(sandboxPublicConfiguration(input))+publicConfigEnd+')';
+
+/** Restamp only the explicitly marked nonsecret literals in an existing
+ * inactive sandbox export. Used for reproducible synthetic runtime fixtures. */
+export function configureSandboxWorkflow(source,input) {
+  assert.equal(source.active,false,'Only inactive sandbox workflows may be configured');
+  const replacement=JSON.stringify(sandboxPublicConfiguration(input));
+  const w=clone(source);let replacements=0;
+  const visit=value=>{
+    if(typeof value==='string'){
+      let offset=0,result='';
+      while(true){
+        const start=value.indexOf(publicConfigStart,offset);
+        if(start<0)return result+value.slice(offset);
+        const bodyStart=start+publicConfigStart.length,end=value.indexOf(publicConfigEnd,bodyStart);
+        assert(end>=bodyStart,'Public configuration end marker is missing');
+        const previous=JSON.parse(value.slice(bodyStart,end));
+        assert.deepEqual(Object.keys(previous).sort(),Object.keys(sandboxPublicConfiguration()).sort(),'Unexpected public configuration fields');
+        result+=value.slice(offset,bodyStart)+replacement+publicConfigEnd;
+        offset=end+publicConfigEnd.length;replacements++;
+      }
+    }
+    if(Array.isArray(value))return value.map(visit);
+    if(value&&typeof value==='object')return Object.fromEntries(Object.entries(value).map(([key,item])=>[key,visit(item)]));
+    return value;
+  };
+  for(const n of w.nodes)n.parameters=visit(n.parameters);
+  assert(replacements>0,'No marked sandbox public configuration found');
+  return w;
+}
+
+export function inactiveSandboxWorkflow(patched,sandboxConfig) {
   const w=clone(patched);
   for(const key of ['id','versionId','activeVersionId','meta','pinData','staticData','tags','createdAt','updatedAt','versionCounter','triggerCount','shared'])delete w[key];
   w.name='Proxo legacy FastPay durable sandbox — INACTIVE';w.active=false;
   w.settings={executionOrder:'v1',saveDataSuccessExecution:'none',saveDataErrorExecution:'none',saveManualExecutions:false,saveExecutionProgress:false};
   for(const n of w.nodes){
     delete n.webhookId;delete n.credentials;delete n.notes;delete n.notesInFlow;
-    // Every configuration expression is validated in sandbox-only mode.
-    n.parameters=JSON.parse(JSON.stringify(n.parameters).replaceAll('.config($vars, false)','.config($vars, true)'));
+    // Normal Code/expression constants avoid the paid n8n Variables feature.
+    // All copies are generated from one allowlisted nonsecret object; runtime
+    // sandbox-only target validation remains unchanged and fails closed.
+    const params=JSON.stringify(n.parameters);
+    const from=JSON.stringify('.config($vars, false)').slice(1,-1);
+    const to=JSON.stringify('.config('+publicConfigExpression(sandboxConfig)+', true)').slice(1,-1);
+    n.parameters=JSON.parse(params.replaceAll(from,()=>to));
     if(n.type==='n8n-nodes-base.stickyNote')n.parameters={content:'Offline sandbox draft. Configure isolated database, merchant credentials and callback before controlled testing. Never use production credentials.'};
     if(n.type==='n8n-nodes-base.telegram'||/refund/i.test(n.name))n.disabled=true;
     if(n.type==='n8n-nodes-base.telegram')n.parameters={chatId:'UNCONFIGURED',text:'Disabled sandbox notification',additionalFields:{}};
@@ -190,9 +239,10 @@ export function inactiveSandboxWorkflow(patched) {
 }
 
 if(process.argv[1]===fileURLToPath(import.meta.url)){
-  const [input,output,...extra]=process.argv.slice(2);assert(input&&output&&!extra.length,'Usage: build-patch.mjs SNAPSHOT_JSON OUTPUT_DIRECTORY');
+  const [input,output,configurationFile,...extra]=process.argv.slice(2);assert(input&&output&&!extra.length,'Usage: build-patch.mjs SNAPSHOT_JSON OUTPUT_DIRECTORY [PUBLIC_CONFIGURATION_JSON]');
   const source=JSON.parse(await fs.readFile(input,'utf8'));
-  const patch=prepareDurablePatch(source),draft=inactiveSandboxWorkflow(applyReviewedPatch(source,patch));
+  const configuration=configurationFile?JSON.parse(await fs.readFile(configurationFile,'utf8')):undefined;
+  const patch=prepareDurablePatch(source),draft=inactiveSandboxWorkflow(applyReviewedPatch(source,patch),configuration);
   await fs.mkdir(output,{recursive:true});
   await fs.writeFile(`${output}/reviewed-durable-patch.json`,JSON.stringify({live_mutations:false,patch},null,2)+'\n');
   await fs.writeFile(`${output}/proxo_fastpay_durable_sandbox.json`,JSON.stringify(draft,null,2)+'\n');
