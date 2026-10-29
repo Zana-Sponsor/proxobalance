@@ -31,6 +31,9 @@ body { font-family: 'Inter', 'Rabar_021', sans-serif; margin: 0; padding: 0; dis
 #ph { background: #e03030; } #as { background: #e03030; }
 .btn:active { transform: scale(.96); }
 .btn i { font-size: 28px; }
+.brand-icon { width: 28px; height: 28px; display: block; flex: 0 0 auto; }
+#ph .brand-icon { width: 25px; height: 25px; }
+#wa .brand-icon { width: 28px; height: 28px; }
 #wa i { font-size: 25px; }
 #vb i { font-size: 22px; }
 #tg i { font-size: 22px; }
@@ -100,7 +103,7 @@ body { font-family: 'Inter', 'Rabar_021', sans-serif; margin: 0; padding: 0; dis
   <div class="content">
     <h1 class="name">Arya Jafr</h1>
     <p class="desc">لەڕێگەی دووگمەکانەوە پەیوەندیمان پێوە بکەن.</p>
-    <div class="grid"><a id="ph" class="btn"><i class="fas fa-phone-alt"></i><span>کۆرەک</span></a><a id="wa" class="btn shine-active"><i class="fab fa-whatsapp"></i><span>واتسئاپ</span></a></div>
+    <div class="grid"><a id="ph" class="btn" href="tel:+9647709580346" aria-label="پەیوەندی بە کۆڕەک"><svg class="brand-icon korek-icon" viewBox="0 0 48 48" role="img" aria-label="Korek"><path d="M7 7h8v14L29 7h11L24 24l17 17H29L15 27v14H7z" fill="currentColor"/><path d="M34 7h7v7h-7z" fill="#fff"/></svg><span>کۆرەک</span></a><a id="wa" class="btn shine-active" href="https://wa.me/9647709580346" target="_blank" rel="noopener noreferrer" aria-label="پەیوەندی لە واتسئاپ"><svg class="brand-icon whatsapp-icon" viewBox="0 0 32 32" role="img" aria-label="WhatsApp"><path fill="currentColor" d="M16.01 3.2A12.74 12.74 0 0 0 5.08 22.5L3.2 29l6.67-1.75A12.78 12.78 0 1 0 16.01 3.2Zm0 23.2c-1.94 0-3.84-.52-5.5-1.51l-.4-.24-3.96 1.04 1.06-3.86-.26-.4a10.35 10.35 0 1 1 9.06 4.97Zm5.68-7.75c-.31-.16-1.85-.91-2.14-1.02-.29-.1-.5-.16-.71.16-.21.31-.82 1.02-1 1.23-.18.21-.37.23-.68.08-.31-.16-1.31-.48-2.5-1.54-.92-.82-1.54-1.84-1.72-2.15-.18-.31-.02-.48.14-.64.14-.14.31-.37.47-.55.16-.18.21-.31.31-.52.1-.21.05-.39-.03-.55-.08-.16-.71-1.71-.97-2.34-.26-.61-.52-.53-.71-.54h-.61c-.21 0-.55.08-.84.39-.29.31-1.1 1.07-1.1 2.62s1.13 3.04 1.29 3.25c.16.21 2.22 3.39 5.38 4.75.75.32 1.34.51 1.8.65.76.24 1.45.21 2 .13.61-.09 1.85-.76 2.11-1.5.26-.73.26-1.36.18-1.5-.08-.13-.29-.21-.6-.37Z"/></svg><span>واتسئاپ</span></a></div>
     <div class="tt-wrap"><a href="https://www.tiktok.com/@aryajafr" target="_blank" class="tt-badge"><span>@aryajafr</span><i class="fab fa-tiktok"></i></a></div>
     <div class="footer">
       <small>سپۆنسەرکراوە لەئەپی</small>
@@ -185,12 +188,6 @@ function goLink() {
 }(window, document, 'ttq');
 
 document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('wa').onclick = function(){
-    askConfirm('whatsapp', 'whatsapp://send?phone=9647709580346', 'واتسئاپ');
-  };
-  document.getElementById('ph').onclick = function(){
-    askConfirm('phone', 'tel:9647709580346', 'کۆرەک');
-  };
   window.onclick = function(e) { if (e.target.id === 'confirm-modal') closeModal(); }
   setTimeout(hideEffects, 10000);
   (function(){var b=document.querySelectorAll('.btn');var n=b.length;var m=n<=2?100:n<=3?120:n<=4?140:n<=5?160:180;var f=document.querySelector('.footer');if(f)f.style.marginTop=m+'px';})();
