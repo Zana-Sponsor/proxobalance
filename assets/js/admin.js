@@ -1242,6 +1242,7 @@ function showOrderDetail(id){
         <input type="file" accept="image/*" style="display:none" onchange="uploadPayoutReceiptDirect(this,'${order.id}')">
       </label>`):''}
     </div>`:''}
+    ${order.status===STATUS_APPROVED?`<section class="admin-order-feedback" id="adminOrderFeedback"><h4>فیدباکی کڕیار</h4><p>فیدباک بار دەکرێت...</p></section>`:''}
     <label class="modal-lbl">تێبینی ئەدمین</label>
     <textarea class="minp mta" id="odNote">${esc(order.admin_note||'')}</textarea>
     <div class="act-grp" style="margin-top:12px">
@@ -1261,6 +1262,18 @@ function showOrderDetail(id){
   `;
   openMo('moOrderDetail');
   loadOrderCorrectionHistory(order.id);
+  if(order.status===STATUS_APPROVED) loadAdminOrderFeedback(order.id);
+}
+
+async function loadAdminOrderFeedback(orderId){
+  const panel=document.getElementById('adminOrderFeedback');if(!panel)return;
+  try{
+    const {data,error}=await sb.from('ex_order_feedback').select('rating,comment,created_at').eq('order_id',orderId).maybeSingle();
+    if(error)throw error;
+    if(!data){panel.innerHTML='<h4>فیدباکی کڕیار</h4><p>هێشتا فیدباکی بۆ ئەم مامەڵەیە تۆمار نەکراوە.</p>';return;}
+    const stars=Array.from({length:5},(_,index)=>`<span class="${index<Number(data.rating)?'filled':''}" aria-hidden="true">★</span>`).join('');
+    panel.innerHTML=`<h4>فیدباکی کڕیار</h4><div class="feedback-stars" aria-label="${Number(data.rating)} لە ٥ ئەستێرە">${stars}</div>${data.comment?`<p class="feedback-comment">${esc(data.comment)}</p>`:'<p>تەنها ئەستێرە هەڵبژێردراوە.</p>'}<small>${data.created_at?esc(fmtDateTime(data.created_at)):''}</small>`;
+  }catch(error){panel.innerHTML='<h4>فیدباکی کڕیار</h4><p>نەتوانرا فیدباک باربکرێت.</p>';}
 }
 
 function correctionHistoryValue(value){

@@ -1,0 +1,17 @@
+.order-feedback,.admin-order-feedback{margin:14px 0;padding:16px;border:1px solid #e2e8f0;border-radius:16px;background:#f8fafc;color:#172033}
+.order-feedback h3,.admin-order-feedback h4{margin:0 0 7px;font-size:15px;font-weight:800;color:#172033}
+.order-feedback>p,.admin-order-feedback>p{margin:0 0 9px;color:#64748b;font-size:13px;line-height:1.7}
+.feedback-star-picker,.feedback-stars{display:flex;align-items:center;gap:5px;direction:ltr;margin:8px 0}
+.feedback-star-picker .feedback-star,.feedback-stars span{border:0;background:transparent;padding:0 2px;color:#cbd5e1;font-size:30px;line-height:1.15}
+.feedback-star-picker .feedback-star{cursor:pointer;transition:color .15s,transform .15s}
+.feedback-star-picker .feedback-star:hover,.feedback-star-picker .feedback-star.selected,.feedback-stars span.filled{color:#f5a623}
+.feedback-star-picker .feedback-star:hover{transform:scale(1.12)}
+.order-feedback textarea{display:block;width:100%;min-height:88px;resize:vertical;margin:10px 0;padding:11px 12px;border:1px solid #dbe3ed;border-radius:12px;background:#fff;color:#172033;font:inherit;font-size:14px;box-sizing:border-box}
+.order-feedback textarea:focus{outline:2px solid #93c5fd;border-color:#3b82f6}
+.order-feedback .feedback-error{min-height:1.4em;margin-top:7px;color:#b42318;font-size:12px}
+.feedback-comment{white-space:pre-wrap;overflow-wrap:anywhere;color:#334155;font-size:14px;line-height:1.8;margin:8px 0}
+.feedback-muted,.order-feedback small,.admin-order-feedback small{color:#64748b;font-size:12px}
+.admin-order-feedback{margin:12px 0;border-color:#dce6f0;background:#f8fafc}
+.admin-order-feedback .feedback-stars{margin:4px 0}
+.admin-order-feedback .feedback-stars span{font-size:23px}
+.admin-order-feedback h4{margin-bottom:5px}
