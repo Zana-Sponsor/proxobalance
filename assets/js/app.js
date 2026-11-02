@@ -2114,19 +2114,42 @@ function orderCardHTML(o){
 // ── transaction details ────────────────────────────────────────
 let _txSheetId=null;
 let _feedbackDraftRating=0;
+function hasOrderFeedbackReward(order){
+  return !!order.feedbackRewardGranted || MY_REWARDS.some(reward=>reward.campaign_key==='order_feedback_v1:'+String(order.id));
+}
+function feedbackOrderSnapshot(order){
+  const payout=typeof ProxoPayoutRounding==='object'?ProxoPayoutRounding.forOrder(order):null;
+  const received=payout?payout.display_amount:order.total;
+  return '<div class="feedback-order-snapshot" aria-label="پوختەی مامەڵە">'+
+    '<div class="feedback-order-top"><span>مامەڵەی پەسەندکراو</span><b dir="ltr">'+escHtml(orderCodeOf(order))+'</b></div>'+
+    '<div class="feedback-order-route"><span>'+escHtml(methodLabel(order.from_method))+'</span><span class="feedback-route-arrow" aria-hidden="true">←</span><span>'+escHtml(methodLabel(order.to_method))+'</span></div>'+
+    '<div class="feedback-order-amounts"><div><small>ناردنت</small><b dir="ltr">'+escHtml(txAmount(order.amount,order.from_method))+'</b></div><div><small>وەرگرتنت</small><b dir="ltr">'+escHtml(txAmount(received,order.to_method))+'</b></div></div>'+
+    '<div class="feedback-order-date"><span>بەرواری مامەڵە</span><b>'+escHtml(txWhen(order.decided_at||order.created_at,true))+'</b></div></div>';
+}
+function feedbackRewardCard(order,earned){
+  return '<div class="feedback-reward-card'+(earned?' is-earned':'')+'" role="status">'+
+    '<div class="feedback-reward-icon" aria-hidden="true">'+(earned?'✓':'%')+'</div>'+
+    '<div class="feedback-reward-copy"><b>'+(earned?'پاداشتەکەت ئامادەیە':'پاداشتی تایبەت بە فیدباک')+'</b>'+
+    '<strong>٥٠٪ داشکاندن لە کرێی خزمەتگوزاری</strong>'+
+    '<span>زۆرترین داشکاندن: <bdi dir="ltr">١٠,٠٠٠ IQD</bdi> · یەکجار</span>'+
+    '<small>'+(earned?'لە مامەڵەی داهاتووی IQD بەکاردێت، بۆ هەمان جۆری ڕێگای ئاڵوگۆڕ.':'دوای ناردنی فیدباک، لە مامەڵەی داهاتووی IQD بەکاردێت؛ لە هەمان جۆری ڕێگا.')+'</small></div>'+
+    '<span class="feedback-reward-tag">'+(earned?'وەرگیرا':'بەدەست بهێنە')+'</span></div>';
+}
 function renderOrderFeedback(order){
   if(order.status!=='پەسەندکرا') return '';
   const feedback=order.feedback;
+  const rewardEarned=hasOrderFeedbackReward(order);
+  const snapshot=feedbackOrderSnapshot(order);
   if(feedback){
-    return '<section class="order-feedback"><h3>هەڵسەنگاندنی تۆ</h3><div class="feedback-stars" aria-label="'+escHtml(String(feedback.rating))+' لە ٥ ئەستێرە">'+
+    return '<section class="order-feedback is-submitted"><div class="feedback-section-heading"><div><span class="feedback-kicker">فیدباکی مامەڵە</span><h3>هەڵسەنگاندنی تۆ</h3></div><span class="feedback-submitted-badge"><span aria-hidden="true">✓</span> نێردرا</span></div>'+snapshot+feedbackRewardCard(order,rewardEarned)+'<div class="feedback-stars" aria-label="'+escHtml(String(feedback.rating))+' لە ٥ ئەستێرە">'+
       Array.from({length:5},(_,i)=>'<span class="'+(i<Number(feedback.rating)?'filled':'')+'" aria-hidden="true">★</span>').join('')+
-      '</div>'+(feedback.comment?'<p class="feedback-comment">'+escHtml(feedback.comment)+'</p>':'<p class="feedback-muted">تەنها ئەستێرەکەت تۆمارکراوە.</p>')+
-      '<small>سوپاس بۆ فیدباکەکەت</small></section>';
+      '</div>'+(feedback.comment?'<div class="feedback-comment-box"><small>تێبینیی تۆ</small><p class="feedback-comment">'+escHtml(feedback.comment)+'</p></div>':'<p class="feedback-muted">تەنها ئەستێرەکەت تۆمارکراوە.</p>')+
+      '<p class="feedback-thanks">سوپاس بۆ ئەوەی کاتت بۆ باشترکردنی خزمەتگوزاری دانا.</p></section>';
   }
-  return '<section class="order-feedback"><h3>ڕای تۆ بۆ ئەم مامەڵەیە</h3><p>مامەڵەکەت پەسەندکرا؛ تکایە هەڵسەنگاندنێک بنووسە.</p>'+
+  return '<section class="order-feedback"><div class="feedback-section-heading"><div><span class="feedback-kicker">مامەڵەکەت پەسەندکرا</span><h3>چۆن هەڵیدەسەنگێنیت؟</h3><p>ئەستێرە هەڵبژێرە؛ نووسین ئارەزوومەندانەیە.</p></div><span class="feedback-heading-icon" aria-hidden="true">★</span></div>'+snapshot+feedbackRewardCard(order,false)+'<label class="feedback-input-label">هەڵسەنگاندنی تۆ <span>ئەستێرەکان هەڵبژێرە</span></label>'+
     '<div class="feedback-star-picker" role="radiogroup" aria-label="هەڵبژاردنی ئەستێرە">'+Array.from({length:5},(_,i)=>'<button type="button" class="feedback-star" data-rating="'+(i+1)+'" aria-label="'+(i+1)+' ئەستێرە" aria-checked="false" role="radio" onclick="selectOrderFeedbackRating('+(i+1)+')">★</button>').join('')+'</div>'+
-    '<textarea id="orderFeedbackComment" maxlength="1000" placeholder="نووسینت (ئارەزوومەندانە)" aria-label="نووسینی فیدباک"></textarea>'+
-    '<button type="button" class="btn btn-primary btn-block" id="orderFeedbackSubmit" onclick="submitOrderFeedback(\''+escHtml(String(order.id))+'\')">ناردنی فیدباک</button><div class="feedback-error" id="orderFeedbackError" role="alert"></div></section>';
+    '<label class="feedback-input-label" for="orderFeedbackComment">تێبینی <span>ئارەزوومەندانە</span></label><textarea id="orderFeedbackComment" maxlength="1000" placeholder="تجربەکەت لەگەڵ ئەم مامەڵەیە چۆن بوو؟" aria-label="نووسینی فیدباک"></textarea><small class="feedback-char-hint">تا ١,٠٠٠ پیت</small>'+
+    '<button type="button" class="btn btn-primary btn-block feedback-submit-btn" id="orderFeedbackSubmit" onclick="submitOrderFeedback(\''+escHtml(String(order.id))+'\')"><span aria-hidden="true">★</span> ناردنی فیدباک و وەرگرتنی پاداشت</button><div class="feedback-error" id="orderFeedbackError" role="alert"></div></section>';
 }
 function selectOrderFeedbackRating(rating){
   _feedbackDraftRating=Math.max(1,Math.min(5,Number(rating)||0));
@@ -2146,7 +2169,7 @@ async function submitOrderFeedback(orderId){
   try{
     const {data,error}=await sb.from('ex_order_feedback').insert({order_id:order.id,user_id:curUser.id,rating:_feedbackDraftRating,comment}).select('order_id,rating,comment,created_at').single();
     if(error)throw error;
-    order.feedback=data;_feedbackDraftRating=0;await loadMyRewards();openTxDetail(order.id);
+    order.feedback=data;order.feedbackRewardGranted=true;_feedbackDraftRating=0;await loadMyRewards();openTxDetail(order.id);
     showToast('سوپاس! داشکاندنی ٥٠٪ تا ١٠,٠٠٠ دینار بۆ مامەڵەی داهاتووت زیادکرا.','success');
   }catch(error){
     if(errorEl)errorEl.textContent=error.code==='23505'?'فیدباکی ئەم مامەڵەیە پێشتر نێردراوە.':'نەتوانرا فیدباکەکەت تۆمار بکرێت؛ تکایە دووبارە هەوڵ بدەرەوە.';
