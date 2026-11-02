@@ -2110,10 +2110,14 @@ function renderRewardsList(){
       const expired=r.valid_until && Date.parse(r.valid_until)<=Date.now();
       const exhausted=r.max_uses!==null && r.used_count>=r.max_uses;
       const status=!r.active?'هەڵوەشاوە':expired?'بەسەرچووە':exhausted?'تەواوبووە':'چالاک';
+      const feedbackReward=String(r.campaign_key||'').startsWith('order_feedback_v1:');
+      const rewardLabel=(r.kind==='free_transactions'?'بێ لێبڕین':'داشکاندنی '+r.discount_percent+'%')+(feedbackReward?' · پاداشتی فیدباک':'');
+      const caps=[r.max_discount_iqd!=null?'داشکاندن تا '+formatNum(r.max_discount_iqd)+' دینار':null,
+        r.max_amount_iqd!=null?'بڕی مامەڵە تا '+formatNum(r.max_amount_iqd)+' دینار':null].filter(Boolean);
       return '<tr><td>'+esc(p.full_name||p.username||p.email||r.user_id)+'</td>'+
-        '<td>'+esc(r.kind==='free_transactions'?'بێ لێبڕین':'داشکاندنی '+r.discount_percent+'%')+'</td>'+
+        '<td>'+esc(rewardLabel)+'</td>'+
         '<td>'+esc(({wallets:'جزدانەکان',korek:'کۆڕەک',asiacell:'ئاسیاسێڵ'})[r.reward_scope||'wallets'])+'</td>'+
-        '<td>'+esc(r.max_amount_iqd==null?'بێ سنوور':formatNum(r.max_amount_iqd)+' دینار')+'</td>'+
+        '<td>'+esc(caps.length?caps.join(' · '):'بێ سنوور')+'</td>'+
         '<td dir="ltr">'+esc(r.used_count)+' / '+esc(r.max_uses===null?'∞':r.max_uses)+'</td>'+
         '<td>'+esc(r.valid_until?fmtDate(r.valid_until):'بێ کۆتایی')+'</td>'+
         '<td>'+esc(status)+'</td>'+

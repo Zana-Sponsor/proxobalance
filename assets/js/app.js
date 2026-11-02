@@ -987,11 +987,39 @@ function startOtpTimer(seconds){
   }
   tick(); _otpTimer=setInterval(tick,1000);
 }
+function normalizeOtpDigits(value){
+  return String(value||'').replace(/[٠-٩]/g,ch=>String(ch.charCodeAt(0)-1632))
+    .replace(/[۰-۹]/g,ch=>String(ch.charCodeAt(0)-1776)).replace(/[^0-9]/g,'').slice(0,6);
+}
+function otpInputs(prefix){return Array.from({length:6},(_,i)=>document.getElementById(prefix+(i+1))).filter(Boolean);}
+function setOtpCode(prefix,value){
+  const digits=normalizeOtpDigits(value),inputs=otpInputs(prefix);
+  inputs.forEach((input,i)=>{input.value=digits[i]||'';});
+  const focusIndex=digits.length>=6?5:Math.min(digits.length,inputs.length-1);
+  inputs[focusIndex]?.focus();
+  if(digits.length===6){
+    if(prefix==='fp')doForgotVerifyOtp();else verifyOtp();
+  }
+}
+function pasteOtpCode(event,prefix){
+  if(!event.clipboardData)return;
+  event.preventDefault();
+  const digits=normalizeOtpDigits(event.clipboardData.getData('text'));
+  if(!digits){
+    if(prefix==='fp')fpShowMsg('B','لە کلیپبۆرددا ژمارەیەکی دروست نەدۆزرایەوە','err');
+    else showOtpMsg('لە کلیپبۆرددا ژمارەیەکی دروست نەدۆزرایەوە','err');
+    return;
+  }
+  setOtpCode(prefix,digits);
+}
 function otpMove(el,prevId,nextId){
-  el.value=el.value.replace(/[^0-9]/g,'').slice(-1);
-  if(el.value&&nextId) document.getElementById(nextId)?.focus();
-  const code=['otp1','otp2','otp3','otp4','otp5','otp6'].map(id=>document.getElementById(id)?.value||'').join('');
-  if(code.length===6) verifyOtp();
+  const prefix=String(el?.id||'').startsWith('fp')?'fp':'otp';
+  const digits=normalizeOtpDigits(el?.value);
+  if(digits.length>1){setOtpCode(prefix,digits);return;}
+  el.value=digits;
+  if(el.value&&nextId)document.getElementById(nextId)?.focus();
+  const code=otpInputs(prefix).map(input=>input.value||'').join('');
+  if(code.length===6){if(prefix==='fp')doForgotVerifyOtp();else verifyOtp();}
 }
 function otpBack(e,el,prevId){ if(e.key==='Backspace'&&!el.value&&prevId) document.getElementById(prevId)?.focus(); }
 function showOtpMsg(t,c){ const el=document.getElementById('otpMsg'); el.textContent=t; el.className='amsg '+c; el.style.display='block'; }
@@ -1099,10 +1127,7 @@ function fpStartTimer(sec){
   tick(); _fpTimer=setInterval(tick,1000);
 }
 function fpOtpMove(el,prevId,nextId){
-  el.value=el.value.replace(/[^0-9]/g,'').slice(-1);
-  if(el.value&&nextId) document.getElementById(nextId)?.focus();
-  const code=['fp1','fp2','fp3','fp4','fp5','fp6'].map(id=>document.getElementById(id)?.value||'').join('');
-  if(code.length===6) doForgotVerifyOtp();
+  otpMove(el,prevId,nextId);
 }
 function fpOtpBack(e,el,prevId){ if(e.key==='Backspace'&&!el.value&&prevId) document.getElementById(prevId)?.focus(); }
 
@@ -1430,7 +1455,7 @@ async function loadMyRewards(){
   try{
     if(curUser && sb){
       const {data,error}=await sb.from('ex_user_rewards')
-        .select('id,kind,discount_percent,max_uses,used_count,max_amount_iqd,reward_scope,valid_until,active,created_at,campaign_key')
+        .select('id,kind,discount_percent,max_uses,used_count,max_amount_iqd,max_discount_iqd,reward_scope,valid_until,active,created_at,campaign_key')
         .eq('user_id',curUser.id).eq('active',true).order('created_at');
       if(error)throw error;
       if(generation!==_rewardLoadId||curUser?.id!==owner)return;
@@ -1462,7 +1487,9 @@ function availableFeeReward(from,to,fee){
   const scope=ProxoRewardPricing.routeScope(from,to);
   return MY_REWARDS.filter(r=>(r.reward_scope||'wallets')===scope && r.active && (r.max_uses==null || Number(r.used_count)<Number(r.max_uses))
       && (!r.valid_until || Date.parse(r.valid_until)>now))
-    .sort((a,b)=>(a.valid_until?Date.parse(a.valid_until):Infinity)-
+    .sort((a,b)=>(String(a.campaign_key||'').startsWith('order_feedback_v1:')?0:1)-
+      (String(b.campaign_key||'').startsWith('order_feedback_v1:')?0:1) ||
+      (a.valid_until?Date.parse(a.valid_until):Infinity)-
       (b.valid_until?Date.parse(b.valid_until):Infinity) ||
       (a.kind==='free_transactions'?0:1)-(b.kind==='free_transactions'?0:1) ||
       Date.parse(a.created_at)-Date.parse(b.created_at) || String(a.id).localeCompare(String(b.id)))[0]||null;
@@ -1718,7 +1745,8 @@ function calc(){
         rewardBanner.hidden=false;
         const left=reward.max_uses==null?'بێ سنوور':formatNum(reward.max_uses-reward.used_count)+' مامەڵەی ماوە';
         rewardBanner.textContent=(reward.kind==='free_transactions'?'پاداشتی مامەڵەی بێ لێبڕین':'داشکاندنی '+reward.discount_percent+'% لە لێبڕین')+
-          (reward.max_amount_iqd==null?'':' تا '+formatNum(reward.max_amount_iqd)+' دینار')+
+          (reward.max_discount_iqd==null?'':' · زۆرترین داشکاندن '+formatNum(reward.max_discount_iqd)+' دینار')+
+          (reward.max_amount_iqd==null?'':' · تا '+formatNum(reward.max_amount_iqd)+' دینار لە بڕی مامەڵە')+
           ' · '+ProxoRewardPricing.scopeLabel(reward.reward_scope||'wallets')+' · '+left+
           (quote.excess_amount_iqd>0?'\nبڕی زیادە بە لێبڕینی ئاسایی: '+formatNum(quote.excess_amount_iqd)+' دینار':'');
       }
@@ -2118,7 +2146,8 @@ async function submitOrderFeedback(orderId){
   try{
     const {data,error}=await sb.from('ex_order_feedback').insert({order_id:order.id,user_id:curUser.id,rating:_feedbackDraftRating,comment}).select('order_id,rating,comment,created_at').single();
     if(error)throw error;
-    order.feedback=data;_feedbackDraftRating=0;openTxDetail(order.id);showToast('سوپاس بۆ فیدباکەکەت','success');
+    order.feedback=data;_feedbackDraftRating=0;await loadMyRewards();openTxDetail(order.id);
+    showToast('سوپاس! داشکاندنی ٥٠٪ تا ١٠,٠٠٠ دینار بۆ مامەڵەی داهاتووت زیادکرا.','success');
   }catch(error){
     if(errorEl)errorEl.textContent=error.code==='23505'?'فیدباکی ئەم مامەڵەیە پێشتر نێردراوە.':'نەتوانرا فیدباکەکەت تۆمار بکرێت؛ تکایە دووبارە هەوڵ بدەرەوە.';
     if(button){button.disabled=false;button.textContent='ناردنی فیدباک';}

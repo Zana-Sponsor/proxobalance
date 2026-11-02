@@ -1,0 +1,45 @@
+/* Modern, calm authentication shell and appbar. */
+#authWrap{background:radial-gradient(ellipse at 8% 0%,#dbeafe 0,transparent 34%),radial-gradient(ellipse at 100% 100%,#e0e7ff 0,transparent 30%),#f6f8fc!important;padding:18px!important}
+#authWrap .auth-inner{max-width:480px!important;gap:0!important}
+#authWrap .auth-topbar{display:flex!important;align-items:center;justify-content:space-between;gap:12px;margin:0 0 16px!important;padding:12px 14px;border:1px solid #e7edf6;border-radius:18px;background:rgba(255,255,255,.82);box-shadow:0 8px 26px rgba(31,54,89,.06);backdrop-filter:blur(12px)}
+#authWrap .auth-appbar-brand{display:flex;align-items:center;gap:10px;min-width:0;color:#14243a}
+#authWrap .auth-appbar-mark{width:38px;height:38px;display:grid;place-items:center;flex:0 0 auto;border-radius:13px;background:linear-gradient(145deg,#2563eb,#4f46e5);color:#fff;font-size:18px;box-shadow:0 6px 14px rgba(37,99,235,.2)}
+#authWrap .auth-appbar-brand b,#authWrap .auth-appbar-brand small{display:block;line-height:1.45}
+#authWrap .auth-appbar-brand b{font-size:13px;font-weight:800;white-space:nowrap}
+#authWrap .auth-appbar-brand small{font-size:10px;color:#728197}
+#authWrap .auth-appbar-secure{display:inline-flex;align-items:center;gap:5px;flex:0 0 auto;padding:7px 9px;border:1px solid #dbeafe;border-radius:999px;background:#eff6ff;color:#1d4ed8;font-size:10px;font-weight:700;white-space:nowrap}
+#authWrap .auth-brand{padding:10px 12px 20px!important}
+#authWrap .brand-mark{background:linear-gradient(145deg,#eff6ff,#eef2ff)!important;color:#2563eb!important;box-shadow:inset 0 0 0 1px #dbeafe,0 9px 24px rgba(37,99,235,.08)!important}
+#authWrap .auth-brand h1{font-weight:800!important;letter-spacing:-.025em}
+#authWrap .auth-brand p{max-width:340px;margin-inline:auto!important}
+#authWrap .auth-card{padding:26px!important;border-color:#e5eaf2!important;border-radius:26px!important;box-shadow:0 20px 55px rgba(26,45,77,.09),0 2px 8px rgba(26,45,77,.03)!important}
+#authWrap .auth-steps{margin-bottom:18px!important}
+#authWrap .auth-step-label{margin:12px 0 20px!important}
+#authWrap .auth-step-label h3{font-weight:750!important;letter-spacing:-.015em}
+#authWrap .auth-step-label p{max-width:390px}
+#authWrap .input-wrap{margin-bottom:13px}
+#authWrap .input,#authWrap .ainp{transition:border-color .16s,box-shadow .16s,background .16s!important}
+#authWrap .input:focus{background:#fff!important;border-color:#3b82f6!important;box-shadow:0 0 0 4px rgba(59,130,246,.11)!important;outline:0!important}
+#authWrap .btn-primary{font-weight:700!important;box-shadow:0 8px 18px rgba(37,99,235,.16)!important;transition:transform .16s,box-shadow .16s,filter .16s!important}
+#authWrap .btn-primary:not(:disabled):hover{filter:brightness(1.04);transform:translateY(-1px);box-shadow:0 11px 22px rgba(37,99,235,.2)!important}
+#authWrap .auth-step-back{display:flex;align-items:center;justify-content:center;gap:6px;min-height:42px;margin-top:12px;border-radius:12px;cursor:pointer;transition:background .15s,color .15s}
+#authWrap .auth-step-back:hover{background:#f1f5f9;color:#1d4ed8!important}
+#authWrap .otp-inputs{gap:9px!important;margin:18px 0 12px}
+#authWrap .otp-digit{height:58px!important;max-width:52px!important;border:1px solid #d5deea!important;border-radius:15px!important;background:#f8fafc!important;color:#152238!important;font-size:22px!important;font-weight:750;direction:ltr;text-align:center;transition:border-color .15s,box-shadow .15s,background .15s,transform .15s!important}
+#authWrap .otp-digit:focus{background:#fff!important;border-color:#3b82f6!important;box-shadow:0 0 0 4px rgba(59,130,246,.11)!important;outline:0!important;transform:translateY(-1px)}
+#authWrap .otp-timer{margin-top:8px!important;color:#69788d!important;font-size:12px!important}
+#authWrap .otp-resend{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px;color:#2563eb;font-size:13px;font-weight:700;cursor:pointer}
+#authWrap .otp-resend:hover{text-decoration:underline}
+#authWrap .amsg{margin-top:12px!important}
+@keyframes auth-step-in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+#authWrap .auth-step,#authWrap #otpStep,#authWrap #forgotStep{animation:auth-step-in .2s ease-out}
+@media(max-width:480px){
+  #authWrap{padding:calc(12px + env(safe-area-inset-top)) 14px 20px!important}
+  #authWrap .auth-topbar{margin-bottom:12px!important;padding:10px 11px;border-radius:15px}
+  #authWrap .auth-appbar-mark{width:35px;height:35px;border-radius:11px}
+  #authWrap .auth-appbar-secure{font-size:9px;padding:6px 8px}
+  #authWrap .auth-card{padding:22px 18px!important;border-radius:23px!important}
+  #authWrap .otp-inputs{gap:7px!important}
+  #authWrap .otp-digit{height:54px!important;max-width:46px!important;border-radius:13px!important;font-size:20px!important}
+}
+@media(prefers-reduced-motion:reduce){#authWrap *,#authWrap *::before,#authWrap *::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}

@@ -94,6 +94,7 @@
 <link rel="stylesheet" href="/assets/css/exchange-auth-app.css?v=1"><script src="/assets/js/exchange-access.js?v=1"></script>
 <link rel="stylesheet" href="/assets/css/exchange-customer-polish.css?v=2">
 <link rel="stylesheet" href="/assets/css/exchange-feedback.css?v=1">
+<link rel="stylesheet" href="/assets/css/exchange-auth-modern.css?v=1">
 </head>
 
 <body>
@@ -279,7 +280,11 @@
   <div class="auth-inner">
 
     <div class="auth-topbar">
-      
+      <div class="auth-appbar-brand">
+        <span class="auth-appbar-mark"><span class="icn icon--solar icon--solar--transfer-horizontal-linear" aria-hidden="true"></span></span>
+        <span><b>Proxo Balance</b><small>ئاڵوگۆڕی سەلامەت</small></span>
+      </div>
+      <span class="auth-appbar-secure"><span class="icn icn-sm icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span> پەیوەندی پارێزراو</span>
     </div>
 
     <div class="auth-brand">
@@ -367,12 +372,12 @@
         </div>
         <div class="auth-step-label"><h3>کۆدی دڵنیاکردنەوە</h3><p id="otpEmailLbl">کۆدی ٦ ژمارە نێردرا</p></div>
         <div class="otp-inputs">
-          <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="otp1" oninput="otpMove(this,null,'otp2')" onkeydown="otpBack(event,this,null)">
-          <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="otp2" oninput="otpMove(this,'otp1','otp3')" onkeydown="otpBack(event,this,'otp1')">
-          <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="otp3" oninput="otpMove(this,'otp2','otp4')" onkeydown="otpBack(event,this,'otp2')">
-          <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="otp4" oninput="otpMove(this,'otp3','otp5')" onkeydown="otpBack(event,this,'otp3')">
-          <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="otp5" oninput="otpMove(this,'otp4','otp6')" onkeydown="otpBack(event,this,'otp4')">
-          <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="otp6" oninput="otpMove(this,'otp5',null)" onkeydown="otpBack(event,this,'otp5')">
+          <input class="otp-digit" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" id="otp1" aria-label="ژمارەی یەکەمی کۆد" oninput="otpMove(this,null,'otp2')" onpaste="pasteOtpCode(event,'otp')" onkeydown="otpBack(event,this,null)">
+          <input class="otp-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="1" id="otp2" aria-label="ژمارەی دووەمی کۆد" oninput="otpMove(this,'otp1','otp3')" onpaste="pasteOtpCode(event,'otp')" onkeydown="otpBack(event,this,'otp1')">
+          <input class="otp-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="1" id="otp3" aria-label="ژمارەی سێیەمی کۆد" oninput="otpMove(this,'otp2','otp4')" onpaste="pasteOtpCode(event,'otp')" onkeydown="otpBack(event,this,'otp2')">
+          <input class="otp-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="1" id="otp4" aria-label="ژمارەی چوارەمی کۆد" oninput="otpMove(this,'otp3','otp5')" onpaste="pasteOtpCode(event,'otp')" onkeydown="otpBack(event,this,'otp3')">
+          <input class="otp-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="1" id="otp5" aria-label="ژمارەی پێنجەمی کۆد" oninput="otpMove(this,'otp4','otp6')" onpaste="pasteOtpCode(event,'otp')" onkeydown="otpBack(event,this,'otp4')">
+          <input class="otp-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="1" id="otp6" aria-label="ژمارەی شەشەمی کۆد" oninput="otpMove(this,'otp5',null)" onpaste="pasteOtpCode(event,'otp')" onkeydown="otpBack(event,this,'otp5')">
         </div>
         <div class="otp-timer" id="otpTimerWrap">ماوەی ئەم کۆدە: <span id="otpTimerVal">10:00</span></div>
         <div class="otp-resend" id="otpResendBtn" onclick="resendOtp()">
@@ -416,12 +421,12 @@
           </div>
           <p style="text-align:center;font-size:var(--fs-xs);color:var(--text-muted);margin-bottom:14px" id="fpOtpLbl">کۆدی ٦ ژمارە نێردرا</p>
           <div class="otp-inputs">
-            <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="fp1" oninput="fpOtpMove(this,null,'fp2')" onkeydown="fpOtpBack(event,this,null)">
-            <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="fp2" oninput="fpOtpMove(this,'fp1','fp3')" onkeydown="fpOtpBack(event,this,'fp1')">
-            <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="fp3" oninput="fpOtpMove(this,'fp2','fp4')" onkeydown="fpOtpBack(event,this,'fp2')">
-            <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="fp4" oninput="fpOtpMove(this,'fp3','fp5')" onkeydown="fpOtpBack(event,this,'fp3')">
-            <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="fp5" oninput="fpOtpMove(this,'fp4','fp6')" onkeydown="fpOtpBack(event,this,'fp4')">
-            <input class="otp-digit" type="text" inputmode="tel" maxlength="1" id="fp6" oninput="fpOtpMove(this,'fp5',null)" onkeydown="fpOtpBack(event,this,'fp5')">
+            <input class="otp-digit" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" id="fp1" aria-label="ژمارەی یەکەمی کۆد" oninput="fpOtpMove(this,null,'fp2')" onpaste="pasteOtpCode(event,'fp')" onkeydown="fpOtpBack(event,this,null)">
+            <input class="otp-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="1" id="fp2" aria-label="ژمارەی دووەمی کۆد" oninput="fpOtpMove(this,'fp1','fp3')" onpaste="pasteOtpCode(event,'fp')" onkeydown="fpOtpBack(event,this,'fp1')">
+            <input class="otp-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="1" id="fp3" aria-label="ژمارەی سێیەمی کۆد" oninput="fpOtpMove(this,'fp2','fp4')" onpaste="pasteOtpCode(event,'fp')" onkeydown="fpOtpBack(event,this,'fp2')">
+            <input class="otp-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="1" id="fp4" aria-label="ژمارەی چوارەمی کۆد" oninput="fpOtpMove(this,'fp3','fp5')" onpaste="pasteOtpCode(event,'fp')" onkeydown="fpOtpBack(event,this,'fp3')">
+            <input class="otp-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="1" id="fp5" aria-label="ژمارەی پێنجەمی کۆد" oninput="fpOtpMove(this,'fp4','fp6')" onpaste="pasteOtpCode(event,'fp')" onkeydown="fpOtpBack(event,this,'fp4')">
+            <input class="otp-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="1" id="fp6" aria-label="ژمارەی شەشەمی کۆد" oninput="fpOtpMove(this,'fp5',null)" onpaste="pasteOtpCode(event,'fp')" onkeydown="fpOtpBack(event,this,'fp5')">
           </div>
           <div class="otp-timer" id="fpTimerWrap">ماوەی ئەم کۆدە: <span id="fpTimerVal">10:00</span></div>
           <div class="otp-resend" id="fpResendBtn" onclick="fpResendOtp()">
@@ -1535,10 +1540,10 @@
 
 
 <script src="/assets/js/index-svg-icons.js?v=1"></script>
-<script src="/assets/js/exchange-reward-pricing.js?v=2"></script>
+<script src="/assets/js/exchange-reward-pricing.js?v=3"></script>
 <script src="/assets/js/exchange-payout-rounding.js?v=1"></script>
 <script src="/assets/js/exchange-live.js?v=1"></script>
-<script src="/assets/js/app.js?v=48"></script>
+<script src="/assets/js/app.js?v=49"></script>
 <script src="/assets/js/exchange-customer-features.js?v=3"></script>
 <script src="/assets/js/exchange-balance.js?v=6"></script>
 <script src="/assets/js/exchange-ux.js?v=1"></script>

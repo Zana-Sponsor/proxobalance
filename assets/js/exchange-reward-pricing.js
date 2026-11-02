@@ -29,6 +29,8 @@
     if(reward&&baseFee>0n){
       const cap=reward.max_amount_iqd==null?null:Number(reward.max_amount_iqd);
       if(cap!==null&&(!Number.isSafeInteger(cap)||cap<1||cap>1000000000))throw new RangeError('Invalid reward cap');
+      const discountCap=reward.max_discount_iqd==null?null:Number(reward.max_discount_iqd);
+      if(discountCap!==null&&(!Number.isSafeInteger(discountCap)||discountCap<1||discountCap>1000000000))throw new RangeError('Invalid maximum discount');
       covered=cap==null?n:(n<BigInt(cap)*d?n:BigInt(cap)*d);
       const excess=n-covered;
       const eligibleFee=positive(baseFee-positive(excess-payout(excess,d,rate.type,r)*d));
@@ -39,6 +41,7 @@
         const p=fraction(reward.discount_percent);
         discount=(eligibleFee*p.n/(d*100n*p.d))*d;
       }else throw new RangeError('Invalid reward kind');
+      if(discountCap!==null){const maximum=BigInt(discountCap)*d;if(discount>maximum)discount=maximum;}
     }
     discount=discount>baseFee?baseFee:positive(discount);
     const value=x=>Number(x)/Number(d);
