@@ -94,7 +94,7 @@
 <link rel="stylesheet" href="/assets/css/exchange-auth-app.css?v=1"><script src="/assets/js/exchange-access.js?v=1"></script>
 <link rel="stylesheet" href="/assets/css/exchange-customer-polish.css?v=2">
 <link rel="stylesheet" href="/assets/css/exchange-feedback.css?v=2">
-<link rel="stylesheet" href="/assets/css/exchange-auth-modern.css?v=8">
+<link rel="stylesheet" href="/assets/css/exchange-auth-modern.css?v=9">
 </head>
 
 <body>
@@ -306,76 +306,75 @@
       <div class="auth-steps"><div class="auth-steps-track" id="authStepsTrack"></div></div>
 
       <!-- Step: email -->
-      <div class="auth-step" id="authStepEmail">
+      <div class="auth-step auth-view" id="authStepEmail">
         <div class="auth-step-label">
           <div class="auth-step-heading">
-            <div class="auth-step-icon"><span class="icn icn-lg icon--solar icon--solar--letter-linear" aria-hidden="true"></span></div>
+            <div class="auth-step-icon"><span class="icn icn-lg icon--solar icon--solar--key-linear" aria-hidden="true"></span></div>
             <h3>چوونەژوورەوە</h3>
           </div>
-          <p>ئیمەیڵەکەت بنووسە بۆ چوونەژوورەوە یان دروستکردنی هەژمار.</p>
+          <p>بەخێربێیتەوە. بۆ بەردەوامبوون بچۆ ژوورەوە.</p>
         </div>
         <label class="auth-field-label" for="authEmail">ئیمەیڵ</label>
         <div class="input-wrap">
           <span class="input-ico"><span class="icn icn-sm icon--solar icon--solar--letter-linear" aria-hidden="true"></span></span>
-          <input class="input" type="email" autocomplete="username" aria-label="ئیمەیل" id="authEmail" placeholder="example@gmail.com" dir="ltr" onkeydown="if(event.key==='Enter')nextAuthStep('email')">
+          <input class="input" type="email" autocomplete="username" aria-label="ئیمەیڵ" id="authEmail" placeholder="example@gmail.com" dir="ltr" inputmode="email" autocapitalize="none" spellcheck="false">
         </div>
-        <button class="btn btn-primary btn-block" id="emailNextBtn" onclick="nextAuthStep('email')">
-          <span>دواتر</span>
+        <label class="auth-field-label" for="authPass">وشەی نهێنی</label>
+        <div class="pass-wrap field">
+          <input class="input" type="password" autocomplete="current-password" aria-label="وشەی نهێنی" id="authPass" placeholder="وشەی نهێنی" dir="ltr">
+          <button type="button" class="pass-eye" onclick="togglePass('authPass',this)" aria-label="پیشاندانی وشەی نهێنی" aria-pressed="false"><span class="pass-eye-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path><circle cx="12" cy="12" r="2.7"></circle></svg></span></button>
+        </div>
+        <div id="forgotLinkWrap" class="auth-forgot-wrap">
+          <button type="button" class="auth-link auth-link-button" onclick="showForgotStep()">وشەی نهێنیم لەبیرکردووە؟</button>
+        </div>
+        <button type="button" class="btn btn-primary btn-block" id="authBtn" onclick="submitLogin()">
+          <span id="authBtnTxt">چوونەژوورەوە</span>
           <span class="icn icon--solar icon--solar--arrow-left-linear" aria-hidden="true"></span>
         </button>
-        <div class="amsg" id="authMsgEmail"></div>
+        <div class="amsg" id="authMsg"></div>
+        <div class="auth-account-switch">
+          <span>هەژمارت نییە؟</span>
+          <button type="button" onclick="setAuthRoute('signup',true)">دروستکردنی هەژمار</button>
+        </div>
       </div>
 
-      <!-- Step: signup name (new accounts only) -->
-      <div class="auth-step" id="authStepName" style="display:none">
+      <!-- Separate Proxo-style account creation screen -->
+      <div class="auth-step auth-view" id="authStepName" style="display:none">
         <div class="auth-step-label">
           <div class="auth-step-heading">
             <div class="auth-step-icon"><span class="icn icn-lg icon--solar icon--solar--user-linear" aria-hidden="true"></span></div>
             <h3>دروستکردنی هەژمار</h3>
           </div>
-          <p>بۆ دەستپێکردن، ناوت بنووسە.</p>
+          <p>زانیارییەکانت بنووسە بۆ دروستکردنی هەژمارێکی نوێ.</p>
         </div>
         <label class="auth-field-label" for="authName">ناوی تەواو</label>
         <div class="input-wrap">
           <span class="input-ico"><span class="icn icn-sm icon--solar icon--solar--user-linear" aria-hidden="true"></span></span>
-          <input class="input" type="text" autocomplete="name" aria-label="ناوی تەواو" id="authName" placeholder="ناوی تەواو" onkeydown="if(event.key==='Enter')nextAuthStep('name')">
+          <input class="input" type="text" autocomplete="name" aria-label="ناوی تەواو" id="authName" placeholder="ناوی تەواو">
         </div>
-        <button class="btn btn-primary btn-block" id="nameNextBtn" onclick="nextAuthStep('name')">
-          <span>دواتر</span>
-          <span class="icn icon--solar icon--solar--arrow-left-linear" aria-hidden="true"></span>
-        </button>
-        <div class="amsg" id="authMsgName"></div>
-        <div class="auth-step-back" onclick="goAuthStep('email')">
-          <span class="icn icn-sm icon--solar icon--solar--arrow-right-linear" aria-hidden="true"></span>
-          گەڕانەوە
+        <label class="auth-field-label" for="signupEmail">ئیمەیڵ</label>
+        <div class="input-wrap">
+          <span class="input-ico"><span class="icn icn-sm icon--solar icon--solar--letter-linear" aria-hidden="true"></span></span>
+          <input class="input" type="email" autocomplete="email" aria-label="ئیمەیڵ" id="signupEmail" placeholder="example@gmail.com" dir="ltr" inputmode="email" autocapitalize="none" spellcheck="false">
         </div>
-      </div>
-
-      <!-- Step: password -->
-      <div class="auth-step" id="authStepPass" style="display:none">
-        <div class="auth-step-label">
-          <div class="auth-step-heading">
-            <div class="auth-step-icon"><span class="icn icn-lg icon--solar icon--solar--lock-linear" aria-hidden="true"></span></div>
-            <h3 id="passStepTitle">وشەی نهێنی</h3>
-          </div>
-          <p id="passStepSub">وشەی نهێنیت بنووسە بۆ چوونەژوورەوە</p>
-        </div>
-        <label class="auth-field-label" for="authPass">وشەی نهێنی</label>
+        <label class="auth-field-label" for="signupPass">وشەی نهێنی</label>
         <div class="pass-wrap field">
-          <input class="input" type="password" autocomplete="current-password" aria-label="وشەی نهێنی" id="authPass" placeholder="وشەی نهێنی" dir="ltr" onkeydown="if(event.key==='Enter')nextAuthStep('pass')">
-          <button type="button" class="pass-eye" onclick="togglePass('authPass',this)" aria-label="پیشاندانی وشەی نهێنی" aria-pressed="false"><span class="pass-eye-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path><circle cx="12" cy="12" r="2.7"></circle></svg></span></button>
+          <input class="input" type="password" autocomplete="new-password" aria-label="وشەی نهێنی" id="signupPass" placeholder="کەمترین ٦ پیت" dir="ltr">
+          <button type="button" class="pass-eye" onclick="togglePass('signupPass',this)" aria-label="پیشاندانی وشەی نهێنی" aria-pressed="false"><span class="pass-eye-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path><circle cx="12" cy="12" r="2.7"></circle></svg></span></button>
         </div>
-        <button class="btn btn-primary btn-block" id="authBtn" onclick="nextAuthStep('pass')">
-          <span id="authBtnTxt">چوونەژوورەوە</span>
+        <label class="auth-field-label" for="signupConfirmPass">دووبارە وشەی نهێنی</label>
+        <div class="pass-wrap field">
+          <input class="input" type="password" autocomplete="new-password" aria-label="دووبارە وشەی نهێنی" id="signupConfirmPass" placeholder="وشەی نهێنی دووبارە بنووسە" dir="ltr">
+          <button type="button" class="pass-eye" onclick="togglePass('signupConfirmPass',this)" aria-label="پیشاندانی وشەی نهێنی" aria-pressed="false"><span class="pass-eye-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path><circle cx="12" cy="12" r="2.7"></circle></svg></span></button>
+        </div>
+        <button type="button" class="btn btn-primary btn-block" id="signupSubmitBtn" onclick="submitSignup()">
+          <span>دروستکردنی هەژمار</span>
           <span class="icn icon--solar icon--solar--arrow-left-linear" aria-hidden="true"></span>
         </button>
-        <div class="amsg" id="authMsg"></div>
-        <div id="forgotLinkWrap" style="text-align:center;margin-top:12px">
-          <span class="auth-link" style="font-size:var(--fs-xs)" onclick="showForgotStep()">وشەی نهێنیم لەبیرکردووە</span>
-        </div>
-        <div class="auth-step-back" onclick="goAuthStep('email')">
-          <span class="icn icn-sm icon--solar icon--solar--arrow-right-linear" aria-hidden="true"></span>
-          گەڕانەوە
+        <div class="amsg" id="authMsgSignup"></div>
+        <div class="auth-account-switch">
+          <span>پێشتر هەژمارت هەیە؟</span>
+          <button type="button" onclick="setAuthRoute('login',true)">چوونەژوورەوە</button>
         </div>
       </div>
 
@@ -1572,7 +1571,7 @@
 <script src="/assets/js/exchange-reward-pricing.js?v=3"></script>
 <script src="/assets/js/exchange-payout-rounding.js?v=1"></script>
 <script src="/assets/js/exchange-live.js?v=1"></script>
-<script src="/assets/js/app.js?v=52"></script>
+<script src="/assets/js/app.js?v=53"></script>
 <script src="/assets/js/exchange-customer-features.js?v=3"></script>
 <script src="/assets/js/exchange-balance.js?v=6"></script>
 <script src="/assets/js/exchange-ux.js?v=1"></script>

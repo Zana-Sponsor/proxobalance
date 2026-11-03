@@ -446,14 +446,48 @@ body #authWrap {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   line-height: 0;
   pointer-events: none;
 }
-#authWrap .pass-eye svg { display: block; width: 20px; height: 20px; }
+#authWrap .pass-eye svg { display: block; width: 22px; height: 22px; fill: currentColor; }
 #authWrap .pass-eye:hover { background: #eef4fd !important; color: #2563eb !important; }
 #authWrap .pass-eye:active { transform: translateY(-50%) scale(.96); background: #e4eefc !important; }
+#authWrap .auth-forgot-wrap { margin: -4px 0 10px; text-align: end; }
+#authWrap .auth-link-button {
+  min-height: 40px;
+  padding: 4px 2px;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+}
+#authWrap .auth-account-switch {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 12px 0 0;
+  color: var(--auth-muted);
+  font-size: 13px;
+  text-align: center;
+}
+#authWrap .auth-account-switch button {
+  min-height: 44px;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--auth-blue);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color .16s ease, color .16s ease, transform .16s ease;
+}
+#authWrap .auth-account-switch button:hover { background: var(--auth-blue-soft); color: #155fce; }
+#authWrap .auth-account-switch button:active { transform: scale(.985); }
 #authWrap .otp-resend {
   width: 100%;
   padding: 8px 12px;
@@ -469,3 +503,17 @@ body #authWrap {
 #authWrap .otp-resend:hover:not(:disabled) { background: #f3f7fd; color: #155fce; }
 #authWrap .otp-resend:active:not(:disabled) { transform: scale(.985); }
 #authWrap .otp-resend:disabled { cursor: not-allowed; opacity: .6; }
+
+
+/* Screen-to-screen movement used by the distinct Proxo login/signup routes. */
+#authWrap .auth-step.auth-route-enter,
+#authWrap #otpStep.auth-route-enter,
+#authWrap #fpStepA.auth-route-enter,
+#authWrap #fpStepB.auth-route-enter,
+#authWrap #fpStepC.auth-route-enter {
+  animation: auth-route-enter .3s cubic-bezier(.2,.8,.2,1) both !important;
+}
+@keyframes auth-route-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}

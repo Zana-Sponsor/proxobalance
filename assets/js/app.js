@@ -7,8 +7,8 @@ const ICON = {
   check: '<span class="icn icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>',
   send: '<span class="icn icon--solar icon--solar--plain-2-linear" aria-hidden="true"></span>',
   lock: '<span class="icn icon--solar icon--solar--lock-linear" aria-hidden="true"></span>',
-  eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path><circle cx="12" cy="12" r="2.7"></circle></svg>',
-  eyeOff: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3 18 18"></path><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"></path><path d="M9.9 5.2A10.8 10.8 0 0 1 12 5c6 0 9.5 7 9.5 7a17 17 0 0 1-3 4.1"></path><path d="M6.2 6.3C3.8 7.9 2.5 12 2.5 12s3.5 7 9.5 7c1.3 0 2.5-.3 3.6-.8"></path></svg>',
+  eye: '<svg viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Zm0-72q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm0 192q-134 0-244.5-72T61-462q-5-9-7.5-18.5T51-500q0-10 2.5-19.5T61-538q64-118 174.5-190T480-800q134 0 244.5 72T899-538q5 9 7.5 18.5T909-500q0 10-2.5 19.5T899-462q-64 118-174.5 190T480-200Zm0-300Zm0 220q113 0 207.5-59.5T832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280Z"/></svg>',
+  eyeOff: '<svg viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M607-627q29 29 42.5 66t9.5 76q0 15-11 25.5T622-449q-15 0-25.5-10.5T586-485q5-26-3-50t-25-41q-17-17-41-26t-51-4q-15 0-25.5-11T430-643q0-15 10.5-25.5T466-679q38-4 75 9.5t66 42.5Zm-127-93q-19 0-37 1.5t-36 5.5q-17 3-30.5-5T358-742q-5-16 3.5-31t24.5-18q23-5 46.5-7t47.5-2q137 0 250.5 72T904-534q4 8 6 16.5t2 17.5q0 9-1.5 17.5T905-466q-18 40-44.5 75T802-327q-12 11-28 9t-26-16q-10-14-8.5-30.5T753-392q24-23 44-50t35-58q-50-101-144.5-160.5T480-720Zm0 520q-134 0-245-72.5T60-463q-5-8-7.5-17.5T50-500q0-10 2-19t7-18q20-40 46.5-76.5T166-680l-83-84q-11-12-10.5-28.5T84-820q11-11 28-11t28 11l680 680q11 11 11.5 27.5T820-84q-11 11-28 11t-28-11L624-222q-35 11-71 16.5t-73 5.5ZM222-624q-29 26-53 57t-41 67q50 101 144.5 160.5T480-280q20 0 39-2.5t39-5.5l-36-38q-11 3-21 4.5t-21 1.5q-75 0-127.5-52.5T300-500q0-11 1.5-21t4.5-21l-84-82Zm319 93Zm-151 75Z"/></svg>',
   sun: '<span class="icn icon--solar icon--solar--sun-linear" aria-hidden="true"></span>',
   moon: '<span class="icn icon--solar icon--solar--moon-linear" aria-hidden="true"></span>',
   swap: '<span class="icn icn-sm icon--solar icon--solar--transfer-horizontal-linear" aria-hidden="true"></span>',
@@ -873,96 +873,110 @@ function togglePass(inputId,btn){
 // ═══ AUTH STEP NAVIGATION ═══════════════════════════════════════
 // ══════════════════════════════════════════════════════════════
 let authCurrentStep='email', _authEmail='', _authName='', _authIsNewUser=false;
-let _authStepBusy=false, _authSubmitting=false;
+let _authStepBusy=false, _authSubmitting=false, _authSignupChecking=false;
+const AUTH_ROUTE_SET=new Set(['login','login/otp','signup','signup/otp','forgetpassword','forgetpassword/otp','newpassword']);
 
-function _renderStepDots(step){
-  const steps=_authIsNewUser?['email','name','pass']:['email','pass'];
-  const track=document.getElementById('authStepsTrack'); if(!track) return;
-  const idx=steps.indexOf(step);
-  track.innerHTML=steps.map((s,i)=>{ let cls='auth-step-dot'; if(i<idx) cls+=' done'; else if(i===idx) cls+=' active'; return '<div class="'+cls+'"></div>'; }).join('');
-}
-function goAuthStep(step){
-  blurAuthInput();
-  authCurrentStep=step;
-  ['authStepEmail','authStepName','authStepPass'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
-  document.getElementById('otpStep').style.display='none';
-  document.getElementById('forgotStep').style.display='none';
-  const map={email:'authStepEmail',name:'authStepName',pass:'authStepPass'};
-  const el=document.getElementById(map[step]); if(el) el.style.display='block';
-  _renderStepDots(step);
-}
 function blurAuthInput(){
   const active=document.activeElement,root=document.getElementById('authWrap');
   if(active&&root?.contains(active)&&/^(INPUT|TEXTAREA|SELECT)$/.test(active.tagName)) active.blur();
 }
 function _showStepMsg(id,text,type){ const el=document.getElementById(id); if(!el) return; el.textContent=text; el.className='amsg '+type; el.style.display='block'; }
-function showAmsg(t,c){ const el=document.getElementById('authMsg'); el.textContent=t; el.className='amsg '+c; el.style.display='block'; }
-
-async function nextAuthStep(from){
-  if(_authStepBusy) return;
-  const buttonId={email:'emailNextBtn',name:'nameNextBtn',pass:'authBtn'}[from];
-  const stepButton=buttonId?document.getElementById(buttonId):null;
-  if(stepButton?.disabled) return;
-  _authStepBusy=true;
-  if(stepButton) stepButton.disabled=true;
-  try{
-    ['authMsgEmail','authMsgName','authMsg'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
-    if(from==='pass'){ await doAuth(); return; }
-    if(window.ProxoAccess && !await ProxoAccess.check()) return;
-    if(from==='email'){
-      const email=document.getElementById('authEmail').value.trim();
-      if(!email){ _showStepMsg('authMsgEmail','ئیمەیل بنووسە','err'); return; }
-      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ _showStepMsg('authMsgEmail','فۆرماتی ئیمەیل هەڵەیە','err'); return; }
-      const btn=document.getElementById('emailNextBtn');
-      btn.disabled=true; btn.innerHTML=ICON.spin+' پشکنین...';
-      try{
-        const {data:exists,error}=await sb.rpc('ex_email_exists',{p_email:email});
-        if(error) throw error;
-        _authEmail=email; _authIsNewUser=!exists;
-        if(exists){
-          document.getElementById('passStepTitle').textContent='وشەی نهێنی';
-          document.getElementById('passStepSub').textContent='وشەی نهێنیت بنووسە بۆ چوونەژوورەوە';
-          document.getElementById('authBtnTxt').textContent='چوونەژوورەوە';
-          document.getElementById('forgotLinkWrap').style.display='block';
-          goAuthStep('pass');
-        } else {
-          goAuthStep('name');
-        }
-      }catch(e){
-        _showStepMsg('authMsgEmail','هەڵەی تۆڕ، دووبارە هەوڵ بدەرەوە','err');
-      }finally{
-        btn.disabled=false; btn.innerHTML='<span>دواتر</span> '+ICON.arrowLeft;
-      }
-    } else if(from==='name'){
-      const name=document.getElementById('authName').value.trim();
-      if(!name){ _showStepMsg('authMsgName','ناوت بنووسە','err'); return; }
-      _authName=name;
-      document.getElementById('passStepTitle').textContent='وشەی نهێنیی نوێ';
-      document.getElementById('passStepSub').textContent='وشەیەکی نهێنی دابنێ — کەمترین ٦ پیت';
-      document.getElementById('authBtnTxt').textContent='تۆمارکردن';
-      document.getElementById('forgotLinkWrap').style.display='none';
-      goAuthStep('pass');
-    }
-  }catch(e){
-    if(from==='email') _showStepMsg('authMsgEmail','هەڵەی تۆڕ، دووبارە هەوڵ بدەرەوە','err');
-    else if(from==='name') _showStepMsg('authMsgName','هەڵەیەک ڕووی دا، دووبارە هەوڵ بدەرەوە','err');
-    else showAmsg(kuErr(e?.message)||'هەڵەیەک ڕووی دا','err');
-  }finally{
-    if(stepButton) stepButton.disabled=false;
-    _authStepBusy=false;
+let authRoute='login';
+function authRouteFromLocation(){
+  const relative=location.pathname.startsWith(BASE_PATH)?location.pathname.slice(BASE_PATH.length):location.pathname.replace(/^\/+/, '');
+  const route=relative.replace(/^\/+|\/+$/g,'');
+  return AUTH_ROUTE_SET.has(route)?route:null;
+}
+function authHref(route){ return BASE_PATH+route; }
+function setAuthRoute(route,push=true,replace=false){
+  if(!AUTH_ROUTE_SET.has(route)) route='login';
+  const previous=authRoute;
+  blurAuthInput();
+  if((previous==='login/otp'||previous==='signup/otp')&&route!==previous){ clearInterval(_otpTimer); _otpPendingData=null; }
+  if(previous==='forgetpassword/otp'&&route==='forgetpassword') clearInterval(_fpTimer);
+  authRoute=route; authCurrentStep=route;
+  if(route==='signup'||route==='signup/otp') _authIsNewUser=true;
+  else if(route==='login'||route==='login/otp') _authIsNewUser=false;
+  ['authStepEmail','authStepName','authStepPass','otpStep','forgotStep'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
+  const fpA=document.getElementById('fpStepA'),fpB=document.getElementById('fpStepB'),fpC=document.getElementById('fpStepC');
+  if(fpA) fpA.style.display='none'; if(fpB) fpB.style.display='none'; if(fpC) fpC.style.display='none';
+  let active=null;
+  if(route==='login'){ active=document.getElementById('authStepEmail'); }
+  else if(route==='signup'){ active=document.getElementById('authStepName'); }
+  else if(route==='login/otp'||route==='signup/otp'){ active=document.getElementById('otpStep'); }
+  else if(route==='forgetpassword'||route==='forgetpassword/otp'||route==='newpassword'){
+    document.getElementById('forgotStep').style.display='block';
+    active=route==='forgetpassword'?fpA:route==='forgetpassword/otp'?fpB:fpC;
   }
+  if(active){ active.style.display='block'; active.classList.remove('auth-route-enter'); void active.offsetWidth; active.classList.add('auth-route-enter'); }
+  const back=document.getElementById('authHeaderBack'); if(back) back.hidden=route==='login';
+  const titles={login:'چوونەژوورەوە',signup:'دروستکردنی هەژمار','login/otp':'کۆدی چوونەژوورەوە','signup/otp':'کۆدی تۆمارکردن',forgetpassword:'گەڕاندنەوەی هەژمار','forgetpassword/otp':'کۆدی گەڕاندنەوە',newpassword:'وشەی نهێنیی نوێ'};
+  document.title=(titles[route]||'چوونەژوورەوە')+' — Proxo Balance';
+  if(push){ try{ history.pushState({authFlow:true,authRoute:route,authPreviousRoute:previous},'',authHref(route)); }catch(_){} }
+  else if(replace){ try{ history.replaceState({authFlow:true,authRoute:route,authPreviousRoute:null},'',authHref(route)); }catch(_){} }
+  syncAuthHeaderBack();
+}
+function authBackTo(route){
+  const state=history.state;
+  if(state?.authFlow&&state.authRoute===authRoute&&state.authPreviousRoute===route){ history.back(); return; }
+  setAuthRoute(route,false,true);
+}
+function goAuthStep(step){ setAuthRoute(step==='name'?'signup':'login',true); }
+function showAmsg(t,c){
+  const id=authRoute==='signup'?'authMsgSignup':'authMsg';
+  const el=document.getElementById(id)||document.getElementById('authMsg');
+  if(!el) return; el.textContent=t; el.className='amsg '+c; el.style.display='block';
+}
+function _authEmailOk(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email||'').trim()); }
+function restoreAuthButton(buttonId){
+  const btn=document.getElementById(buttonId); if(!btn) return;
+  btn.disabled=false;
+  if(buttonId==='signupSubmitBtn') btn.innerHTML='<span>دروستکردنی هەژمار</span> '+ICON.arrowLeft;
+  else btn.innerHTML='<span id="authBtnTxt">چوونەژوورەوە</span> '+ICON.arrowLeft;
+}
+async function submitLogin(){
+  if(_authSubmitting||_authStepBusy) return;
+  const email=document.getElementById('authEmail').value.trim();
+  if(!email){ showAmsg('ئیمەیڵەکەت بنووسە','err'); return; }
+  if(!_authEmailOk(email)){ showAmsg('فۆرماتی ئیمەیڵ هەڵەیە','err'); return; }
+  _authEmail=email; _authIsNewUser=false;
+  return doAuth(document.getElementById('authPass').value,'authBtn');
+}
+async function submitSignup(){
+  if(_authSignupChecking||_authSubmitting) return;
+  _authSignupChecking=true;
+  const btn=document.getElementById('signupSubmitBtn');
+  if(btn){btn.disabled=true;btn.innerHTML=ICON.spin+' پشکنین...';}
+  try{
+    const name=document.getElementById('authName').value.trim();
+    const email=document.getElementById('signupEmail').value.trim();
+    const pass=document.getElementById('signupPass').value;
+    const confirm=document.getElementById('signupConfirmPass').value;
+    if(!name){showAmsg('ناوی تەواوت بنووسە','err');return;}
+    if(!email){showAmsg('ئیمەیڵەکەت بنووسە','err');return;}
+    if(!_authEmailOk(email)){showAmsg('فۆرماتی ئیمەیڵ هەڵەیە','err');return;}
+    if(!pass||pass.length<6){showAmsg('وشەی نهێنی دەبێت کەمترین ٦ پیت بێت','err');return;}
+    if(pass!==confirm){showAmsg('وشە نهێنییەکان یەکسان نین','err');return;}
+    if(window.ProxoAccess&&!await ProxoAccess.check()) return;
+    const {data:exists,error}=await sb.rpc('ex_email_exists',{p_email:email});
+    if(error) throw error;
+    if(exists){showAmsg('ئەم ئیمەیڵە پێشتر تۆمارکراوە؛ تکایە بچۆ ژوورەوە','err');return;}
+    _authName=name;_authEmail=email;_authIsNewUser=true;
+    await doAuth(pass,'signupSubmitBtn');
+  }catch(e){showAmsg(kuErr(e?.message)||'هەڵەی تۆڕ، دووبارە هەوڵ بدەرەوە','err');}
+  finally{_authSignupChecking=false;if(!_authSubmitting)restoreAuthButton('signupSubmitBtn');}
 }
 
-async function doAuth(){
+async function doAuth(passOverride,buttonId='authBtn'){
   if(_authSubmitting) return;
   _authSubmitting=true;
-  const btn=document.getElementById('authBtn');
+  const btn=document.getElementById(buttonId);
   try{
     if(window.ProxoAccess && !await ProxoAccess.check()) return;
-    const pass=document.getElementById('authPass').value;
+    const pass=String(passOverride??document.getElementById('authPass')?.value??'');
     if(!pass){ showAmsg('وشەی نهێنی بنووسە','err'); return; }
     if(pass.length<6){ showAmsg('وشەی نهێنی دەبێت کەمترین ٦ پیت بێت','err'); return; }
-    btn.disabled=true; btn.innerHTML=ICON.spin+' پشکنین...';
+    if(btn){btn.disabled=true;btn.innerHTML=ICON.spin+' پشکنین...';}
     try{
       await window.trackAuthAttempt?.(_authEmail,_authIsNewUser?'signup':'login');
       if(_authIsNewUser){
@@ -980,13 +994,11 @@ async function doAuth(){
       showOtpStep(_authEmail);
     }catch(e){
       showAmsg(kuErr(e.message)||'هەڵەیەک ڕووی دا','err');
-    }finally{
-      btn.disabled=false; btn.innerHTML='<span id="authBtnTxt">'+(_authIsNewUser?'تۆمارکردن':'چوونەژوورەوە')+'</span> '+ICON.arrowLeft;
     }
   }catch(e){
     showAmsg(kuErr(e?.message)||'هەڵەیەک ڕووی دا','err');
-    if(btn){ btn.disabled=false; btn.innerHTML='<span id="authBtnTxt">'+(_authIsNewUser?'تۆمارکردن':'چوونەژوورەوە')+'</span> '+ICON.arrowLeft; }
   }finally{
+    restoreAuthButton(buttonId);
     _authSubmitting=false;
   }
 }
@@ -995,16 +1007,14 @@ async function doAuth(){
 function showOtpStep(email){
   blurAuthInput();
   _otpEmail=email;
+  setAuthRoute(_otpPurpose==='signup'?'signup/otp':'login/otp',true);
   document.getElementById('otpEmailLbl').textContent='کۆدی ٦ ژمارە بۆ '+email+' نێردرا';
-  ['authStepEmail','authStepName','authStepPass'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
-  document.getElementById('forgotStep').style.display='none';
-  document.getElementById('otpStep').style.display='block';
   ['otp1','otp2','otp3','otp4','otp5','otp6'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
   document.getElementById('otpMsg').style.display='none';
   document.getElementById('otpResendBtn').style.display='none';
   startOtpTimer(600);
 }
-function cancelOtp(){ clearInterval(_otpTimer); document.getElementById('otpStep').style.display='none'; goAuthStep('email'); _otpPendingData=null; }
+function cancelOtp(){ clearInterval(_otpTimer); const target=_otpPurpose==='signup'?'signup':'login'; _otpPendingData=null; authBackTo(target); }
 function startOtpTimer(seconds){
   clearInterval(_otpTimer); let remaining=seconds;
   function tick(){
@@ -1147,37 +1157,28 @@ async function resendOtp(){
 // ══════════════════════════════════════════════════════════════
 // ═══ FORGOT PASSWORD ═══════════════════════════════════════════
 // ══════════════════════════════════════════════════════════════
-let _fpTimer=null, _fpEmail='';
+let _fpTimer=null, _fpEmail='', _fpVerified=false;
 function showForgotStep(){
   blurAuthInput();
-  ['authStepEmail','authStepName','authStepPass'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
-  document.getElementById('otpStep').style.display='none';
-  document.getElementById('forgotStep').style.display='block';
-  document.getElementById('fpStepA').style.display='block';
-  document.getElementById('fpStepB').style.display='none';
-  document.getElementById('fpStepC').style.display='none';
-  document.getElementById('forgotEmail').value='';
+  setAuthRoute('forgetpassword',true);
+  document.getElementById('forgotEmail').value=_fpEmail||document.getElementById('authEmail')?.value.trim()||'';
   document.getElementById('fpMsgA').style.display='none';
 }
-function cancelForgotStep(){ clearInterval(_fpTimer); document.getElementById('forgotStep').style.display='none'; goAuthStep('email'); }
-function fpBackToA(){ blurAuthInput(); clearInterval(_fpTimer); document.getElementById('fpStepB').style.display='none'; document.getElementById('fpStepA').style.display='block'; document.getElementById('fpMsgA').style.display='none'; }
+function cancelForgotStep(){ clearInterval(_fpTimer); _fpVerified=false; _fpEmail=''; authBackTo('login'); }
+function fpBackToA(){ blurAuthInput(); clearInterval(_fpTimer); _fpVerified=false; authBackTo('forgetpassword'); }
 function authHeaderBack(){
-  if(_authStepBusy||_authSubmitting||_otpVerifying||_otpResending||_fpResending||_fpSending||_fpVerifying||_fpSaving) return;
-  const visible=id=>{const el=document.getElementById(id);return !!el&&getComputedStyle(el).display!=='none';};
-  if(visible('otpStep')) return cancelOtp();
-  if(visible('forgotStep')){
-    if(visible('fpStepC')) return cancelForgotStep();
-    if(visible('fpStepB')) return fpBackToA();
-    return cancelForgotStep();
-  }
-  if(visible('authStepPass')) return goAuthStep(_authIsNewUser?'name':'email');
-  if(visible('authStepName')) return goAuthStep('email');
+  if(_authStepBusy||_authSubmitting||_authSignupChecking||_otpVerifying||_otpResending||_fpResending||_fpSending||_fpVerifying||_fpSaving) return;
+  const target={'signup':'login','login/otp':'login','signup/otp':'signup',forgetpassword:'login','forgetpassword/otp':'forgetpassword',newpassword:'forgetpassword/otp'}[authRoute];
+  if(!target) return;
+  if(authRoute==='login/otp'||authRoute==='signup/otp') return cancelOtp();
+  if(authRoute==='forgetpassword') return cancelForgotStep();
+  if(authRoute==='forgetpassword/otp') return fpBackToA();
+  authBackTo(target);
 }
 function syncAuthHeaderBack(){
   const button=document.getElementById('authHeaderBack');
   if(!button) return;
-  const visible=id=>{const el=document.getElementById(id);return !!el&&getComputedStyle(el).display!=='none';};
-  button.hidden=!(visible('authStepName')||visible('authStepPass')||visible('otpStep')||visible('forgotStep'));
+  button.hidden=authRoute==='login';
 }
 (()=>{
   const root=document.getElementById('authWrap');
@@ -1233,15 +1234,14 @@ async function doForgotSendOtp(){
     btn.innerHTML=ICON.spin+' دەنێردرێت...';
     const result=await requestOtp(email,'reset_password');
     if(!result.success){ fpShowMsg('A',result.message||'هەڵەی ناردنی کۆد','err'); return; }
-    _fpEmail=email;
+    _fpEmail=email; _fpVerified=false;
     document.getElementById('fpOtpLbl').textContent='کۆدی ٦ ژمارە بۆ '+email+' نێردرا';
     ['fp1','fp2','fp3','fp4','fp5','fp6'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
     document.getElementById('fpMsgB').style.display='none';
     document.getElementById('fpResendBtn').style.display='none';
     document.getElementById('fpTimerWrap').style.color='';
     blurAuthInput();
-    document.getElementById('fpStepA').style.display='none';
-    document.getElementById('fpStepB').style.display='block';
+    setAuthRoute('forgetpassword/otp',true);
     fpStartTimer(600);
   }catch(e){
     fpShowMsg('A',e.message||'هەڵەی پشکنین','err');
@@ -1270,8 +1270,8 @@ async function doForgotVerifyOtp(){
     }
     clearInterval(_fpTimer);
     blurAuthInput();
-    document.getElementById('fpStepB').style.display='none';
-    document.getElementById('fpStepC').style.display='block';
+    _fpVerified=true;
+    setAuthRoute('newpassword',true);
     document.getElementById('fpNewPass').value=''; document.getElementById('fpConfirmPass').value='';
     document.getElementById('fpMsgC').style.display='none';
     btn.disabled=false; btn.innerHTML=ICON.check+' دڵنیاکردنەوە';
@@ -1302,14 +1302,13 @@ async function doForgotSavePass(){
         document.getElementById('forgotStep').style.display='none';
         await startApp(ld.user);
       } else {
-        cancelForgotStep();
-        _authEmail=_fpEmail; _authIsNewUser=false;
+        const resetEmail=_fpEmail;
+        clearInterval(_fpTimer); _fpVerified=false;
+        setAuthRoute('login',false,true);
+        _authEmail=resetEmail; _authIsNewUser=false;
         document.getElementById('authEmail').value=_fpEmail;
         document.getElementById('authPass').value=np;
-        document.getElementById('passStepTitle').textContent='وشەی نهێنی';
         document.getElementById('authBtnTxt').textContent='چوونەژوورەوە';
-        document.getElementById('forgotLinkWrap').style.display='block';
-        goAuthStep('pass');
         setTimeout(()=>showAmsg('وشەی نهێنیەکەت گۆڕدرا — کلیک لە چوونەژوورەوە بکە','ok'),100);
       }
     }catch(e){ fpShowMsg('C',kuErr(e.message)||'هەڵەی تۆڕ','err'); }
@@ -1461,6 +1460,7 @@ async function startApp(user){
     const _ph=document.getElementById('userPhone');
     if(_ph && !_ph.value) _ph.value=curProfile.phone;
   }
+  if(authRouteFromLocation()){ try{history.replaceState({},'',BASE_PATH);}catch(_){} }
   navigate(routeFromLocation(), false);
   refreshFormHints();
   startProofPolling();
@@ -2690,7 +2690,9 @@ const ROUTE_TITLES = {
 const BASE_PATH = (function(){
   let p = location.pathname.replace(/[^\/]*\.html?$/i, '');
   const parts = p.split('/').filter(Boolean);
-  if(parts.length && ROUTES[parts[parts.length-1]]) parts.pop();
+  const lastTwo=parts.slice(-2).join('/');
+  if(parts.length>1 && AUTH_ROUTE_SET.has(lastTwo)) parts.splice(-2);
+  else if(parts.length && (ROUTES[parts[parts.length-1]]||AUTH_ROUTE_SET.has(parts[parts.length-1]))) parts.pop();
   return '/' + (parts.length ? parts.join('/') + '/' : '');
 })();
 let _route='home';
@@ -2729,7 +2731,19 @@ function navigate(route, push){
   if(route==='verify')     { renderVerifyPage(); loadKycStatus(true); }
   if(route==='support')      loadSupportCases();
 }
-window.addEventListener('popstate', function(){ navigate(routeFromLocation(), false); });
+window.addEventListener('popstate', function(){
+  const requested=authRouteFromLocation();
+  if(!curUser){
+    let route=requested||'login';
+    if((route==='login/otp'||route==='signup/otp')&&!_otpPendingData) route=route.split('/')[0];
+    if(route==='forgetpassword/otp'&&!_fpEmail) route='forgetpassword';
+    if(route==='newpassword'&&!_fpVerified) route='forgetpassword';
+    setAuthRoute(route,false,!requested||route!==requested);
+    return;
+  }
+  if(requested){ try{history.replaceState({},'',BASE_PATH);}catch(_){} }
+  navigate(routeFromLocation(), false);
+});
 
 // ══════════════════════════════════════════════════════════════
 // ═══ CHANGE LOG (ex_change_log — filled by database triggers) ══
@@ -4358,7 +4372,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   applyTheme(document.documentElement.getAttribute('data-theme')||'light');
   // Public trust numbers need no session — visitors see them on the login screen.
   loadPublicProof();
-  document.querySelectorAll('.pass-eye-ico').forEach(el=>{ el.innerHTML=ICON.eyeOff; });
+  document.querySelectorAll('.pass-eye-ico').forEach(el=>{ el.innerHTML=ICON.eye; });
   refreshTrigger('from');
   refreshTrigger('receiveVia');
   if(!window.supabase){ showAmsg('هەڵەی بارکردنی سیستەم، پەڕەکە نوێ بکەرەوە','err'); return; }
@@ -4378,11 +4392,10 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   }
   if(session?.user){ await startApp(session.user); }
   else {
-    // No session: drop any inner route from the address bar so the login
-    // screen is always at the root of the site.
-    if(location.pathname.replace(/\/+$/,'') !== BASE_PATH.replace(/\/+$/,'')){
-      try{ history.replaceState({}, '', BASE_PATH); }catch(_){}
-    }
-    goAuthStep('email');
+    let route=authRouteFromLocation()||'login';
+    if((route==='login/otp'||route==='signup/otp')&&!_otpPendingData) route=route.split('/')[0];
+    if(route==='forgetpassword/otp'&&!_fpEmail) route='forgetpassword';
+    if(route==='newpassword'&&!_fpVerified) route='forgetpassword';
+    setAuthRoute(route,false,true);
   }
 });
