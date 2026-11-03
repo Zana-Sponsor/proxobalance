@@ -94,7 +94,7 @@
 <link rel="stylesheet" href="/assets/css/exchange-auth-app.css?v=1"><script src="/assets/js/exchange-access.js?v=1"></script>
 <link rel="stylesheet" href="/assets/css/exchange-customer-polish.css?v=2">
 <link rel="stylesheet" href="/assets/css/exchange-feedback.css?v=2">
-<link rel="stylesheet" href="/assets/css/exchange-auth-modern.css?v=3">
+<link rel="stylesheet" href="/assets/css/exchange-auth-modern.css?v=7">
 </head>
 
 <body>
@@ -280,11 +280,13 @@
   <div class="auth-inner">
 
     <div class="auth-topbar">
-      <div class="auth-appbar-brand">
-        <span class="auth-appbar-mark"><span class="icn icon--solar icon--solar--transfer-horizontal-linear" aria-hidden="true"></span></span>
-        <span><b>Proxo Balance</b><small>ئاڵوگۆڕی سەلامەت</small></span>
-      </div>
-      <span class="auth-appbar-secure"><span class="icn icn-sm icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span> پەیوەندی پارێزراو</span>
+      <span class="auth-appbar-language" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"></path></svg>
+      </span>
+      <div class="auth-appbar-brand"><img src="/assets/images/auth/proxo-logo.webp" alt="Proxo"></div>
+      <button type="button" class="auth-appbar-back" id="authHeaderBack" onclick="authHeaderBack()" aria-label="گەڕانەوە" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>
+      </button>
     </div>
 
     <div class="auth-brand">
@@ -305,10 +307,14 @@
 
       <!-- Step: email -->
       <div class="auth-step" id="authStepEmail">
-        <div class="auth-step-icon">
-          <span class="icn icn-lg icon--solar icon--solar--letter-linear" aria-hidden="true"></span>
+        <div class="auth-step-label">
+          <div class="auth-step-heading">
+            <div class="auth-step-icon"><span class="icn icn-lg icon--solar icon--solar--letter-linear" aria-hidden="true"></span></div>
+            <h3>چوونەژوورەوە</h3>
+          </div>
+          <p>ئیمەیڵەکەت بنووسە بۆ چوونەژوورەوە یان دروستکردنی هەژمار.</p>
         </div>
-        <div class="auth-step-label"><h3>با دەست پێ بکەین</h3><p>ئیمەیلەکەت بنووسە؛ هەژمار هەبێت دەچیتە ژوورەوە، نەبێت هەژمار دروست دەکەیت.</p></div>
+        <label class="auth-field-label" for="authEmail">ئیمەیڵ</label>
         <div class="input-wrap">
           <span class="input-ico"><span class="icn icn-sm icon--solar icon--solar--letter-linear" aria-hidden="true"></span></span>
           <input class="input" type="email" autocomplete="username" aria-label="ئیمەیل" id="authEmail" placeholder="example@gmail.com" dir="ltr" onkeydown="if(event.key==='Enter')nextAuthStep('email')">
@@ -322,10 +328,14 @@
 
       <!-- Step: signup name (new accounts only) -->
       <div class="auth-step" id="authStepName" style="display:none">
-        <div class="auth-step-icon">
-          <span class="icn icn-lg icon--solar icon--solar--user-linear" aria-hidden="true"></span>
+        <div class="auth-step-label">
+          <div class="auth-step-heading">
+            <div class="auth-step-icon"><span class="icn icn-lg icon--solar icon--solar--user-linear" aria-hidden="true"></span></div>
+            <h3>دروستکردنی هەژمار</h3>
+          </div>
+          <p>بۆ دەستپێکردن، ناوت بنووسە.</p>
         </div>
-        <div class="auth-step-label"><h3>هەژمارێکی نوێ</h3><p>ناوت بنووسە بۆ دروستکردنی هەژمار</p></div>
+        <label class="auth-field-label" for="authName">ناوی تەواو</label>
         <div class="input-wrap">
           <span class="input-ico"><span class="icn icn-sm icon--solar icon--solar--user-linear" aria-hidden="true"></span></span>
           <input class="input" type="text" autocomplete="name" aria-label="ناوی تەواو" id="authName" placeholder="ناوی تەواو" onkeydown="if(event.key==='Enter')nextAuthStep('name')">
@@ -343,10 +353,14 @@
 
       <!-- Step: password -->
       <div class="auth-step" id="authStepPass" style="display:none">
-        <div class="auth-step-icon">
-          <span class="icn icn-lg icon--solar icon--solar--lock-linear" aria-hidden="true"></span>
+        <div class="auth-step-label">
+          <div class="auth-step-heading">
+            <div class="auth-step-icon"><span class="icn icn-lg icon--solar icon--solar--lock-linear" aria-hidden="true"></span></div>
+            <h3 id="passStepTitle">وشەی نهێنی</h3>
+          </div>
+          <p id="passStepSub">وشەی نهێنیت بنووسە بۆ چوونەژوورەوە</p>
         </div>
-        <div class="auth-step-label"><h3 id="passStepTitle">وشەی نهێنی</h3><p id="passStepSub">وشەی نهێنیت بنووسە بۆ چوونەژوورەوە</p></div>
+        <label class="auth-field-label" for="authPass">وشەی نهێنی</label>
         <div class="pass-wrap field">
           <input class="input" type="password" autocomplete="current-password" aria-label="وشەی نهێنی" id="authPass" placeholder="وشەی نهێنی" dir="ltr" onkeydown="if(event.key==='Enter')nextAuthStep('pass')">
           <button type="button" class="pass-eye" onclick="togglePass('authPass',this)" aria-label="پیشاندانی وشەی نهێنی"><span class="pass-eye-ico icn icn-sm"></span></button>
@@ -367,10 +381,13 @@
 
       <!-- OTP -->
       <div id="otpStep" style="display:none">
-        <div class="auth-step-icon">
-          <span class="icn icn-lg icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span>
+        <div class="auth-step-label">
+          <div class="auth-step-heading">
+            <div class="auth-step-icon"><span class="icn icn-lg icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span></div>
+            <h3>کۆدی دڵنیاکردنەوە</h3>
+          </div>
+          <p id="otpEmailLbl">کۆدی ٦ ژمارە نێردرا</p>
         </div>
-        <div class="auth-step-label"><h3>کۆدی دڵنیاکردنەوە</h3><p id="otpEmailLbl">کۆدی ٦ ژمارە نێردرا</p></div>
         <div class="otp-inputs">
           <input class="otp-digit" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" id="otp1" aria-label="ژمارەی یەکەمی کۆد" oninput="otpMove(this,null,'otp2')" onpaste="pasteOtpCode(event,'otp')" onkeydown="otpBack(event,this,null)">
           <input class="otp-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="1" id="otp2" aria-label="ژمارەی دووەمی کۆد" oninput="otpMove(this,'otp1','otp3')" onpaste="pasteOtpCode(event,'otp')" onkeydown="otpBack(event,this,'otp1')">
@@ -398,10 +415,14 @@
       <!-- Forgot password -->
       <div id="forgotStep" style="display:none">
         <div id="fpStepA">
-          <div class="auth-step-icon">
-            <span class="icn icn-lg icon--solar icon--solar--key-linear" aria-hidden="true"></span>
+          <div class="auth-step-label">
+            <div class="auth-step-heading">
+              <div class="auth-step-icon"><span class="icn icn-lg icon--solar icon--solar--key-linear" aria-hidden="true"></span></div>
+              <h3>گەڕاندنەوەی هەژمار</h3>
+            </div>
+            <p>ئیمەیڵەکەت بنووسە بۆ وەرگرتنی کۆد.</p>
           </div>
-          <div class="auth-step-label"><h3>گەڕاندنەوەی وشەی نهێنی</h3><p>ئیمەیلەکەت بنووسە</p></div>
+          <label class="auth-field-label" for="forgotEmail">ئیمەیڵ</label>
           <div class="field">
             <input class="input" type="email" id="forgotEmail" placeholder="example@gmail.com" dir="ltr">
           </div>
@@ -416,10 +437,13 @@
           </div>
         </div>
         <div id="fpStepB" style="display:none">
-          <div class="auth-step-icon">
-            <span class="icn icn-lg icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span>
+          <div class="auth-step-label">
+            <div class="auth-step-heading">
+              <div class="auth-step-icon"><span class="icn icn-lg icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span></div>
+              <h3>کۆدی دڵنیاکردنەوە</h3>
+            </div>
+            <p id="fpOtpLbl">کۆدی ٦ ژمارە نێردرا</p>
           </div>
-          <p style="text-align:center;font-size:var(--fs-xs);color:var(--text-muted);margin-bottom:14px" id="fpOtpLbl">کۆدی ٦ ژمارە نێردرا</p>
           <div class="otp-inputs">
             <input class="otp-digit" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" id="fp1" aria-label="ژمارەی یەکەمی کۆد" oninput="fpOtpMove(this,null,'fp2')" onpaste="pasteOtpCode(event,'fp')" onkeydown="fpOtpBack(event,this,null)">
             <input class="otp-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="1" id="fp2" aria-label="ژمارەی دووەمی کۆد" oninput="fpOtpMove(this,'fp1','fp3')" onpaste="pasteOtpCode(event,'fp')" onkeydown="fpOtpBack(event,this,'fp1')">
@@ -444,14 +468,19 @@
           </div>
         </div>
         <div id="fpStepC" style="display:none">
-          <div class="auth-step-icon success">
-            <span class="icn icn-lg icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>
+          <div class="auth-step-label">
+            <div class="auth-step-heading">
+              <div class="auth-step-icon success"><span class="icn icn-lg icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span></div>
+              <h3>ناسنامەت دڵنیاکرایەوە</h3>
+            </div>
+            <p>وشەی نهێنیی نوێت بنووسە</p>
           </div>
-          <div class="auth-step-label"><h3>ناسنامەت دڵنیاکرایەوە</h3><p>وشەی نهێنیی نوێت بنووسە</p></div>
+          <label class="auth-field-label" for="fpNewPass">وشەی نهێنیی نوێ</label>
           <div class="pass-wrap field">
             <input class="input" type="password" id="fpNewPass" placeholder="وشەی نهێنیی نوێ — کەمترین ٦ پیت" dir="ltr">
             <button type="button" class="pass-eye" onclick="togglePass('fpNewPass',this)" aria-label="پیشاندانی وشەی نهێنی"><span class="pass-eye-ico icn icn-sm"></span></button>
           </div>
+          <label class="auth-field-label" for="fpConfirmPass">دووبارە وشەی نهێنیی نوێ</label>
           <div class="pass-wrap field">
             <input class="input" type="password" id="fpConfirmPass" placeholder="دووبارە وشەی نهێنیی نوێ" dir="ltr">
             <button type="button" class="pass-eye" onclick="togglePass('fpConfirmPass',this)" aria-label="پیشاندانی وشەی نهێنی"><span class="pass-eye-ico icn icn-sm"></span></button>
@@ -1543,7 +1572,7 @@
 <script src="/assets/js/exchange-reward-pricing.js?v=3"></script>
 <script src="/assets/js/exchange-payout-rounding.js?v=1"></script>
 <script src="/assets/js/exchange-live.js?v=1"></script>
-<script src="/assets/js/app.js?v=50"></script>
+<script src="/assets/js/app.js?v=51"></script>
 <script src="/assets/js/exchange-customer-features.js?v=3"></script>
 <script src="/assets/js/exchange-balance.js?v=6"></script>
 <script src="/assets/js/exchange-ux.js?v=1"></script>

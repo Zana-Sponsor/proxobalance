@@ -1117,6 +1117,29 @@ function showForgotStep(){
 }
 function cancelForgotStep(){ clearInterval(_fpTimer); document.getElementById('forgotStep').style.display='none'; goAuthStep('email'); }
 function fpBackToA(){ clearInterval(_fpTimer); document.getElementById('fpStepB').style.display='none'; document.getElementById('fpStepA').style.display='block'; document.getElementById('fpMsgA').style.display='none'; }
+function authHeaderBack(){
+  const visible=id=>{const el=document.getElementById(id);return !!el&&getComputedStyle(el).display!=='none';};
+  if(visible('otpStep')) return cancelOtp();
+  if(visible('forgotStep')){
+    if(visible('fpStepC')) return cancelForgotStep();
+    if(visible('fpStepB')) return fpBackToA();
+    return cancelForgotStep();
+  }
+  if(visible('authStepPass')) return goAuthStep(_authIsNewUser?'name':'email');
+  if(visible('authStepName')) return goAuthStep('email');
+}
+function syncAuthHeaderBack(){
+  const button=document.getElementById('authHeaderBack');
+  if(!button) return;
+  const visible=id=>{const el=document.getElementById(id);return !!el&&getComputedStyle(el).display!=='none';};
+  button.hidden=!(visible('authStepName')||visible('authStepPass')||visible('otpStep')||visible('forgotStep'));
+}
+(()=>{
+  const root=document.getElementById('authWrap');
+  if(!root) return;
+  new MutationObserver(syncAuthHeaderBack).observe(root,{subtree:true,attributes:true,attributeFilter:['style']});
+  syncAuthHeaderBack();
+})();
 function fpShowMsg(step,t,c){ const el=document.getElementById('fpMsg'+step); el.textContent=t; el.className='amsg '+c; el.style.display='block'; }
 function fpStartTimer(sec){
   clearInterval(_fpTimer); let rem=sec;
