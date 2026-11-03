@@ -9,7 +9,7 @@
   --auth-blue: #046cfa;
   --auth-blue-soft: #edf4ff;
   position: relative;
-  display: flex !important;
+  display: flex;
   align-items: stretch !important;
   justify-content: center !important;
   box-sizing: border-box;
@@ -311,7 +311,8 @@
 @keyframes auth-pr46-enter { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 @media (max-width: 480px) {
   #authWrap {
-    padding-inline: max(20px, env(safe-area-inset-left)) max(20px, env(safe-area-inset-right)) !important;
+    padding-left: max(20px, env(safe-area-inset-left)) !important;
+    padding-right: max(20px, env(safe-area-inset-right)) !important;
   }
   #authWrap .auth-topbar { margin-bottom: 32px !important; }
   #authWrap .auth-step-label { margin-bottom: 24px !important; }
@@ -319,6 +320,10 @@
   #authWrap .auth-field-label { margin-bottom: 6px; }
   #authWrap .input-wrap,
   #authWrap .field { margin-bottom: 16px !important; }
+  #authWrap #authStepName .auth-step-label { margin-bottom: 18px !important; }
+  #authWrap #authStepName .input-wrap,
+  #authWrap #authStepName .field { margin-bottom: 12px !important; }
+  #authWrap #authStepName .auth-account-switch { margin-top: 8px; }
   #authWrap .otp-inputs { gap: 7px !important; margin-top: 24px !important; }
   #authWrap .otp-digit { width: calc((100% - 35px) / 6) !important; height: 56px !important; }
 }
@@ -360,7 +365,8 @@ body #authWrap .auth-box {
 }
 @media (max-width: 480px) {
   body #authWrap {
-    padding-inline: max(20px, env(safe-area-inset-left)) max(20px, env(safe-area-inset-right)) !important;
+    padding-left: max(20px, env(safe-area-inset-left)) !important;
+    padding-right: max(20px, env(safe-area-inset-right)) !important;
   }
 }
 @media (max-width: 350px) {

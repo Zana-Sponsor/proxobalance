@@ -151,6 +151,26 @@ export default withSecurity(async (req, res, { context, user }) => {
 
   if (req.method === 'PATCH') return submitOrderCorrection(res, body, user);
 
+  const retryId = oneLine(body.retry_rejected_order_id, 64);
+  let retryOrder = null;
+  if (retryId) {
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(retryId)) {
+      return json(res, 422, { code: 'INVALID_RETRY_ORDER_ID', error: 'Invalid rejected order id' });
+    }
+    const retryRows = await serviceFetch(
+      `/rest/v1/ex_orders?id=eq.${encodeURIComponent(retryId)}&user_id=eq.${encodeURIComponent(user.id)}` +
+      '&select=id,user_id,status,from_method,to_method,amount,phone,sender_phone,receipt_url,receipt_hash,transaction_reference,shortfall_refunded_iqd&limit=1'
+    );
+    retryOrder = Array.isArray(retryRows) ? retryRows[0] : null;
+    if (!retryOrder) return json(res, 404, { code: 'RETRY_ORDER_NOT_FOUND', error: 'Rejected order not found' });
+    if (retryOrder.status !== STATUS_REJECTED) {
+      return json(res, 409, { code: 'RETRY_ORDER_NOT_REJECTED', error: 'Only rejected orders can be resubmitted' });
+    }
+    if (Number(retryOrder.shortfall_refunded_iqd || 0) > 0) {
+      return json(res, 409, { code: 'RETRY_ORDER_REFUNDED', error: 'This order has already been refunded' });
+    }
+  }
+
   if (oneLine(body.contact_reference, 120)) {
     await logThreat('honeypot', context, user, {
       detail: 'Hidden contact_reference field was filled',
@@ -160,16 +180,18 @@ export default withSecurity(async (req, res, { context, user }) => {
     return json(res, 202, { ok: true, order: { id: randomUUID(), order_code: 'P' + Date.now() } });
   }
 
-  const fromMethod = oneLine(body.from_method, 30);
-  const toMethod = oneLine(body.to_method, 30);
-  const amount = Number(body.amount);
-  const phone = oneLine(body.phone, 32).replace(/\s+/g, '');
+  const fromMethod = oneLine(retryOrder?.from_method || body.from_method, 30);
+  const toMethod = oneLine(retryOrder?.to_method || body.to_method, 30);
+  const amount = Number(retryOrder?.amount ?? body.amount);
+  const phone = oneLine(retryOrder?.phone || body.phone, 32).replace(/\s+/g, '');
   const balanceSource = fromMethod === 'AccountBalance';
   const carrierSender = CARRIER_SENDER_METHODS.has(fromMethod);
-  const senderPhone = oneLine(body.sender_phone, 32).replace(/[^0-9]/g, '');
-  const receiptUrl = cleanReceiptUrl(body.receipt_url);
-  const receiptHash = /^[a-f0-9]{64}$/i.test(body.receipt_hash || '') ? String(body.receipt_hash).toLowerCase() : null;
-  const transactionReference = oneLine(body.transaction_reference, 120) || null;
+  const senderPhone = oneLine(retryOrder?.sender_phone || body.sender_phone, 32).replace(/[^0-9]/g, '');
+  const receiptUrl = cleanReceiptUrl(retryOrder?.receipt_url || body.receipt_url);
+  const rawReceiptHash = retryOrder?.receipt_hash || body.receipt_hash || '';
+  const receiptHash = /^[a-f0-9]{64}$/i.test(rawReceiptHash) ? String(rawReceiptHash).toLowerCase() : null;
+  const transactionReference = oneLine(retryOrder?.transaction_reference || body.transaction_reference, 120) || null;
+  const requestKey = retryOrder?.from_method === 'AccountBalance' ? randomUUID() : body.request_key;
 
   // Wallets and routes are managed from the admin panel. Keep only structural
   // validation here, then use the live database configuration below.
@@ -189,7 +211,7 @@ export default withSecurity(async (req, res, { context, user }) => {
     return json(res, 422, { error: 'Invalid sender number' });
   }
   if (balanceSource && (!Number.isSafeInteger(amount) || toMethod==='USDT' ||
-      !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(body.request_key||''))))
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(requestKey||''))))
     return json(res,422,{error:'Valid balance request key and whole IQD amount required'});
   if (toMethod==='AccountBalance') return json(res,422,{error:'Account balance is a Send source only'});
   if (!balanceSource && (!receiptUrl || !receiptHash)) return json(res, 422, { error: 'Receipt is required' });
@@ -269,7 +291,7 @@ export default withSecurity(async (req, res, { context, user }) => {
   try {
     if (balanceSource) {
       const order = await rpc('ex_balance_create_order', {
-        p_user_id:user.id,p_request_key:body.request_key,p_to:toMethod,
+        p_user_id:user.id,p_request_key:requestKey,p_to:toMethod,
         p_amount:amount,p_phone:phone,p_security_log_id:velocity?.log_id||null
       });
       return json(res,201,{ok:true,order:{...order,payout_plan:payoutPlan(order?.total,order?.to_method)}});

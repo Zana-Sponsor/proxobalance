@@ -1103,17 +1103,21 @@ async function verifyOtp(){
           showOtpMsg('هەژمار دروستدەکرێت...','ok');
           const {data,error}=await sb.auth.signUp({ email:_otpEmail, password:_otpPendingData.pass, options:{ data:{ full_name:_otpPendingData.name, source:'exchange' } } });
           if(error) throw error;
-          user=data.user;
-          if(!data.session){
+          if(data?.session && data?.user){
+            user=data.user;
+          } else {
             const {data:ld,error:le}=await sb.auth.signInWithPassword({email:_otpEmail,password:_otpPendingData.pass});
-            if(!le && ld?.user) user=ld.user;
+            if(le) throw le;
+            if(!ld?.session||!ld?.user) throw new Error('چوونەژوورەوەی هەژمار سەرکەوتوو نەبوو؛ تکایە دووبارە هەوڵ بدەرەوە');
+            user=ld.user;
           }
         } else {
           const {data,error}=await sb.auth.signInWithPassword({email:_otpEmail,password:_otpPendingData.pass});
           if(error) throw error;
+          if(!data?.session||!data?.user) throw new Error('چوونەژوورەوەی هەژمار سەرکەوتوو نەبوو؛ تکایە دووبارە هەوڵ بدەرەوە');
           user=data.user;
         }
-        if(!user) throw new Error('هەڵەیەک ڕووی دا');
+        if(!user) throw new Error('نەتوانرا هەژمارەکە بکەوێتە کار؛ تکایە دووبارە هەوڵ بدەرەوە');
         // track.js is loaded after app.js and owns the server-side IP capture.
         // Send immediately while the freshly issued Supabase session is present;
         // its Authorization header lets /api/track attach this IP to the account.
@@ -2323,6 +2327,11 @@ function openTxDetail(id){
   if(o.admin_note){
     html+='<div class="tx-dnote"><b>تێبینی ئادمین</b><p>'+escHtml(o.admin_note)+'</p></div>';
   }
+  if(o.status==='ڕەتکرا'){
+    html+='<div class="tx-dnote warn"><b>داواکارییەکە ڕەتکراوەتەوە</b>'
+      +'<p>دەتوانیت داواکارییەکی نوێ بە هەمان زانیاری و پسووڵە بنێریتەوە. ئەگەر هۆکاری ڕەتکردنەوە پەیوەندی بە پسووڵەوە هەیە، پێشتر پسووڵەی دروست لە فۆڕمی داواکاریی نوێ باربکە.</p>'
+      +'<button type="button" class="btn btn-primary btn-block" onclick="confirmRejectedOrderRetry(\''+escHtml(String(o.id))+'\')">دووبارە ناردنەوەی داواکاری</button></div>';
+  }
   if(o.correction_request && !o.balance_refunded_at){
     html+='<div class="tx-dnote warn"><b>داواکاری ڕاستکردنەوە</b><p>'+escHtml(o.correction_request)+'</p>'
       + (o.status==='پێویستی بە ڕاستکردنەوەیە'
@@ -2360,6 +2369,79 @@ function closeTxDetail(){
   _txSheetId=null;
   document.body.style.overflow='';
   setTimeout(()=>{ if(!sheet.classList.contains('open')) sheet.hidden=true; }, 200);
+}
+let _rejectedOrderRetryBusy=false;
+function confirmRejectedOrderRetry(orderId){
+  const order=_orders.find(item=>String(item.id)===String(orderId));
+  if(!order||order.status!=='ڕەتکرا'){
+    showResultModal({tone:'warning',title:'داواکاری نەدۆزرایەوە',message:'لیستی مامەڵەکان نوێ بکەرەوە و دووبارە هەوڵ بدەرەوە.'});
+    return;
+  }
+  showResultModal({
+    tone:'warning',
+    title:'داواکارییەکی نوێ بنێرەوە؟',
+    message:'داواکارییەکی نوێ بە هەمان بڕ، ڕێگا، ژمارە و پسووڵە دروست دەکرێت؛ نرخ و کرێ بە نرخی ئێستا حیساب دەکرێت. داواکاریی کۆنەکە هەروا ڕەتکراو دەمێنێتەوە.',
+    primaryText:'بەڵێ، دووبارە بنێرەوە',
+    secondaryText:'پاشگەزبوونەوە',
+    onPrimary:()=>resubmitRejectedOrder(orderId)
+  });
+}
+async function resubmitRejectedOrder(orderId){
+  if(_rejectedOrderRetryBusy) return;
+  const sourceOrder=_orders.find(item=>String(item.id)===String(orderId));
+  if(!sourceOrder||sourceOrder.status!=='ڕەتکرا'){
+    showResultModal({tone:'warning',title:'داواکاری نەدۆزرایەوە',message:'لیستی مامەڵەکان نوێ بکەرەوە و دووبارە هەوڵ بدەرەوە.'});
+    return;
+  }
+  _rejectedOrderRetryBusy=true;
+  try{
+    const session=await getOrderSession();
+    const response=await fetch('/api/orders',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
+      body:JSON.stringify({retry_rejected_order_id:String(sourceOrder.id)})
+    });
+    let payload={};
+    try{payload=await response.json();}catch(_){}
+    if(!response.ok||!payload.order){
+      const error=new Error(payload.error||'نەتوانرا داواکارییەکە دووبارە بنێردرێتەوە');
+      error.code=payload.code||'ORDER_RETRY_FAILED';
+      throw error;
+    }
+    const newOrder=payload.order;
+    closeTxDetail();
+    await Promise.allSettled([
+      loadHistory(),
+      loadMyRewards(),
+      sourceOrder.from_method==='AccountBalance'?loadMyBalance():Promise.resolve()
+    ]);
+    try{
+      await fetch('/api/notify-order',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
+        body:JSON.stringify({order_id:newOrder.id})
+      });
+    }catch(_){}
+    showResultModal({
+      tone:'success',
+      title:'داواکاریی نوێ نێردرا',
+      message:'داواکارییەکی نوێ بە سەرکەوتوویی تۆمارکرا و لە چاوەڕوانی پێداچوونەوەدایە.',
+      orderCode:orderCodeOf(newOrder),
+      primaryText:'بینینی مامەڵەکان',
+      onPrimary:()=>navigate('transactions',true)
+    });
+  }catch(error){
+    const message=error.code==='RECEIPT_ALREADY_USED'
+      ? 'ئەم پسووڵەیە لە داواکارییەکی تر کە هێشتا لە چاوەڕوانی یان پەسەندکراوە بەکارهاتووە. بەشی مامەڵەکان نوێ بکەرەوە بۆ پشکنینی دۆخەکە.'
+      : error.code==='RETRY_ORDER_REFUNDED'
+        ? 'ئەم داواکارییە پێشتر گەڕاندراوەتەوە؛ تکایە بۆ داواکاریی نوێ پشتگیری پەیوەندی پێوە بکە.'
+        : error.code==='RETRY_ORDER_NOT_REJECTED'
+          ? 'دۆخی ئەم داواکارییە گۆڕاوە و چیتر ڕەتکراو نییە. مامەڵەکان نوێ بکەرەوە.'
+          : error.message||'هەڵەیەک ڕوویدا؛ تکایە دووبارە هەوڵ بدەرەوە.';
+    showResultModal({tone:'error',title:'ناردنەوە سەرکەوتوو نەبوو',message});
+  }finally{
+    _rejectedOrderRetryBusy=false;
+  }
 }
 function openReceiptFull(url){
   const modal=document.getElementById('supportImageModal');
