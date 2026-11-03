@@ -94,7 +94,7 @@
 <link rel="stylesheet" href="/assets/css/exchange-auth-app.css?v=1"><script src="/assets/js/exchange-access.js?v=1"></script>
 <link rel="stylesheet" href="/assets/css/exchange-customer-polish.css?v=2">
 <link rel="stylesheet" href="/assets/css/exchange-feedback.css?v=2">
-<link rel="stylesheet" href="/assets/css/exchange-auth-modern.css?v=7">
+<link rel="stylesheet" href="/assets/css/exchange-auth-modern.css?v=8">
 </head>
 
 <body>
@@ -363,7 +363,7 @@
         <label class="auth-field-label" for="authPass">وشەی نهێنی</label>
         <div class="pass-wrap field">
           <input class="input" type="password" autocomplete="current-password" aria-label="وشەی نهێنی" id="authPass" placeholder="وشەی نهێنی" dir="ltr" onkeydown="if(event.key==='Enter')nextAuthStep('pass')">
-          <button type="button" class="pass-eye" onclick="togglePass('authPass',this)" aria-label="پیشاندانی وشەی نهێنی"><span class="pass-eye-ico icn icn-sm"></span></button>
+          <button type="button" class="pass-eye" onclick="togglePass('authPass',this)" aria-label="پیشاندانی وشەی نهێنی" aria-pressed="false"><span class="pass-eye-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path><circle cx="12" cy="12" r="2.7"></circle></svg></span></button>
         </div>
         <button class="btn btn-primary btn-block" id="authBtn" onclick="nextAuthStep('pass')">
           <span id="authBtnTxt">چوونەژوورەوە</span>
@@ -397,10 +397,10 @@
           <input class="otp-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="1" id="otp6" aria-label="ژمارەی شەشەمی کۆد" oninput="otpMove(this,'otp5',null)" onpaste="pasteOtpCode(event,'otp')" onkeydown="otpBack(event,this,'otp5')">
         </div>
         <div class="otp-timer" id="otpTimerWrap">ماوەی ئەم کۆدە: <span id="otpTimerVal">10:00</span></div>
-        <div class="otp-resend" id="otpResendBtn" onclick="resendOtp()">
+        <button type="button" class="otp-resend" id="otpResendBtn" onclick="resendOtp()">
           <span class="icn icn-sm icon--solar icon--solar--refresh-linear" aria-hidden="true"></span>
           کۆدی نوێ بنێرە
-        </div>
+        </button>
         <button class="btn btn-primary btn-block" id="otpVerifyBtn" onclick="verifyOtp()" style="margin-top:14px">
           <span class="icn icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>
           دڵنیاکردنەوە
@@ -453,10 +453,10 @@
             <input class="otp-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="1" id="fp6" aria-label="ژمارەی شەشەمی کۆد" oninput="fpOtpMove(this,'fp5',null)" onpaste="pasteOtpCode(event,'fp')" onkeydown="fpOtpBack(event,this,'fp5')">
           </div>
           <div class="otp-timer" id="fpTimerWrap">ماوەی ئەم کۆدە: <span id="fpTimerVal">10:00</span></div>
-          <div class="otp-resend" id="fpResendBtn" onclick="fpResendOtp()">
+          <button type="button" class="otp-resend" id="fpResendBtn" onclick="fpResendOtp()">
             <span class="icn icn-sm icon--solar icon--solar--refresh-linear" aria-hidden="true"></span>
             کۆدی نوێ بنێرە
-          </div>
+          </button>
           <div class="amsg" id="fpMsgB"></div>
           <button class="btn btn-primary btn-block" id="fpVerifyBtn" onclick="doForgotVerifyOtp()" style="margin-top:14px">
             <span class="icn icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>
@@ -478,12 +478,12 @@
           <label class="auth-field-label" for="fpNewPass">وشەی نهێنیی نوێ</label>
           <div class="pass-wrap field">
             <input class="input" type="password" id="fpNewPass" placeholder="وشەی نهێنیی نوێ — کەمترین ٦ پیت" dir="ltr">
-            <button type="button" class="pass-eye" onclick="togglePass('fpNewPass',this)" aria-label="پیشاندانی وشەی نهێنی"><span class="pass-eye-ico icn icn-sm"></span></button>
+            <button type="button" class="pass-eye" onclick="togglePass('fpNewPass',this)" aria-label="پیشاندانی وشەی نهێنی" aria-pressed="false"><span class="pass-eye-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path><circle cx="12" cy="12" r="2.7"></circle></svg></span></button>
           </div>
           <label class="auth-field-label" for="fpConfirmPass">دووبارە وشەی نهێنیی نوێ</label>
           <div class="pass-wrap field">
             <input class="input" type="password" id="fpConfirmPass" placeholder="دووبارە وشەی نهێنیی نوێ" dir="ltr">
-            <button type="button" class="pass-eye" onclick="togglePass('fpConfirmPass',this)" aria-label="پیشاندانی وشەی نهێنی"><span class="pass-eye-ico icn icn-sm"></span></button>
+            <button type="button" class="pass-eye" onclick="togglePass('fpConfirmPass',this)" aria-label="پیشاندانی وشەی نهێنی" aria-pressed="false"><span class="pass-eye-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path><circle cx="12" cy="12" r="2.7"></circle></svg></span></button>
           </div>
           <div class="amsg" id="fpMsgC"></div>
           <button class="btn btn-primary btn-block" id="fpSaveBtn" onclick="doForgotSavePass()">
@@ -1572,7 +1572,7 @@
 <script src="/assets/js/exchange-reward-pricing.js?v=3"></script>
 <script src="/assets/js/exchange-payout-rounding.js?v=1"></script>
 <script src="/assets/js/exchange-live.js?v=1"></script>
-<script src="/assets/js/app.js?v=51"></script>
+<script src="/assets/js/app.js?v=52"></script>
 <script src="/assets/js/exchange-customer-features.js?v=3"></script>
 <script src="/assets/js/exchange-balance.js?v=6"></script>
 <script src="/assets/js/exchange-ux.js?v=1"></script>

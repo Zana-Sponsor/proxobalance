@@ -379,3 +379,93 @@ body #authWrap {
 
 /* The appbar back arrow replaces the legacy in-form back links. */
 #authWrap .auth-step-back { display: none !important; }
+
+/* Polished, consistent controls for the auth flow. */
+#authWrap .btn-primary,
+#authWrap .abtn {
+  border-radius: 18px !important;
+  background: linear-gradient(135deg, #2f80ed 0%, #1769e8 100%) !important;
+  box-shadow: 0 5px 16px rgba(23, 105, 232, .16) !important;
+  font-weight: 500 !important;
+  transition: transform .16s cubic-bezier(.2,.8,.2,1), box-shadow .16s ease, filter .16s ease !important;
+}
+#authWrap .btn-primary:hover:not(:disabled),
+#authWrap .abtn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 19px rgba(23, 105, 232, .2) !important;
+  filter: none !important;
+}
+#authWrap .btn-primary:active:not(:disabled),
+#authWrap .abtn:active:not(:disabled) {
+  transform: scale(.985);
+  box-shadow: 0 3px 9px rgba(23, 105, 232, .14) !important;
+}
+#authWrap .btn-primary:disabled,
+#authWrap .abtn:disabled {
+  cursor: not-allowed;
+  box-shadow: none !important;
+  opacity: .62 !important;
+}
+#authWrap .btn-primary > .icn,
+#authWrap .abtn > .icn,
+#authWrap .otp-resend > .icn,
+#authWrap .auth-topbar .icn,
+#authWrap .auth-topbar svg {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+}
+#authWrap .pass-wrap { direction: ltr; }
+#authWrap .pass-wrap .input {
+  padding-inline-start: 14px !important;
+  padding-inline-end: 54px !important;
+}
+#authWrap .pass-eye {
+  position: absolute !important;
+  inset-inline-end: 5px !important;
+  top: 50%;
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  background: transparent !important;
+  color: #64748b !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-50%);
+  transition: background-color .16s ease, color .16s ease, transform .16s ease !important;
+}
+#authWrap .pass-eye .pass-eye-ico {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  line-height: 0;
+  pointer-events: none;
+}
+#authWrap .pass-eye svg { display: block; width: 20px; height: 20px; }
+#authWrap .pass-eye:hover { background: #eef4fd !important; color: #2563eb !important; }
+#authWrap .pass-eye:active { transform: translateY(-50%) scale(.96); background: #e4eefc !important; }
+#authWrap .otp-resend {
+  width: 100%;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color .16s ease, color .16s ease, transform .16s ease;
+}
+#authWrap .otp-resend:hover:not(:disabled) { background: #f3f7fd; color: #155fce; }
+#authWrap .otp-resend:active:not(:disabled) { transform: scale(.985); }
+#authWrap .otp-resend:disabled { cursor: not-allowed; opacity: .6; }
