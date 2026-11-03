@@ -523,3 +523,73 @@ body #authWrap {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+
+/* Final appbar and control alignment: crisp mobile-app geometry, no oversized pills. */
+#authWrap .auth-appbar-refresh,
+#authWrap .auth-appbar-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--auth-ink);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+#authWrap .auth-appbar-refresh { grid-column: 1; grid-row: 1; }
+#authWrap .auth-appbar-refresh svg,
+#authWrap .auth-appbar-back svg { display: block; width: 21px; height: 21px; flex: 0 0 21px; }
+#authWrap .auth-appbar-refresh:hover,
+#authWrap .auth-appbar-back:hover { background: #f1f5f9; }
+#authWrap .auth-appbar-refresh:focus-visible,
+#authWrap .auth-appbar-back:focus-visible,
+#authWrap .pass-eye:focus-visible { outline: 2px solid var(--auth-blue); outline-offset: 2px; }
+#authWrap .input-wrap .input-ico {
+  position: absolute;
+  z-index: 2;
+  inset-inline-start: 14px;
+  top: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  line-height: 0;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+#authWrap .input-wrap .input-ico .icn,
+#authWrap .input-wrap .input-ico svg { display: block; width: 18px; height: 18px; flex: 0 0 18px; }
+#authWrap .input-wrap:not(.pass-wrap) .input,
+#authWrap .input-wrap:not(.pass-wrap) .ainp { padding-inline-start: 46px !important; }
+#authWrap .input,
+#authWrap .ainp,
+#authWrap .pass-eye,
+#authWrap .auth-appbar-language,
+#authWrap .auth-account-switch button,
+#authWrap .otp-resend { border-radius: 10px !important; }
+#authWrap .btn-primary,
+#authWrap .abtn { border-radius: 12px !important; }
+#authWrap .btn-primary > .icn,
+#authWrap .abtn > .icn,
+#authWrap .btn-primary > svg,
+#authWrap .abtn > svg {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  line-height: 0;
+  vertical-align: middle;
+}
+#authWrap .btn-primary > svg,
+#authWrap .abtn > svg { display: block; }

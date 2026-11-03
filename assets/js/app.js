@@ -882,6 +882,7 @@ function blurAuthInput(){
 }
 function _showStepMsg(id,text,type){ const el=document.getElementById(id); if(!el) return; el.textContent=text; el.className='amsg '+type; el.style.display='block'; }
 let authRoute='login';
+let _authRouteStack=[];
 function authRouteFromLocation(){
   const relative=location.pathname.startsWith(BASE_PATH)?location.pathname.slice(BASE_PATH.length):location.pathname.replace(/^\/+/, '');
   const route=relative.replace(/^\/+|\/+$/g,'');
@@ -912,13 +913,30 @@ function setAuthRoute(route,push=true,replace=false){
   const back=document.getElementById('authHeaderBack'); if(back) back.hidden=route==='login';
   const titles={login:'چوونەژوورەوە',signup:'دروستکردنی هەژمار','login/otp':'کۆدی چوونەژوورەوە','signup/otp':'کۆدی تۆمارکردن',forgetpassword:'گەڕاندنەوەی هەژمار','forgetpassword/otp':'کۆدی گەڕاندنەوە',newpassword:'وشەی نهێنیی نوێ'};
   document.title=(titles[route]||'چوونەژوورەوە')+' — Proxo Balance';
-  if(push){ try{ history.pushState({authFlow:true,authRoute:route,authPreviousRoute:previous},'',authHref(route)); }catch(_){} }
-  else if(replace){ try{ history.replaceState({authFlow:true,authRoute:route,authPreviousRoute:null},'',authHref(route)); }catch(_){} }
+  if(push){
+    if(!_authRouteStack.length||_authRouteStack[_authRouteStack.length-1]!==previous) _authRouteStack=[previous];
+    _authRouteStack.push(route);
+    try{ history.pushState({authFlow:true,authRoute:route,authPreviousRoute:previous},'',authHref(route)); }catch(_){}
+  }
+  else if(replace){
+    _authRouteStack=[route];
+    try{ history.replaceState({authFlow:true,authRoute:route,authPreviousRoute:null},'',authHref(route)); }catch(_){}
+  }
+  else{
+    const stackIndex=_authRouteStack.lastIndexOf(route);
+    if(stackIndex>=0) _authRouteStack=_authRouteStack.slice(0,stackIndex+1);
+    else{
+      const state=history.state;
+      const parent=state?.authFlow&&state.authRoute===route?state.authPreviousRoute:null;
+      _authRouteStack=parent?[parent,route]:[route];
+    }
+  }
   syncAuthHeaderBack();
 }
 function authBackTo(route){
   const state=history.state;
-  if(state?.authFlow&&state.authRoute===authRoute&&state.authPreviousRoute===route){ history.back(); return; }
+  const hasKnownAuthParent=_authRouteStack.length>1&&_authRouteStack[_authRouteStack.length-2]===route;
+  if(hasKnownAuthParent&&history.length>1&&state?.authFlow&&state.authRoute===authRoute&&state.authPreviousRoute===route){ history.back(); return; }
   setAuthRoute(route,false,true);
 }
 function goAuthStep(step){ setAuthRoute(step==='name'?'signup':'login',true); }
@@ -1178,6 +1196,16 @@ function authHeaderBack(){
   if(authRoute==='forgetpassword') return cancelForgotStep();
   if(authRoute==='forgetpassword/otp') return fpBackToA();
   authBackTo(target);
+}
+function refreshAuthPage(){
+  const safeRoute={
+    'login/otp':_authIsNewUser?'signup':'login',
+    'signup/otp':'signup',
+    'forgetpassword/otp':'forgetpassword',
+    newpassword:'forgetpassword'
+  }[authRoute];
+  if(safeRoute){ location.replace(authHref(safeRoute)); return; }
+  location.reload();
 }
 function syncAuthHeaderBack(){
   const button=document.getElementById('authHeaderBack');

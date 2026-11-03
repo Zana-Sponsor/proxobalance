@@ -94,7 +94,7 @@
 <link rel="stylesheet" href="/assets/css/exchange-auth-app.css?v=1"><script src="/assets/js/exchange-access.js?v=1"></script>
 <link rel="stylesheet" href="/assets/css/exchange-customer-polish.css?v=2">
 <link rel="stylesheet" href="/assets/css/exchange-feedback.css?v=2">
-<link rel="stylesheet" href="/assets/css/exchange-auth-modern.css?v=10">
+<link rel="stylesheet" href="/assets/css/exchange-auth-modern.css?v=11">
 </head>
 
 <body>
@@ -280,9 +280,9 @@
   <div class="auth-inner">
 
     <div class="auth-topbar">
-      <span class="auth-appbar-language" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"></path></svg>
-      </span>
+      <button type="button" class="auth-appbar-refresh" id="authRefreshBtn" onclick="refreshAuthPage()" aria-label="نوێکردنەوەی پەڕە" title="نوێکردنەوەی پەڕە">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.9-3L3 11"></path><path d="M3 4v7h7"></path><path d="M4 13a8 8 0 0 0 14.9 3L21 13"></path><path d="M21 20v-7h-7"></path></svg>
+      </button>
       <div class="auth-appbar-brand"><img src="/assets/images/auth/proxo-logo.webp" alt="Proxo"></div>
       <button type="button" class="auth-appbar-back" id="authHeaderBack" onclick="authHeaderBack()" aria-label="گەڕانەوە" hidden>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>
@@ -1571,7 +1571,7 @@
 <script src="/assets/js/exchange-reward-pricing.js?v=3"></script>
 <script src="/assets/js/exchange-payout-rounding.js?v=1"></script>
 <script src="/assets/js/exchange-live.js?v=1"></script>
-<script src="/assets/js/app.js?v=54"></script>
+<script src="/assets/js/app.js?v=55"></script>
 <script src="/assets/js/exchange-customer-features.js?v=3"></script>
 <script src="/assets/js/exchange-balance.js?v=6"></script>
 <script src="/assets/js/exchange-ux.js?v=1"></script>
