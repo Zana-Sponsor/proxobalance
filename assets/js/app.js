@@ -2254,10 +2254,10 @@ function feedbackOrderSnapshot(order){
 function feedbackRewardCard(order,earned){
   return '<div class="feedback-reward-card'+(earned?' is-earned':'')+'" role="status">'+
     '<div class="feedback-reward-icon" aria-hidden="true">'+(earned?'✓':'%')+'</div>'+
-    '<div class="feedback-reward-copy"><b>'+(earned?'پاداشتەکەت ئامادەیە':'پاداشتی تایبەت بە فیدباک')+'</b>'+
+    '<div class="feedback-reward-copy"><b>'+(earned?'پاداشتەکەت ئامادەیە':'پاداشتی هەڵسەنگاندن')+'</b>'+
     '<strong>٥٠٪ داشکاندن لە کرێی خزمەتگوزاری</strong>'+
     '<span>زۆرترین داشکاندن: <bdi dir="ltr">١٠,٠٠٠ IQD</bdi> · یەکجار</span>'+
-    '<small>'+(earned?'لە مامەڵەی داهاتووی IQD بەکاردێت، بۆ هەمان جۆری ڕێگای ئاڵوگۆڕ.':'دوای ناردنی فیدباک، لە مامەڵەی داهاتووی IQD بەکاردێت؛ لە هەمان جۆری ڕێگا.')+'</small></div>'+
+    '<small>'+(earned?'لە مامەڵەی داهاتووی IQD بەکاردێت، بۆ هەمان جۆری ڕێگای ئاڵوگۆڕ.':'دوای هەڵسەنگاندن، داشکاندنەکە لە مامەڵەی داهاتووی IQD بەکاردێت.')+'</small></div>'+
     '<span class="feedback-reward-tag">'+(earned?'وەرگیرا':'بەدەست بهێنە')+'</span></div>';
 }
 function renderOrderFeedback(order){
@@ -2266,15 +2266,15 @@ function renderOrderFeedback(order){
   const rewardEarned=hasOrderFeedbackReward(order);
   const snapshot=feedbackOrderSnapshot(order);
   if(feedback){
-    return '<section class="order-feedback is-submitted"><div class="feedback-section-heading"><div><span class="feedback-kicker">فیدباکی مامەڵە</span><h3>هەڵسەنگاندنی تۆ</h3></div><span class="feedback-submitted-badge"><span aria-hidden="true">✓</span> نێردرا</span></div>'+snapshot+feedbackRewardCard(order,rewardEarned)+'<div class="feedback-stars" aria-label="'+escHtml(String(feedback.rating))+' لە ٥ ئەستێرە">'+
+    return '<section class="order-feedback is-submitted"><div class="feedback-section-heading"><div><span class="feedback-kicker">هەڵسەنگاندنی داواکاری</span><h3>هەڵسەنگاندنی تۆ</h3></div><span class="feedback-submitted-badge"><span aria-hidden="true">✓</span> نێردرا</span></div>'+snapshot+feedbackRewardCard(order,rewardEarned)+'<div class="feedback-stars" aria-label="'+escHtml(String(feedback.rating))+' لە ٥ ئەستێرە">'+
       Array.from({length:5},(_,i)=>'<span class="'+(i<Number(feedback.rating)?'filled':'')+'" aria-hidden="true">★</span>').join('')+
       '</div>'+(feedback.comment?'<div class="feedback-comment-box"><small>تێبینیی تۆ</small><p class="feedback-comment">'+escHtml(feedback.comment)+'</p></div>':'<p class="feedback-muted">تەنها ئەستێرەکەت تۆمارکراوە.</p>')+
       '<p class="feedback-thanks">سوپاس بۆ ئەوەی کاتت بۆ باشترکردنی خزمەتگوزاری دانا.</p></section>';
   }
-  return '<section class="order-feedback"><div class="feedback-section-heading"><div><span class="feedback-kicker">مامەڵەکەت پەسەندکرا</span><h3>چۆن هەڵیدەسەنگێنیت؟</h3><p>ئەستێرە هەڵبژێرە؛ نووسین ئارەزوومەندانەیە.</p></div><span class="feedback-heading-icon" aria-hidden="true">★</span></div>'+snapshot+feedbackRewardCard(order,false)+'<label class="feedback-input-label">هەڵسەنگاندنی تۆ <span>ئەستێرەکان هەڵبژێرە</span></label>'+
-    '<div class="feedback-star-picker" role="radiogroup" aria-label="هەڵبژاردنی ئەستێرە">'+Array.from({length:5},(_,i)=>'<button type="button" class="feedback-star" data-rating="'+(i+1)+'" aria-label="'+(i+1)+' ئەستێرە" aria-checked="false" role="radio" onclick="selectOrderFeedbackRating('+(i+1)+')">★</button>').join('')+'</div>'+
-    '<label class="feedback-input-label" for="orderFeedbackComment">تێبینی <span>ئارەزوومەندانە</span></label><textarea id="orderFeedbackComment" maxlength="1000" placeholder="تجربەکەت لەگەڵ ئەم مامەڵەیە چۆن بوو؟" aria-label="نووسینی فیدباک"></textarea><small class="feedback-char-hint">تا ١,٠٠٠ پیت</small>'+
-    '<button type="button" class="btn btn-primary btn-block feedback-submit-btn" id="orderFeedbackSubmit" onclick="submitOrderFeedback(\''+escHtml(String(order.id))+'\')"><span aria-hidden="true">★</span> ناردنی فیدباک و وەرگرتنی پاداشت</button><div class="feedback-error" id="orderFeedbackError" role="alert"></div></section>';
+  return '<section class="order-feedback"><div class="feedback-section-heading"><div><span class="feedback-kicker">مامەڵەکەت پەسەندکرا</span><h3>هەڵسەنگاندنی داواکاری</h3><p>ئەستێرەکان هەڵبژێرە. تێبینی ئارەزوومەندانەیە.</p></div><span class="feedback-heading-icon" aria-hidden="true"><span class="icn icon--solar icon--solar--star-linear"></span></span></div>'+snapshot+feedbackRewardCard(order,false)+'<label class="feedback-input-label">هەڵسەنگاندنی تۆ <span>ئەستێرەکان هەڵبژێرە</span></label>'+
+    '<div class="feedback-star-picker" role="radiogroup" aria-label="هەڵبژاردنی ئەستێرە">'+Array.from({length:5},(_,i)=>'<button type="button" class="feedback-star" data-rating="'+(i+1)+'" aria-label="'+(i+1)+' ئەستێرە" aria-checked="false" role="radio" onclick="selectOrderFeedbackRating('+(i+1)+')"><span class="icn icon--solar icon--solar--star-linear" aria-hidden="true"></span></button>').join('')+'</div>'+
+    '<label class="feedback-input-label" for="orderFeedbackComment">تێبینی <span>ئارەزوومەندانە</span></label><textarea id="orderFeedbackComment" maxlength="1000" placeholder="ئەزموونت لەگەڵ ئەم مامەڵەیە چۆن بوو؟" aria-label="نووسینی هەڵسەنگاندن"></textarea><small class="feedback-char-hint">تا ١,٠٠٠ پیت</small>'+
+    '<button type="button" class="btn btn-primary btn-block feedback-submit-btn" id="orderFeedbackSubmit" onclick="submitOrderFeedback(\''+escHtml(String(order.id))+'\')"><span class="icn icon--solar icon--solar--star-linear" aria-hidden="true"></span> ناردنی هەڵسەنگاندن و وەرگرتنی پاداشت</button><div class="feedback-error" id="orderFeedbackError" role="alert"></div></section>';
 }
 function selectOrderFeedbackRating(rating){
   _feedbackDraftRating=Math.max(1,Math.min(5,Number(rating)||0));
@@ -2287,7 +2287,7 @@ async function submitOrderFeedback(orderId){
   const errorEl=document.getElementById('orderFeedbackError'),button=document.getElementById('orderFeedbackSubmit');
   if(!order||String(order.id)!==String(_txSheetId)||order.status!=='پەسەندکرا'||order.feedback)return;
   if(!_feedbackDraftRating){if(errorEl)errorEl.textContent='تکایە ژمارەی ئەستێرە هەڵبژێرە.';return;}
-  if(!curUser?.id){if(errorEl)errorEl.textContent='بۆ ناردنی فیدباک بچۆ ژوورەوە.';return;}
+  if(!curUser?.id){if(errorEl)errorEl.textContent='بۆ ناردنی هەڵسەنگاندن بچۆ ژوورەوە.';return;}
   const comment=(document.getElementById('orderFeedbackComment')?.value||'').trim();
   if(comment.length>1000){if(errorEl)errorEl.textContent='نووسین نابێت لە ١٠٠٠ پیت زیاتر بێت.';return;}
   if(button){button.disabled=true;button.textContent='دەنێردرێت...';}
@@ -2297,8 +2297,8 @@ async function submitOrderFeedback(orderId){
     order.feedback=data;order.feedbackRewardGranted=true;_feedbackDraftRating=0;await loadMyRewards();openTxDetail(order.id);
     showToast('سوپاس! داشکاندنی ٥٠٪ تا ١٠,٠٠٠ دینار بۆ مامەڵەی داهاتووت زیادکرا.','success');
   }catch(error){
-    if(errorEl)errorEl.textContent=error.code==='23505'?'فیدباکی ئەم مامەڵەیە پێشتر نێردراوە.':'نەتوانرا فیدباکەکەت تۆمار بکرێت؛ تکایە دووبارە هەوڵ بدەرەوە.';
-    if(button){button.disabled=false;button.textContent='ناردنی فیدباک';}
+    if(errorEl)errorEl.textContent=error.code==='23505'?'هەڵسەنگاندنی ئەم داواکارییە پێشتر تۆمار کراوە.':'نەتوانرا هەڵسەنگاندنەکەت تۆمار بکرێت؛ تکایە دووبارە هەوڵ بدەرەوە.';
+    if(button){button.disabled=false;button.innerHTML='<span class="icn icon--solar icon--solar--star-linear" aria-hidden="true"></span> ناردنی هەڵسەنگاندن';}
   }
 }
 function txRow(label, value, opts){
@@ -4479,13 +4479,23 @@ window.addEventListener('unhandledrejection', event=>{
 });
 
 document.addEventListener('DOMContentLoaded', async ()=>{
+  const appSplash=document.getElementById('appSplash');
+  const appSplashStartedAt=performance.now();
+  let appSplashDismissQueued=false;
+  const dismissAppSplash=()=>{
+    if(!appSplash||appSplashDismissQueued)return;
+    appSplashDismissQueued=true;
+    const wait=Math.max(0,700-(performance.now()-appSplashStartedAt));
+    setTimeout(()=>appSplash.classList.add('is-hidden'),wait);
+  };
+  setTimeout(dismissAppSplash,4200);
   applyTheme(document.documentElement.getAttribute('data-theme')||'light');
   // Public trust numbers need no session — visitors see them on the login screen.
   loadPublicProof();
   document.querySelectorAll('.pass-eye-ico').forEach(el=>{ el.innerHTML=ICON.eye; });
   refreshTrigger('from');
   refreshTrigger('receiveVia');
-  if(!window.supabase){ showAmsg('هەڵەی بارکردنی سیستەم، پەڕەکە نوێ بکەرەوە','err'); return; }
+  if(!window.supabase){ showAmsg('هەڵەی بارکردنی سیستەم، پەڕەکە نوێ بکەرەوە','err'); dismissAppSplash(); return; }
   sb=window.supabase.createClient(SB_URL,SB_KEY,{ auth:{ persistSession:true, autoRefreshToken:true, storageKey:'zex_sb_session' } });
   sb.auth.onAuthStateChange((_event,nextSession)=>{
     activeSession=nextSession||null;
@@ -4508,4 +4518,5 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     if(route==='newpassword'&&!_fpVerified) route='forgetpassword';
     setAuthRoute(route,false,true);
   }
+  dismissAppSplash();
 });

@@ -36,11 +36,24 @@ const S={
  mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/>',
  headset:'<path d="M4 14v-2a8 8 0 0 1 16 0v2M4 14h4v6H6a2 2 0 0 1-2-2v-4Zm16 0h-4v6h2a2 2 0 0 0 2-2v-4Z"/>',
  power:'<path d="M12 3v9M6.6 6.6a8 8 0 1 0 10.8 0"/>',
+ bolt:'<path d="m13 2-3 8H4l7 12 3-8h6L13 2Z"/>',
  refresh:'<path d="M20 7v5h-5M4 17v-5h5"/><path d="M18.5 9A7 7 0 0 0 6 6.5L4 9m2 6a7 7 0 0 0 12 2l2-2"/>',
  copy:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
  calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4m8-4v4M3 10h18"/>',
  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
- plus:'<path d="M12 5v14M5 12h14"/>'
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ star:'<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3 6.4 20.2l1.1-6.2L3 9.6l6.2-.9L12 3Z"/>',
+ eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
+ eyeOff:'<path d="m3 3 18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.8 5.2A10 10 0 0 1 12 5c6.4 0 10 7 10 7a14.7 14.7 0 0 1-3.2 4.1M6.1 6.1C3.5 7.8 2 12 2 12s3.6 7 10 7a9.8 9.8 0 0 0 4.3-1"/>',
+ sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+ moon:'<path d="M20.8 13.2A8.6 8.6 0 0 1 10.8 3.2 8.8 8.8 0 1 0 20.8 13.2Z"/>',
+ wifi:'<path d="M5 10.5a11 11 0 0 1 14 0M8 13.5a6 6 0 0 1 8 0M11 16.5a2 2 0 0 1 2 0"/><path d="M12 20h.01"/>',
+ banknote:'<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 9h.01M18 15h.01"/>',
+ bellOff:'<path d="M18 8a6 6 0 0 0-10.4-4M6 8c0 5.5-2 7-3 9h14M10 21h4"/><path d="m3 3 18 18"/>',
+ graphDown:'<path d="M4 19V5m0 14h16M7 8l4 4 3-2 5 6"/>',
+ building:'<path d="M3 21h18M5 21V7l7-4v18m7 0V11l-7-4"/><path d="M8 9h.01M8 13h.01M8 17h.01M16 13h.01M16 17h.01"/>',
+ unlock:'<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 7.5-2"/>',
+ sparkle:'<path d="m12 3 1.6 6.4L20 11l-6.4 1.6L12 19l-1.6-6.4L4 11l6.4-1.6L12 3Z"/><path d="m19 15 .8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15Z"/>'
 };
 const A={
 'history-linear':'history','history-2-linear':'history','clock-circle-linear':'clock',
@@ -54,9 +67,9 @@ const A={
 'lock-linear':'lock','key-linear':'key','shield-check-linear':'shield','shield-warning-linear':'warning','shield-linear':'shield',
 'refresh-linear':'refresh','bill-list-linear':'receipt','graph-up-linear':'graph','bell-linear':'bell',
 'copy-linear':'copy','magnifer-linear':'search','dollar-minimalistic-linear':'dollar','dollar-linear':'dollar',
-'banknote-2-linear':'wallet','wallet-linear':'wallet','sale-linear':'dollar','info-circle-linear':'info',
+'banknote-2-linear':'banknote','wallet-linear':'wallet','sale-linear':'dollar','info-circle-linear':'info',
 'danger-triangle-linear':'warning','calendar-linear':'calendar','pen-linear':'edit','diskette-linear':'save',
-'headphones-round-linear':'headset','power-linear':'power','card-linear':'card','eye-linear':'info','eye-closed-linear':'info','sun-linear':'info','moon-linear':'info','phone-linear':'phone','chat-round-dots-linear':'mail','wi-fi-router-minimalistic-linear':'wallet','wi-fi-router-round-linear':'wallet','wi-fi-router-linear':'wallet','bolt-linear':'graph','buildings-2-linear':'wallet','banknote-linear':'wallet','bell-off-linear':'bell','graph-down-linear':'graph','lock-unlocked-linear':'lock','magic-stick-3-linear':'plus','user-rounded-linear':'user','tuning-2-linear':'edit'
+'headphones-round-linear':'headset','power-linear':'power','card-linear':'card','eye-linear':'eye','eye-closed-linear':'eyeOff','sun-linear':'sun','moon-linear':'moon','phone-linear':'phone','chat-round-dots-linear':'mail','wi-fi-router-minimalistic-linear':'wifi','wi-fi-router-round-linear':'wifi','wi-fi-router-linear':'wifi','bolt-linear':'bolt','buildings-2-linear':'building','banknote-linear':'banknote','bell-off-linear':'bellOff','graph-down-linear':'graphDown','lock-unlocked-linear':'unlock','magic-stick-3-linear':'sparkle','user-rounded-linear':'user','tuning-2-linear':'edit','star-linear':'star'
 };
 function convert(node){
  const cls=[...node.classList].find(c=>c.indexOf('icon--solar--')===0);if(!cls)return;

@@ -1242,7 +1242,7 @@ function showOrderDetail(id){
         <input type="file" accept="image/*" style="display:none" onchange="uploadPayoutReceiptDirect(this,'${order.id}')">
       </label>`):''}
     </div>`:''}
-    ${order.status===STATUS_APPROVED?`<section class="admin-order-feedback" id="adminOrderFeedback"><h4>فیدباکی کڕیار</h4><p>فیدباک بار دەکرێت...</p></section>`:''}
+    ${order.status===STATUS_APPROVED?`<section class="admin-order-feedback" id="adminOrderFeedback"><h4>هەڵسەنگاندنی کڕیار</h4><p>هەڵسەنگاندن بار دەکرێت...</p></section>`:''}
     <label class="modal-lbl">تێبینی ئەدمین</label>
     <textarea class="minp mta" id="odNote">${esc(order.admin_note||'')}</textarea>
     <div class="act-grp" style="margin-top:12px">
@@ -1270,10 +1270,10 @@ async function loadAdminOrderFeedback(orderId){
   try{
     const {data,error}=await sb.from('ex_order_feedback').select('rating,comment,created_at').eq('order_id',orderId).maybeSingle();
     if(error)throw error;
-    if(!data){panel.innerHTML='<h4>فیدباکی کڕیار</h4><p>هێشتا فیدباکی بۆ ئەم مامەڵەیە تۆمار نەکراوە.</p>';return;}
+    if(!data){panel.innerHTML='<h4>هەڵسەنگاندنی کڕیار</h4><p>هێشتا هەڵسەنگاندنی بۆ ئەم داواکارییە تۆمار نەکراوە.</p>';return;}
     const stars=Array.from({length:5},(_,index)=>`<span class="${index<Number(data.rating)?'filled':''}" aria-hidden="true">★</span>`).join('');
-    panel.innerHTML=`<h4>فیدباکی کڕیار</h4><div class="feedback-stars" aria-label="${Number(data.rating)} لە ٥ ئەستێرە">${stars}</div>${data.comment?`<p class="feedback-comment">${esc(data.comment)}</p>`:'<p>تەنها ئەستێرە هەڵبژێردراوە.</p>'}<small>${data.created_at?esc(fmtDateTime(data.created_at)):''}</small>`;
-  }catch(error){panel.innerHTML='<h4>فیدباکی کڕیار</h4><p>نەتوانرا فیدباک باربکرێت.</p>';}
+    panel.innerHTML=`<h4>هەڵسەنگاندنی کڕیار</h4><div class="feedback-stars" aria-label="${Number(data.rating)} لە ٥ ئەستێرە">${stars}</div>${data.comment?`<p class="feedback-comment">${esc(data.comment)}</p>`:'<p>تەنها ئەستێرە هەڵبژێردراوە.</p>'}<small>${data.created_at?esc(fmtDateTime(data.created_at)):''}</small>`;
+  }catch(error){panel.innerHTML='<h4>هەڵسەنگاندنی کڕیار</h4><p>نەتوانرا هەڵسەنگاندن باربکرێت.</p>';}
 }
 
 function correctionHistoryValue(value){
@@ -2111,7 +2111,7 @@ function renderRewardsList(){
       const exhausted=r.max_uses!==null && r.used_count>=r.max_uses;
       const status=!r.active?'هەڵوەشاوە':expired?'بەسەرچووە':exhausted?'تەواوبووە':'چالاک';
       const feedbackReward=String(r.campaign_key||'').startsWith('order_feedback_v1:');
-      const rewardLabel=(r.kind==='free_transactions'?'بێ لێبڕین':'داشکاندنی '+r.discount_percent+'%')+(feedbackReward?' · پاداشتی فیدباک':'');
+      const rewardLabel=(r.kind==='free_transactions'?'بێ لێبڕین':'داشکاندنی '+r.discount_percent+'%')+(feedbackReward?' · پاداشتی هەڵسەنگاندن':'');
       const caps=[r.max_discount_iqd!=null?'داشکاندن تا '+formatNum(r.max_discount_iqd)+' دینار':null,
         r.max_amount_iqd!=null?'بڕی مامەڵە تا '+formatNum(r.max_amount_iqd)+' دینار':null].filter(Boolean);
       return '<tr><td>'+esc(p.full_name||p.username||p.email||r.user_id)+'</td>'+

@@ -33,9 +33,9 @@
 <meta name="twitter:description" content="ئاڵوگۆڕی دراو بە کەمترین لێبڕین لە هەموو کوردستان و عێراق — FastPay، FIB، Qi Card، NassWallet، Korek و Asiacell. متمانە و خێرایی.">
 <meta name="twitter:image" content="https://cdn.imageurlgenerator.com/uploads/bdd57b8f-384b-470e-8a37-31fb03051838.webp">
 
-<!-- Icons (temporary — hotlinked; see note) -->
-<link rel="icon" type="image/webp" href="https://cdn.imageurlgenerator.com/uploads/bdd57b8f-384b-470e-8a37-31fb03051838.webp">
-<link rel="apple-touch-icon" href="https://cdn.imageurlgenerator.com/uploads/bdd57b8f-384b-470e-8a37-31fb03051838.webp">
+<!-- Local PNG app icon -->
+<link rel="icon" type="image/png" sizes="240x240" href="/assets/images/proxo-splash-icon.png?v=1">
+<link rel="apple-touch-icon" href="/assets/images/proxo-splash-icon.png?v=1">
 
 <!-- Structured data — site name shown by Google -->
 <script type="application/ld+json">
@@ -93,11 +93,20 @@
 <link rel="stylesheet" href="/assets/css/exchange-features.css?v=2">
 <link rel="stylesheet" href="/assets/css/exchange-auth-app.css?v=1"><script src="/assets/js/exchange-access.js?v=1"></script>
 <link rel="stylesheet" href="/assets/css/exchange-customer-polish.css?v=2">
-<link rel="stylesheet" href="/assets/css/exchange-feedback.css?v=2">
+<link rel="stylesheet" href="/assets/css/exchange-feedback.css?v=3">
 <link rel="stylesheet" href="/assets/css/exchange-auth-modern.css?v=11">
+<link rel="stylesheet" href="/assets/css/app-ui-polish.css?v=1">
 </head>
 
 <body>
+<div id="appSplash" aria-hidden="true">
+  <div class="app-splash-content">
+    <img class="app-splash-icon" src="/assets/images/proxo-splash-icon.png?v=1" alt="" width="88" height="88">
+    <strong class="app-splash-title">Proxo Balance</strong>
+    <span class="app-splash-subtitle">ئاڵوگۆڕی پارە بە ئاسانی</span>
+    <span class="app-splash-progress"></span>
+  </div>
+</div>
 
 <!-- ══════════════════════════════════════════════════════════════
      TOASTS
@@ -1567,11 +1576,11 @@
 </div>
 
 
-<script src="/assets/js/index-svg-icons.js?v=1"></script>
+<script src="/assets/js/index-svg-icons.js?v=2"></script>
 <script src="/assets/js/exchange-reward-pricing.js?v=3"></script>
 <script src="/assets/js/exchange-payout-rounding.js?v=1"></script>
 <script src="/assets/js/exchange-live.js?v=1"></script>
-<script src="/assets/js/app.js?v=55"></script>
+<script src="/assets/js/app.js?v=56"></script>
 <script src="/assets/js/exchange-customer-features.js?v=3"></script>
 <script src="/assets/js/exchange-balance.js?v=6"></script>
 <script src="/assets/js/exchange-ux.js?v=1"></script>
