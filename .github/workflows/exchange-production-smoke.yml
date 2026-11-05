@@ -15,7 +15,7 @@ jobs:
           set -euo pipefail
           for attempt in $(seq 1 24); do
             if curl -fLsS --max-time 15 'https://www.proxobalance.app/' -o current-index.html &&
-               grep -q 'app.js?v=57' current-index.html &&
+               grep -q 'app.js?v=58' current-index.html &&
                grep -q 'exchange-payout-rounding.js?v=1' current-index.html &&
                grep -q 'exchange-customer-polish.css?v=2' current-index.html &&
                grep -q 'exchange-feedback.css?v=3' current-index.html &&
@@ -41,7 +41,7 @@ jobs:
                grep -q 'exchange-profit.js?v=5' current-admin.html &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-profit.js?v=5' -o current-profit.js &&
                grep -q 'ex_admin_deduction_stats_filtered' current-profit.js &&
-               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/app.js?v=57' -o current-app.js &&
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/app.js?v=58' -o current-app.js &&
                grep -q 'accountBalanceSourceOption' current-app.js &&
                grep -q 'dismissAppSplash' current-app.js &&
                grep -q 'هەڵسەنگاندنی داواکاری' current-app.js &&
@@ -77,12 +77,15 @@ jobs:
             echo 'FAIL: completed transactions summary is still published.'
             exit 1
           fi
-          grep -q 'app.js?v=57' index.html
+          grep -q 'app.js?v=58' index.html
           curl -fLsS --max-time 25 "$root/assets/css/app-ui-polish.css?v=2" -o app-ui-polish.css
           grep -q 'app-splash-content' app-ui-polish.css
           curl -fLsS --max-time 25 "$root/assets/css/proxo-app-shell.css?v=1" -o proxo-app-shell.css
           grep -q 'bottom-nav-inner' proxo-app-shell.css
           grep -q 'profile-balance-card' proxo-app-shell.css
+          curl -fLsS --max-time 25 "$root/assets/css/proxo-design-system.css?v=1" -o proxo-design-system.css
+          grep -q -- "--proxo-accent: #0265ff" proxo-design-system.css
+          grep -q "proxo-design-system.css?v=1" index.html
           curl -fLsS --max-time 25 "$root/assets/images/proxo-app/proxo-app-icon.png?v=1" -o app-icon.png
           file --brief --mime-type app-icon.png | grep -q '^image/png$'
           curl -fLsS --max-time 25 "$root/assets/images/proxo-app/proxo-wordmark.png?v=1" -o proxo-wordmark.png

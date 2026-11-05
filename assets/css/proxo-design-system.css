@@ -1,0 +1,327 @@
+/* Proxo customer design contract. Loaded last to retire conflicting legacy
+   important rules on this external, vanilla-JS site. Admin is not affected.
+   14px body / 12px secondary / 18px screen title; 48px main controls;
+   44px icon targets; 12px controls / 14px cards; 12-16px spacing. */
+body:has(#mainApp) {
+  --proxo-accent: #0265ff;
+  --proxo-accent-hover: #0058df;
+  --proxo-accent-soft: #eff4fe;
+  --proxo-canvas: #fafafa;
+  --proxo-card: #fff;
+  --proxo-ink: #0f172a;
+  --proxo-muted: #64748b;
+  --proxo-line: #e3e7f0;
+  --proxo-font: Rabar, Arial, sans-serif;
+  --primary: var(--proxo-accent);
+  --secondary: var(--proxo-accent);
+  --primary-soft: var(--proxo-accent-soft);
+  --secondary-soft: var(--proxo-accent-soft);
+  --text: var(--proxo-ink);
+  --text-muted: var(--proxo-muted);
+  --border: var(--proxo-line);
+  --pri: var(--proxo-accent);
+  --bl: var(--proxo-accent);
+  --bl-soft: var(--proxo-accent-soft);
+  font-family: var(--proxo-font);
+}
+#mainApp {
+  --primary: var(--proxo-accent);
+  --secondary: var(--proxo-accent);
+  --text: var(--proxo-ink);
+  --text-muted: var(--proxo-muted);
+  --ex-blue: var(--proxo-accent);
+  --unified-blue: var(--proxo-accent);
+  font-family: var(--proxo-font) !important;
+  font-size: 14px;
+  line-height: 1.6;
+}
+#authWrap {
+  --auth-blue: var(--proxo-accent);
+  --auth-blue-soft: var(--proxo-accent-soft);
+  --auth-ink: var(--proxo-ink);
+  --auth-muted: var(--proxo-muted);
+  --auth-line: var(--proxo-line);
+  font-family: var(--proxo-font) !important;
+}
+body :is(#mainApp,#authWrap,#recipientSheet,#pickerSheet,#confirmSheet,#resultModal,#orderCorrectionModal) :is(button,input,select,textarea) { font-family: var(--proxo-font) !important; }
+
+/* The same hierarchy on every customer screen. */
+#mainApp .page .page-head h2 {
+  color: var(--proxo-ink) !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+}
+#mainApp .page .page-head p {
+  color: var(--proxo-muted) !important;
+  font-size: 12px !important;
+  line-height: 1.65 !important;
+}
+#mainApp .page :is(.section-title,.pf-card-title,.xc-head h2,.rule-txt h4,.support-form-title b,.kyc-sec-title b) {
+  color: var(--proxo-ink) !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  line-height: 1.6 !important;
+}
+#mainApp .page .section-title { padding: 0; margin-block: 12px; border: 0; background: transparent; }
+#mainApp .page .page-head h2 > .icn {
+  display: inline-flex !important;
+  flex: 0 0 20px;
+  width: 20px !important;
+  height: 20px !important;
+  padding: 0 !important;
+  color: var(--proxo-muted) !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+#mainApp .page .section-title > .icn {
+  flex: 0 0 20px;
+  width: 20px !important;
+  height: 20px !important;
+  padding: 0 !important;
+  color: var(--proxo-muted) !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+#mainApp .page :is(.field-label,.kyc-label-help,.kyc-sec-title small) { font-size: 12px !important; line-height: 1.6 !important; color: var(--proxo-muted); }
+#mainApp .page :is(.input,.support-select):not(textarea) {
+  height: 48px !important;
+  min-height: 48px !important;
+  padding-block: 10px !important;
+  font-size: 14px !important;
+  border-radius: 12px !important;
+  color: var(--proxo-ink) !important;
+  border-color: var(--proxo-line) !important;
+  box-shadow: none !important;
+}
+#mainApp .page textarea.input {
+  min-height: 104px;
+  padding: 12px 14px;
+  font-size: 14px !important;
+  line-height: 1.6;
+  border-radius: 12px !important;
+  color: var(--proxo-ink) !important;
+  border-color: var(--proxo-line) !important;
+}
+#mainApp .page .input:focus { border-color: var(--proxo-accent) !important; }
+#mainApp .page :is(.input.is-invalid,.input.error,.input[aria-invalid="true"]) { border-color: #dc2626 !important; }
+
+/* Use role-specific buttons: primary is blue; secondary is never mistaken for it. */
+body :is(#mainApp,#authWrap,#recipientSheet,#pickerSheet,#confirmSheet,#resultModal,#orderCorrectionModal) .btn.btn-primary,
+#mainApp :is(#pageHome,#pageProfile,#pageSupport,#pageVerify) :is(#submitBtn,#pfSaveBtn,#supportSubmitBtn,#kycSubmitBtn,#balancePayoutToggle,#balancePayoutSubmit),
+body #confirmSheet #confirmSendBtn,
+body #resultModal #resultPrimaryBtn,
+body #recipientSheet #recipientSave,
+body #authWrap :is(.btn-primary,.abtn) {
+  min-height: 48px !important;
+  height: auto !important;
+  padding: 11px 14px !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #fff !important;
+  background: var(--proxo-accent) !important;
+  background-image: none !important;
+  border: 1px solid var(--proxo-accent) !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  line-height: 1.6 !important;
+  white-space: normal;
+}
+body :is(#mainApp,#authWrap,#recipientSheet,#confirmSheet,#resultModal,#orderCorrectionModal) .btn.btn-primary:hover:not(:disabled),
+#mainApp :is(#pageHome,#pageProfile,#pageSupport,#pageVerify) :is(#submitBtn,#pfSaveBtn,#supportSubmitBtn,#kycSubmitBtn,#balancePayoutToggle,#balancePayoutSubmit):hover:not(:disabled),
+body #authWrap :is(.btn-primary,.abtn):hover:not(:disabled) {
+  background: var(--proxo-accent-hover) !important;
+  border-color: var(--proxo-accent-hover) !important;
+  box-shadow: none !important;
+  filter: none !important;
+  transform: none;
+}
+#mainApp .page .btn.btn-ghost,
+body :is(#mainApp,#recipientSheet,#confirmSheet,#resultModal,#orderCorrectionModal) .btn.btn-ghost,
+#mainApp #pageProfile .profile-wallet-controls .pb-secondary {
+  min-height: 44px !important;
+  color: #334155 !important;
+  background: #f5f7fa !important;
+  border: 1px solid var(--proxo-line) !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  font-size: 14px !important;
+  line-height: 1.6;
+}
+body :is(#mainApp,#authWrap,#recipientSheet,#confirmSheet,#resultModal,#orderCorrectionModal) button:disabled { cursor: not-allowed; }
+body :is(#mainApp,#authWrap,#recipientSheet,#confirmSheet,#resultModal,#orderCorrectionModal) .btn-primary:disabled { opacity: .55 !important; }
+body :is(#mainApp,#authWrap,#recipientSheet,#confirmSheet,#resultModal,#orderCorrectionModal) .btn > :is(.icn,svg) { flex: 0 0 18px; width: 18px !important; height: 18px !important; color: inherit !important; }
+
+/* Shared small controls have generous hit areas, without oversized symbols. */
+#mainApp .hdr-actions :is(.icon-btn,.profile-top-btn),
+#mainApp .support-back,
+#mainApp .profile-balance-refresh,
+body :is(#recipientSheet,#pickerSheet,#confirmSheet) .sheet-close,
+#mainApp .tx-sheet-close { width: 44px !important; height: 44px !important; min-height: 44px !important; flex-basis: 44px; border-radius: 12px; }
+#mainApp .hdr-actions :is(.icn,.profile-top-btn img),
+#mainApp .support-back .icn { width: 20px !important; height: 20px !important; }
+#mainApp .bn-label { font-size: 12px !important; line-height: 1.5 !important; font-weight: 400; }
+#mainApp .bottom-nav { padding-top: 3px; }
+
+/* Home: one surface hierarchy, compact two-line method rows, clear selected step. */
+#mainApp #pageHome #exchangeCard .ux-exchange-head { background: #fff !important; background-image: none !important; }
+#mainApp #pageHome :is(#grpSend,#grpRecv,#grpProof,.xc-summary) { box-shadow: none !important; border-color: var(--proxo-line) !important; border-radius: 12px !important; }
+#mainApp #pageHome .ux-progress-item.is-current { color: var(--proxo-accent) !important; background: var(--proxo-accent-soft) !important; border-color: var(--proxo-accent) !important; }
+#mainApp #pageHome .ux-progress-item.is-current .ux-progress-index { color: #fff !important; background: var(--proxo-accent) !important; border-color: var(--proxo-accent) !important; }
+#mainApp #pageHome #exchangeCard .picker-trigger {
+  min-height: 56px !important;
+  height: auto;
+  padding: 8px 12px !important;
+  border-radius: 12px !important;
+  border-color: var(--proxo-line) !important;
+}
+#mainApp #pageHome .picker-trigger-label { font-size: 12px !important; line-height: 1.35 !important; }
+#mainApp #pageHome .picker-trigger-value { font-size: 14px !important; line-height: 1.5 !important; }
+#mainApp #pageHome .ux-review-grid .file-picker { min-height: 64px !important; padding: 10px 12px !important; border-radius: 12px !important; box-shadow: none !important; }
+#mainApp #pageHome .welcome-reward { background: #fff !important; border-color: var(--proxo-line) !important; border-radius: 14px !important; box-shadow: none !important; }
+#mainApp #pageHome .welcome-reward h3 { color: var(--proxo-ink) !important; font-size: 14px !important; }
+#mainApp #pageHome .home-feedback-copy :is(span,small),
+#mainApp #pageHome .greet-hi { font-size: 12px !important; color: var(--proxo-muted); }
+#mainApp #pageHome .home-feedback-action { min-height: 44px; font-size: 12px; padding-inline: 12px; }
+
+/* Profile: balanced identity, readable values and usable wallet actions. */
+#mainApp #pageProfile .pf2-avatar { background: #f5f7fa !important; color: var(--proxo-ink) !important; }
+#mainApp #pageProfile :is(.pf2-handle,.kyc-badge) { min-height: 36px; }
+#mainApp #pageProfile :is(.profile-balance-heading span,.profile-balance-values span,.pf-menu-txt span,.pb-message,.pb-history-row small) { font-size: 12px !important; line-height: 1.65 !important; }
+#mainApp #pageProfile .profile-balance-held strong { font-size: 16px; }
+#mainApp #pageProfile .profile-wallet-controls .pb-btn { min-height: 48px !important; font-size: 12px !important; padding: 10px !important; }
+#mainApp #pageProfile .profile-wallet-controls .pb-form :is(input,select) { min-height: 48px; font-size: 14px; border-radius: 12px; }
+#mainApp #pageProfile .pb-history-row { font-size: 14px; }
+#mainApp #pageProfile .pf-menu-arrow { display: inline-flex !important; flex: 0 0 18px; width: 18px; height: 18px; align-items: center; color: var(--proxo-muted); }
+#mainApp #pageProfile .kyc-card[data-state] { border-inline-start: 3px solid var(--kyc-c) !important; }
+
+/* Transactions and rating live outside .page; they share the same contract. */
+#mainApp #pageTx .tx-card-content { margin-top: 10px; padding: 10px 0; border-block: 1px solid var(--proxo-line); }
+#mainApp #pageTx .tx-card.needs-action { border-color: #eab5b5 !important; }
+#mainApp .tx-sheet { border-radius: 16px 16px 0 0 !important; box-shadow: none !important; color: var(--proxo-ink); }
+#mainApp .tx-sheet .tx-sheet-head h3 { font-size: 18px !important; color: var(--proxo-ink) !important; }
+#mainApp .tx-sheet .order-feedback {
+  --fb-ink: var(--proxo-ink);
+  --fb-muted: var(--proxo-muted);
+  --fb-line: var(--proxo-line);
+  font-family: var(--proxo-font) !important;
+  padding: 14px;
+  border-color: var(--proxo-line);
+  border-radius: 14px;
+  background: #fff;
+}
+#mainApp .tx-sheet .feedback-section-heading h3 { font-size: 16px !important; color: var(--proxo-ink); font-weight: 600; }
+#mainApp .tx-sheet :is(.feedback-kicker,.feedback-order-top,.feedback-order-date,.feedback-order-date b,.feedback-order-amounts small,.feedback-input-label span,.feedback-char-hint,.feedback-thanks,.feedback-comment-box > small,.feedback-reward-copy > small,.feedback-reward-copy > span) { font-size: 12px; line-height: 1.65; }
+#mainApp .tx-sheet .feedback-order-amounts b { font-size: 14px; }
+#mainApp .tx-sheet .feedback-star-picker .feedback-star { min-width: 44px; width: 44px; min-height: 44px; height: 44px; flex: 0 0 44px; border-radius: 10px; }
+#mainApp .tx-sheet .order-feedback textarea { min-height: 96px; border-radius: 12px; font-size: 14px; }
+#mainApp .tx-sheet .feedback-reward-card { align-items: flex-start; }
+#mainApp .tx-sheet .feedback-reward-tag { font-size: 10px; }
+#mainApp .tx-sheet .feedback-submit-btn { width: 100%; }
+
+/* Rules and rates use neutral title/icon chrome; status signals keep their colors. */
+#mainApp #pageRules .rule-txt h4 { color: var(--proxo-ink) !important; font-size: 14px !important; margin-bottom: 4px; }
+#mainApp #pageRules .rule-txt p { color: var(--proxo-muted) !important; font-size: 12px !important; line-height: 1.75 !important; }
+#mainApp #pageRules .rule-note { background: #fff9e9 !important; color: #713f12 !important; border: 1px solid #f0dda8 !important; border-radius: 14px; box-shadow: none !important; font-size: 12px; }
+#mainApp #pageRules .rule-note b { color: #713f12 !important; }
+#mainApp #pageChanges > .section-title[style] { margin-top: 12px !important; }
+#mainApp #pageChanges .chg-ico { width: 30px; height: 30px; flex-basis: 30px; border-radius: 8px; }
+#mainApp #pageChanges .chg-ico .icn { width: 18px; height: 18px; }
+
+/* Support form and case cards. Rebuild the select affordance lost to background
+   shorthands; selected/error states must remain distinguishable. */
+#mainApp #pageSupport :is(.support-form-card,.support-case-card),
+#mainApp #pageVerify :is(.kyc-form-card,.kyc-success) { background: #fff !important; border: 1px solid var(--proxo-line) !important; border-radius: 14px !important; box-shadow: none !important; }
+#mainApp #pageSupport .support-form-title > .icn { width: 36px; height: 36px; padding: 9px; border-radius: 10px; background: #f5f7fa !important; color: var(--proxo-muted) !important; }
+#mainApp #pageSupport select.support-select {
+  appearance: none;
+  background-color: #fff !important;
+  background-image: linear-gradient(45deg,transparent 50%,#64748b 50%),linear-gradient(135deg,#64748b 50%,transparent 50%) !important;
+  background-position: 18px 21px,23px 21px !important;
+  background-size: 5px 5px !important;
+  background-repeat: no-repeat !important;
+  padding-inline-end: 36px !important;
+}
+body :is(#pageSupport,#orderCorrectionModal) .support-image-picker { min-height: 64px; padding: 10px 12px; background: #fff !important; border: 1px dashed var(--proxo-line) !important; border-radius: 12px !important; box-shadow: none !important; }
+body :is(#pageSupport,#orderCorrectionModal) .support-image-picker.selected { border: 1px solid var(--proxo-accent) !important; background: var(--proxo-accent-soft) !important; }
+#mainApp #pageSupport .support-case-card :is(.support-case-head small,.support-case-status,.support-case-meta span,.support-case-image-link span) { font-size: 12px; }
+
+/* Verification keeps its approval/rejection/required tone variables. */
+#mainApp #pageVerify .kyc-banner { background: var(--kyc-bg) !important; border: 1px solid var(--kyc-bd) !important; border-radius: 14px; box-shadow: none !important; }
+#mainApp #pageVerify :is(.kyc-src-btn,.kyc-mini-btn) { min-height: 44px; font-size: 12px !important; border-radius: 12px; }
+#mainApp #pageVerify :is(.kyc-doc-ico,.kyc-drop-ico) { width: 36px; height: 36px; flex-basis: 36px; border-radius: 10px; }
+#mainApp #pageVerify :is(.kyc-doc-ico,.kyc-drop-ico) .icn { width: 20px; height: 20px; }
+#mainApp #pageVerify .kyc-success-ico { width: 48px; height: 48px; font-size: 24px; }
+#mainApp #pageVerify :is(.kyc-doc-txt small,.kyc-drop small,.kyc-preview small) { font-size: 12px; }
+
+/* Auth remains full-bleed like the approved Proxo app reference. Its art is
+   intentionally kept; only field scale, spacing and flat accent are unified. */
+body #authWrap .auth-step-heading h3 { font-size: 18px !important; }
+body #authWrap :is(.auth-step-label p,.auth-field-label,.otp-timer,#fpOtpLbl,.amsg,.auth-err,.auth-account-switch) { font-size: 12px !important; line-height: 1.65 !important; }
+body #authWrap :is(.input,.ainp,.otp-digit) { height: 48px !important; min-height: 48px !important; border-radius: 12px !important; border-color: var(--proxo-line) !important; }
+body #authWrap :is(.input-wrap,.field) { margin-bottom: 12px !important; }
+body #authWrap .pass-eye { width: 44px !important; height: 44px !important; min-height: 44px; }
+body #authWrap :is(.input,.otp-digit):focus { border-color: var(--proxo-accent) !important; box-shadow: 0 0 0 3px var(--proxo-accent-soft) !important; }
+
+/* Root-level sheets were never inside #mainApp. Style them explicitly, without
+   touching [hidden] or their visibility/navigation state machinery. */
+body :is(#recipientSheet,#pickerSheet,#confirmSheet) > .sheet,
+body :is(#resultModal,#orderCorrectionModal) > .modal-card {
+  font-family: var(--proxo-font);
+  background: #fff !important;
+  color: var(--proxo-ink) !important;
+  border: 1px solid var(--proxo-line) !important;
+  border-radius: 16px 16px 0 0 !important;
+  box-shadow: none !important;
+}
+body :is(#resultModal,#orderCorrectionModal) > .modal-card { border-radius: 16px !important; }
+body :is(#recipientSheet,#pickerSheet,#confirmSheet) .sheet-head h3,
+body :is(#resultModal,#orderCorrectionModal) :is(h2,h3) { color: var(--proxo-ink) !important; font-size: 18px !important; line-height: 1.5; }
+body :is(#recipientSheet,#pickerSheet,#confirmSheet,#orderCorrectionModal) .input:not(textarea) { height: 48px !important; min-height: 48px !important; font-size: 14px !important; padding-block: 10px !important; border-radius: 12px !important; }
+body :is(#recipientSheet,#pickerSheet,#confirmSheet,#orderCorrectionModal) :is(label,.field-label) { font-size: 12px; }
+body #resultModal .modal-ico-wrap { width: 48px; height: 48px; margin-bottom: 12px; }
+body #resultModal .modal-ico-wrap :is(svg,.icn) { width: 24px !important; height: 24px !important; }
+#mainApp #notifPanel { height: min(72dvh,600px); border-radius: 16px 16px 0 0 !important; box-shadow: none !important; }
+#mainApp #notifPanel .notif-panel-head { min-height: 56px; }
+#mainApp #notifPanel .notif-title-icon { width: 30px; height: 30px; flex-basis: 30px; }
+#mainApp #notifPanel .notif-item { border-radius: 12px; }
+body :is(#recipientSheet,#pickerSheet,#confirmSheet) .sheet,
+#mainApp #notifPanel { transition-duration: .19s !important; transition-timing-function: ease !important; }
+
+@media (max-width: 380px) {
+  #mainApp #pageProfile .profile-wallet-controls .pb-actions { grid-template-columns: 1fr; }
+  #mainApp #pageHome .home-feedback-prompt { flex-wrap: wrap; }
+  #mainApp #pageHome .home-feedback-copy { flex-basis: calc(100% - 50px); }
+  #mainApp #pageHome .home-feedback-action { margin-inline-start: 49px; }
+  #mainApp .tx-sheet .feedback-reward-card { flex-wrap: wrap; }
+  #mainApp .tx-sheet .feedback-reward-tag { margin-inline-start: 41px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body :is(#mainApp,#authWrap,#recipientSheet,#pickerSheet,#confirmSheet,#resultModal,#orderCorrectionModal) * { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
+
+/* Rating glyphs need contrast even before selection; gold remains semantic. */
+#mainApp .tx-sheet .feedback-star-picker .feedback-star { color: #64748b; }
+#mainApp .tx-sheet .feedback-star-picker .feedback-star.selected {
+  color: #9a6700;
+  background: #fff9e9;
+  border-color: #ddb54b;
+}
+#mainApp #pageSupport .support-form-title .icn { background: #f5f7fa !important; color: var(--proxo-muted) !important; }
+@media (min-width: 640px) {
+  #mainApp .tx-sheet { border-radius: 16px !important; }
+}
+
+#mainApp #pageProfile #balancePayoutToggle:disabled {
+  background: #e4eaf2 !important;
+  border-color: #e4eaf2 !important;
+  color: #64748b !important;
+  opacity: 1 !important;
+}

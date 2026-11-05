@@ -98,6 +98,7 @@
 <link rel="stylesheet" href="/assets/css/exchange-auth-modern.css?v=11">
 <link rel="stylesheet" href="/assets/css/app-ui-polish.css?v=2">
 <link rel="stylesheet" href="/assets/css/proxo-app-shell.css?v=1">
+<link rel="stylesheet" href="/assets/css/proxo-design-system.css?v=1">
 </head>
 
 <body>
@@ -430,7 +431,8 @@
             <p>ئیمەیڵەکەت بنووسە بۆ وەرگرتنی کۆد.</p>
           </div>
           <label class="auth-field-label" for="forgotEmail">ئیمەیڵ</label>
-          <div class="field">
+          <div class="field input-wrap">
+            <span class="input-ico"><span class="icn icn-sm icon--solar icon--solar--letter-linear" aria-hidden="true"></span></span>
             <input class="input" type="email" id="forgotEmail" placeholder="example@gmail.com" dir="ltr">
           </div>
           <button class="btn btn-primary btn-block" id="forgotSendBtn" onclick="doForgotSendOtp()">
@@ -1221,7 +1223,7 @@
     <section class="pb-balance profile-wallet-controls" id="balanceSendSection" aria-label="باڵانسی هەژمار">
       <div hidden aria-hidden="true"><span id="balanceAvailable">—</span><span id="balanceHeld">—</span></div>
       <div class="pb-actions">
-        <button type="button" id="balancePayoutToggle" class="pb-btn" onclick="openAccountBalanceSend()" disabled>هەڵبژاردنی باڵانس بۆ ناردن</button>
+        <button type="button" id="balancePayoutToggle" class="pb-btn" onclick="openAccountBalanceSend()" disabled>ناردن لە باڵانس</button>
         <button type="button" class="pb-btn pb-secondary" onclick="toggleBalanceHistory()">مێژووی باڵانس</button>
       </div>
       <p class="pb-message" id="balanceStatusMessage" tabindex="-1" role="status">باڵانس بار دەکرێت...</p>
@@ -1579,7 +1581,7 @@
 <script src="/assets/js/exchange-reward-pricing.js?v=3"></script>
 <script src="/assets/js/exchange-payout-rounding.js?v=1"></script>
 <script src="/assets/js/exchange-live.js?v=1"></script>
-<script src="/assets/js/app.js?v=57"></script>
+<script src="/assets/js/app.js?v=58"></script>
 <script src="/assets/js/exchange-customer-features.js?v=3"></script>
 <script src="/assets/js/exchange-balance.js?v=7"></script>
 <script src="/assets/js/exchange-ux.js?v=1"></script>
