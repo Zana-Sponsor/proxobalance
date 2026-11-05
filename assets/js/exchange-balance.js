@@ -1,10 +1,10 @@
-// Customer full refunds and order shortfall credits are visible in Send balance history.
+// Customer full refunds and order shortfall credits are visible in Profile balance history.
 // Actual payouts are manual, gated in the database and reviewed by an admin.
 let _myBalanceData=null,_balanceRequestKey=null,_balanceLoadId=0;
 function resetMyBalance(){
   ++_balanceLoadId;_myBalanceData=null;_balanceRequestKey=null;
   const wrap=document.getElementById('balanceSendSection');if(wrap)wrap.hidden=true;
-  for(const id of ['balanceAvailable','balanceHeld']){
+  for(const id of ['balanceAvailable','balanceHeld','profileBalanceAvailable','profileBalanceHeld']){
     const el=document.getElementById(id);if(el)el.textContent='—';
   }
   const btn=document.getElementById('balancePayoutToggle');if(btn)btn.disabled=true;
@@ -42,8 +42,14 @@ async function loadMyBalance(){
     const data=await balanceApi('GET');
     if(loadId!==_balanceLoadId||curUser?.id!==owner)return;
     _myBalanceData=data;
-    document.getElementById('balanceAvailable').textContent=balanceIqd(_myBalanceData.balance.available_iqd);
-    document.getElementById('balanceHeld').textContent=balanceIqd(_myBalanceData.balance.held_iqd);
+    const availableText=balanceIqd(_myBalanceData.balance.available_iqd);
+    const heldText=balanceIqd(_myBalanceData.balance.held_iqd);
+    document.getElementById('balanceAvailable').textContent=availableText;
+    document.getElementById('balanceHeld').textContent=heldText;
+    const profileAvailable=document.getElementById('profileBalanceAvailable');
+    const profileHeld=document.getElementById('profileBalanceHeld');
+    if(profileAvailable)profileAvailable.textContent=availableText;
+    if(profileHeld)profileHeld.textContent=heldText;
     const enabled=_myBalanceData.payouts_enabled===true;
     const available=Number(_myBalanceData.balance.available_iqd||0);
     const kycBlocked=typeof kycExchangeBlocked==='function'&&kycExchangeBlocked();
@@ -70,8 +76,9 @@ async function loadMyBalance(){
   }catch(e){
     if(loadId!==_balanceLoadId||curUser?.id!==owner)return;
     _myBalanceData=null;
-    document.getElementById('balanceAvailable').textContent='—';
-    document.getElementById('balanceHeld').textContent='—';
+    for(const id of ['balanceAvailable','balanceHeld','profileBalanceAvailable','profileBalanceHeld']){
+      const el=document.getElementById(id);if(el)el.textContent='—';
+    }
     document.getElementById('balancePayoutForm').hidden=true;
     note.textContent='کێشە لە بارکردنی باڵانس: '+e.message;
   }
@@ -92,6 +99,7 @@ async function openAccountBalanceSend(){
   }
   const from=document.getElementById('from');
   if(!from||typeof FROM_OPTIONS==='undefined'||!FROM_OPTIONS.includes('AccountBalance'))return;
+  if(typeof navigate==='function')navigate('home');
   from.value='AccountBalance';
   if(typeof _balanceOrderKey!=='undefined')_balanceOrderKey=null;
   updateWallet();
@@ -174,7 +182,7 @@ async function cancelMyBalancePayout(id){
 // Refresh when the customer returns to Send or resumes the page after a refund.
 function refreshVisibleBalance(){
   if(curUser&&document.visibilityState!=='hidden'&&
-    (typeof _route==='undefined'||_route==='home'))return Promise.all([loadMyBalance(),
+    (typeof _route==='undefined'||_route==='home'||_route==='profile'))return Promise.all([loadMyBalance(),
       ...(typeof loadMyRewards==='function'?[loadMyRewards()]:[])]);
 }
 window.addEventListener('focus',refreshVisibleBalance);

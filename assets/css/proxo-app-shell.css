@@ -1,0 +1,421 @@
+/* Proxo mobile-app shell: restrained white surfaces, Rabar, and app navigation. */
+#mainApp {
+  --primary: #0265ff;
+  --secondary: #0265ff;
+  --secondary-soft: #eff4fe;
+  --surface: #ffffff;
+  --surface-2: #f5f7fa;
+  --bg-elevated: #ffffff;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --text-faint: #94a3b8;
+  --border: #e3e7f0;
+  --border-strong: #cbd5e1;
+  --success: #13a56a;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 14px;
+  --radius-xl: 16px;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  color: #0f172a;
+  background: #fafafa;
+  font-family: Rabar, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+#mainApp :is(button, input, select, textarea) { font-family: inherit; }
+body { background: #fafafa; }
+body.has-nav { padding-bottom: calc(86px + env(safe-area-inset-bottom, 0px)) !important; }
+
+/* App bar — the actual Proxo app places the wordmark left and actions right. */
+#mainApp .site-header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 1200;
+  margin: 0;
+  padding: env(safe-area-inset-top, 0px) 0 0;
+  background: #fff;
+  border: 0;
+  border-bottom: 1px solid #f2f3f5;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+#mainApp .site-header-inner {
+  display: flex;
+  direction: ltr;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  max-width: 820px;
+  min-height: 54px;
+  margin-inline: auto;
+  padding: 0 16px;
+}
+#mainApp .hdr-logo {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  flex: 0 0 auto;
+  color: #0f172a;
+  text-decoration: none;
+}
+#mainApp .proxo-header-wordmark {
+  display: block;
+  width: 106px;
+  max-width: 32vw;
+  height: auto;
+  max-height: 28px;
+  object-fit: contain;
+}
+#mainApp .hdr-rate,
+#mainApp .hdr-nav,
+#mainApp .hdr-cta { display: none !important; }
+#mainApp .hdr-actions {
+  display: flex;
+  direction: rtl;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  margin: 0;
+  flex: 0 0 auto;
+}
+#mainApp .hdr-actions .icon-btn,
+#mainApp .hdr-actions .profile-top-btn {
+  display: inline-flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  padding: 0;
+  color: #334155;
+  background: #fff;
+  border: 1px solid #e7eaf0;
+  border-radius: 12px;
+  box-shadow: none;
+  transition: transform .14s ease, background-color .14s ease;
+}
+#mainApp .hdr-actions .icon-btn:active { transform: scale(.96); background: #f5f7fa; }
+#mainApp .hdr-actions .icon-btn .icn { width: 19px; height: 19px; }
+#mainApp .profile-top-btn img { width: 21px; height: 21px; object-fit: contain; opacity: .74; }
+
+/* Content stays centered like a native app, with room for the fixed tab bar. */
+#mainApp .page {
+  width: 100%;
+  max-width: 720px;
+  margin-inline: auto;
+  padding: 12px 16px 22px;
+}
+#mainApp .page-head { margin: 3px 0 12px; }
+#mainApp .page-head h2 {
+  gap: 8px;
+  color: #0f172a;
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+#mainApp .page-head h2 .icn { color: #0265ff; }
+#mainApp .page-head p { margin-top: 4px; color: #64748b; font-size: 12px; }
+
+/* Solid, quietly separated cards instead of layered gradients and heavy shadows. */
+#mainApp :is(.panel, .pf-card, .pf-menu, .tx-card, .rule-item, .chg-item, .rate-card, .kyc-card, .pb-balance, .welcome-reward) {
+  background-color: #fff;
+  border: 1px solid #e3e7f0;
+  border-radius: 14px;
+  box-shadow: none;
+}
+#mainApp .panel { padding: 16px; }
+#mainApp :is(.tx-card, .rule-item, .chg-item, .rate-card, .pf-card) { padding: 14px; }
+#mainApp :is(.tx-card, .rule-item, .rate-card, .chg-item) + :is(.tx-card, .rule-item, .rate-card, .chg-item) { margin-top: 9px; }
+#mainApp .tx-card:hover { border-color: #cbd5e1; box-shadow: none; }
+#mainApp :is(.btn-primary, .btn-block, .pb-btn, #submitBtn, .xc-submit) {
+  border-radius: 12px;
+  background-color: #0265ff;
+  background-image: none;
+  box-shadow: none;
+  font-weight: 600;
+}
+#mainApp :is(.btn-primary, .btn-block, #submitBtn, .xc-submit):not(:disabled) { color: #fff; }
+#mainApp :is(.pb-btn, .pb-secondary) { min-height: 42px; border-radius: 11px; box-shadow: none; }
+#mainApp .pb-secondary { color: #334155; background: #f5f7fa; border: 1px solid #e3e7f0; }
+#mainApp :is(.filter-chip, .status-badge, .pf-chip) { box-shadow: none; }
+#mainApp input,
+#mainApp select,
+#mainApp textarea { border-radius: 11px; }
+
+/* Home: a compact greeting, one clear exchange card, and a persistent rating cue. */
+#mainApp .home-greet {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid #e3e7f0;
+  border-radius: 14px;
+  box-shadow: none;
+}
+#mainApp .greet-hi { color: #64748b; }
+#mainApp .greet-txt #userName { color: #0f172a; font-size: 15px; font-weight: 600; }
+#mainApp .greet-rate { padding: 4px 8px; border-radius: 9px; background: #eff4fe; color: #0265ff; }
+#mainApp #newsBanner,
+#mainApp #notifBar { border-radius: 12px; box-shadow: none; }
+#mainApp #exchangeCard { margin-top: 12px; border-radius: 16px; }
+#mainApp .xc-head-ico { color: #0265ff; background: #eff4fe; border: 0; border-radius: 12px; box-shadow: none; }
+#mainApp .xc-head-copy h2 { color: #0f172a; font-weight: 600; }
+#mainApp .pb-balance { margin: 12px 0; padding: 13px; border-radius: 12px; }
+#mainApp .pb-balance h3 { color: #0f172a; font-weight: 600; }
+#mainApp .pb-message { color: #64748b; }
+#mainApp .home-feedback-prompt[hidden] { display: none !important; }
+#mainApp .home-feedback-prompt:not([hidden]) {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin: 0 0 12px;
+  padding: 12px;
+  background: #fff;
+  border: 1px solid #dbeafe;
+  border-radius: 14px;
+}
+#mainApp .home-feedback-icon {
+  display: grid;
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  color: #0265ff;
+  background: #eff4fe;
+  border-radius: 11px;
+}
+#mainApp .home-feedback-icon .icn { width: 20px; height: 20px; }
+#mainApp .home-feedback-copy { display: flex; min-width: 0; flex: 1; flex-direction: column; gap: 3px; }
+#mainApp .home-feedback-copy b { color: #0f172a; font-size: 13px; font-weight: 600; }
+#mainApp .home-feedback-copy span { color: #64748b; font-size: 11px; line-height: 1.5; }
+#mainApp .home-feedback-action {
+  min-height: 36px;
+  padding: 0 11px;
+  color: #fff;
+  background: #0265ff;
+  border: 0;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Profile — clean identity card, with available/held balance surfaced directly. */
+#mainApp #pageProfile .pf-hero {
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #e3e7f0;
+  border-radius: 16px;
+  box-shadow: none;
+}
+#mainApp #pageProfile .pf2-cover { background: #eff4fe; }
+#mainApp #pageProfile .pf2-avatar { background: #0265ff; border: 3px solid #fff; box-shadow: none; }
+#mainApp #pageProfile .pf-name { color: #0f172a; font-weight: 600; }
+#mainApp #pageProfile .pf2-handle { border-radius: 9px; background: #f5f7fa; }
+#mainApp #pageProfile .pf-chip { border-radius: 9px; }
+#mainApp .profile-balance-card {
+  margin: 12px 0;
+  padding: 14px;
+  background: #fff;
+  border: 1px solid #e3e7f0;
+  border-radius: 14px;
+}
+#mainApp .profile-balance-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+#mainApp .profile-balance-heading > div { display: flex; flex-direction: column; gap: 3px; }
+#mainApp .profile-balance-heading small { color: #0f172a; font-size: 14px; font-weight: 600; }
+#mainApp .profile-balance-heading span { color: #64748b; font-size: 11px; }
+#mainApp .profile-balance-refresh {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  color: #0265ff;
+  background: #eff4fe;
+  border: 0;
+  border-radius: 10px;
+}
+#mainApp .profile-balance-refresh .icn { width: 18px; height: 18px; }
+#mainApp .profile-balance-values { display: grid; grid-template-columns: 1.25fr 1fr; gap: 10px; margin-top: 13px; }
+#mainApp .profile-balance-values > div { display: flex; min-width: 0; flex-direction: column; gap: 5px; padding: 10px; background: #fafafa; border-radius: 10px; }
+#mainApp .profile-balance-values span { color: #64748b; font-size: 11px; }
+#mainApp .profile-balance-available strong { color: #0f172a; font-size: 18px; font-weight: 600; direction: ltr; text-align: right; }
+#mainApp .profile-balance-held strong { color: #334155; font-size: 15px; font-weight: 600; direction: ltr; text-align: right; }
+#mainApp #pageProfile .pf-card,
+#mainApp #pageProfile .pf-menu { margin-top: 12px; border-radius: 14px; box-shadow: none; }
+#mainApp #pageProfile .pf-menu-item { min-height: 48px; }
+#mainApp #pageProfile .pf-menu-ico { border-radius: 10px; background: #eff4fe; color: #0265ff; }
+
+/* App-style fixed bottom tabs; active PNG glyphs use the same Proxo blue. */
+#mainApp .bottom-nav {
+  position: fixed;
+  z-index: 1400;
+  inset-inline: 0;
+  inset-block-end: 0;
+  display: block;
+  min-height: calc(68px + env(safe-area-inset-bottom, 0px));
+  padding: 3px 12px calc(3px + env(safe-area-inset-bottom, 0px));
+  background: #fafafa;
+  border: 0;
+  border-top: 1px solid #e3e7f0;
+  border-radius: 0;
+  box-shadow: 0 -3px 12px rgba(15, 23, 42, .035);
+  pointer-events: auto;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+#mainApp .bottom-nav-inner {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  width: 100%;
+  max-width: 520px;
+  min-height: 60px;
+  margin: 0 auto;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  pointer-events: auto;
+}
+#mainApp .bn-item {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 59px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 3px;
+  padding: 7px 2px 4px;
+  color: #6b7280;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  font-family: inherit;
+  transition: color .16s ease, transform .16s ease;
+}
+#mainApp .bn-item::after {
+  position: absolute;
+  inset-block-start: -3px;
+  left: 50%;
+  width: 34px;
+  height: 3px;
+  content: "";
+  background: #0265ff;
+  border-radius: 0 0 3px 3px;
+  opacity: 0;
+  transform: translateX(-50%) scaleX(.5);
+  transition: opacity .16s ease, transform .16s ease;
+}
+#mainApp .bn-item.on { color: #0265ff; background: transparent; font-weight: 600; }
+#mainApp .bn-item.on::after { opacity: 1; transform: translateX(-50%) scaleX(1); }
+#mainApp .bn-ico {
+  position: relative;
+  display: grid;
+  width: 25px;
+  height: 25px;
+  flex: 0 0 25px;
+  place-items: center;
+  color: inherit;
+  background: transparent;
+}
+#mainApp .bn-icon { display: block; width: 22px; height: 22px; object-fit: contain; filter: grayscale(1) brightness(.58); }
+#mainApp .bn-icon-active { display: none; }
+#mainApp .bn-item.on .bn-icon-idle { display: none; }
+#mainApp .bn-item.on .bn-icon-active {
+  display: block;
+  filter: brightness(0) saturate(100%) invert(27%) sepia(95%) saturate(2555%) hue-rotate(204deg) brightness(101%) contrast(103%);
+}
+#mainApp .bn-label { display: block; max-width: 100%; overflow: hidden; color: inherit; font-size: 10px; font-weight: 500; line-height: 1.35; text-overflow: ellipsis; white-space: nowrap; }
+#mainApp .bn-item.on .bn-label { font-weight: 600; }
+#mainApp .bn-dot { z-index: 2; }
+#mainApp .bn-item:active { transform: scale(.97); }
+
+@media (min-width: 820px) {
+  #mainApp .site-header-inner { max-width: 860px; }
+  #mainApp .bottom-nav { padding-inline: 20px; }
+}
+@media (max-width: 380px) {
+  #mainApp .page { padding-inline: 12px; }
+  #mainApp .profile-balance-values { gap: 7px; }
+  #mainApp .profile-balance-available strong { font-size: 16px; }
+  #mainApp .bn-label { font-size: 9px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #mainApp .bn-item,
+  #mainApp .bn-item::after { transition-duration: .01ms; }
+}
+
+/* Retire the legacy admin-matched !important treatments on the customer shell only. */
+body:has(#mainApp) { margin: 0; padding: 0; background: #fafafa !important; }
+#mainApp.app-wrapper {
+  --unified-bg: #fafafa;
+  --unified-card: #fff;
+  --unified-text: #0f172a;
+  --unified-muted: #64748b;
+  --unified-blue: #0265ff;
+  --unified-border: #e3e7f0;
+  --unified-shadow: none;
+  --ex-blue: #0265ff;
+  --ex-muted: #64748b;
+  --ex-border: #e3e7f0;
+  --ex-shadow: none;
+  max-width: none;
+  background: #fafafa !important;
+  color: #0f172a !important;
+  font-family: Rabar, Arial, sans-serif;
+}
+#mainApp .page { background: #fafafa !important; color: #0f172a !important; }
+#mainApp .site-header,
+#mainApp .site-header-inner { background: #fff !important; box-shadow: none !important; border-color: #f2f3f5 !important; }
+#mainApp .hdr-actions .icon-btn { background: #fff !important; border: 1px solid #e3e7f0 !important; box-shadow: none !important; color: #334155 !important; }
+#mainApp .bottom-nav { background: #fafafa !important; border-color: #e3e7f0 !important; box-shadow: 0 -3px 12px rgba(15,23,42,.035) !important; }
+#mainApp .bn-item { color: #6b7280 !important; }
+#mainApp .bn-item.on { color: #0265ff !important; }
+#mainApp .bn-item .bn-ico { background: transparent !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; color: inherit !important; }
+#mainApp .bn-label { color: inherit !important; }
+#mainApp .page :is(.panel, .pf-card, .pf-menu, .tx-card, .rule-item, .chg-item, .rate-card, .kyc-card, .home-greet) {
+  background: #fff !important;
+  border: 1px solid #e3e7f0 !important;
+  border-radius: 14px !important;
+  box-shadow: none !important;
+}
+#mainApp #exchangeCard,
+#mainApp #pageProfile .pf-hero { background: #fff !important; border: 1px solid #e3e7f0 !important; border-radius: 16px !important; box-shadow: none !important; }
+#mainApp .page :is(.page-head h2,.section-title,.xc-head h2,.xc-step-head h3,.xc-summary-head h3,.pf-card-title) { color: #0f172a !important; font-family: Rabar, Arial, sans-serif !important; font-weight: 500 !important; }
+#mainApp .page button.btn-primary,
+#mainApp .page button.btn-block,
+#mainApp :is(#submitBtn,#confirmSendBtn,#pfSaveBtn,#kycSubmitBtn,#supportSubmitBtn,#balancePayoutToggle,#balancePayoutSubmit) {
+  color: #fff !important;
+  background: #0265ff !important;
+  border: 1px solid #0265ff !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+}
+#mainApp .page button.btn-primary:hover:not(:disabled),
+#mainApp :is(#submitBtn,#confirmSendBtn,#pfSaveBtn,#kycSubmitBtn,#supportSubmitBtn,#balancePayoutToggle,#balancePayoutSubmit):hover:not(:disabled) { background: #0058df !important; border-color: #0058df !important; }
+#mainApp #pageProfile .pf2-cover { background: #eff4fe !important; }
+#mainApp #pageProfile .pf2-avatar { background: #0265ff !important; }
+#mainApp .greet-rate { background: #eff4fe !important; color: #0265ff !important; }
+#mainApp #pageHome .xc-head-ico { background: #eff4fe !important; color: #0265ff !important; border-color: transparent !important; }
+#mainApp #pageHome .xc-head-ico :is(.icn,.pb-svg-icon) { color: #0265ff !important; }
+#mainApp #pageHome .feature-shortcut { min-height: 34px; background: #f5f7fa !important; border: 1px solid #e3e7f0 !important; color: #64748b !important; font-size: 11px !important; border-radius: 9px; }
+#mainApp #pageProfile .profile-wallet-controls { margin: 13px 0 0; padding: 0; border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; }
+#mainApp #pageProfile .profile-wallet-controls .pb-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+#mainApp #pageProfile .profile-wallet-controls .pb-btn { min-height: 40px; padding: 8px; font-size: 11px; }
+#mainApp #pageProfile .profile-wallet-controls .pb-secondary { color: #334155 !important; background: #f5f7fa !important; border: 1px solid #e3e7f0 !important; }
+#mainApp #pageProfile .profile-wallet-controls .pb-message { margin-top: 9px; font-size: 11px; line-height: 1.65; color: #64748b; }
+
+#mainApp #pageHome #exchangeCard #submitBtn {
+  background: #0265ff !important;
+  border-color: #0265ff !important;
+  border-radius: 12px !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+#mainApp #pageHome #exchangeCard #submitBtn:hover:not(:disabled) { background: #0058df !important; border-color: #0058df !important; }

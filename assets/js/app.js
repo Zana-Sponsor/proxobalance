@@ -568,7 +568,7 @@ function applyTheme(){
   document.documentElement.setAttribute('data-theme','light');
   try{ localStorage.setItem('zex_theme','light'); }catch(_){}
   const meta=document.getElementById('themeColorMeta');
-  if(meta)meta.setAttribute('content','#f8fafc');
+  if(meta)meta.setAttribute('content','#fafafa');
 }
 function toggleTheme(){ applyTheme(); }
 
@@ -912,7 +912,7 @@ function setAuthRoute(route,push=true,replace=false){
   if(active){ active.style.display='block'; active.classList.remove('auth-route-enter'); void active.offsetWidth; active.classList.add('auth-route-enter'); }
   const back=document.getElementById('authHeaderBack'); if(back) back.hidden=route==='login';
   const titles={login:'چوونەژوورەوە',signup:'دروستکردنی هەژمار','login/otp':'کۆدی چوونەژوورەوە','signup/otp':'کۆدی تۆمارکردن',forgetpassword:'گەڕاندنەوەی هەژمار','forgetpassword/otp':'کۆدی گەڕاندنەوە',newpassword:'وشەی نهێنیی نوێ'};
-  document.title=(titles[route]||'چوونەژوورەوە')+' — Proxo Balance';
+  document.title=(titles[route]||'چوونەژوورەوە')+' — Proxo';
   if(push){
     if(!_authRouteStack.length||_authRouteStack[_authRouteStack.length-1]!==previous) _authRouteStack=[previous];
     _authRouteStack.push(route);
@@ -2239,6 +2239,8 @@ function orderCardHTML(o){
 // ── transaction details ────────────────────────────────────────
 let _txSheetId=null;
 let _feedbackDraftRating=0;
+let _homeFeedbackPromptShownThisSession=false;
+let _homeFeedbackPromptQueued=false;
 function hasOrderFeedbackReward(order){
   return !!order.feedbackRewardGranted || MY_REWARDS.some(reward=>reward.campaign_key==='order_feedback_v1:'+String(order.id));
 }
@@ -2294,7 +2296,7 @@ async function submitOrderFeedback(orderId){
   try{
     const {data,error}=await sb.from('ex_order_feedback').insert({order_id:order.id,user_id:curUser.id,rating:_feedbackDraftRating,comment}).select('order_id,rating,comment,created_at').single();
     if(error)throw error;
-    order.feedback=data;order.feedbackRewardGranted=true;_feedbackDraftRating=0;await loadMyRewards();openTxDetail(order.id);
+    order.feedback=data;order.feedbackRewardGranted=true;_feedbackDraftRating=0;renderHomeFeedbackPrompt();await loadMyRewards();openTxDetail(order.id);
     showToast('سوپاس! داشکاندنی ٥٠٪ تا ١٠,٠٠٠ دینار بۆ مامەڵەی داهاتووت زیادکرا.','success');
   }catch(error){
     if(errorEl)errorEl.textContent=error.code==='23505'?'هەڵسەنگاندنی ئەم داواکارییە پێشتر تۆمار کراوە.':'نەتوانرا هەڵسەنگاندنەکەت تۆمار بکرێت؛ تکایە دووبارە هەوڵ بدەرەوە.';
@@ -2647,10 +2649,48 @@ function renderHistory(rows){
   if(_txSheetId && !_orders.some(o=>String(o.id)===_txSheetId)) closeTxDetail();
   else if(_txSheetId) openTxDetail(_txSheetId);
   renderHomePreview();
+  renderHomeFeedbackPrompt();
+  maybePromptHomeFeedback();
   renderTxPage();
   updateNavBadge();
 }
 
+function pendingHomeFeedbackOrder(){
+  return _orders.find(order=>order && order.status==='پەسەندکرا' && !order.feedback) || null;
+}
+function renderHomeFeedbackPrompt(){
+  const el=document.getElementById('homeFeedbackPrompt');
+  if(!el)return;
+  const order=pendingHomeFeedbackOrder();
+  if(!order){el.hidden=true;el.innerHTML='';return;}
+  el.hidden=false;
+  el.innerHTML='<span class="home-feedback-icon" aria-hidden="true"><span class="icn icon--solar icon--solar--star-linear"></span></span>'+
+    '<span class="home-feedback-copy"><b>هەڵسەنگاندنی داواکاری</b><span>مامەڵەی '+escHtml(orderCodeOf(order))+' پەسەندکراوە؛ هەڵسەنگاندنەکەت ماوە.</span></span>'+
+    '<button type="button" class="home-feedback-action" onclick="openHomePendingFeedback()">هەڵسەنگاندن</button>';
+}
+function openHomePendingFeedback(){
+  const order=pendingHomeFeedbackOrder();
+  if(!order)return;
+  _homeFeedbackPromptShownThisSession=true;
+  _homeFeedbackPromptQueued=false;
+  navigate('transactions');
+  openTxDetail(order.id);
+}
+function maybePromptHomeFeedback(){
+  if(_homeFeedbackPromptShownThisSession||_homeFeedbackPromptQueued||!curUser||_route!=='home'||_txSheetId)return;
+  const order=pendingHomeFeedbackOrder();
+  if(!order)return;
+  _homeFeedbackPromptQueued=true;
+  const orderId=String(order.id);
+  setTimeout(()=>{
+    _homeFeedbackPromptQueued=false;
+    if(!curUser||_route!=='home'||_txSheetId)return;
+    const stillPending=_orders.find(row=>String(row.id)===orderId && row.status==='پەسەندکرا' && !row.feedback);
+    if(!stillPending)return;
+    _homeFeedbackPromptShownThisSession=true;
+    openTxDetail(stillPending.id);
+  },850);
+}
 function renderHomePreview(){
   const el=document.getElementById('historyPreview');
   if(!el) return;
@@ -2787,13 +2827,13 @@ Object.assign(ICON, {
 const ROUTE_MODE = 'path';
 const ROUTES = { home:'pageHome', transactions:'pageTx', changes:'pageChanges', rules:'pageRules', profile:'pageProfile', support:'pageSupport', verify:'pageVerify' };
 const ROUTE_TITLES = {
-  home:'Proxo Balance — ئاڵوگۆڕی دراو',
-  transactions:'مامەڵەکان — Proxo Balance',
-  changes:'گۆڕانکاری نرخەکان — Proxo Balance',
-  rules:'یاساکانی ئەپ — Proxo Balance',
-  profile:'پڕۆفایل — Proxo Balance',
-  support:'پشتگیری — Proxo Balance',
-  verify:'پشتڕاستکردنەوەی ناسنامە — Proxo Balance'
+  home:'Proxo — ئاڵوگۆڕی دراو',
+  transactions:'مامەڵەکان — Proxo',
+  changes:'گۆڕانکاری نرخەکان — Proxo',
+  rules:'یاساکانی ئەپ — Proxo',
+  profile:'پڕۆفایل — Proxo',
+  support:'پشتگیری — Proxo',
+  verify:'پشتڕاستکردنەوەی ناسنامە — Proxo'
 };
 // Everything before the route segment, so the app works at the domain root
 // (/profile) and inside a sub-folder (/exchange/profile) with no edits.
@@ -2830,14 +2870,18 @@ function navigate(route, push){
   // /changes lives under the profile tab
   const navRoute = (route==='changes' || route==='support' || route==='verify') ? 'profile' : route;
   document.querySelectorAll('.bn-item, .hdr-nav-link').forEach(b=>b.classList.toggle('on', b.dataset.route===navRoute));
-  if(push){ try{ history.pushState({route:route}, '', urlFor(route)); }catch(_){} }
-  document.title = ROUTE_TITLES[route] || 'Proxo Balance';
+  if(push && location.pathname+location.hash!==urlFor(route)){ try{ history.pushState({route:route}, '', urlFor(route)); }catch(_){} }
+  document.title = ROUTE_TITLES[route] || 'Proxo';
   closeNotifPanel();
   window.scrollTo({ top:0, behavior:'smooth' });
   if(route==='transactions') renderTxPage();
-  if(route==='home' && curUser && typeof loadMyBalance==='function')loadMyBalance();
+  if(route==='home'){
+    renderHomeFeedbackPrompt();
+    maybePromptHomeFeedback();
+    if(curUser && typeof loadMyBalance==='function')loadMyBalance();
+  }
   if(route==='changes')      loadChangeLog();
-  if(route==='profile')    { fillProfileForm(); loadKycStatus(true); }
+  if(route==='profile')    { fillProfileForm(); loadKycStatus(true); if(curUser && typeof loadMyBalance==='function')loadMyBalance(); }
   if(route==='verify')     { renderVerifyPage(); loadKycStatus(true); }
   if(route==='support')      loadSupportCases();
 }
@@ -4485,7 +4529,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   const dismissAppSplash=()=>{
     if(!appSplash||appSplashDismissQueued)return;
     appSplashDismissQueued=true;
-    const wait=Math.max(0,700-(performance.now()-appSplashStartedAt));
+    const wait=Math.max(0,950-(performance.now()-appSplashStartedAt));
     setTimeout(()=>appSplash.classList.add('is-hidden'),wait);
   };
   setTimeout(dismissAppSplash,4200);
