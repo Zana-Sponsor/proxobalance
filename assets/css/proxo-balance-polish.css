@@ -1,5 +1,5 @@
 /* Final Proxo Balance polish: one calm app surface across customer routes. */
-/* Balance artwork source: https://www.flaticon.com/free-icon/wallet_214362 */
+/* Balance mark uses the project's regular Solar wallet outline icon. */
 #mainApp .proxo-header-wordmark {
   width: 88px;
   max-width: 27vw;
@@ -14,14 +14,21 @@
   gap: 10px;
 }
 #mainApp .profile-balance-brand-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 34px;
   height: 34px;
   flex: 0 0 34px;
   padding: 6px;
-  object-fit: contain;
   border-radius: 10px;
   background: #eff4fe;
   border: 1px solid #dbeafe;
+  color: #0265ff;
+}
+#mainApp .profile-balance-brand-icon::before {
+  width: 22px;
+  height: 22px;
 }
 #mainApp .profile-balance-heading small {
   color: #0f172a;
