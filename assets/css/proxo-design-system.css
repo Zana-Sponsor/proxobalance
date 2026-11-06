@@ -325,3 +325,96 @@ body :is(#recipientSheet,#pickerSheet,#confirmSheet) .sheet,
   color: #64748b !important;
   opacity: 1 !important;
 }
+
+
+/* Final Proxo app alignment: compact appbar, balanced icon nav, and PR-style surfaces. */
+#mainApp .site-header {
+  padding: 8px 0 !important;
+  margin-bottom: 14px !important;
+  background: #fff !important;
+  border-bottom: 1px solid #e3e7f0 !important;
+  box-shadow: 0 2px 12px rgba(15, 23, 42, .04) !important;
+}
+#mainApp .site-header-inner { min-height: 44px !important; gap: 8px !important; }
+/* The appbar uses the mark only; the written Proxo name is intentionally not shown. */
+#mainApp .hdr-logo {
+  width: 40px !important;
+  height: 40px !important;
+  flex: 0 0 40px !important;
+  border-radius: 12px !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  background: #eff6ff !important;
+}
+#mainApp .hdr-logo img { display: none !important; }
+#mainApp .hdr-logo::before {
+  content: "";
+  width: 27px;
+  height: 27px;
+  display: block;
+  background: url('/assets/images/proxo-app/proxo-app-icon.png') center / contain no-repeat;
+}
+#mainApp .hdr-rate { display: none !important; }
+#mainApp .hdr-nav { flex: 1 1 auto !important; justify-content: center !important; gap: 2px !important; }
+#mainApp .hdr-nav-link { min-height: 36px !important; padding: 6px 8px !important; border-radius: 10px !important; font-size: 11px !important; }
+#mainApp .hdr-actions { gap: 5px !important; }
+#mainApp .hdr-actions .icon-btn { width: 40px !important; height: 40px !important; border-radius: 11px !important; }
+#mainApp .hdr-actions .hdr-cta { display: none !important; }
+
+/* Four equal tap targets, line icons, and one restrained active state. */
+#mainApp .bottom-nav {
+  padding: 7px 12px calc(7px + env(safe-area-inset-bottom, 0px)) !important;
+  background: rgba(255,255,255,.98) !important;
+  border-top: 1px solid #e3e7f0 !important;
+  box-shadow: 0 -6px 22px rgba(15, 23, 42, .08) !important;
+}
+#mainApp .bottom-nav-inner { max-width: 520px !important; grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 5px !important; }
+#mainApp .bn-item {
+  min-height: 54px !important;
+  gap: 3px !important;
+  padding: 4px 2px !important;
+  border-radius: 13px !important;
+  color: #64748b !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+}
+#mainApp .bn-item:hover { background: #f8fafc !important; }
+#mainApp .bn-ico { width: 42px !important; height: 29px !important; border-radius: 10px !important; background: transparent !important; }
+#mainApp .bn-icon { width: 20px !important; height: 20px !important; object-fit: contain !important; filter: grayscale(1) saturate(0) opacity(.72) !important; }
+#mainApp .bn-icon-active { display: none !important; }
+#mainApp .bn-item.on { color: #1264e8 !important; font-weight: 650 !important; background: #eff6ff !important; }
+#mainApp .bn-item.on .bn-icon-idle { display: none !important; }
+#mainApp .bn-item.on .bn-icon-active { display: block !important; filter: none !important; }
+#mainApp .bn-item.on .bn-ico { background: transparent !important; }
+#mainApp .bn-dot { box-shadow: 0 0 0 2px #fff !important; }
+
+/* PR #46-inspired profile: a quiet identity card, clear balance and uniform actions. */
+#mainApp #pageProfile .pf2-hero {
+  padding: 18px 16px !important;
+  background: #fff !important;
+  border: 1px solid #e3e7f0 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, .05) !important;
+}
+#mainApp #pageProfile .pf2-cover { display: none !important; }
+#mainApp #pageProfile .pf2-avatar { width: 56px !important; height: 56px !important; border: 1px solid #dbeafe !important; background: #eff6ff !important; color: #1264e8 !important; }
+#mainApp #pageProfile .pf2-identity { gap: 3px !important; }
+#mainApp #pageProfile .profile-balance-card { margin-top: 12px !important; padding: 16px !important; border-radius: 16px !important; box-shadow: 0 8px 24px rgba(15,23,42,.05) !important; }
+#mainApp #pageProfile .profile-balance-brand-icon { width: 36px !important; height: 36px !important; color: #1264e8 !important; background: #eff6ff !important; border: 1px solid #dbeafe !important; }
+#mainApp #pageProfile .profile-wallet-controls { margin-top: 12px !important; border-radius: 16px !important; background: #fff !important; border: 1px solid #e3e7f0 !important; box-shadow: 0 8px 24px rgba(15,23,42,.05) !important; }
+#mainApp #pageProfile .profile-wallet-controls .pb-actions { gap: 8px !important; }
+#mainApp #pageProfile .profile-wallet-controls .pb-btn { min-height: 46px !important; border-radius: 11px !important; }
+#mainApp #pageProfile .pf-menu { margin-top: 12px !important; padding: 4px !important; border-radius: 16px !important; background: #fff !important; border: 1px solid #e3e7f0 !important; box-shadow: 0 8px 24px rgba(15,23,42,.05) !important; }
+#mainApp #pageProfile .pf-menu-item { min-height: 62px !important; border-radius: 11px !important; }
+#mainApp #pageProfile .pf-menu-item:hover { background: #f8fafc !important; }
+
+/* Transaction request form: mirror the friendly error/alert card geometry. */
+#mainApp #pageHome #exchangeCard { border-radius: 18px !important; border: 1px solid #e3e7f0 !important; box-shadow: 0 8px 26px rgba(15,23,42,.06) !important; }
+#mainApp #pageHome #exchangeCard .ux-progress { margin: 10px 0 16px !important; padding: 5px !important; border-radius: 13px !important; background: #f8fafc !important; border: 1px solid #e3e7f0 !important; }
+#mainApp #pageHome #exchangeCard .ux-progress-item { min-height: 42px !important; border-radius: 10px !important; }
+#mainApp #pageHome #exchangeCard :is(.xc-step,.xc-summary,.ux-review-grid) { border-radius: 13px !important; border: 1px solid #e3e7f0 !important; background: #fff !important; box-shadow: none !important; }
+#mainApp #pageHome #exchangeCard .xc-step-head { min-height: 42px !important; padding: 8px 10px !important; border-bottom: 1px solid #eef2f7 !important; }
+#mainApp #pageHome #exchangeCard .xc-step-index { width: 26px !important; height: 26px !important; border-radius: 8px !important; background: #eff6ff !important; color: #1264e8 !important; }
+#mainApp #pageHome #exchangeCard .field-error { display: block !important; min-height: 0 !important; margin-top: 5px !important; padding: 0 !important; border: 0 !important; background: transparent !important; color: #c2414b !important; font-size: 12px !important; line-height: 1.7 !important; }
+#mainApp #pageHome #exchangeCard :is(.xc-kyc-gate,.xc-error,.field-error-wrap) { border-radius: 12px !important; border: 1px solid #f3c6ca !important; background: #fff4f4 !important; color: #9f303b !important; box-shadow: none !important; }
+#mainApp #pageHome #exchangeCard .btn-primary { min-height: 50px !important; border-radius: 11px !important; }
