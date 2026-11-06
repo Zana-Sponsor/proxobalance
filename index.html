@@ -98,6 +98,7 @@
 <link rel="stylesheet" href="/assets/css/exchange-auth-modern.css?v=11">
 <link rel="stylesheet" href="/assets/css/app-ui-polish.css?v=2">
 <link rel="stylesheet" href="/assets/css/proxo-app-shell.css?v=1">
+<link rel="stylesheet" href="/assets/css/proxo-balance-polish.css?v=1">
 <link rel="stylesheet" href="/assets/css/proxo-design-system.css?v=1">
 </head>
 
@@ -662,7 +663,7 @@
 
     <aside class="welcome-reward" id="welcomeReward" aria-label="پاداشتی هەژماری نوێ" hidden>
       <span class="welcome-reward-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11v10h16V11M3 7h18v4H3zM12 7v14"/><path d="M12 7H8a2.5 2.5 0 1 1 2.5-2.5L12 7Zm0 0h4a2.5 2.5 0 1 0-2.5-2.5L12 7Z"/></svg></span>
-      <div><h3>پاداشتی هەژماری نوێ</h3><p><b dir="ltr">50%</b> داشکاندنی لێبڕینی واڵێتەکان · یەک جار تا <b dir="ltr">30,000 IQD</b></p><small id="welcomeRewardExpiry"></small></div>
+      <div><h3>پاداشتی هەژماری نوێ</h3><p><b dir="ltr">50%</b> داشکاندنی لێبڕینی واڵێتەکان · یەک جار تا <b dir="ltr">30,000 IQD</b> · بۆ حەوت ڕۆژ کارایە</p><small id="welcomeRewardExpiry"></small></div>
     </aside>
     <div class="ux-progress" role="list" aria-label="هەنگاوەکانی ئاڵوگۆڕ">
       <div class="ux-progress-item is-current" data-ux-stage="send" role="listitem" aria-current="step">
@@ -1212,7 +1213,10 @@
 
     <section class="profile-balance-card" aria-label="باڵانسی هەژمار">
       <div class="profile-balance-heading">
-        <div><small>باڵانسی هەژمار</small><span>باڵانسی بەردەست و بڕی چاوەڕوان</span></div>
+        <div>
+          <img class="profile-balance-brand-icon" src="/assets/images/icons/proxo-balance-flaticon.png?v=1" alt="" width="34" height="34" title="Balance icon by Flaticon" decoding="async">
+          <span><small>باڵانسی هەژمار</small><span>باڵانسی بەردەست و بڕی چاوەڕوان</span></span>
+        </div>
         <button type="button" class="profile-balance-refresh" onclick="loadMyBalance()" aria-label="نوێکردنەوەی باڵانس"><span class="icn icon--solar icon--solar--refresh-linear" aria-hidden="true"></span></button>
       </div>
       <div class="profile-balance-values">

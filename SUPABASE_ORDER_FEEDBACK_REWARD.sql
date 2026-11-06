@@ -96,8 +96,8 @@ begin
     user_id,kind,discount_percent,max_uses,used_count,valid_until,active,note,
     created_by,max_amount_iqd,max_discount_iqd,reward_scope,campaign_key
   ) values (
-    new.user_id,'fee_discount',50,1,0,null,true,
-    'Feedback reward for approved order '||coalesce(v_order.order_code,v_order.id::text),
+    new.user_id,'fee_discount',50,1,0,now()+interval '7 days',true,
+    'پاداشتی هەڵسەنگاندنی مامەڵەی پەسەندکراو: ٥٠٪ داشکاندن، یەک جار، بۆ حەوت ڕۆژ '||coalesce(v_order.order_code,v_order.id::text),
     null,null,10000,v_scope,'order_feedback_v1:'||new.order_id::text
   );
   return new;

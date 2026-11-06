@@ -2259,7 +2259,7 @@ function feedbackRewardCard(order,earned){
     '<div class="feedback-reward-copy"><b>'+(earned?'پاداشتەکەت ئامادەیە':'پاداشتی هەڵسەنگاندن')+'</b>'+
     '<strong>٥٠٪ داشکاندن لە کرێی خزمەتگوزاری</strong>'+
     '<span>زۆرترین داشکاندن: <bdi dir="ltr">١٠,٠٠٠ IQD</bdi> · یەکجار</span>'+
-    '<small>'+(earned?'لە مامەڵەی داهاتووی IQD بەکاردێت، بۆ هەمان جۆری ڕێگای ئاڵوگۆڕ.':'دوای هەڵسەنگاندن، داشکاندنەکە لە مامەڵەی داهاتووی IQD بەکاردێت.')+'</small></div>'+
+    '<small>'+(earned?'لە مامەڵەی داهاتووی IQD بەکاردێت، بۆ هەمان جۆری ڕێگای ئاڵوگۆڕ؛ بۆ حەوت ڕۆژ کارایە.':'دوای هەڵسەنگاندن، داشکاندنەکە بۆ یەک مامەڵە و بۆ حەوت ڕۆژ کارایە.')+'</small></div>'+
     '<span class="feedback-reward-tag">'+(earned?'وەرگیرا':'بەدەست بهێنە')+'</span></div>';
 }
 function renderOrderFeedback(order){
@@ -2296,7 +2296,9 @@ async function submitOrderFeedback(orderId){
   try{
     const {data,error}=await sb.from('ex_order_feedback').insert({order_id:order.id,user_id:curUser.id,rating:_feedbackDraftRating,comment}).select('order_id,rating,comment,created_at').single();
     if(error)throw error;
-    order.feedback=data;order.feedbackRewardGranted=true;_feedbackDraftRating=0;renderHomeFeedbackPrompt();await loadMyRewards();openTxDetail(order.id);
+    order.feedback=data;order.feedbackRewardGranted=true;_feedbackDraftRating=0;renderHomeFeedbackPrompt();await loadMyRewards();
+    closeTxDetail();
+    navigate('home',true);
     showToast('سوپاس! داشکاندنی ٥٠٪ تا ١٠,٠٠٠ دینار بۆ مامەڵەی داهاتووت زیادکرا.','success');
   }catch(error){
     if(errorEl)errorEl.textContent=error.code==='23505'?'هەڵسەنگاندنی ئەم داواکارییە پێشتر تۆمار کراوە.':'نەتوانرا هەڵسەنگاندنەکەت تۆمار بکرێت؛ تکایە دووبارە هەوڵ بدەرەوە.';

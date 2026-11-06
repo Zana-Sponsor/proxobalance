@@ -1,0 +1,145 @@
+/* Final Proxo Balance polish: one calm app surface across customer routes. */
+/* Balance artwork source: https://www.flaticon.com/free-icon/balance_7032605 */
+#mainApp .proxo-header-wordmark {
+  width: 88px;
+  max-width: 27vw;
+  max-height: 24px;
+}
+#mainApp .profile-balance-heading {
+  align-items: center;
+}
+#mainApp .profile-balance-heading > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#mainApp .profile-balance-brand-icon {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  padding: 6px;
+  object-fit: contain;
+  border-radius: 10px;
+  background: #eff4fe;
+  border: 1px solid #dbeafe;
+}
+#mainApp .profile-balance-heading small {
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 600;
+}
+#mainApp .profile-balance-heading span {
+  color: #64748b;
+  font-size: 11px;
+  line-height: 1.6;
+}
+#mainApp .profile-balance-card,
+#mainApp .profile-wallet-controls {
+  border-color: #e3e7f0;
+  box-shadow: none;
+}
+#mainApp .profile-wallet-controls {
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 12px;
+}
+#mainApp .profile-wallet-controls .pb-actions {
+  gap: 8px;
+}
+#mainApp .profile-wallet-controls .pb-btn {
+  min-height: 44px;
+  border-radius: 11px;
+  font-size: 12px;
+  font-weight: 500;
+}
+#mainApp .profile-wallet-controls .pb-message {
+  margin: 9px 1px 0 !important;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.75;
+}
+#mainApp .profile-wallet-controls .pb-form {
+  margin-top: 10px;
+  border-color: #e3e7f0;
+  background: #fafafa;
+  border-radius: 11px;
+}
+#mainApp .profile-wallet-controls .pb-form input,
+#mainApp .profile-wallet-controls .pb-form select {
+  min-height: 46px;
+  border-radius: 10px;
+  border-color: #e3e7f0;
+  font-size: 14px;
+}
+#mainApp .home-feedback-prompt:not([hidden]) {
+  border-color: #dbeafe;
+  background: #fff;
+  box-shadow: 0 4px 16px rgba(37, 99, 235, .06);
+}
+#mainApp .home-feedback-action {
+  min-height: 40px;
+  border-radius: 10px;
+  background: #0265ff;
+  font-size: 12px;
+}
+#mainApp .notif-bar,
+#mainApp #newsBanner,
+#mainApp .notif-panel,
+#mainApp .tx-sheet {
+  border-color: #e3e7f0;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, .08);
+}
+#mainApp .notif-bar {
+  background: #fff;
+}
+#mainApp .notif-panel {
+  background: #fff;
+}
+#mainApp .notif-panel-head,
+#mainApp .tx-sheet-head {
+  border-color: #eef1f5;
+}
+#mainApp .notif-panel-body,
+#mainApp .tx-sheet-body {
+  color: #0f172a;
+}
+#mainApp .notif-item,
+#mainApp .tx-card {
+  border-color: #e3e7f0;
+  border-radius: 14px;
+  box-shadow: none;
+}
+#mainApp .notif-item + .notif-item,
+#mainApp .tx-card + .tx-card {
+  margin-top: 9px;
+}
+#mainApp .tx-sheet .order-feedback {
+  margin-top: 12px;
+  border-radius: 12px;
+  background: #fff;
+  border-color: #e3e7f0;
+  box-shadow: none;
+}
+#mainApp .tx-sheet .feedback-reward-card {
+  border-radius: 10px;
+}
+#mainApp .tx-sheet .feedback-submit-btn {
+  min-height: 48px;
+  border-radius: 11px;
+  background: #0265ff;
+}
+.app-splash-icon {
+  width: min(34vw, 165px);
+  min-width: 110px;
+}
+@media (max-width: 480px) {
+  #mainApp .profile-balance-heading > div:first-child { gap: 8px; }
+  #mainApp .profile-balance-brand-icon { width: 32px; height: 32px; flex-basis: 32px; }
+  #mainApp .profile-wallet-controls .pb-actions { display: grid; grid-template-columns: 1fr 1fr; }
+  #mainApp .profile-wallet-controls .pb-btn { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #mainApp .notif-panel,
+  #mainApp .tx-sheet,
+  #mainApp .home-feedback-prompt { transition: none !important; }
+}
