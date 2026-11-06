@@ -420,26 +420,10 @@ body :is(#recipientSheet,#pickerSheet,#confirmSheet) .sheet,
 #mainApp #pageHome #exchangeCard .btn-primary { min-height: 50px !important; border-radius: 11px !important; }
 
 
-/* PR #46 bottom navigation parity: four destinations plus the centered primary action. */
-#mainApp .bottom-nav-inner { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; max-width: 640px !important; }
+/* Keep the original four-destination customer bottom navigation. */
+#mainApp .bottom-nav-inner { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; max-width: 520px !important; }
 #mainApp .bn-item { min-width: 0 !important; }
 #mainApp .bn-item.on .bn-ico { background: #eaf2ff !important; }
-#mainApp .bn-create { color: #1264e8 !important; }
-#mainApp .bn-create .bn-create-button {
-  width: 56px !important;
-  height: 56px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  border-radius: 18px !important;
-  background: #1264e8 !important;
-  color: #fff !important;
-  box-shadow: 0 7px 16px rgba(18,100,232,.22) !important;
-  transform: translateY(-10px) !important;
-}
-#mainApp .bn-create .bn-create-button .icn { width: 28px !important; height: 28px !important; color: #fff !important; }
-#mainApp .bn-create .bn-label { margin-top: -8px !important; color: #1264e8 !important; font-weight: 600 !important; }
-#mainApp .bn-create:active .bn-create-button { transform: translateY(-9px) scale(.96) !important; }
 
 /* PR #46 profile toolbar: centered title, white 56px bar, one edit action. */
 #mainApp #pageProfile > .page-head {
