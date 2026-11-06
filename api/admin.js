@@ -733,9 +733,14 @@ const actions = {
     const cap = max_amount_iqd == null || max_amount_iqd === '' ? null : Number(max_amount_iqd);
     if (cap !== null && (!Number.isSafeInteger(cap) || cap < 1 || cap > 1000000000))
       throw { status: 400, code: 'bad_amount_cap', message: 'Reward amount cap must be 1–1,000,000,000 IQD' };
-    const expiry = valid_until ? new Date(valid_until) : null;
-    if (expiry && (!Number.isFinite(expiry.getTime()) || expiry.getTime() <= Date.now()))
-      throw { status: 400, code: 'bad_expiry', message: 'Expiration must be in the future' };
+    // Proxo reward offers are intentionally short-lived: every newly issued
+    // reward is valid for exactly seven days from issuance.
+    if (valid_until) {
+      const requestedExpiry = new Date(valid_until);
+      if (!Number.isFinite(requestedExpiry.getTime()) || requestedExpiry.getTime() <= Date.now())
+        throw { status: 400, code: 'bad_expiry', message: 'Expiration must be in the future' };
+    }
+    const expiry = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     const db = getDb();
     const { data: profile, error: profileError } = await db.from('ex_profiles')
       .select('id,is_banned').eq('id', user_id).maybeSingle();
@@ -982,4 +987,3 @@ export default async function handler(req, res) {
     return fail(res, 500, 'Internal server error', 'server_error');
   }
 }
-

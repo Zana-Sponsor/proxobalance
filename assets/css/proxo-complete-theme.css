@@ -1,0 +1,86 @@
+/* Proxo Complete Theme
+   One readable surface for auth, home, profile, rewards, feedback, notifications,
+   transactions, forms, error states and request submission. */
+:root {
+  --proxo-bg: #f8fafc;
+  --proxo-surface: #ffffff;
+  --proxo-ink: #122033;
+  --proxo-muted: #64748b;
+  --proxo-line: #e2e8f0;
+  --proxo-blue: #1264e8;
+  --proxo-blue-soft: #eff6ff;
+  --proxo-success: #16805b;
+  --proxo-danger: #c2414b;
+  --proxo-radius: 14px;
+  --proxo-shadow: 0 8px 26px rgba(15, 23, 42, .06);
+}
+html, body { background: var(--proxo-bg) !important; color: var(--proxo-ink) !important; }
+body, button, input, select, textarea { font-family: inherit !important; }
+button, .btn, .pb-btn, .home-feedback-action { border-radius: var(--proxo-radius) !important; transition: background-color .18s ease, border-color .18s ease, color .18s ease, transform .18s ease, box-shadow .18s ease !important; }
+button:active, .btn:active, .pb-btn:active { transform: translateY(1px); }
+.btn-primary, #authWrap .btn-primary, #mainApp .btn-primary { background: var(--proxo-blue) !important; border-color: var(--proxo-blue) !important; box-shadow: 0 6px 16px rgba(18, 100, 232, .16) !important; }
+.btn-primary:hover, #authWrap .btn-primary:hover, #mainApp .btn-primary:hover { background: #0b55c9 !important; box-shadow: 0 8px 20px rgba(18, 100, 232, .22) !important; }
+.btn-secondary, .btn-ghost, .pb-secondary { background: #fff !important; border: 1px solid var(--proxo-line) !important; color: var(--proxo-ink) !important; box-shadow: none !important; }
+.btn-secondary:hover, .btn-ghost:hover, .pb-secondary:hover { border-color: #b8c7da !important; background: #f8fafc !important; }
+
+/* Public/auth surface */
+body #authWrap { min-height: 100dvh !important; background: var(--proxo-bg) !important; padding: 24px 16px 42px !important; }
+#authWrap .auth-inner { max-width: 440px !important; }
+#authWrap .auth-topbar { margin-bottom: 18px !important; }
+#authWrap .auth-appbar-brand img { width: 88px !important; max-height: 26px !important; }
+#authWrap .auth-brand { padding: 18px 12px 22px !important; margin: 0 !important; }
+#authWrap .brand-mark { width: 54px !important; height: 54px !important; margin: 0 auto 12px !important; border-radius: 16px !important; background: var(--proxo-blue-soft) !important; color: var(--proxo-blue) !important; box-shadow: none !important; }
+#authWrap .auth-brand h1, #authWrap .auth-logo h1 { color: var(--proxo-blue) !important; font-size: 23px !important; font-weight: 650 !important; letter-spacing: -.25px !important; }
+#authWrap .auth-brand p, #authWrap .auth-logo p { color: var(--proxo-muted) !important; font-size: 12px !important; line-height: 1.8 !important; }
+#authWrap .auth-card, #authWrap .auth-box { max-width: 440px !important; padding: 26px !important; border: 1px solid var(--proxo-line) !important; border-radius: 18px !important; background: var(--proxo-surface) !important; box-shadow: var(--proxo-shadow) !important; }
+#authWrap .auth-step-label { margin: 14px 0 20px !important; text-align: right !important; }
+#authWrap .auth-step-heading h3 { color: var(--proxo-ink) !important; font-size: 19px !important; font-weight: 650 !important; line-height: 1.6 !important; }
+#authWrap .auth-step-label p, #authWrap .auth-field-label { color: var(--proxo-muted) !important; font-size: 12px !important; line-height: 1.8 !important; }
+#authWrap .auth-field-label { color: var(--proxo-ink) !important; font-weight: 550 !important; margin-bottom: 6px !important; }
+#authWrap .input, #authWrap .ainp { min-height: 48px !important; height: 48px !important; border: 1px solid var(--proxo-line) !important; border-radius: 11px !important; background: #fbfdff !important; color: var(--proxo-ink) !important; box-shadow: none !important; }
+#authWrap .input:focus, #authWrap .ainp:focus { border-color: #75aaf5 !important; outline: 3px solid var(--proxo-blue-soft) !important; }
+#authWrap .btn-primary, #authWrap .abtn { min-height: 48px !important; height: 48px !important; border-radius: 11px !important; font-size: 14px !important; font-weight: 600 !important; }
+#authWrap .auth-link, #authWrap .auth-step-back, #authWrap .auth-account-switch button { color: var(--proxo-blue) !important; }
+#authWrap .amsg, #authWrap .auth-err { border-radius: 11px !important; line-height: 1.8 !important; }
+
+/* Main shell, header and navigation */
+#mainApp { background: var(--proxo-bg) !important; }
+#mainApp .app-shell, #mainApp .page, #mainApp .page-inner { color: var(--proxo-ink); }
+#mainApp .app-header, #mainApp .topbar, #mainApp header { background: rgba(255,255,255,.96) !important; border-color: var(--proxo-line) !important; box-shadow: 0 1px 0 rgba(15,23,42,.03) !important; }
+#mainApp .proxo-header-wordmark, #mainApp .app-header-logo img { width: 84px !important; max-width: 26vw !important; max-height: 25px !important; object-fit: contain; }
+#mainApp .bottom-nav, #mainApp .mobile-nav, #mainApp nav { border-color: var(--proxo-line) !important; background: rgba(255,255,255,.98) !important; }
+#mainApp .bottom-nav a, #mainApp .bottom-nav button, #mainApp nav a, #mainApp nav button { color: var(--proxo-muted) !important; }
+#mainApp .bottom-nav .active, #mainApp nav .active, #mainApp .is-active { color: var(--proxo-blue) !important; }
+
+/* Cards, fields and route headings */
+#mainApp .panel, #mainApp .pf-card, #mainApp .pf-menu, #mainApp .profile-balance-card, #mainApp .pb-balance, #mainApp .tx-card, #mainApp .notif-item, #mainApp .order-feedback, #mainApp .home-feedback-prompt, #mainApp .xc-card, #mainApp .form-card { background: var(--proxo-surface) !important; border: 1px solid var(--proxo-line) !important; border-radius: var(--proxo-radius) !important; box-shadow: var(--proxo-shadow) !important; }
+#mainApp .page-title, #mainApp .page-head h1, #mainApp .section-title, #mainApp h2, #mainApp h3 { color: var(--proxo-ink) !important; }
+#mainApp .page-subtitle, #mainApp .muted, #mainApp small, #mainApp .hint, #mainApp .field-label, #mainApp .auth-field-label { color: var(--proxo-muted); }
+#mainApp input, #mainApp select, #mainApp textarea, #mainApp .input { min-height: 46px; border: 1px solid var(--proxo-line) !important; border-radius: 11px !important; background: #fbfdff !important; color: var(--proxo-ink) !important; box-shadow: none !important; }
+#mainApp input:focus, #mainApp select:focus, #mainApp textarea:focus, #mainApp .input:focus { border-color: #75aaf5 !important; outline: 3px solid var(--proxo-blue-soft) !important; }
+#mainApp .status-badge, #mainApp .tag, #mainApp .chip { border-radius: 999px !important; font-weight: 550 !important; }
+
+/* Home exchange/request workflow: same visual hierarchy as Create Ad */
+#mainApp #exchangeCard, #mainApp #xcForm, #mainApp .exchange-card { background: #fff !important; border: 1px solid var(--proxo-line) !important; border-radius: 18px !important; box-shadow: var(--proxo-shadow) !important; }
+#mainApp #exchangeCard .method-card, #mainApp #exchangeCard .select-card, #mainApp #exchangeCard .field, #mainApp .request-step, #mainApp .form-section { border-color: var(--proxo-line) !important; border-radius: 12px !important; }
+#mainApp .ux-progress-item.is-current, #mainApp .ux-progress-item.active { color: var(--proxo-blue) !important; }
+#mainApp .fee-note, #mainApp .reward-detail, #mainApp .notice, #mainApp .alert { border-radius: 12px !important; border: 1px solid #dbeafe !important; background: var(--proxo-blue-soft) !important; color: #26466f !important; line-height: 1.8 !important; }
+#mainApp .error, #mainApp .field-error, #mainApp .amsg.error, #mainApp .alert-danger { border-radius: 11px !important; background: #fff4f4 !important; border-color: #f3c6ca !important; color: var(--proxo-danger) !important; }
+#mainApp .success, #mainApp .alert-success { border-radius: 11px !important; background: #effaf5 !important; border-color: #bfe8d1 !important; color: var(--proxo-success) !important; }
+
+/* Notifications, rewards, feedback and transaction sheets */
+#mainApp .notif-panel, #mainApp .notif-bar, #mainApp .tx-sheet, #mainApp .modal, #mainApp .result-modal { background: #fff !important; border-color: var(--proxo-line) !important; border-radius: 18px !important; box-shadow: 0 18px 48px rgba(15,23,42,.12) !important; }
+#mainApp .welcome-reward, #mainApp .home-feedback-prompt { border-color: #dbeafe !important; background: linear-gradient(180deg,#fff,#f8fbff) !important; }
+#mainApp .welcome-reward h3, #mainApp .feedback-kicker, #mainApp .feedback-section-heading h3 { color: #145bc2 !important; }
+#mainApp .feedback-submit-btn, #mainApp .home-feedback-action { background: var(--proxo-blue) !important; color: white !important; }
+#mainApp .feedback-star.selected, #mainApp .feedback-star:hover { color: #f59e0b !important; }
+#mainApp .tx-sheet-body, #mainApp .notif-panel-body { color: var(--proxo-ink) !important; }
+
+@media (max-width: 600px) {
+  #authWrap .auth-card, #authWrap .auth-box { padding: 22px !important; border-radius: 16px !important; }
+  #mainApp .page { padding-left: 14px !important; padding-right: 14px !important; }
+  #mainApp .panel, #mainApp .pf-card, #mainApp .profile-balance-card, #mainApp .tx-card { border-radius: 13px !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}

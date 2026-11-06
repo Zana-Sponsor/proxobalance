@@ -1591,17 +1591,29 @@ async function loadMyRewards(){
   calc();
 }
 let _welcomeRewardExpiryTimer=null;
+let _welcomeRewardCountdownTimer=null;
+function formatRewardCountdown(validUntil){
+  const left=Math.max(0,Date.parse(validUntil)-Date.now());
+  const days=Math.floor(left/86400000), hours=Math.floor((left%86400000)/3600000), minutes=Math.floor((left%3600000)/60000);
+  return days>0 ? `${days} ڕۆژ و ${hours} کاتژمێر ماوە` : `${hours} کاتژمێر و ${minutes} خولەک ماوە`;
+}
 function renderWelcomeReward(){
   clearTimeout(_welcomeRewardExpiryTimer);_welcomeRewardExpiryTimer=null;
+  clearInterval(_welcomeRewardCountdownTimer);_welcomeRewardCountdownTimer=null;
   const box=document.getElementById('welcomeReward');
   if(!box)return;
   const reward=curUser && MY_REWARDS.find(r=>r.campaign_key==='welcome_signup_v1' && r.active &&
     Number(r.used_count)<Number(r.max_uses) && Date.parse(r.valid_until)>Date.now());
   box.hidden=!reward;
   const expiry=document.getElementById('welcomeRewardExpiry');
-  if(expiry)expiry.textContent=reward?'کارایە تا '+kycFmtDate(reward.valid_until,true):'';
+  if(expiry)expiry.textContent=reward?'کارایە تا '+kycFmtDate(reward.valid_until,true)+' · '+formatRewardCountdown(reward.valid_until):'';
   if(reward){
     const owner=curUser.id;
+    _welcomeRewardCountdownTimer=setInterval(()=>{
+      if(curUser?.id!==owner){clearInterval(_welcomeRewardCountdownTimer);return;}
+      const current=document.getElementById('welcomeRewardExpiry');
+      if(current)current.textContent='کارایە تا '+kycFmtDate(reward.valid_until,true)+' · '+formatRewardCountdown(reward.valid_until);
+    },60000);
     _welcomeRewardExpiryTimer=setTimeout(()=>{if(curUser?.id===owner)calc();},
       Math.min(2147483647,Math.max(100,Date.parse(reward.valid_until)-Date.now()+50)));
   }
@@ -2660,11 +2672,18 @@ function renderHistory(rows){
 function pendingHomeFeedbackOrder(){
   return _orders.find(order=>order && order.status==='پەسەندکرا' && !order.feedback) || null;
 }
+function feedbackReadKey(orderId){ return 'proxo_feedback_read:'+String(orderId); }
+function isFeedbackRead(orderId){
+  try{return localStorage.getItem(feedbackReadKey(orderId))==='1';}catch(_){return false;}
+}
+function markFeedbackRead(orderId){
+  try{localStorage.setItem(feedbackReadKey(orderId),'1');}catch(_){/* private browsing */}
+}
 function renderHomeFeedbackPrompt(){
   const el=document.getElementById('homeFeedbackPrompt');
   if(!el)return;
   const order=pendingHomeFeedbackOrder();
-  if(!order){el.hidden=true;el.innerHTML='';return;}
+  if(!order||isFeedbackRead(order.id)){el.hidden=true;el.innerHTML='';return;}
   el.hidden=false;
   el.innerHTML='<span class="home-feedback-icon" aria-hidden="true"><span class="icn icon--solar icon--solar--star-linear"></span></span>'+
     '<span class="home-feedback-copy"><b>هەڵسەنگاندنی داواکاری</b><span>مامەڵەی '+escHtml(orderCodeOf(order))+' پەسەندکراوە؛ هەڵسەنگاندنەکەت ماوە.</span></span>'+
@@ -2673,6 +2692,7 @@ function renderHomeFeedbackPrompt(){
 function openHomePendingFeedback(){
   const order=pendingHomeFeedbackOrder();
   if(!order)return;
+  markFeedbackRead(order.id);
   _homeFeedbackPromptShownThisSession=true;
   _homeFeedbackPromptQueued=false;
   navigate('transactions');
@@ -2688,7 +2708,8 @@ function maybePromptHomeFeedback(){
     _homeFeedbackPromptQueued=false;
     if(!curUser||_route!=='home'||_txSheetId)return;
     const stillPending=_orders.find(row=>String(row.id)===orderId && row.status==='پەسەندکرا' && !row.feedback);
-    if(!stillPending)return;
+    if(!stillPending||isFeedbackRead(orderId))return;
+    markFeedbackRead(orderId);
     _homeFeedbackPromptShownThisSession=true;
     openTxDetail(stillPending.id);
   },850);
