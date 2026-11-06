@@ -455,3 +455,119 @@ body :is(#recipientSheet,#pickerSheet,#confirmSheet) .sheet,
 }
 #mainApp #pageProfile > .page-head .profile-page-action:hover { background: #f1f5f9 !important; }
 #mainApp #pageProfile > .page-head .profile-page-action .icn { width: 21px !important; height: 21px !important; }
+
+
+/* Reference-matched Proxo shell, measured from PR #46 code and release screenshots. */
+#mainApp .site-header {
+  padding: 8px 0 !important;
+  margin-bottom: 0 !important;
+  background: #fff !important;
+  border-bottom: 1px solid #e4e7f0 !important;
+  box-shadow: none !important;
+}
+#mainApp .site-header-inner { min-height: 56px !important; gap: 10px !important; }
+#mainApp .hdr-logo {
+  width: auto !important;
+  height: 44px !important;
+  flex: 0 0 auto !important;
+  overflow: visible !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+}
+#mainApp .hdr-logo img { display: block !important; width: 140px !important; height: 40px !important; object-fit: contain !important; }
+#mainApp .hdr-logo::before { display: none !important; }
+#mainApp .hdr-rate { display: none !important; }
+#mainApp .hdr-actions .hdr-cta { display: none !important; }
+
+/* ProxoBottomNav from PR #46: 5 slots, 80px strip, 48x32 selected pill, 56px primary action. */
+#mainApp .bottom-nav {
+  min-height: 80px !important;
+  padding: 0 !important;
+  background: #fafafa !important;
+  border-top: 1px solid #e4e7f0 !important;
+  box-shadow: 0 -2px 8px rgba(15,23,42,.025) !important;
+}
+#mainApp .bottom-nav-inner {
+  width: min(100%, 640px) !important;
+  max-width: 640px !important;
+  height: 80px !important;
+  grid-template-columns: repeat(5, minmax(56px, 1fr)) !important;
+  gap: 0 !important;
+}
+#mainApp .bn-item {
+  min-width: 56px !important;
+  height: 80px !important;
+  min-height: 80px !important;
+  padding: 0 !important;
+  gap: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #6b7280 !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  justify-content: center !important;
+}
+#mainApp .bn-item.on { color: #0265ff !important; background: transparent !important; font-weight: 600 !important; }
+#mainApp .bn-ico {
+  width: 48px !important;
+  height: 32px !important;
+  flex: 0 0 32px !important;
+  border-radius: 16px !important;
+  background: transparent !important;
+}
+#mainApp .bn-item.on .bn-ico { background: #eaf2ff !important; }
+#mainApp .bn-icon { width: 24px !important; height: 24px !important; object-fit: contain !important; filter: grayscale(1) saturate(0) opacity(.72) !important; }
+#mainApp .bn-icon-active { display: none !important; }
+#mainApp .bn-item.on .bn-icon-idle { display: none !important; }
+#mainApp .bn-item.on .bn-icon-active { display: block !important; filter: none !important; }
+#mainApp .bn-label { font-size: 12px !important; line-height: 1.5 !important; margin-top: 6px !important; white-space: nowrap !important; }
+#mainApp .bn-create .bn-create-button {
+  width: 56px !important;
+  height: 56px !important;
+  flex: 0 0 56px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 18px !important;
+  background: #0265ff !important;
+  color: #fff !important;
+  transform: translateY(-2px) !important;
+  box-shadow: none !important;
+}
+#mainApp .bn-create .bn-create-button svg { width: 28px !important; height: 28px !important; }
+#mainApp .bn-create .bn-label { display: none !important; }
+#mainApp .bn-dot { box-shadow: 0 0 0 2px #fafafa !important; }
+
+/* Profile screenshot parity: no global appbar, 56px local toolbar with edit/back actions. */
+#mainApp:has(#pageProfile.active) .site-header { display: none !important; }
+#mainApp #pageProfile > .page-head {
+  min-height: 56px !important;
+  margin: 0 -14px 0 !important;
+  padding: 4px 8px !important;
+  display: grid !important;
+  grid-template-columns: 48px 1fr 48px !important;
+  align-items: center !important;
+  background: #fff !important;
+  border-bottom: 1px solid #e4e7f0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+#mainApp #pageProfile > .page-head h2 { grid-column: 2 !important; grid-row: 1 !important; justify-content: center !important; margin: 0 !important; font-size: 18px !important; font-weight: 400 !important; }
+#mainApp #pageProfile > .page-head h2 > .icn { display: none !important; }
+#mainApp #pageProfile > .page-head .profile-page-action,
+#mainApp #pageProfile > .page-head .profile-page-back {
+  grid-row: 1 !important;
+  width: 48px !important;
+  height: 48px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #0f172a !important;
+}
+#mainApp #pageProfile > .page-head .profile-page-action { grid-column: 1 !important; }
+#mainApp #pageProfile > .page-head .profile-page-back { grid-column: 3 !important; }
+#mainApp #pageProfile > .page-head :is(.profile-page-action,.profile-page-back) .icn { width: 22px !important; height: 22px !important; }
+#mainApp #pageProfile > .page-head :is(.profile-page-action,.profile-page-back):hover { background: #fafafa !important; }
