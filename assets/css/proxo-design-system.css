@@ -418,3 +418,56 @@ body :is(#recipientSheet,#pickerSheet,#confirmSheet) .sheet,
 #mainApp #pageHome #exchangeCard .field-error { display: block !important; min-height: 0 !important; margin-top: 5px !important; padding: 0 !important; border: 0 !important; background: transparent !important; color: #c2414b !important; font-size: 12px !important; line-height: 1.7 !important; }
 #mainApp #pageHome #exchangeCard :is(.xc-kyc-gate,.xc-error,.field-error-wrap) { border-radius: 12px !important; border: 1px solid #f3c6ca !important; background: #fff4f4 !important; color: #9f303b !important; box-shadow: none !important; }
 #mainApp #pageHome #exchangeCard .btn-primary { min-height: 50px !important; border-radius: 11px !important; }
+
+
+/* PR #46 bottom navigation parity: four destinations plus the centered primary action. */
+#mainApp .bottom-nav-inner { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; max-width: 640px !important; }
+#mainApp .bn-item { min-width: 0 !important; }
+#mainApp .bn-item.on .bn-ico { background: #eaf2ff !important; }
+#mainApp .bn-create { color: #1264e8 !important; }
+#mainApp .bn-create .bn-create-button {
+  width: 56px !important;
+  height: 56px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 18px !important;
+  background: #1264e8 !important;
+  color: #fff !important;
+  box-shadow: 0 7px 16px rgba(18,100,232,.22) !important;
+  transform: translateY(-10px) !important;
+}
+#mainApp .bn-create .bn-create-button .icn { width: 28px !important; height: 28px !important; color: #fff !important; }
+#mainApp .bn-create .bn-label { margin-top: -8px !important; color: #1264e8 !important; font-weight: 600 !important; }
+#mainApp .bn-create:active .bn-create-button { transform: translateY(-9px) scale(.96) !important; }
+
+/* PR #46 profile toolbar: centered title, white 56px bar, one edit action. */
+#mainApp #pageProfile > .page-head {
+  min-height: 56px !important;
+  margin: -14px -14px 14px !important;
+  padding: 4px 8px !important;
+  display: grid !important;
+  grid-template-columns: 48px 1fr 48px !important;
+  align-items: center !important;
+  background: #fff !important;
+  border-bottom: 1px solid #e3e7f0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+#mainApp #pageProfile > .page-head h2 { grid-column: 2 !important; justify-content: center !important; margin: 0 !important; font-size: 18px !important; font-weight: 650 !important; }
+#mainApp #pageProfile > .page-head h2 > .icn { display: none !important; }
+#mainApp #pageProfile > .page-head .profile-page-action {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  width: 44px !important;
+  height: 44px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: transparent !important;
+  color: #122033 !important;
+}
+#mainApp #pageProfile > .page-head .profile-page-action:hover { background: #f1f5f9 !important; }
+#mainApp #pageProfile > .page-head .profile-page-action .icn { width: 21px !important; height: 21px !important; }
