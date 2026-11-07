@@ -234,19 +234,24 @@ body #mainApp .pxn-cap {
   place-items: center;
   border-radius: 16px;
 }
-body #mainApp .pxn-cap::before {
-  content: "";
+body #mainApp .pxn-pill {
   position: absolute;
-  inset: 0;
-  border-radius: inherit;
+  top: 0;
+  left: 0;
+  width: 56px;
+  height: 32px;
+  border-radius: 16px;
   background: var(--v2-sky);
   opacity: 0;
-  transform: scale(.55, .8);
-  transition: opacity .25s var(--v2-ease), transform .38s cubic-bezier(.3, 1.3, .5, 1);
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
 }
-body #mainApp .pxn-item.on .pxn-cap::before { opacity: 1; transform: none; }
-body #mainApp .pxn-cap .pxi { position: relative; width: 25px; height: 25px; }
-body #mainApp .pxn-ico.pxn-on { display: none; fill: currentColor; stroke-width: 1.6; }
+body #mainApp .pxn-card.is-ready .pxn-pill {
+  opacity: 1;
+  transition: transform .42s cubic-bezier(.4, 0, .15, 1), opacity .2s;
+}
+body #mainApp .pxn-cap .pxi { position: relative; width: 26px; height: 26px; }
+body #mainApp .pxn-ico.pxn-on { display: none; fill: currentColor; stroke-width: 1.6; stroke-linejoin: round; }
 body #mainApp .pxn-item.on .pxn-ico.pxn-on { display: block; }
 body #mainApp .pxn-item.on .pxn-ico.pxn-off { display: none; }
 body #mainApp .pxn-ico .pxn-cut { fill: none; stroke: var(--v2-sky); stroke-width: 1.9; }
@@ -264,8 +269,8 @@ body #mainApp .pxn-label {
 /* Counters (ids are set by app.js: bnTxDot / bnProfileDot). */
 body #mainApp .pxn-badge {
   position: absolute;
-  top: -5px;
-  inset-inline-end: 3px;
+  top: -6px;
+  inset-inline-end: -5px;
   z-index: 2;
   min-width: 17px;
   height: 17px;
@@ -293,7 +298,7 @@ body #mainApp .pxn-state[data-state="warn"] { background: #ef4444; }
 }
 @media (prefers-reduced-motion: reduce) {
   body #mainApp .pxn-card.is-ready .pxn-line,
-  body #mainApp .pxn-cap::before { transition-duration: .01ms; }
+  body #mainApp .pxn-card.is-ready .pxn-pill { transition-duration: .01ms; }
 }
 
 /* ═════════════════════════ PROFILE ═════════════════════════ */
@@ -1296,7 +1301,7 @@ body #mainApp #txSheet .feedback-reward-icon .pxi { width: 18px; height: 18px; }
 body #mainApp #txSheet .feedback-reward-copy { min-width: 0; flex: 1; display: flex !important; flex-direction: column !important; gap: 0 !important; }
 body #mainApp #txSheet .feedback-reward-copy b { color: var(--v2-muted) !important; font-size: 11.5px !important; font-weight: 400 !important; }
 body #mainApp #txSheet .feedback-reward-copy strong { color: var(--v2-ink) !important; font-size: 13px !important; font-weight: 400 !important; line-height: 1.6; }
-body #mainApp #txSheet .feedback-reward-copy span,
+body #mainApp #txSheet .feedback-reward-copy span { display: block !important; margin-top: 2px; color: var(--v2-muted) !important; font-size: 11px !important; line-height: 1.5 !important; }
 body #mainApp #txSheet .feedback-reward-copy small { display: none !important; }
 body #mainApp #txSheet .feedback-reward-tag { display: none !important; }
 
@@ -1426,3 +1431,39 @@ body #mainApp #notifPanel .notif-empty .icn { width: 40px !important; height: 40
 
 /* feedback: the heading already says what to do, so the extra star label and char counter go */
 body #mainApp #txSheet .feedback-input-label:not([for]) { display: none !important; }
+
+/* ── less text in the request form ── */
+body #mainApp #pageHome #exchangeCard :is(#amtHint, #phoneHint, #etaBadge, #payoutRoundingNote, #rewardBanner) { display: none !important; }
+
+/* ── price details: rows add up (fee, discount as a minus line, amount received) ── */
+body #mainApp #pageHome #exchangeCard .xc-sum-row { min-height: 42px !important; gap: 12px !important; }
+body #mainApp #pageHome #exchangeCard .xc-sum-row .lbl { font-size: 13px !important; }
+body #mainApp #pageHome #exchangeCard .xc-sum-row .v { font-size: 13.5px !important; text-align: end; }
+body #mainApp #pageHome #exchangeCard .xc-sum-row.fee-saving {
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+body #mainApp #pageHome #exchangeCard .xc-sum-row.fee-saving .lbl,
+body #mainApp #pageHome #exchangeCard .xc-sum-row.fee-saving .v { color: #15803d !important; }
+body #mainApp #pageHome #exchangeCard #bdExpectedRow { border-top: 1px dashed #d8dfeb !important; }
+body #mainApp #pageHome #exchangeCard #bdExpectedRow .lbl { color: var(--v2-ink) !important; }
+body #mainApp #pageHome #exchangeCard #bdExpectedRow .v,
+body #mainApp #pageHome #exchangeCard #bdExpectedRow .total-value { color: var(--v2-accent) !important; font-size: 15px !important; }
+body #mainApp #txSheet .tx-save { color: #15803d; }
+
+/* receipt picker: one icon is enough */
+body #mainApp #pageHome #exchangeCard .file-picker .file-picker-action { display: none !important; }
+
+
+/* Compact saved-recipient access remains available in the receive step. */
+body #mainApp .xc-saved-recipients-btn {
+  width: 40px; height: 40px; flex: 0 0 40px; margin-inline-start: auto; padding: 0;
+  display: inline-grid; place-items: center; border: 1px solid var(--v2-line) !important;
+  border-radius: 12px; background: #fff !important; color: var(--v2-accent) !important;
+  box-shadow: none !important; cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+body #mainApp .xc-saved-recipients-btn .icn { width: 20px; height: 20px; }
+body #mainApp .xc-saved-recipients-btn:active { background: var(--v2-sky) !important; transform: scale(.96); }

@@ -2270,11 +2270,9 @@ function feedbackOrderSnapshot(order){
 function feedbackRewardCard(order,earned){
   return '<div class="feedback-reward-card'+(earned?' is-earned':'')+'" role="status">'+
     '<div class="feedback-reward-icon" aria-hidden="true">'+(earned?'<svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5"/></svg>':'<svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m19 5-14 14"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>')+'</div>'+
-    '<div class="feedback-reward-copy"><b>'+(earned?'پاداشتەکەت ئامادەیە':'پاداشتی هەڵسەنگاندن')+'</b>'+
-    '<strong>٥٠٪ داشکاندن لە کرێی خزمەتگوزاری</strong>'+
-    '<span>زۆرترین داشکاندن: <bdi dir="ltr">١٠,٠٠٠ IQD</bdi> · یەکجار</span>'+
-    '<small>'+(earned?'لە مامەڵەی داهاتووی IQD بەکاردێت، بۆ هەمان جۆری ڕێگای ئاڵوگۆڕ؛ بۆ حەوت ڕۆژ کارایە.':'دوای هەڵسەنگاندن، داشکاندنەکە بۆ یەک مامەڵە و بۆ حەوت ڕۆژ کارایە.')+'</small></div>'+
-    '<span class="feedback-reward-tag">'+(earned?'وەرگیرا':'بەدەست بهێنە')+'</span></div>';
+    '<div class="feedback-reward-copy"><b>'+(earned?'پاداشتەکەت ئامادەیە':'پاداشت')+'</b>'+
+    '<strong>٥٠٪ داشکاندن لە کرێی مامەڵەی داهاتوو</strong>'+
+    '<span>یەکجار · تا ١٠٬٠٠٠ دینار · بۆ ماوەی ٧ ڕۆژ</span></div></div>';
 }
 function renderOrderFeedback(order){
   if(order.status!=='پەسەندکرا') return '';
@@ -2282,15 +2280,15 @@ function renderOrderFeedback(order){
   const rewardEarned=hasOrderFeedbackReward(order);
   const snapshot=feedbackOrderSnapshot(order);
   if(feedback){
-    return '<section class="order-feedback is-submitted"><div class="feedback-section-heading"><div><span class="feedback-kicker">هەڵسەنگاندنی داواکاری</span><h3>هەڵسەنگاندنی تۆ</h3></div><span class="feedback-submitted-badge"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5"/></svg> نێردرا</span></div>'+feedbackRewardCard(order,rewardEarned)+'<div class="feedback-stars" aria-label="'+escHtml(String(feedback.rating))+' لە ٥ ئەستێرە">'+
+    return '<section class="order-feedback is-submitted"><div class="feedback-section-heading"><div><h3>هەڵسەنگاندنی تۆ</h3></div><span class="feedback-submitted-badge"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5"/></svg> نێردرا</span></div>'+feedbackRewardCard(order,rewardEarned)+'<div class="feedback-stars" aria-label="'+escHtml(String(feedback.rating))+' لە ٥ ئەستێرە">'+
       Array.from({length:5},(_,i)=>'<span class="'+(i<Number(feedback.rating)?'filled':'')+'" aria-hidden="true">★</span>').join('')+
-      '</div>'+(feedback.comment?'<div class="feedback-comment-box"><small>تێبینیی تۆ</small><p class="feedback-comment">'+escHtml(feedback.comment)+'</p></div>':'<p class="feedback-muted">تەنها ئەستێرەکەت تۆمارکراوە.</p>')+
-      '<p class="feedback-thanks">سوپاس بۆ ئەوەی کاتت بۆ باشترکردنی خزمەتگوزاری دانا.</p></section>';
+      '</div>'+(feedback.comment?'<div class="feedback-comment-box"><small>تێبینیی تۆ</small><p class="feedback-comment">'+escHtml(feedback.comment)+'</p></div>':'')+
+      '<p class="feedback-thanks">سوپاس بۆ هەڵسەنگاندنەکەت.</p></section>';
   }
-  return '<section class="order-feedback"><div class="feedback-section-heading"><div><span class="feedback-kicker">مامەڵەکەت پەسەندکرا</span><h3>هەڵسەنگاندنی داواکاری</h3><p>ئەستێرەکان هەڵبژێرە. تێبینی ئارەزوومەندانەیە.</p></div><span class="feedback-heading-icon" aria-hidden="true"><span class="icn icon--solar icon--solar--star-linear"></span></span></div>'+feedbackRewardCard(order,false)+'<label class="feedback-input-label">هەڵسەنگاندنی تۆ <span>ئەستێرەکان هەڵبژێرە</span></label>'+
+  return '<section class="order-feedback"><div class="feedback-section-heading"><div><h3>هەڵسەنگاندن</h3><p>چەند ئەستێرەی دەدەیت؟</p></div><span class="feedback-heading-icon" aria-hidden="true"><span class="icn icon--solar icon--solar--star-linear"></span></span></div>'+feedbackRewardCard(order,false)+'<label class="feedback-input-label">هەڵسەنگاندنی تۆ <span>ئەستێرەکان هەڵبژێرە</span></label>'+
     '<div class="feedback-star-picker" role="radiogroup" aria-label="هەڵبژاردنی ئەستێرە">'+Array.from({length:5},(_,i)=>'<button type="button" class="feedback-star" data-rating="'+(i+1)+'" aria-label="'+(i+1)+' ئەستێرە" aria-checked="false" role="radio" onclick="selectOrderFeedbackRating('+(i+1)+')"><span class="icn icon--solar icon--solar--star-linear" aria-hidden="true"></span></button>').join('')+'</div>'+
-    '<label class="feedback-input-label" for="orderFeedbackComment">تێبینی <span>ئارەزوومەندانە</span></label><textarea id="orderFeedbackComment" maxlength="1000" placeholder="ئەزموونت لەگەڵ ئەم مامەڵەیە چۆن بوو؟" aria-label="نووسینی هەڵسەنگاندن"></textarea><small class="feedback-char-hint">تا ١,٠٠٠ پیت</small>'+
-    '<button type="button" class="btn btn-primary btn-block feedback-submit-btn" id="orderFeedbackSubmit" onclick="submitOrderFeedback(\''+escHtml(String(order.id))+'\')"><span class="icn icon--solar icon--solar--star-linear" aria-hidden="true"></span> ناردنی هەڵسەنگاندن و وەرگرتنی پاداشت</button><div class="feedback-error" id="orderFeedbackError" role="alert"></div></section>';
+    '<textarea id="orderFeedbackComment" maxlength="1000" placeholder="تێبینی (ئارەزوومەندانە)" aria-label="تێبینی"></textarea>'+
+    '<button type="button" class="btn btn-primary btn-block feedback-submit-btn" id="orderFeedbackSubmit" onclick="submitOrderFeedback(\''+escHtml(String(order.id))+'\')"><span class="icn icon--solar icon--solar--star-linear" aria-hidden="true"></span> ناردنی هەڵسەنگاندن</button><div class="feedback-error" id="orderFeedbackError" role="alert"></div></section>';
 }
 function selectOrderFeedbackRating(rating){
   _feedbackDraftRating=Math.max(1,Math.min(5,Number(rating)||0));
@@ -2336,6 +2334,7 @@ function openTxDetail(id){
   const rate=Number(o.amount)>0 ? (Number(o.total)/Number(o.amount)) : 0;
   const isUsdt=o.from_method==='USDT';
   const fee=!isUsdt && o.to_method!=='USDT' && Number(o.amount)>Number(o.total) ? Math.floor(Number(o.amount)-Number(o.total)) : 0;
+  const discountIqd=Math.max(0,Math.floor(Number(o.reward_discount_iqd)||0));
   const payout=typeof ProxoPayoutRounding==='object'?ProxoPayoutRounding.forOrder(o):null;
   const rounded=!o.balance_refunded_at&&payout&&(payout.planned||payout.has_settlement);
   const received=payout?payout.display_amount:o.total;
@@ -2356,7 +2355,7 @@ function openTxDetail(id){
     // A rate only means something across currencies; IQD → IQD is a fee.
     + (isUsdt && rate ? txRow('نرخی ئاڵوگۆڕ', '1 $ = '+formatNum(Math.round(rate))+' IQD', {ltr:true}) : '')
     + (!o.balance_refunded_at && !isUsdt && o.to_method!=='USDT' ? txRow('کرێی خزمەتگوزاری', formatNum(fee)+' IQD', {ltr:true}) : '')
-    + (!o.balance_refunded_at && Number(o.reward_discount_iqd)>0 ? txRow('سوودی داشکاندن',formatNum(o.reward_discount_iqd)+' IQD',{ltr:true}) : '')
+    + (!o.balance_refunded_at && discountIqd>0 ? txRow('سوودی داشکاندن','<span class="tx-save" dir="ltr">'+formatNum(discountIqd)+' IQD</span>',{html:true}) : '')
     + (rounded?txRow('بڕی سەرەکی دوای لێبڕین',txAmount(o.total,o.to_method),{ltr:true}):'')
     + (rounded?txRow(payout.settled?'گەڕاندنەوەی خۆکار بۆ باڵانست':'گەڕاندنەوە بۆ باڵانست دوای پەسەندکردن',txAmount(payout.remainder_iqd,'IQD'),{ltr:true}):'')
     + (rounded&&payout.valid&&payout.payout_iqd===0?txRow('ناردنی دەرەکی','هیچ ناردنێک بۆ وەرگر ئەنجام نادرێت'):'')

@@ -4,6 +4,7 @@ import {readFileSync} from 'node:fs';
 const read=path=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
 const html=read('index.html');
 const css=read('assets/css/proxo-design-system.css');
+const shellCss=read('assets/css/proxo-ui-v2.css');
 
 test('Customer design contract is loaded after every legacy stylesheet',()=>{
   const sheets=[...html.matchAll(/<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"/g)].map(m=>m[1]);
@@ -45,7 +46,10 @@ test('Design layer leaves hidden/route mechanics untouched and provides accessib
 
 test('Production smoke waits for the changed customer version and verifies its design contract',()=>{
   const workflow=read('.github/workflows/exchange-production-smoke.yml');
-  assert(workflow.includes('app.js?v=59'));
+  assert(workflow.includes('app.js?v=60'));
   assert(workflow.includes('proxo-design-system.css?v=1'));
-  assert(html.includes('/assets/js/app.js?v=59'));
+  assert(html.includes('/assets/js/app.js?v=60'));
+  assert(html.includes('/assets/css/proxo-ui-v2.css?v=2'));
+  assert(html.includes('/assets/js/proxo-ui-v2.js?v=2'));
+  assert(shellCss.includes('.pxn-pill'));
 });

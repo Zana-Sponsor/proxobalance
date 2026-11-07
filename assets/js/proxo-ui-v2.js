@@ -7,6 +7,7 @@
   var card = document.querySelector('#bottomNav .pxn-card');
   if (!card) return;
   var line = card.querySelector('.pxn-line');
+  var pill = card.querySelector('.pxn-pill');
   var items = Array.prototype.slice.call(card.querySelectorAll('.pxn-item[data-route]'));
   if (!line || !items.length) return;
 
@@ -20,12 +21,19 @@
     items.forEach(function (el) { if (el === active) el.setAttribute('aria-current', 'page'); else el.removeAttribute('aria-current'); });
     var box = active.getBoundingClientRect();
     var x = box.left - cardBox.left + (box.width - line.offsetWidth) / 2;
+    var cap = active.querySelector('.pxn-cap').getBoundingClientRect();
     var first = !card.classList.contains('is-ready');
-    if (first) line.style.transition = 'none';   // first placement: no slide-in from the corner
+    if (first) { line.style.transition = 'none'; if (pill) pill.style.transition = 'none'; }   // first placement: no slide-in from the corner
     line.style.transform = 'translate3d(' + Math.round(x * 100) / 100 + 'px,0,0)';
+    if (pill) {
+      pill.style.width = cap.width + 'px';
+      pill.style.height = cap.height + 'px';
+      pill.style.transform = 'translate3d(' + Math.round((cap.left - cardBox.left) * 100) / 100 + 'px,' + Math.round((cap.top - cardBox.top) * 100) / 100 + 'px,0)';
+    }
     if (first) {
       void line.offsetWidth;                      // flush so the next change animates
       line.style.transition = '';
+      if (pill) pill.style.transition = '';
       card.classList.add('is-ready');
     }
   }
