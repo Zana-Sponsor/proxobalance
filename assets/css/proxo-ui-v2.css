@@ -6,7 +6,7 @@
    Type note: Rabar ships as a single weight, so hierarchy comes from size
    and colour (soft ink -> muted), not from bold. */
 
-#mainApp {
+body #mainApp {
   --v2-accent: #0265ff;
   --v2-accent-deep: #0050d0;
   --v2-sky: #d6eeff;          /* water-blue capsule behind nav icons */
@@ -37,7 +37,7 @@
 }
 
 /* ═════════════════════════ APPBAR ═════════════════════════ */
-#mainApp #siteHeader.pxh {
+body #mainApp #siteHeader.pxh {
   position: sticky;
   top: 0;
   z-index: 1200;
@@ -51,11 +51,11 @@
   box-shadow: none !important;
   transition: border-color .2s var(--v2-ease), box-shadow .2s var(--v2-ease);
 }
-#mainApp #siteHeader.pxh.scrolled {
+body #mainApp #siteHeader.pxh.scrolled {
   border-bottom-color: var(--v2-line) !important;
   box-shadow: 0 10px 24px -20px rgba(20, 35, 60, .35) !important;
 }
-#mainApp .pxh-in {
+body #mainApp .pxh-in {
   width: 100%;
   max-width: var(--container-w, 480px);
   height: 60px;
@@ -66,7 +66,7 @@
   gap: 12px;
   direction: rtl;
 }
-#mainApp .pxh-brand {
+body #mainApp .pxh-brand {
   display: inline-flex;
   align-items: center;
   height: 44px;
@@ -74,9 +74,9 @@
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
-#mainApp .pxh-brand img { display: block; width: auto; height: 24px; object-fit: contain; }
-#mainApp .pxh-actions { display: flex; align-items: center; gap: 8px; }
-#mainApp .pxh-btn {
+body #mainApp .pxh-brand img { display: block; width: auto; height: 24px; object-fit: contain; }
+body #mainApp .pxh-actions { display: flex; align-items: center; gap: 8px; }
+body #mainApp .pxh-btn {
   position: relative;
   width: 44px;
   height: 44px;
@@ -95,10 +95,10 @@
   -webkit-tap-highlight-color: transparent;
   transition: background .2s var(--v2-ease), transform .15s var(--v2-ease);
 }
-#mainApp .pxh-btn:active { transform: scale(.95); background: #f3f6fb !important; }
-#mainApp .pxh-btn .pxi { width: 22px; height: 22px; }
-#mainApp .pxh-btn.pxh-profile { display: none; }
-#mainApp .pxh-btn .notif-badge {
+body #mainApp .pxh-btn:active { transform: scale(.95); background: #f3f6fb !important; }
+body #mainApp .pxh-btn .pxi { width: 22px; height: 22px; }
+body #mainApp .pxh-btn.pxh-profile { display: none; }
+body #mainApp .pxh-btn .notif-badge {
   position: absolute;
   top: -5px;
   left: -6px;
@@ -117,16 +117,16 @@
   line-height: 1;
   box-shadow: 0 0 0 2px var(--v2-canvas);
 }
-#mainApp .pxh-nav { display: none; }
+body #mainApp .pxh-nav { display: none; }
 
 /* On the profile page the page has its own toolbar. */
-#mainApp:has(#pageProfile.active) #siteHeader.pxh { display: none !important; }
+body #mainApp:has(#pageProfile.active) #siteHeader.pxh { display: none !important; }
 
 @media (min-width: 1024px) {
-  #mainApp .pxh-in { height: 68px; padding: 0 20px; }
-  #mainApp .pxh-brand { margin-inline-end: 0; }
-  #mainApp .pxh-brand img { height: 26px; }
-  #mainApp .pxh-nav {
+  body #mainApp .pxh-in { height: 68px; padding: 0 20px; }
+  body #mainApp .pxh-brand { margin-inline-end: 0; }
+  body #mainApp .pxh-brand img { height: 26px; }
+  body #mainApp .pxh-nav {
     display: flex;
     align-items: center;
     gap: 4px;
@@ -136,7 +136,7 @@
     border-radius: 999px;
     background: var(--v2-card);
   }
-  #mainApp .pxh-link {
+  body #mainApp .pxh-link {
     height: 38px;
     padding: 0 16px;
     display: inline-flex;
@@ -151,17 +151,17 @@
     cursor: pointer;
     transition: background .25s var(--v2-ease), color .25s var(--v2-ease);
   }
-  #mainApp .pxh-link .pxi { width: 19px; height: 19px; }
-  #mainApp .pxh-link:hover { color: var(--v2-ink) !important; }
-  #mainApp .pxh-link.on { background: var(--v2-sky) !important; color: var(--v2-accent) !important; }
-  #mainApp .pxh-btn.pxh-profile { display: inline-grid; }
-  #mainApp:has(#pageProfile.active) #siteHeader.pxh { display: block !important; }
+  body #mainApp .pxh-link .pxi { width: 19px; height: 19px; }
+  body #mainApp .pxh-link:hover { color: var(--v2-ink) !important; }
+  body #mainApp .pxh-link.on { background: var(--v2-sky) !important; color: var(--v2-accent) !important; }
+  body #mainApp .pxh-btn.pxh-profile { display: inline-grid; }
+  body #mainApp:has(#pageProfile.active) #siteHeader.pxh { display: block !important; }
 }
 
 /* ═════════════════════════ BOTTOM NAV ═════════════════════════ */
 body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !important; }
 
-#mainApp #bottomNav.pxn {
+body #mainApp #bottomNav.pxn {
   position: fixed;
   inset-inline: 0;
   bottom: 0;
@@ -174,18 +174,18 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   box-shadow: none !important;
   pointer-events: none;
 }
-#mainApp .pxn-card {
+body #mainApp .pxn-card {
   position: relative;
   width: 100%;
-  max-width: 440px;
-  padding: 10px 4px 8px;
+  max-width: 400px;
+  padding: 10px 6px 8px;
   border-radius: 26px;
   background: #fff;
   box-shadow: 0 0 0 1px rgba(20, 35, 60, .05), 0 14px 34px -10px rgba(20, 35, 60, .22), 0 3px 8px rgba(20, 35, 60, .05);
   pointer-events: auto;
 }
 /* The short line that slides along the top of the white card. */
-#mainApp .pxn-line {
+body #mainApp .pxn-line {
   position: absolute;
   top: 0;
   left: 0;
@@ -197,16 +197,16 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   transform: translate3d(0, 0, 0);
   will-change: transform;
 }
-#mainApp .pxn-card.is-ready .pxn-line {
+body #mainApp .pxn-card.is-ready .pxn-line {
   opacity: 1;
   transition: transform .42s cubic-bezier(.4, 0, .15, 1), opacity .2s;
 }
-#mainApp .pxn-inner {
+body #mainApp .pxn-inner {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   direction: rtl;
 }
-#mainApp #bottomNav .pxn-item {
+body #mainApp #bottomNav .pxn-item {
   position: relative;
   min-width: 0;
   padding: 6px 0 2px;
@@ -222,11 +222,11 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   -webkit-tap-highlight-color: transparent;
   transition: color .25s var(--v2-ease), transform .15s var(--v2-ease);
 }
-#mainApp #bottomNav .pxn-item:active { transform: scale(.94); }
-#mainApp #bottomNav .pxn-item.on { color: var(--v2-accent) !important; }
+body #mainApp #bottomNav .pxn-item:active { transform: scale(.94); }
+body #mainApp #bottomNav .pxn-item.on { color: var(--v2-accent) !important; }
 
-/* Capsule behind the icon. Set --v2-idle-capsule to show it on every tab. */
-#mainApp .pxn-cap {
+/* Capsule behind the icon (shown on the active tab). */
+body #mainApp .pxn-cap {
   position: relative;
   width: min(56px, calc(100% - 6px));
   height: 32px;
@@ -234,7 +234,7 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   place-items: center;
   border-radius: 16px;
 }
-#mainApp .pxn-cap::before {
+body #mainApp .pxn-cap::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -244,13 +244,14 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   transform: scale(.55, .8);
   transition: opacity .25s var(--v2-ease), transform .38s cubic-bezier(.3, 1.3, .5, 1);
 }
-#mainApp .pxn-item.on .pxn-cap::before { opacity: 1; transform: none; }
-#mainApp .pxn-cap .pxi { position: relative; width: 24px; height: 24px; }
-#mainApp .pxn-item.on .pxn-cap .pxi { stroke-width: 2; }
-#mainApp .pxn-item .pxn-f { fill: none; transition: fill .25s var(--v2-ease); }
-#mainApp .pxn-item.on .pxn-f { fill: currentColor; fill-opacity: .16; }
+body #mainApp .pxn-item.on .pxn-cap::before { opacity: 1; transform: none; }
+body #mainApp .pxn-cap .pxi { position: relative; width: 25px; height: 25px; }
+body #mainApp .pxn-ico.pxn-on { display: none; fill: currentColor; stroke-width: 1.6; }
+body #mainApp .pxn-item.on .pxn-ico.pxn-on { display: block; }
+body #mainApp .pxn-item.on .pxn-ico.pxn-off { display: none; }
+body #mainApp .pxn-ico .pxn-cut { fill: none; stroke: var(--v2-sky); stroke-width: 1.9; }
 
-#mainApp .pxn-label {
+body #mainApp .pxn-label {
   max-width: 100%;
   overflow: hidden;
   font-size: 11px;
@@ -260,24 +261,11 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
 }
 @media (min-width: 400px) { #mainApp .pxn-label { font-size: 12px; } }
 
-/* Primary action: the same capsule, solid. */
-#mainApp #bottomNav .pxn-create { color: var(--v2-accent) !important; }
-#mainApp .pxn-create .pxn-cap {
-  width: min(62px, calc(100% - 4px));
-  height: 36px;
-  border-radius: 18px;
-  background: linear-gradient(135deg, #2b86ff 0%, var(--v2-accent) 100%);
-  color: #fff;
-  box-shadow: 0 8px 16px -6px rgba(2, 101, 255, .55);
-}
-#mainApp .pxn-create .pxn-cap::before { display: none; }
-#mainApp .pxn-create .pxi { stroke: #fff; stroke-width: 2.2; }
-
 /* Counters (ids are set by app.js: bnTxDot / bnProfileDot). */
-#mainApp .pxn-badge {
+body #mainApp .pxn-badge {
   position: absolute;
-  top: -4px;
-  inset-inline-end: 8px;
+  top: -5px;
+  inset-inline-end: 3px;
   z-index: 2;
   min-width: 17px;
   height: 17px;
@@ -292,27 +280,31 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   line-height: 1;
   box-shadow: 0 0 0 2px #fff;
 }
-#mainApp .pxn-badge-plus { min-width: 16px; width: 16px; height: 16px; padding: 0; background: var(--v2-accent); }
-#mainApp .pxn-badge-plus svg { width: 10px; height: 10px; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; }
+/* Verification state on the profile tab. */
+body #mainApp .pxn-state { min-width: 18px; width: 18px; height: 18px; padding: 0; border-radius: 50%; }
+body #mainApp .pxn-state svg { width: 12px; height: 12px; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+body #mainApp .pxn-state[data-state="ok"] { background: #16a34a; }
+body #mainApp .pxn-state[data-state="wait"] { background: #f59e0b; }
+body #mainApp .pxn-state[data-state="warn"] { background: #ef4444; }
 
 @media (min-width: 1024px) {
   body.has-nav { padding-bottom: 32px !important; }
-  #mainApp #bottomNav.pxn { display: none; }
+  body #mainApp #bottomNav.pxn { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  #mainApp .pxn-card.is-ready .pxn-line,
-  #mainApp .pxn-cap::before { transition-duration: .01ms; }
+  body #mainApp .pxn-card.is-ready .pxn-line,
+  body #mainApp .pxn-cap::before { transition-duration: .01ms; }
 }
 
 /* ═════════════════════════ PROFILE ═════════════════════════ */
-#mainApp #pageProfile { padding-top: 0; color: var(--v2-text); }
+body #mainApp #pageProfile { padding-top: 0; color: var(--v2-text); }
 
 /* toolbar */
-#mainApp .pfx-bar {
+body #mainApp .pfx-bar {
   position: sticky;
   top: 0;
   z-index: 1100;
-  margin: 0 -14px 14px;
+  margin: 0 -12px 14px;
   padding: env(safe-area-inset-top, 0px) 8px 0;
   height: calc(56px + env(safe-area-inset-top, 0px));
   display: grid;
@@ -322,15 +314,15 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   -webkit-backdrop-filter: saturate(1.6) blur(14px);
   backdrop-filter: saturate(1.6) blur(14px);
 }
-#mainApp .pfx-bar h2 {
+body #mainApp .pfx-bar h2 {
   margin: 0;
   color: var(--v2-ink);
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 400;
   line-height: 1.4;
   text-align: center;
 }
-#mainApp .pfx-bar-btn {
+body #mainApp .pfx-bar-btn {
   width: 44px;
   height: 44px;
   padding: 0;
@@ -343,10 +335,10 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
-#mainApp .pfx-bar-btn:active { background: #eef2f8 !important; }
+body #mainApp .pfx-bar-btn:active { background: #eef2f8 !important; }
 
 /* cards */
-#mainApp .pfx-card {
+body #mainApp .pfx-card {
   margin: 0 0 14px;
   padding: 18px 16px;
   border: 1px solid var(--v2-line);
@@ -354,7 +346,7 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   background: var(--v2-card);
   box-shadow: var(--v2-shadow);
 }
-#mainApp .pfx-title {
+body #mainApp .pfx-title {
   margin: 0 0 14px;
   display: flex;
   align-items: center;
@@ -364,7 +356,7 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   font-weight: 400;
   line-height: 1.5;
 }
-#mainApp .pfx-title-ico {
+body #mainApp .pfx-title-ico {
   width: 34px;
   height: 34px;
   display: grid;
@@ -373,10 +365,10 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   background: var(--v2-sky-soft);
   color: var(--v2-accent);
 }
-#mainApp .pfx-title-ico .pxi { width: 19px; height: 19px; }
+body #mainApp .pfx-title-ico .pxi { width: 19px; height: 19px; }
 
 /* hero */
-#mainApp .pfx-hero {
+body #mainApp .pfx-hero {
   position: relative;
   margin: 0 0 14px;
   padding: 0 16px 18px;
@@ -390,7 +382,7 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   box-shadow: var(--v2-shadow);
   text-align: center;
 }
-#mainApp .pfx-cover {
+body #mainApp .pfx-cover {
   align-self: stretch;
   height: 84px;
   margin: 0 -16px;
@@ -398,8 +390,8 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
     radial-gradient(120px 80px at 18% 20%, rgba(255, 255, 255, .7), transparent 70%),
     linear-gradient(135deg, #cfeaff 0%, #e4f3ff 55%, #f1f9ff 100%);
 }
-#mainApp .pfx-avatar-wrap { position: relative; margin-top: -40px; }
-#mainApp .pfx-avatar {
+body #mainApp .pfx-avatar-wrap { position: relative; margin-top: -40px; }
+body #mainApp .pfx-avatar {
   width: 80px;
   height: 80px;
   display: grid;
@@ -413,8 +405,8 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   line-height: 1;
   box-shadow: 0 8px 20px -10px rgba(2, 101, 255, .45);
 }
-#mainApp .pfx-avatar img { width: 100%; height: 100%; object-fit: cover; }
-#mainApp .pfx-verified {
+body #mainApp .pfx-avatar img { width: 100%; height: 100%; object-fit: cover; }
+body #mainApp .pfx-verified {
   position: absolute;
   inset-block-end: 0;
   inset-inline-end: -2px;
@@ -427,9 +419,9 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   background: #16a34a;
   color: #fff;
 }
-#mainApp .pfx-verified[hidden] { display: none; }
-#mainApp .pfx-verified .pxi { width: 15px; height: 15px; stroke-width: 2.4; }
-#mainApp .pfx-name {
+body #mainApp .pfx-verified[hidden] { display: none; }
+body #mainApp .pfx-verified .pxi { width: 15px; height: 15px; stroke-width: 2.4; }
+body #mainApp .pfx-name {
   max-width: 100%;
   margin-top: 12px;
   overflow: hidden;
@@ -439,7 +431,7 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-#mainApp .pfx-handle {
+body #mainApp .pfx-handle {
   margin-top: 2px;
   min-height: 32px;
   padding: 0 12px;
@@ -455,9 +447,9 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
-#mainApp .pfx-handle .pxi { width: 14px; height: 14px; }
-#mainApp .pfx-handle:active { background: #e6ecf5 !important; }
-#mainApp .pfx-email {
+body #mainApp .pfx-handle .pxi { width: 14px; height: 14px; }
+body #mainApp .pfx-handle:active { background: #e6ecf5 !important; }
+body #mainApp .pfx-email {
   max-width: 100%;
   margin-top: 4px;
   overflow: hidden;
@@ -467,7 +459,7 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-#mainApp .pfx-meta {
+body #mainApp .pfx-meta {
   width: 100%;
   margin-top: 14px;
   padding-top: 14px;
@@ -480,7 +472,7 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
 }
 
 /* KYC status pill (state variables come from app.css) */
-#mainApp .pfx-hero .kyc-badge {
+body #mainApp .pfx-hero .kyc-badge {
   min-height: 36px;
   margin: 0;
   padding: 0 12px 0 14px;
@@ -497,10 +489,10 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   line-height: 1.4;
   cursor: pointer;
 }
-#mainApp .pfx-hero .kyc-badge-ico { width: 16px; height: 16px; display: inline-grid; place-items: center; }
-#mainApp .pfx-hero .kyc-badge-ico .icn,
-#mainApp .pfx-hero .kyc-badge-ico svg { width: 16px; height: 16px; }
-#mainApp .pfx-chip {
+body #mainApp .pfx-hero .kyc-badge-ico { width: 16px; height: 16px; display: inline-grid; place-items: center; }
+body #mainApp .pfx-hero .kyc-badge-ico .icn,
+body #mainApp .pfx-hero .kyc-badge-ico svg { width: 16px; height: 16px; }
+body #mainApp .pfx-chip {
   min-height: 36px;
   padding: 0 12px;
   display: inline-flex;
@@ -511,25 +503,25 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   color: var(--v2-muted);
   font-size: 12px;
 }
-#mainApp .pfx-chip .pxi { width: 15px; height: 15px; }
-#mainApp .pfx-chip.is-admin { background: var(--v2-sky-soft); color: var(--v2-accent); }
+body #mainApp .pfx-chip .pxi { width: 15px; height: 15px; }
+body #mainApp .pfx-chip.is-admin { background: var(--v2-sky-soft); color: var(--v2-accent); }
 
 /* balance */
-#mainApp .pfx-balance { padding: 16px; }
-#mainApp .pfx-balance-head {
+body #mainApp .pfx-balance { padding: 16px; }
+body #mainApp .pfx-balance-head {
   margin-bottom: 14px;
   display: flex;
   align-items: center;
   gap: 10px;
 }
-#mainApp .pfx-balance-head .pfx-title-ico { background: var(--v2-sky); }
-#mainApp .pfx-balance-head b {
+body #mainApp .pfx-balance-head .pfx-title-ico { background: var(--v2-sky); }
+body #mainApp .pfx-balance-head b {
   flex: 1;
   color: var(--v2-ink);
   font-size: 14px;
   font-weight: 400;
 }
-#mainApp .pfx-icon-btn {
+body #mainApp .pfx-icon-btn {
   width: 40px;
   height: 40px;
   padding: 0;
@@ -541,10 +533,10 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   color: var(--v2-muted) !important;
   cursor: pointer;
 }
-#mainApp .pfx-icon-btn:active { background: #e6ecf5 !important; }
-#mainApp .pfx-icon-btn .pxi { width: 19px; height: 19px; }
-#mainApp .pfx-balance-values { display: grid; grid-template-columns: 1.25fr 1fr; gap: 10px; }
-#mainApp .pfx-balance-values > div {
+body #mainApp .pfx-icon-btn:active { background: #e6ecf5 !important; }
+body #mainApp .pfx-icon-btn .pxi { width: 19px; height: 19px; }
+body #mainApp .pfx-balance-values { display: grid; grid-template-columns: 1.25fr 1fr; gap: 10px; }
+body #mainApp .pfx-balance-values > div {
   min-width: 0;
   padding: 12px 14px;
   display: flex;
@@ -553,9 +545,9 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   border-radius: 16px;
   background: #f5f7fb;
 }
-#mainApp .pfx-balance-values .is-main { background: linear-gradient(135deg, #e3f3ff, #d6eeff); }
-#mainApp .pfx-balance-values span { color: var(--v2-muted); font-size: 12px; line-height: 1.6; }
-#mainApp .pfx-balance-values strong {
+body #mainApp .pfx-balance-values .is-main { background: linear-gradient(135deg, #e3f3ff, #d6eeff); }
+body #mainApp .pfx-balance-values span { color: var(--v2-muted); font-size: 12px; line-height: 1.6; }
+body #mainApp .pfx-balance-values strong {
   overflow: hidden;
   color: var(--v2-ink);
   font-size: 17px;
@@ -564,10 +556,10 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-#mainApp .pfx-balance-values .is-main strong { color: var(--v2-accent-deep); font-size: 20px; }
+body #mainApp .pfx-balance-values .is-main strong { color: var(--v2-accent-deep); font-size: 20px; }
 
 /* wallet controls (ids/handlers untouched; legacy rules target these ids) */
-#mainApp #pageProfile #balanceSendSection.profile-wallet-controls {
+body #mainApp #pageProfile #balanceSendSection.profile-wallet-controls {
   margin: 12px 0 0 !important;
   padding: 0 !important;
   border: 0 !important;
@@ -575,8 +567,8 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   background: none !important;
   box-shadow: none !important;
 }
-#mainApp #pageProfile .pfx-balance .pb-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-#mainApp #pageProfile .pfx-balance .pb-btn {
+body #mainApp #pageProfile .pfx-balance .pb-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+body #mainApp #pageProfile .pfx-balance .pb-btn {
   min-height: 48px;
   height: 48px;
   padding: 0 12px;
@@ -589,29 +581,29 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   cursor: pointer;
   box-shadow: none !important;
 }
-#mainApp #pageProfile .pfx-balance .pb-btn:disabled { background: #dbe6f6 !important; color: #7b8aa3 !important; cursor: not-allowed; }
-#mainApp #pageProfile .pfx-balance .pb-btn.pb-secondary { background: #f1f5fa !important; color: var(--v2-text) !important; }
-#mainApp #pageProfile .pfx-balance .pb-message {
+body #mainApp #pageProfile .pfx-balance .pb-btn:disabled { background: #dbe6f6 !important; color: #7b8aa3 !important; cursor: not-allowed; }
+body #mainApp #pageProfile .pfx-balance .pb-btn.pb-secondary { background: #f1f5fa !important; color: var(--v2-text) !important; }
+body #mainApp #pageProfile .pfx-balance .pb-message {
   margin: 10px 2px 0;
   color: var(--v2-muted);
   font-size: 12px;
   line-height: 1.7;
 }
-#mainApp #pageProfile .pfx-balance .pb-form { margin-top: 12px; }
+body #mainApp #pageProfile .pfx-balance .pb-form { margin-top: 12px; }
 
 /* kyc card rendered by app.js */
-#mainApp #pageProfile .kyc-card { margin: 0 0 14px; border-radius: var(--v2-r-card); }
+body #mainApp #pageProfile .kyc-card { margin: 0 0 14px; border-radius: var(--v2-r-card); }
 
 /* personal info form */
-#mainApp .pfx-form .field { margin-bottom: 14px; }
-#mainApp .pfx-form .field-label {
+body #mainApp .pfx-form .field { margin-bottom: 14px; }
+body #mainApp .pfx-form .field-label {
   margin-bottom: 6px;
   display: block;
   color: var(--v2-muted);
   font-size: 12px;
   line-height: 1.6;
 }
-#mainApp .pfx-form .input {
+body #mainApp .pfx-form .input {
   height: 48px;
   border: 1px solid var(--v2-line);
   border-radius: var(--v2-r-ctl);
@@ -620,13 +612,13 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   font-size: 14px;
   transition: border-color .2s var(--v2-ease), background .2s var(--v2-ease), box-shadow .2s var(--v2-ease);
 }
-#mainApp .pfx-form .input:focus {
+body #mainApp .pfx-form .input:focus {
   border-color: var(--v2-accent);
   background: #fff;
   box-shadow: 0 0 0 4px rgba(2, 101, 255, .10);
   outline: 0;
 }
-#mainApp .pfx-note {
+body #mainApp .pfx-note {
   margin-top: 6px;
   display: flex;
   align-items: flex-start;
@@ -635,9 +627,9 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   font-size: 12px;
   line-height: 1.7;
 }
-#mainApp .pfx-note[hidden] { display: none; }
-#mainApp .pfx-note .pxi { width: 15px; height: 15px; margin-top: 3px; }
-#mainApp .pfx-hint {
+body #mainApp .pfx-note[hidden] { display: none; }
+body #mainApp .pfx-note .pxi { width: 15px; height: 15px; margin-top: 3px; }
+body #mainApp .pfx-hint {
   margin: 0 0 14px;
   padding: 10px 12px;
   display: flex;
@@ -649,9 +641,9 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   font-size: 12px;
   line-height: 1.7;
 }
-#mainApp .pfx-hint .pxi { width: 16px; height: 16px; margin-top: 3px; }
-#mainApp .pfx-hint.warn { background: #fff7e8; color: #a16207; }
-#mainApp .pfx-save {
+body #mainApp .pfx-hint .pxi { width: 16px; height: 16px; margin-top: 3px; }
+body #mainApp .pfx-hint.warn { background: #fff7e8; color: #a16207; }
+body #mainApp .pfx-save {
   width: 100%;
   min-height: 48px;
   display: inline-flex;
@@ -667,11 +659,11 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   cursor: pointer;
   box-shadow: none !important;
 }
-#mainApp .pfx-save:disabled { background: #cfe0fb !important; cursor: not-allowed; }
-#mainApp .pfx-save .pxi { width: 19px; height: 19px; }
+body #mainApp .pfx-save:disabled { background: #cfe0fb !important; cursor: not-allowed; }
+body #mainApp .pfx-save .pxi { width: 19px; height: 19px; }
 
 /* menu */
-#mainApp .pfx-menu {
+body #mainApp .pfx-menu {
   margin: 0 0 14px;
   padding: 4px 0;
   overflow: hidden;
@@ -680,7 +672,7 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   background: var(--v2-card);
   box-shadow: var(--v2-shadow);
 }
-#mainApp .pfx-item {
+body #mainApp .pfx-item {
   width: 100%;
   min-height: 68px;
   padding: 10px 16px;
@@ -696,9 +688,9 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
-#mainApp .pfx-item + .pfx-item { border-top: 1px solid #f0f3f8 !important; }
-#mainApp .pfx-item:active { background: #f6f8fc !important; }
-#mainApp .pfx-item-ico {
+body #mainApp .pfx-item + .pfx-item { border-top: 1px solid #f0f3f8 !important; }
+body #mainApp .pfx-item:active { background: #f6f8fc !important; }
+body #mainApp .pfx-item-ico {
   width: 40px;
   height: 40px;
   flex: 0 0 auto;
@@ -708,14 +700,14 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   background: var(--v2-sky-soft);
   color: var(--v2-accent);
 }
-#mainApp .pfx-item-ico .pxi { width: 21px; height: 21px; }
-#mainApp .pfx-item-txt { min-width: 0; flex: 1; display: flex; flex-direction: column; }
-#mainApp .pfx-item-txt b { font-size: 14px; font-weight: 400; line-height: 1.6; }
-#mainApp .pfx-item-txt small { color: var(--v2-muted); font-size: 12px; line-height: 1.6; }
-#mainApp .pfx-item-go { flex: 0 0 auto; color: #a6b1c2; }
-#mainApp .pfx-item-go .pxi { width: 18px; height: 18px; }
+body #mainApp .pfx-item-ico .pxi { width: 21px; height: 21px; }
+body #mainApp .pfx-item-txt { min-width: 0; flex: 1; display: flex; flex-direction: column; }
+body #mainApp .pfx-item-txt b { font-size: 14px; font-weight: 400; line-height: 1.6; }
+body #mainApp .pfx-item-txt small { color: var(--v2-muted); font-size: 12px; line-height: 1.6; }
+body #mainApp .pfx-item-go { flex: 0 0 auto; color: #a6b1c2; }
+body #mainApp .pfx-item-go .pxi { width: 18px; height: 18px; }
 
-#mainApp .pfx-logout {
+body #mainApp .pfx-logout {
   width: 100%;
   min-height: 52px;
   margin: 0 0 6px;
@@ -731,11 +723,706 @@ body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !i
   font-size: 14px;
   cursor: pointer;
 }
-#mainApp .pfx-logout:active { background: #fff5f5 !important; }
-#mainApp .pfx-logout .pxi { width: 19px; height: 19px; }
-#mainApp .pfx-version {
+body #mainApp .pfx-logout:active { background: #fff5f5 !important; }
+body #mainApp .pfx-logout .pxi { width: 19px; height: 19px; }
+body #mainApp .pfx-version {
   padding: 10px 0 6px;
   color: #98a4b6;
   font-size: 11px;
   text-align: center;
 }
+
+/* ═════════════════════════ SHARED PIECES (exchange / transactions / notifications) ═════════════════════════
+   Same language everywhere: sky-tinted icon tile, white card, 14px controls, 12px muted text.
+   Legacy rules for these screens are ID/!important based, so these match at #mainApp #id level. */
+body #mainApp .pxi.pxi-s { width: 18px; height: 18px; }
+
+/* ═════════════════════════ EXCHANGE ═════════════════════════ */
+body #mainApp #pageHome { padding-top: 6px; }
+body #mainApp #pageHome #exchangeCard.panel {
+  margin: 0 0 14px !important;
+  padding: 18px 16px !important;
+  border: 1px solid var(--v2-line) !important;
+  border-radius: var(--v2-r-card) !important;
+  background: var(--v2-card) !important;
+  box-shadow: var(--v2-shadow) !important;
+}
+body #mainApp #pageHome #exchangeCard .xc-head {
+  margin: 0 0 16px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  background: none !important;
+}
+body #mainApp #pageHome #exchangeCard .xc-head-ico {
+  width: 40px !important;
+  height: 40px !important;
+  display: grid !important;
+  place-items: center !important;
+  border: 0 !important;
+  border-radius: 13px !important;
+  background: var(--v2-sky) !important;
+  color: var(--v2-accent) !important;
+}
+body #mainApp #pageHome #exchangeCard .xc-head-ico .icn { width: 21px !important; height: 21px !important; }
+body #mainApp #pageHome #exchangeCard .xc-head h2 { margin: 0 !important; color: var(--v2-ink) !important; font-size: 16px !important; font-weight: 400 !important; line-height: 1.5 !important; }
+
+body #mainApp #pageHome #exchangeCard .xc-cols { display: block !important; padding: 0 !important; }
+body #mainApp #pageHome #exchangeCard :is(#grpSend, #grpRecv, #grpProof) {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+body #mainApp #pageHome #exchangeCard .ux-review-grid { display: block !important; margin: 16px 0 0 !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; }
+body #mainApp #pageHome #exchangeCard .ux-review-column { padding: 0 !important; }
+body #mainApp #pageHome #exchangeCard .file-picker-action { display: none !important; }
+body #mainApp #pageHome #exchangeCard .ux-proof-column { margin-top: 16px !important; }
+body #mainApp #pageHome #exchangeCard .xc-step {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+body #mainApp #pageHome #exchangeCard .xc-step + .xc-step { border-top: 0 !important; }
+body #mainApp #pageHome #exchangeCard .xc-step-head {
+  margin: 0 0 12px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+body #mainApp #pageHome #exchangeCard .xc-step-ico {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  background: var(--v2-sky-soft);
+  color: var(--v2-accent);
+}
+body #mainApp #pageHome #exchangeCard .xc-step-ico .pxi { width: 19px; height: 19px; }
+body #mainApp #pageHome #exchangeCard .xc-step-head h3 { margin: 0 !important; flex: 1; color: var(--v2-ink) !important; font-size: 14px !important; font-weight: 400 !important; line-height: 1.5 !important; }
+body #mainApp #pageHome #exchangeCard .xc-badge {
+  min-height: 26px !important;
+  padding: 0 10px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: #f1f5fa !important;
+  color: var(--v2-muted) !important;
+  font-size: 11.5px !important;
+  font-weight: 400 !important;
+}
+
+/* method picker */
+body #mainApp #pageHome #exchangeCard .picker-trigger {
+  width: 100% !important;
+  min-height: 60px !important;
+  padding: 8px 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  border: 1px solid var(--v2-line) !important;
+  border-radius: var(--v2-r-ctl) !important;
+  background: #f8fafd !important;
+  box-shadow: none !important;
+  cursor: pointer;
+}
+body #mainApp #pageHome #exchangeCard .picker-trigger-label { color: var(--v2-muted) !important; font-size: 11.5px !important; line-height: 1.5 !important; }
+body #mainApp #pageHome #exchangeCard .picker-trigger-value { color: var(--v2-ink) !important; font-size: 14px !important; font-weight: 400 !important; line-height: 1.5 !important; }
+body #mainApp #pageHome #exchangeCard .select-chevron { color: var(--v2-muted) !important; }
+body #mainApp #pageHome #exchangeCard .method-icon { width: 36px !important; height: 36px !important; border-radius: 11px !important; flex: 0 0 auto; }
+
+/* where to pay: number + copy */
+body #mainApp #pageHome #exchangeCard .wallet-row {
+  margin: 10px 0 0 !important;
+  padding: 12px 14px !important;
+  border: 0 !important;
+  border-right: 0 !important;
+  border-left: 0 !important;
+  border-radius: var(--v2-r-ctl) !important;
+  background: var(--v2-sky-soft) !important;
+  box-shadow: none !important;
+}
+body #mainApp #pageHome #exchangeCard .wallet-label { color: var(--v2-muted) !important; font-size: 12px !important; font-weight: 400 !important; }
+body #mainApp #pageHome #exchangeCard .wallet-row-line { margin-top: 6px !important; display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 10px !important; }
+body #mainApp #pageHome #exchangeCard .wallet-value { color: var(--v2-ink) !important; font-size: 15px !important; font-weight: 400 !important; letter-spacing: .2px; }
+body #mainApp #pageHome #exchangeCard .copy-btn {
+  min-height: 36px !important;
+  padding: 0 12px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  border: 0 !important;
+  border-radius: 11px !important;
+  background: #fff !important;
+  color: var(--v2-accent) !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  box-shadow: none !important;
+}
+body #mainApp #pageHome #exchangeCard .copy-btn .icn { width: 16px !important; height: 16px !important; }
+
+/* fields */
+body #mainApp #pageHome #exchangeCard .field { margin: 14px 0 0 !important; }
+body #mainApp #pageHome #exchangeCard .field-label { margin: 0 0 6px !important; display: block !important; color: var(--v2-muted) !important; font-size: 12px !important; font-weight: 400 !important; line-height: 1.6 !important; }
+body #mainApp #pageHome #exchangeCard .input {
+  height: 48px !important;
+  border: 1px solid var(--v2-line) !important;
+  border-radius: var(--v2-r-ctl) !important;
+  background: #f8fafd !important;
+  color: var(--v2-ink) !important;
+  font-size: 14px !important;
+  box-shadow: none !important;
+}
+body #mainApp #pageHome #exchangeCard .input:focus { border-color: var(--v2-accent) !important; background: #fff !important; box-shadow: 0 0 0 4px rgba(2, 101, 255, .10) !important; outline: 0 !important; }
+body #mainApp #pageHome #exchangeCard .xc-in-suffix { color: var(--v2-muted) !important; font-size: 12px !important; font-weight: 400 !important; }
+body #mainApp #pageHome #exchangeCard .quick-amounts { margin-top: 10px !important; display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
+body #mainApp #pageHome #exchangeCard .quick-amount-btn {
+  min-height: 40px !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: #f1f5fa !important;
+  color: var(--v2-text) !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  box-shadow: none !important;
+}
+body #mainApp #pageHome #exchangeCard .quick-amount-btn:active { background: var(--v2-sky) !important; color: var(--v2-accent) !important; }
+body #mainApp #pageHome #exchangeCard .xc-hint { margin: 8px 2px 0 !important; padding: 0 !important; border: 0 !important; background: none !important; color: var(--v2-muted) !important; font-size: 12px !important; line-height: 1.7 !important; }
+
+/* the profile name is no longer asked for here (it is filled from the profile; the field only
+   re-appears if validation has something to say) */
+body #mainApp #pageHome #exchangeCard #senderNameField { display: none !important; }
+body #mainApp #pageHome #exchangeCard #senderNameField:has(#userSenderNameError:not(:empty)) { display: block !important; }
+
+/* swap between the two steps */
+body #mainApp #pageHome #exchangeCard .xc-swap { margin: 14px 0 !important; display: flex !important; align-items: center !important; justify-content: center !important; gap: 10px !important; }
+body #mainApp #pageHome #exchangeCard .xc-swap-line { flex: 1 !important; height: 1px !important; background: var(--v2-line) !important; }
+body #mainApp #pageHome #exchangeCard .xc-swap-btn {
+  width: 40px !important;
+  height: 40px !important;
+  display: grid !important;
+  place-items: center !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: var(--v2-sky) !important;
+  color: var(--v2-accent) !important;
+  box-shadow: none !important;
+}
+body #mainApp #pageHome #exchangeCard .xc-swap-btn .icn { width: 20px !important; height: 20px !important; }
+
+/* summary */
+body #mainApp #pageHome #exchangeCard .xc-summary {
+  margin: 16px 0 0 !important;
+  padding: 6px 14px !important;
+  border: 0 !important;
+  border-radius: var(--v2-r-ctl) !important;
+  background: #f8fafd !important;
+  box-shadow: none !important;
+}
+body #mainApp #pageHome #exchangeCard .xc-summary-head { margin: 0 !important; padding: 8px 0 !important; border: 0 !important; }
+body #mainApp #pageHome #exchangeCard .xc-summary-head h3 { margin: 0 !important; color: var(--v2-ink) !important; font-size: 13px !important; font-weight: 400 !important; }
+body #mainApp #pageHome #exchangeCard .xc-sum-row { min-height: 40px !important; padding: 0 !important; display: flex !important; align-items: center !important; justify-content: space-between !important; border: 0 !important; border-top: 1px solid #eef1f6 !important; font-size: 13px !important; }
+body #mainApp #pageHome #exchangeCard .xc-sum-row[hidden] { display: none !important; }
+body #mainApp #pageHome #exchangeCard .xc-sum-row .lbl { color: var(--v2-muted) !important; font-weight: 400 !important; }
+body #mainApp #pageHome #exchangeCard .xc-sum-row .v { color: var(--v2-ink) !important; font-weight: 400 !important; }
+body #mainApp #pageHome #exchangeCard .xc-sum-row.total .v { color: var(--v2-accent) !important; }
+
+/* receipt upload */
+body #mainApp #pageHome #exchangeCard .file-picker {
+  min-height: 72px !important;
+  padding: 12px 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  border: 1.5px dashed var(--v2-sky-line) !important;
+  border-radius: var(--v2-r-ctl) !important;
+  background: #f6fbff !important;
+  box-shadow: none !important;
+  cursor: pointer;
+}
+body #mainApp #pageHome #exchangeCard .file-picker-icon,
+body #mainApp #pageHome #exchangeCard .file-picker-action {
+  width: 40px !important;
+  height: 40px !important;
+  flex: 0 0 auto;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 13px !important;
+  background: var(--v2-sky) !important;
+  color: var(--v2-accent) !important;
+}
+body #mainApp #pageHome #exchangeCard .file-picker-icon svg { width: 20px !important; height: 20px !important; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+body #mainApp #pageHome #exchangeCard .file-picker-action .icn { width: 20px !important; height: 20px !important; }
+body #mainApp #pageHome #exchangeCard .file-picker-copy b { display: block; color: var(--v2-ink) !important; font-size: 14px !important; font-weight: 400 !important; }
+body #mainApp #pageHome #exchangeCard .file-picker-copy small { color: var(--v2-muted) !important; font-size: 12px !important; }
+
+/* submit */
+body #mainApp #pageHome #exchangeCard .xc-submit-wrap { margin: 18px 0 0 !important; }
+body #mainApp #pageHome #exchangeCard #submitBtn.btn-submit {
+  width: 100% !important;
+  min-height: 52px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  border: 0 !important;
+  border-radius: var(--v2-r-ctl) !important;
+  background: var(--v2-accent) !important;
+  color: #fff !important;
+  font-size: 15px !important;
+  font-weight: 400 !important;
+  box-shadow: none !important;
+}
+body #mainApp #pageHome #exchangeCard #submitBtn .pxi { width: 20px; height: 20px; }
+body #mainApp #pageHome #exchangeCard #submitBtn:disabled { background: #dbe6f6 !important; color: #7b8aa3 !important; }
+
+/* ═════════════════════════ NOTICES ON HOME (feedback prompt, news, notification bar) ═════════════════════════ */
+body #mainApp .home-feedback-prompt:not([hidden]),
+body #mainApp #newsBanner,
+body #mainApp #notifBar.notif-bar {
+  margin: 0 0 12px !important;
+  padding: 12px 14px !important;
+  align-items: center !important;
+  gap: 12px !important;
+  border: 1px solid var(--v2-line) !important;
+  border-radius: 18px !important;
+  background: var(--v2-card) !important;
+  box-shadow: var(--v2-shadow) !important;
+}
+body #mainApp .home-feedback-prompt:not([hidden]) { display: flex !important; }
+body #mainApp .home-feedback-icon,
+body #mainApp .news-banner-icon,
+body #mainApp .notif-bar-ico {
+  width: 38px !important;
+  height: 38px !important;
+  flex: 0 0 auto;
+  display: grid !important;
+  place-items: center !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: var(--v2-sky-soft) !important;
+  color: var(--v2-accent) !important;
+}
+body #mainApp .home-feedback-icon { background: #fff4de !important; color: #d98a05 !important; }
+body #mainApp .home-feedback-icon .icn,
+body #mainApp .news-banner-icon .icn { width: 20px !important; height: 20px !important; }
+body #mainApp .home-feedback-copy { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 2px; }
+body #mainApp .home-feedback-copy b { color: var(--v2-ink) !important; font-size: 13.5px !important; font-weight: 400 !important; }
+body #mainApp .home-feedback-copy span { color: var(--v2-muted) !important; font-size: 12px !important; line-height: 1.6 !important; }
+body #mainApp .home-feedback-action {
+  min-height: 38px !important;
+  padding: 0 14px !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: var(--v2-accent) !important;
+  color: #fff !important;
+  font: inherit;
+  font-size: 12.5px !important;
+  box-shadow: none !important;
+  cursor: pointer;
+}
+body #mainApp .news-banner-label { color: var(--v2-accent) !important; font-size: 11.5px !important; font-weight: 400 !important; }
+body #mainApp .news-slide-text { color: var(--v2-text) !important; font-size: 13px !important; }
+body #mainApp .notif-bar-title { color: var(--v2-ink) !important; font-size: 13.5px !important; font-weight: 400 !important; }
+body #mainApp .notif-bar-msg { color: var(--v2-muted) !important; font-size: 12px !important; }
+
+/* ═════════════════════════ TRANSACTIONS ═════════════════════════ */
+body #mainApp #pageTx .tx-profit-panel { padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; }
+body #mainApp #pageTx .tx-profit-head { margin: 4px 0 14px !important; padding: 0 !important; border: 0 !important; background: none !important; }
+body #mainApp #pageTx .tx-profit-head h2 { margin: 0 !important; color: var(--v2-ink) !important; font-size: 18px !important; font-weight: 400 !important; }
+body #mainApp #pageTx .tx-profit-head p { margin: 2px 0 0 !important; color: var(--v2-muted) !important; font-size: 12px !important; }
+body #mainApp #pageTx .tx-profit-tools { padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; }
+
+body #mainApp #pageTx .search-wrap { position: relative; margin: 0 0 12px !important; }
+body #mainApp #pageTx #txSearch.input {
+  height: 48px !important;
+  padding-inline: 44px !important;
+  border: 1px solid var(--v2-line) !important;
+  border-radius: var(--v2-r-ctl) !important;
+  background: #fff !important;
+  color: var(--v2-ink) !important;
+  font-size: 13px !important;
+  box-shadow: none !important;
+}
+body #mainApp #pageTx .search-ico { color: var(--v2-muted) !important; }
+body #mainApp #pageTx .search-ico .icn { width: 19px !important; height: 19px !important; }
+
+body #mainApp #pageTx .filter-scroll { margin: 0 0 14px !important; padding: 0 !important; display: flex !important; gap: 8px !important; overflow-x: auto; scrollbar-width: none; }
+body #mainApp #pageTx .filter-scroll::-webkit-scrollbar { display: none; }
+body #mainApp #pageTx .filter-chip {
+  min-height: 38px !important;
+  padding: 0 14px !important;
+  flex: 0 0 auto;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  border: 1px solid var(--v2-line) !important;
+  border-radius: 999px !important;
+  background: #fff !important;
+  color: var(--v2-muted) !important;
+  font-size: 12.5px !important;
+  font-weight: 400 !important;
+  box-shadow: none !important;
+  transition: background .2s var(--v2-ease), color .2s var(--v2-ease), border-color .2s var(--v2-ease);
+}
+body #mainApp #pageTx .filter-chip.on { border-color: var(--v2-sky-line) !important; background: var(--v2-sky) !important; color: var(--v2-accent) !important; }
+body #mainApp #pageTx .chip-count {
+  min-width: 20px !important;
+  height: 20px !important;
+  padding: 0 6px !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  border-radius: 10px !important;
+  background: #f1f5fa !important;
+  color: var(--v2-muted) !important;
+  font-size: 11px !important;
+  font-weight: 400 !important;
+}
+body #mainApp #pageTx .filter-chip.on .chip-count { background: #fff !important; color: var(--v2-accent) !important; }
+
+body #mainApp #pageTx .tx-profit-title { margin: 6px 2px 12px !important; padding: 0 !important; border: 0 !important; color: var(--v2-ink) !important; font-size: 14px !important; font-weight: 400 !important; }
+body #mainApp #pageTx .tx-profit-title::before { display: none !important; }
+body #mainApp #pageTx .tx-profit-count { color: var(--v2-muted) !important; font-size: 12px !important; }
+
+body #mainApp #pageTx .tx-card {
+  margin: 0 0 12px !important;
+  padding: 14px !important;
+  display: block !important;
+  border: 1px solid var(--v2-line) !important;
+  border-radius: 18px !important;
+  background: var(--v2-card) !important;
+  box-shadow: var(--v2-shadow) !important;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+body #mainApp #pageTx .tx-card:active { background: #f9fbfe !important; }
+body #mainApp #pageTx .tx-card.needs-action { border-color: #f7d9a8 !important; background: #fffdf8 !important; }
+body #mainApp #pageTx .tx-card-top { margin: 0 !important; padding: 0 !important; border: 0 !important; display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 10px; }
+body #mainApp #pageTx .tx-code { color: var(--v2-muted) !important; font-size: 12px !important; font-weight: 400 !important; letter-spacing: .3px; }
+body #mainApp #pageTx .tx-card-content { margin: 12px 0 0 !important; padding: 12px 0 0 !important; border: 0 !important; border-top: 1px solid #f0f3f8 !important; display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 10px; }
+body #mainApp #pageTx .tx-route { margin: 0 !important; display: flex !important; align-items: center !important; gap: 8px !important; color: var(--v2-text) !important; font-size: 13px !important; font-weight: 400 !important; }
+body #mainApp #pageTx .tx-route-arrow { color: var(--v2-muted) !important; display: inline-grid; }
+body #mainApp #pageTx .tx-route-arrow .icn, #mainApp #pageTx .tx-route-arrow svg { width: 16px !important; height: 16px !important; }
+body #mainApp #pageTx .tx-card-value { display: flex !important; flex-direction: column !important; align-items: flex-start !important; gap: 0 !important; }
+body #mainApp #pageTx .tx-card-value small { color: var(--v2-muted) !important; font-size: 11.5px !important; font-weight: 400 !important; }
+body #mainApp #pageTx .tx-amount { color: var(--v2-ink) !important; font-size: 16px !important; font-weight: 400 !important; }
+body #mainApp #pageTx .tx-card-foot { margin: 12px 0 0 !important; padding: 12px 0 0 !important; border: 0 !important; border-top: 1px solid #f0f3f8 !important; display: flex !important; align-items: center !important; justify-content: space-between !important; }
+body #mainApp #pageTx .tx-when { color: var(--v2-muted) !important; font-size: 12px !important; }
+body #mainApp #pageTx .tx-detail-link { display: inline-flex !important; align-items: center !important; gap: 2px !important; color: var(--v2-accent) !important; font-size: 12px !important; font-weight: 400 !important; }
+body #mainApp #pageTx .tx-detail-link .pxi { width: 16px; height: 16px; }
+body #mainApp #pageTx .tx-card-action { margin: 12px 0 0 !important; padding: 9px 12px !important; border: 0 !important; border-radius: 12px !important; background: #fff4de !important; color: #a35f00 !important; font-size: 12px !important; font-weight: 400 !important; }
+body #mainApp #pageTx .tx-rounding-credit { margin: 10px 0 0 !important; color: var(--v2-muted) !important; font-size: 12px !important; }
+
+/* status pills: same tint family everywhere */
+body #mainApp .status-badge {
+  min-height: 26px !important;
+  padding: 0 11px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: #fff4de !important;
+  color: #a35f00 !important;
+  font-size: 11.5px !important;
+  font-weight: 400 !important;
+}
+body #mainApp .status-badge.status-success { background: #e6f6ec !important; color: #15803d !important; }
+body #mainApp .status-badge.status-danger,
+body #mainApp .status-badge.status-correction { background: #fdeceb !important; color: #b91c1c !important; }
+body #mainApp .status-badge.status-corrected { background: var(--v2-sky) !important; color: var(--v2-accent-deep) !important; }
+
+/* ═════════════════════════ TRANSACTION DETAIL SHEET ═════════════════════════ */
+body #mainApp #txSheet.tx-sheet {
+  border: 0 !important;
+  border-radius: 26px 26px 0 0 !important;
+  background: var(--v2-canvas) !important;
+  box-shadow: 0 -20px 50px -20px rgba(20, 35, 60, .35) !important;
+}
+body #mainApp #txSheet .tx-sheet-grip { width: 38px !important; height: 4px !important; margin: 10px auto 4px !important; border-radius: 4px !important; background: #d5dbe6 !important; }
+body #mainApp #txSheet .tx-sheet-head { padding: 6px 16px 10px !important; display: flex !important; align-items: center !important; justify-content: space-between !important; border: 0 !important; background: none !important; }
+body #mainApp #txSheet .tx-sheet-head h3 { margin: 0 !important; color: var(--v2-ink) !important; font-size: 16px !important; font-weight: 400 !important; }
+body #mainApp #txSheet .tx-sheet-close {
+  width: 40px !important;
+  height: 40px !important;
+  display: grid !important;
+  place-items: center !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: #eef2f8 !important;
+  color: var(--v2-muted) !important;
+  box-shadow: none !important;
+}
+body #mainApp #txSheet .tx-sheet-body { padding: 4px 14px calc(22px + env(safe-area-inset-bottom, 0px)) !important; }
+
+body #mainApp #txSheet .tx-dhead { margin: 0 0 12px !important; display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 10px; }
+body #mainApp #txSheet .tx-dcode {
+  min-height: 36px !important;
+  padding: 0 12px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: #eef2f8 !important;
+  color: var(--v2-text) !important;
+  font: inherit;
+  font-size: 12px !important;
+  box-shadow: none !important;
+}
+body #mainApp #txSheet .tx-dcode .icn, #mainApp #txSheet .tx-dcode svg { width: 15px !important; height: 15px !important; }
+
+body #mainApp #txSheet .tx-damounts { margin: 0 0 12px !important; display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+body #mainApp #txSheet .tx-damounts > div {
+  min-width: 0;
+  padding: 12px 14px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  border: 0 !important;
+  border-radius: 16px !important;
+  background: #fff !important;
+  box-shadow: var(--v2-shadow) !important;
+}
+body #mainApp #txSheet .tx-damounts > div:nth-child(2) { background: linear-gradient(135deg, #e3f3ff, #d6eeff) !important; }
+body #mainApp #txSheet .tx-damounts small { color: var(--v2-muted) !important; font-size: 12px !important; font-weight: 400 !important; }
+body #mainApp #txSheet .tx-damounts b { overflow: hidden; color: var(--v2-ink) !important; font-size: 16px !important; font-weight: 400 !important; text-overflow: ellipsis; white-space: nowrap; }
+body #mainApp #txSheet .tx-damounts b.recv { color: var(--v2-accent-deep) !important; }
+
+body #mainApp #txSheet .tx-dgroup {
+  margin: 0 0 12px !important;
+  padding: 2px 14px !important;
+  overflow: hidden;
+  border: 1px solid var(--v2-line) !important;
+  border-radius: 18px !important;
+  background: #fff !important;
+  box-shadow: var(--v2-shadow) !important;
+}
+body #mainApp #txSheet .tx-drow { min-height: 48px !important; padding: 8px 0 !important; display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 14px !important; border: 0 !important; }
+body #mainApp #txSheet .tx-drow + .tx-drow { border-top: 1px solid #f0f3f8 !important; }
+body #mainApp #txSheet .tx-dlbl { flex: 0 0 auto; color: var(--v2-muted) !important; font-size: 12.5px !important; font-weight: 400 !important; }
+body #mainApp #txSheet .tx-dval { min-width: 0; color: var(--v2-ink) !important; font-size: 13px !important; font-weight: 400 !important; line-height: 1.6 !important; text-align: end; }
+body #mainApp #txSheet .tx-droute { display: inline-flex !important; align-items: center !important; gap: 8px !important; }
+body #mainApp #txSheet .tx-route-arrow { color: var(--v2-muted) !important; display: inline-grid; }
+body #mainApp #txSheet .tx-route-arrow .icn, #mainApp #txSheet .tx-route-arrow svg { width: 16px !important; height: 16px !important; }
+
+body #mainApp #txSheet .tx-dnote { margin: 0 0 12px !important; padding: 12px 14px !important; border: 0 !important; border-radius: 16px !important; background: #eef2f8 !important; }
+body #mainApp #txSheet .tx-dnote.warn { background: #fff4de !important; }
+body #mainApp #txSheet .tx-dnote b { display: block; margin-bottom: 2px; color: var(--v2-ink) !important; font-size: 13px !important; font-weight: 400 !important; }
+body #mainApp #txSheet .tx-dnote p { margin: 0 !important; color: var(--v2-text) !important; font-size: 12.5px !important; line-height: 1.8 !important; }
+body #mainApp #txSheet .tx-dnote .btn { margin-top: 10px !important; }
+body #mainApp #txSheet .payout-rounding-note { margin: 0 0 12px !important; color: var(--v2-muted) !important; font-size: 12px !important; line-height: 1.8 !important; }
+body #mainApp #txSheet .tx-dreceipt { margin: 0 0 12px !important; }
+body #mainApp #txSheet .tx-dreceipt b { display: block; margin-bottom: 8px; color: var(--v2-ink) !important; font-size: 13px !important; font-weight: 400 !important; }
+body #mainApp #txSheet .tx-dreceipt img { width: 100%; border-radius: 16px; }
+
+/* buttons inside the sheet share one size and shape */
+body #mainApp #txSheet .btn,
+body #mainApp #txSheet .tx-receipt-actions .btn-ghost {
+  width: 100% !important;
+  min-height: 48px !important;
+  padding: 0 16px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  border: 0 !important;
+  border-radius: var(--v2-r-ctl) !important;
+  background: var(--v2-accent) !important;
+  color: #fff !important;
+  font: inherit;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  box-shadow: none !important;
+  cursor: pointer;
+}
+body #mainApp #txSheet .tx-receipt-actions .btn-ghost { background: #eef2f8 !important; color: var(--v2-text) !important; }
+body #mainApp #txSheet .tx-receipt-actions .btn-ghost svg { width: 19px !important; height: 19px !important; }
+
+/* ── feedback inside the sheet: heading, one reward line, stars, note, send ── */
+body #mainApp #txSheet .order-feedback {
+  margin: 0 0 12px !important;
+  padding: 16px 14px !important;
+  border: 1px solid var(--v2-line) !important;
+  border-radius: 18px !important;
+  background: #fff !important;
+  box-shadow: var(--v2-shadow) !important;
+}
+body #mainApp #txSheet .feedback-section-heading { margin: 0 0 12px !important; padding: 0 !important; display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 12px !important; flex-direction: row-reverse; }
+body #mainApp #txSheet .feedback-section-heading > div { flex: 1; min-width: 0; }
+body #mainApp #txSheet .feedback-kicker { display: none !important; }
+body #mainApp #txSheet .feedback-section-heading h3 { margin: 0 !important; color: var(--v2-ink) !important; font-size: 14px !important; font-weight: 400 !important; line-height: 1.6 !important; }
+body #mainApp #txSheet .feedback-section-heading p { margin: 2px 0 0 !important; color: var(--v2-muted) !important; font-size: 12px !important; line-height: 1.7 !important; }
+body #mainApp #txSheet .feedback-heading-icon {
+  width: 38px !important;
+  height: 38px !important;
+  flex: 0 0 auto;
+  display: grid !important;
+  place-items: center !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: #fff4de !important;
+  color: #d98a05 !important;
+}
+body #mainApp #txSheet .feedback-heading-icon .icn { width: 20px !important; height: 20px !important; }
+body #mainApp #txSheet .feedback-submitted-badge { min-height: 26px; padding: 0 10px; display: inline-flex; align-items: center; gap: 4px; border-radius: 999px; background: #e6f6ec; color: #15803d; font-size: 11.5px; }
+body #mainApp #txSheet .feedback-submitted-badge .pxi { width: 14px; height: 14px; stroke-width: 2.4; }
+body #mainApp #txSheet .feedback-order-snapshot { display: none !important; }
+
+body #mainApp #txSheet .feedback-reward-card {
+  margin: 0 0 14px !important;
+  padding: 10px 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  background: #fff8e8 !important;
+}
+body #mainApp #txSheet .feedback-reward-card.is-earned { background: #e9f7ee !important; }
+body #mainApp #txSheet .feedback-reward-icon { width: 34px !important; height: 34px !important; flex: 0 0 auto; display: grid !important; place-items: center !important; border-radius: 11px !important; background: #fdecc4 !important; color: #b86e00 !important; font-size: 14px !important; }
+body #mainApp #txSheet .feedback-reward-card.is-earned .feedback-reward-icon { background: #cdeed8 !important; color: #15803d !important; }
+body #mainApp #txSheet .feedback-reward-icon .pxi { width: 18px; height: 18px; }
+body #mainApp #txSheet .feedback-reward-copy { min-width: 0; flex: 1; display: flex !important; flex-direction: column !important; gap: 0 !important; }
+body #mainApp #txSheet .feedback-reward-copy b { color: var(--v2-muted) !important; font-size: 11.5px !important; font-weight: 400 !important; }
+body #mainApp #txSheet .feedback-reward-copy strong { color: var(--v2-ink) !important; font-size: 13px !important; font-weight: 400 !important; line-height: 1.6; }
+body #mainApp #txSheet .feedback-reward-copy span,
+body #mainApp #txSheet .feedback-reward-copy small { display: none !important; }
+body #mainApp #txSheet .feedback-reward-tag { display: none !important; }
+
+body #mainApp #txSheet .feedback-input-label { margin: 0 0 8px !important; display: flex !important; align-items: center !important; justify-content: space-between !important; color: var(--v2-text) !important; font-size: 12.5px !important; font-weight: 400 !important; }
+body #mainApp #txSheet .feedback-input-label span { color: var(--v2-muted) !important; font-size: 11.5px !important; }
+body #mainApp #txSheet .feedback-star-picker,
+body #mainApp #txSheet .feedback-stars { margin: 0 0 14px !important; display: grid !important; grid-template-columns: repeat(5, 1fr) !important; gap: 8px !important; direction: ltr; }
+body #mainApp #txSheet .feedback-star-picker .feedback-star,
+body #mainApp #txSheet .feedback-stars span {
+  width: 100% !important;
+  height: 44px !important;
+  display: grid !important;
+  place-items: center !important;
+  border: 0 !important;
+  border-radius: 13px !important;
+  background: #f1f5fa !important;
+  color: #b3bfd0 !important;
+  font-size: 20px !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+body #mainApp #txSheet .feedback-star-picker .feedback-star .icn { width: 22px !important; height: 22px !important; }
+body #mainApp #txSheet .feedback-star-picker .feedback-star.selected,
+body #mainApp #txSheet .feedback-stars span.filled { background: #fff1cf !important; color: #e39a0b !important; }
+body #mainApp #txSheet .feedback-star-picker .feedback-star.selected .icn path { fill: currentColor; }
+body #mainApp #txSheet #orderFeedbackComment {
+  width: 100%;
+  min-height: 84px !important;
+  padding: 12px 14px !important;
+  border: 1px solid var(--v2-line) !important;
+  border-radius: var(--v2-r-ctl) !important;
+  background: #f8fafd !important;
+  color: var(--v2-ink) !important;
+  font: inherit;
+  font-size: 13px !important;
+  resize: none !important;
+}
+body #mainApp #txSheet .feedback-char-hint { display: none !important; }
+body #mainApp #txSheet .feedback-submit-btn { margin-top: 12px !important; }
+body #mainApp #txSheet .feedback-comment-box { margin: 0 0 10px; padding: 10px 12px; border-radius: 14px; background: #f5f7fb; }
+body #mainApp #txSheet .feedback-comment-box small { color: var(--v2-muted); font-size: 11.5px; }
+body #mainApp #txSheet .feedback-comment { margin: 2px 0 0; color: var(--v2-text); font-size: 13px; line-height: 1.8; }
+body #mainApp #txSheet .feedback-muted,
+body #mainApp #txSheet .feedback-thanks { margin: 0 !important; color: var(--v2-muted) !important; font-size: 12px !important; }
+body #mainApp #txSheet .feedback-error { color: #b91c1c !important; font-size: 12px !important; }
+
+/* ═════════════════════════ NOTIFICATIONS PANEL ═════════════════════════ */
+body #mainApp #notifPanel.notif-panel {
+  border: 0 !important;
+  border-radius: 26px 26px 0 0 !important;
+  background: var(--v2-canvas) !important;
+  box-shadow: 0 -20px 50px -20px rgba(20, 35, 60, .35) !important;
+}
+body #mainApp #notifPanel .notif-grabber { width: 38px !important; height: 4px !important; margin: 10px auto 4px !important; border-radius: 4px !important; background: #d5dbe6 !important; }
+body #mainApp #notifPanel .notif-panel-head { padding: 6px 16px 12px !important; display: flex !important; align-items: center !important; gap: 8px !important; border: 0 !important; background: none !important; }
+body #mainApp #notifPanel .notif-panel-head h3 { margin: 0 !important; display: flex !important; align-items: center !important; gap: 10px !important; color: var(--v2-ink) !important; font-size: 16px !important; font-weight: 400 !important; }
+body #mainApp #notifPanel .notif-title-icon {
+  width: 40px !important;
+  height: 40px !important;
+  display: grid !important;
+  place-items: center !important;
+  border: 0 !important;
+  border-radius: 13px !important;
+  background: var(--v2-sky) !important;
+  color: var(--v2-accent) !important;
+}
+body #mainApp #notifPanel .notif-title-icon .icn { width: 21px !important; height: 21px !important; }
+body #mainApp #notifPanel .notif-head-count { min-width: 22px !important; height: 22px !important; padding: 0 7px !important; border-radius: 11px !important; background: #ef4444 !important; color: #fff !important; font-size: 11px !important; font-weight: 400 !important; }
+body #mainApp #notifPanel .notif-head-spacer { flex: 1; }
+body #mainApp #notifPanel .notif-read-all,
+body #mainApp #notifPanel .notif-close-btn {
+  width: 40px !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  padding: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: #eef2f8 !important;
+  color: var(--v2-muted) !important;
+  box-shadow: none !important;
+}
+body #mainApp #notifPanel .notif-read-all span:not(.icn):not(.pxi) { display: none !important; }
+body #mainApp #notifPanel .notif-read-all .icn, #mainApp #notifPanel .notif-close-btn .icn { width: 20px !important; height: 20px !important; }
+body #mainApp #notifPanel .notif-panel-body { padding: 0 14px calc(20px + env(safe-area-inset-bottom, 0px)) !important; }
+body #mainApp #notifPanel .notif-day { margin: 10px 4px 8px !important; padding: 0 !important; border: 0 !important; background: none !important; color: var(--v2-muted) !important; font-size: 12px !important; font-weight: 400 !important; }
+body #mainApp #notifPanel .notif-item {
+  width: 100%;
+  margin: 0 0 10px !important;
+  padding: 12px 14px !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+  border: 1px solid var(--v2-line) !important;
+  border-radius: 18px !important;
+  background: #fff !important;
+  box-shadow: var(--v2-shadow) !important;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+body #mainApp #notifPanel .notif-item::before, #mainApp #notifPanel .notif-item::after { display: none !important; }
+body #mainApp #notifPanel .notif-item.unread { background: #f6fbff !important; border-color: var(--v2-sky-line) !important; }
+body #mainApp #notifPanel .notif-item-ico {
+  width: 40px !important;
+  height: 40px !important;
+  flex: 0 0 auto;
+  display: grid !important;
+  place-items: center !important;
+  border: 0 !important;
+  border-radius: 13px !important;
+  background: var(--v2-sky-soft) !important;
+  color: var(--v2-accent) !important;
+}
+body #mainApp #notifPanel .notif-item-ico.ok { background: #e6f6ec !important; color: #15803d !important; }
+body #mainApp #notifPanel .notif-item-ico.no { background: #fdeceb !important; color: #b91c1c !important; }
+body #mainApp #notifPanel .notif-item-ico .pxi, #mainApp #notifPanel .notif-item-ico .icn { width: 21px !important; height: 21px !important; }
+body #mainApp #notifPanel .notif-item-text { min-width: 0; flex: 1; display: flex !important; flex-direction: column !important; gap: 2px !important; }
+body #mainApp #notifPanel .notif-item-title { display: flex !important; align-items: center !important; gap: 8px !important; color: var(--v2-ink) !important; font-size: 14px !important; font-weight: 400 !important; line-height: 1.6 !important; }
+body #mainApp #notifPanel .notif-unread-dot { width: 8px !important; height: 8px !important; flex: 0 0 auto; border-radius: 50% !important; background: var(--v2-accent) !important; }
+body #mainApp #notifPanel .notif-item-msg { color: var(--v2-text) !important; font-size: 12.5px !important; line-height: 1.8 !important; }
+body #mainApp #notifPanel .notif-item-time { margin-top: 2px !important; display: inline-flex !important; align-items: center !important; gap: 5px !important; color: var(--v2-muted) !important; font-size: 11.5px !important; }
+body #mainApp #notifPanel .notif-item-time .icn { width: 14px !important; height: 14px !important; }
+body #mainApp #notifPanel .notif-empty { padding: 36px 16px !important; color: var(--v2-muted) !important; font-size: 13px !important; line-height: 1.9 !important; text-align: center; }
+body #mainApp #notifPanel .notif-empty .icn { width: 40px !important; height: 40px !important; margin-bottom: 8px; display: inline-block; color: #b3bfd0 !important; }
+
+/* feedback: the heading already says what to do, so the extra star label and char counter go */
+body #mainApp #txSheet .feedback-input-label:not([for]) { display: none !important; }

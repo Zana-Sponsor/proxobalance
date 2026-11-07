@@ -353,11 +353,13 @@ function _notifKind(type){
   return 'msg';
 }
 function _notifIcon(type){
-  const k=_notifKind(type);
-  if(k==='ok')  return ICON.badgeCheck;
-  if(k==='no')  return ICON.xCircle;
-  if(k==='upd') return ICON.refresh;
-  return ICON.megaphone;
+  const sv=inner=>'<svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'+inner+'</svg>';
+  if(type==='order_approved') return sv('<circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.8 2.8L16 9.5"/>');
+  if(type==='order_rejected') return sv('<circle cx="12" cy="12" r="9"/><path d="m9 9 6 6m0-6-6 6"/>');
+  if(type==='order_status')   return sv('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>');
+  if(type==='support_case')   return sv('<path d="M21 12a9 9 0 0 1-13.2 8L3 21l1.1-4.6A9 9 0 1 1 21 12Z"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"/>');
+  if(type==='kyc')            return sv('<rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6.2 15a3 3 0 0 1 5.6 0M15 10h3M15 14h3"/>');
+  return sv('<path d="M10.3 21a2 2 0 0 0 3.4 0"/><path d="M3.3 15.3A1 1 0 0 0 4 17h16a1 1 0 0 0 .7-1.7C19.4 14 18 12.5 18 8A6 6 0 0 0 6 8c0 4.5-1.4 6-2.7 7.3"/>');
 }
 function _notifColor(type){
   const k=_notifKind(type);
@@ -2242,7 +2244,7 @@ function orderCardHTML(o){
     + roundingNote
     + '<div class="tx-card-foot">'
       + '<span class="tx-when">'+escHtml(txWhen(o.created_at,true))+'</span>'
-      + '<span class="tx-detail-link">وردەکاری <span aria-hidden="true">‹</span></span>'
+      + '<span class="tx-detail-link">وردەکاری <svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg></span>'
     + '</div>'
     + (needsAction ? '<div class="tx-card-action">پێویستی بە ڕاستکردنەوەی تۆ هەیە</div>' : '')
     + '</article>';
@@ -2267,7 +2269,7 @@ function feedbackOrderSnapshot(order){
 }
 function feedbackRewardCard(order,earned){
   return '<div class="feedback-reward-card'+(earned?' is-earned':'')+'" role="status">'+
-    '<div class="feedback-reward-icon" aria-hidden="true">'+(earned?'✓':'%')+'</div>'+
+    '<div class="feedback-reward-icon" aria-hidden="true">'+(earned?'<svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5"/></svg>':'<svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m19 5-14 14"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>')+'</div>'+
     '<div class="feedback-reward-copy"><b>'+(earned?'پاداشتەکەت ئامادەیە':'پاداشتی هەڵسەنگاندن')+'</b>'+
     '<strong>٥٠٪ داشکاندن لە کرێی خزمەتگوزاری</strong>'+
     '<span>زۆرترین داشکاندن: <bdi dir="ltr">١٠,٠٠٠ IQD</bdi> · یەکجار</span>'+
@@ -2280,12 +2282,12 @@ function renderOrderFeedback(order){
   const rewardEarned=hasOrderFeedbackReward(order);
   const snapshot=feedbackOrderSnapshot(order);
   if(feedback){
-    return '<section class="order-feedback is-submitted"><div class="feedback-section-heading"><div><span class="feedback-kicker">هەڵسەنگاندنی داواکاری</span><h3>هەڵسەنگاندنی تۆ</h3></div><span class="feedback-submitted-badge"><span aria-hidden="true">✓</span> نێردرا</span></div>'+snapshot+feedbackRewardCard(order,rewardEarned)+'<div class="feedback-stars" aria-label="'+escHtml(String(feedback.rating))+' لە ٥ ئەستێرە">'+
+    return '<section class="order-feedback is-submitted"><div class="feedback-section-heading"><div><span class="feedback-kicker">هەڵسەنگاندنی داواکاری</span><h3>هەڵسەنگاندنی تۆ</h3></div><span class="feedback-submitted-badge"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5"/></svg> نێردرا</span></div>'+feedbackRewardCard(order,rewardEarned)+'<div class="feedback-stars" aria-label="'+escHtml(String(feedback.rating))+' لە ٥ ئەستێرە">'+
       Array.from({length:5},(_,i)=>'<span class="'+(i<Number(feedback.rating)?'filled':'')+'" aria-hidden="true">★</span>').join('')+
       '</div>'+(feedback.comment?'<div class="feedback-comment-box"><small>تێبینیی تۆ</small><p class="feedback-comment">'+escHtml(feedback.comment)+'</p></div>':'<p class="feedback-muted">تەنها ئەستێرەکەت تۆمارکراوە.</p>')+
       '<p class="feedback-thanks">سوپاس بۆ ئەوەی کاتت بۆ باشترکردنی خزمەتگوزاری دانا.</p></section>';
   }
-  return '<section class="order-feedback"><div class="feedback-section-heading"><div><span class="feedback-kicker">مامەڵەکەت پەسەندکرا</span><h3>هەڵسەنگاندنی داواکاری</h3><p>ئەستێرەکان هەڵبژێرە. تێبینی ئارەزوومەندانەیە.</p></div><span class="feedback-heading-icon" aria-hidden="true"><span class="icn icon--solar icon--solar--star-linear"></span></span></div>'+snapshot+feedbackRewardCard(order,false)+'<label class="feedback-input-label">هەڵسەنگاندنی تۆ <span>ئەستێرەکان هەڵبژێرە</span></label>'+
+  return '<section class="order-feedback"><div class="feedback-section-heading"><div><span class="feedback-kicker">مامەڵەکەت پەسەندکرا</span><h3>هەڵسەنگاندنی داواکاری</h3><p>ئەستێرەکان هەڵبژێرە. تێبینی ئارەزوومەندانەیە.</p></div><span class="feedback-heading-icon" aria-hidden="true"><span class="icn icon--solar icon--solar--star-linear"></span></span></div>'+feedbackRewardCard(order,false)+'<label class="feedback-input-label">هەڵسەنگاندنی تۆ <span>ئەستێرەکان هەڵبژێرە</span></label>'+
     '<div class="feedback-star-picker" role="radiogroup" aria-label="هەڵبژاردنی ئەستێرە">'+Array.from({length:5},(_,i)=>'<button type="button" class="feedback-star" data-rating="'+(i+1)+'" aria-label="'+(i+1)+' ئەستێرە" aria-checked="false" role="radio" onclick="selectOrderFeedbackRating('+(i+1)+')"><span class="icn icon--solar icon--solar--star-linear" aria-hidden="true"></span></button>').join('')+'</div>'+
     '<label class="feedback-input-label" for="orderFeedbackComment">تێبینی <span>ئارەزوومەندانە</span></label><textarea id="orderFeedbackComment" maxlength="1000" placeholder="ئەزموونت لەگەڵ ئەم مامەڵەیە چۆن بوو؟" aria-label="نووسینی هەڵسەنگاندن"></textarea><small class="feedback-char-hint">تا ١,٠٠٠ پیت</small>'+
     '<button type="button" class="btn btn-primary btn-block feedback-submit-btn" id="orderFeedbackSubmit" onclick="submitOrderFeedback(\''+escHtml(String(order.id))+'\')"><span class="icn icon--solar icon--solar--star-linear" aria-hidden="true"></span> ناردنی هەڵسەنگاندن و وەرگرتنی پاداشت</button><div class="feedback-error" id="orderFeedbackError" role="alert"></div></section>';
@@ -3672,8 +3674,20 @@ function renderKycProfile(){
   if(dot) dot.hidden = status!=='approved';
   const sub=document.getElementById('pfMenuKycSub');
   if(sub) sub.textContent = status==='loading'||status==='error' ? 'کارتی نیشتیمانی یان مۆڵەتی شوفێری' : meta.label;
+  // Profile tab shows the verification state: approved / pending / not verified.
   const bn=document.getElementById('bnProfileDot');
-  if(bn) bn.style.display = (status==='required'||status==='rejected') ? 'flex' : 'none';
+  if(bn){
+    const dotKind = status==='approved' ? 'ok' : status==='pending' ? 'wait' : (status==='none'||status==='required'||status==='rejected') ? 'warn' : '';
+    const dotGlyph = { ok:'<path d="m5.5 12.5 4.2 4.2L18.5 8"/>', wait:'<path d="M12 6.5V12l3.5 2"/>', warn:'<path d="M12 6.5v6.5M12 17.4h.01"/>' };
+    if(dotKind){
+      bn.dataset.state=dotKind;
+      bn.setAttribute('aria-label', meta.label);
+      bn.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+dotGlyph[dotKind]+'</svg>';
+      bn.style.display='flex';
+    }else{
+      bn.style.display='none';
+    }
+  }
   renderExchangeGate();
 
   const card=document.getElementById('pfKycCard');

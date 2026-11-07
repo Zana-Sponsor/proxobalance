@@ -567,18 +567,6 @@
   <!-- ══════════════ PAGE: HOME (route "/") ══════════════ -->
   <section class="page active" id="pageHome" data-route="home">
 
-  <div class="home-greet">
-    <div class="greet-av" id="greetAvatar">؟</div>
-    <div class="greet-txt">
-      <span class="greet-hi">بەخێربێیتەوە</span>
-      <span id="userName">...</span>
-    </div>
-    <div class="greet-rate">
-      <span class="greet-rate-dot" aria-hidden="true"></span>
-      <span class="greet-rate-txt">چالاک</span>
-    </div>
-  </div>
-
   <aside class="home-feedback-prompt" id="homeFeedbackPrompt" aria-live="polite" hidden></aside>
 
   <!-- Live announcements: slide automatically; navigate with arrows, dots or a swipe. -->
@@ -626,7 +614,6 @@
       </span>
       <div class="xc-head-copy">
         <h2>ئاڵوگۆڕی دراو</h2>
-        <button type="button" id="savedRecipientsShortcut" class="feature-shortcut" onclick="openSavedRecipients()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4z"/></svg> وەرگرە پاشەکەوتکراوەکان</button>
       </div>
     </div>
 
@@ -636,21 +623,6 @@
       <span class="welcome-reward-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11v10h16V11M3 7h18v4H3zM12 7v14"/><path d="M12 7H8a2.5 2.5 0 1 1 2.5-2.5L12 7Zm0 0h4a2.5 2.5 0 1 0-2.5-2.5L12 7Z"/></svg></span>
       <div><h3>پاداشتی هەژماری نوێ</h3><p><b dir="ltr">50%</b> داشکاندنی لێبڕینی واڵێتەکان · یەک جار تا <b dir="ltr">30,000 IQD</b> · بۆ حەوت ڕۆژ کارایە</p><small id="welcomeRewardExpiry"></small></div>
     </aside>
-    <div class="ux-progress" role="list" aria-label="هەنگاوەکانی ئاڵوگۆڕ">
-      <div class="ux-progress-item is-current" data-ux-stage="send" role="listitem" aria-current="step">
-        <span class="ux-progress-index" aria-hidden="true">١</span>
-        <span class="ux-progress-copy"><span>ناردن</span></span>
-      </div>
-      <div class="ux-progress-item" data-ux-stage="receive" role="listitem">
-        <span class="ux-progress-index" aria-hidden="true">٢</span>
-        <span class="ux-progress-copy"><span>وەرگرتن</span></span>
-      </div>
-      <div class="ux-progress-item" data-ux-stage="proof" role="listitem">
-        <span class="ux-progress-index" aria-hidden="true">٣</span>
-        <span class="ux-progress-copy"><span>پسووڵە</span></span>
-      </div>
-    </div>
-
     <!-- Shown instead of the form while an admin-requested verification is not approved -->
     <div class="xc-kyc-gate" id="exchangeKycGate" role="alert" hidden>
       <span class="xc-kyc-gate-ico" aria-hidden="true">
@@ -669,7 +641,7 @@
       <!-- ── STEP 1 — YOU SEND ───────────────────────────────── -->
       <section class="xc-step" id="grpSend">
         <div class="xc-step-head">
-          <span class="xc-step-index" aria-hidden="true">١</span>
+          <span class="xc-step-ico" aria-hidden="true"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></span>
           <h3>زانیاری ناردن</h3>
           <span class="xc-badge" id="sendLimitBadge">کەمترین 10,000</span>
         </div>
@@ -760,7 +732,7 @@
       <!-- ── STEP 2 — YOU RECEIVE ────────────────────────────── -->
       <section class="xc-step" id="grpRecv">
         <div class="xc-step-head">
-          <span class="xc-step-index" aria-hidden="true">٢</span>
+          <span class="xc-step-ico" aria-hidden="true"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M17 7 7 17"/><path d="M16 17H7V8"/></svg></span>
           <h3>زانیاری وەرگرتن</h3>
           <span class="xc-badge" id="etaBadge">٥–٣٠ خولەک</span>
         </div>
@@ -838,7 +810,7 @@
     <!-- ── STEP 3: PROOF OF PAYMENT ──────────────────────── -->
     <section class="xc-step" id="grpProof">
         <div class="xc-step-head">
-          <span class="xc-step-index" aria-hidden="true">٣</span>
+          <span class="xc-step-ico" aria-hidden="true"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M14 8H8"/><path d="M16 12H8"/><path d="M13 16H8"/></svg></span>
           <h3>پسووڵەی پارەدان</h3>
         </div>
         <div class="file-field">
@@ -870,7 +842,7 @@
 
     <div class="xc-submit-wrap">
       <button class="btn btn-primary btn-block btn-submit" id="submitBtn" onclick="openOrderConfirm()">
-        <span class="icn icon--solar icon--solar--plain-2-linear" aria-hidden="true"></span>
+        <svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>
         ناردنی داواکاری
       </button>
     </div>
@@ -1500,23 +1472,19 @@
       <span class="pxn-line" aria-hidden="true"></span>
       <div class="pxn-inner">
       <button type="button" class="pxn-item on" data-route="home" onclick="navigate('home')" aria-label="ئاڵوگۆڕ">
-        <span class="pxn-cap" aria-hidden="true"><svg class="pxi pxn-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg></span>
+        <span class="pxn-cap" aria-hidden="true"><svg class="pxi pxn-ico pxn-off" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg><svg class="pxi pxn-ico pxn-on" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path style="stroke-width:2.6" d="M4 7h12"/><path d="M14 3.2 20.4 7 14 10.8z"/><path style="stroke-width:2.6" d="M20 17H8"/><path d="M10 13.2 3.6 17 10 20.8z"/></svg></span>
         <span class="pxn-label">ئاڵوگۆڕ</span>
       </button>
       <button type="button" class="pxn-item" data-route="transactions" onclick="navigate('transactions')" aria-label="مامەڵەکان">
-        <span class="pxn-cap" aria-hidden="true"><svg class="pxi pxn-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="pxn-f" d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M14 8H8"/><path d="M16 12H8"/><path d="M13 16H8"/></svg><span class="pxn-badge" id="bnTxDot">0</span></span>
+        <span class="pxn-cap" aria-hidden="true"><svg class="pxi pxn-ico pxn-off" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M14 8H8"/><path d="M16 12H8"/><path d="M13 16H8"/></svg><svg class="pxi pxn-ico pxn-on" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path class="pxn-cut" d="M14 8H8M16 12H8M13 16H8"/></svg><span class="pxn-badge" id="bnTxDot">0</span></span>
         <span class="pxn-label">مامەڵەکان</span>
       </button>
-      <button type="button" class="pxn-item pxn-create" onclick="focusExchangeForm()" aria-label="دروستکردنی داواکاری">
-        <span class="pxn-cap" aria-hidden="true"><svg class="pxi pxn-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg></span>
-        <span class="pxn-label">داواکاری</span>
-      </button>
       <button type="button" class="pxn-item" data-route="rules" onclick="navigate('rules')" aria-label="یاساکان">
-        <span class="pxn-cap" aria-hidden="true"><svg class="pxi pxn-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="pxn-f" d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="m9 15 2 2 4-4"/></svg></span>
+        <span class="pxn-cap" aria-hidden="true"><svg class="pxi pxn-ico pxn-off" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="m9 15 2 2 4-4"/></svg><svg class="pxi pxn-ico pxn-on" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path class="pxn-cut" d="M14 2v5a1 1 0 0 0 1 1h5"/><path class="pxn-cut" d="m9 15 2 2 4-4"/></svg></span>
         <span class="pxn-label">یاساکان</span>
       </button>
       <button type="button" class="pxn-item" data-route="profile" onclick="navigate('profile')" aria-label="پڕۆفایل">
-        <span class="pxn-cap" aria-hidden="true"><svg class="pxi pxn-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle class="pxn-f" cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></svg><span class="pxn-badge pxn-badge-plus" id="bnProfileDot" aria-label="زیادکردنی پشتڕاستکردنەوەی ناسنامە"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span></span>
+        <span class="pxn-cap" aria-hidden="true"><svg class="pxi pxn-ico pxn-off" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></svg><svg class="pxi pxn-ico pxn-on" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0z"/></svg><span class="pxn-badge pxn-state" id="bnProfileDot" role="img"></span></span>
         <span class="pxn-label">پڕۆفایل</span>
       </button>
       </div>
