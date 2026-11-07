@@ -2892,7 +2892,7 @@ function navigate(route, push){
   });
   // /changes lives under the profile tab
   const navRoute = (route==='changes' || route==='support' || route==='verify') ? 'profile' : route;
-  document.querySelectorAll('.bn-item, .hdr-nav-link').forEach(b=>b.classList.toggle('on', b.dataset.route===navRoute));
+  document.querySelectorAll('.bn-item, .hdr-nav-link, .pxn-item, .pxh-link').forEach(b=>b.classList.toggle('on', b.dataset.route===navRoute));
   if(push && location.pathname+location.hash!==urlFor(route)){ try{ history.pushState({route:route}, '', urlFor(route)); }catch(_){} }
   document.title = ROUTE_TITLES[route] || 'Proxo';
   closeNotifPanel();

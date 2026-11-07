@@ -1,0 +1,741 @@
+/* Proxo UI v2 — appbar, bottom navigation and profile.
+   Loaded just before proxo-design-system.css. Every rule uses the new
+   pxh- (header), pxn- (nav) and pfx- (profile) classes, so none of the
+   legacy !important rules for .site-header / .bn-* / .pf-* apply here.
+
+   Type note: Rabar ships as a single weight, so hierarchy comes from size
+   and colour (soft ink -> muted), not from bold. */
+
+#mainApp {
+  --v2-accent: #0265ff;
+  --v2-accent-deep: #0050d0;
+  --v2-sky: #d6eeff;          /* water-blue capsule behind nav icons */
+  --v2-sky-soft: #eaf6ff;
+  --v2-sky-line: #bfe2fa;
+  --v2-ink: #1f2d44;          /* softer than the old #0f172a */
+  --v2-text: #3a4962;
+  --v2-muted: #64748b;
+  --v2-line: #e8ecf3;
+  --v2-canvas: #fafafa;
+  --v2-card: #fff;
+  --v2-r-card: 20px;
+  --v2-r-ctl: 14px;
+  --v2-shadow: 0 1px 2px rgba(20, 35, 60, .04), 0 12px 28px -18px rgba(20, 35, 60, .18);
+  --v2-ease: cubic-bezier(.4, 0, .2, 1);
+}
+
+.pxi {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+/* ═════════════════════════ APPBAR ═════════════════════════ */
+#mainApp #siteHeader.pxh {
+  position: sticky;
+  top: 0;
+  z-index: 1200;
+  width: 100%;
+  padding-top: env(safe-area-inset-top, 0px);
+  background: rgba(250, 250, 250, .86) !important;
+  -webkit-backdrop-filter: saturate(1.6) blur(14px);
+  backdrop-filter: saturate(1.6) blur(14px);
+  border: 0 !important;
+  border-bottom: 1px solid transparent !important;
+  box-shadow: none !important;
+  transition: border-color .2s var(--v2-ease), box-shadow .2s var(--v2-ease);
+}
+#mainApp #siteHeader.pxh.scrolled {
+  border-bottom-color: var(--v2-line) !important;
+  box-shadow: 0 10px 24px -20px rgba(20, 35, 60, .35) !important;
+}
+#mainApp .pxh-in {
+  width: 100%;
+  max-width: var(--container-w, 480px);
+  height: 60px;
+  margin: 0 auto;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  direction: rtl;
+}
+#mainApp .pxh-brand {
+  display: inline-flex;
+  align-items: center;
+  height: 44px;
+  margin-inline-end: auto;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+#mainApp .pxh-brand img { display: block; width: auto; height: 24px; object-fit: contain; }
+#mainApp .pxh-actions { display: flex; align-items: center; gap: 8px; }
+#mainApp .pxh-btn {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: inline-grid;
+  place-items: center;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid var(--v2-line) !important;
+  border-radius: 14px;
+  background: var(--v2-card) !important;
+  color: var(--v2-text) !important;
+  box-shadow: none !important;
+  cursor: pointer;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background .2s var(--v2-ease), transform .15s var(--v2-ease);
+}
+#mainApp .pxh-btn:active { transform: scale(.95); background: #f3f6fb !important; }
+#mainApp .pxh-btn .pxi { width: 22px; height: 22px; }
+#mainApp .pxh-btn.pxh-profile { display: none; }
+#mainApp .pxh-btn .notif-badge {
+  position: absolute;
+  top: -5px;
+  left: -6px;
+  right: auto;
+  width: auto;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 10px;
+  line-height: 1;
+  box-shadow: 0 0 0 2px var(--v2-canvas);
+}
+#mainApp .pxh-nav { display: none; }
+
+/* On the profile page the page has its own toolbar. */
+#mainApp:has(#pageProfile.active) #siteHeader.pxh { display: none !important; }
+
+@media (min-width: 1024px) {
+  #mainApp .pxh-in { height: 68px; padding: 0 20px; }
+  #mainApp .pxh-brand { margin-inline-end: 0; }
+  #mainApp .pxh-brand img { height: 26px; }
+  #mainApp .pxh-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-inline: auto;
+    padding: 4px;
+    border: 1px solid var(--v2-line);
+    border-radius: 999px;
+    background: var(--v2-card);
+  }
+  #mainApp .pxh-link {
+    height: 38px;
+    padding: 0 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 0 !important;
+    border-radius: 999px;
+    background: transparent !important;
+    color: var(--v2-muted) !important;
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background .25s var(--v2-ease), color .25s var(--v2-ease);
+  }
+  #mainApp .pxh-link .pxi { width: 19px; height: 19px; }
+  #mainApp .pxh-link:hover { color: var(--v2-ink) !important; }
+  #mainApp .pxh-link.on { background: var(--v2-sky) !important; color: var(--v2-accent) !important; }
+  #mainApp .pxh-btn.pxh-profile { display: inline-grid; }
+  #mainApp:has(#pageProfile.active) #siteHeader.pxh { display: block !important; }
+}
+
+/* ═════════════════════════ BOTTOM NAV ═════════════════════════ */
+body.has-nav { padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !important; }
+
+#mainApp #bottomNav.pxn {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 900;
+  display: flex;
+  justify-content: center;
+  padding: 0 12px calc(12px + env(safe-area-inset-bottom, 0px));
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  pointer-events: none;
+}
+#mainApp .pxn-card {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  padding: 10px 4px 8px;
+  border-radius: 26px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(20, 35, 60, .05), 0 14px 34px -10px rgba(20, 35, 60, .22), 0 3px 8px rgba(20, 35, 60, .05);
+  pointer-events: auto;
+}
+/* The short line that slides along the top of the white card. */
+#mainApp .pxn-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 28px;
+  height: 4px;
+  border-radius: 0 0 5px 5px;
+  background: var(--v2-accent);
+  opacity: 0;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+#mainApp .pxn-card.is-ready .pxn-line {
+  opacity: 1;
+  transition: transform .42s cubic-bezier(.4, 0, .15, 1), opacity .2s;
+}
+#mainApp .pxn-inner {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  direction: rtl;
+}
+#mainApp #bottomNav .pxn-item {
+  position: relative;
+  min-width: 0;
+  padding: 6px 0 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  border: 0 !important;
+  background: none !important;
+  color: var(--v2-muted) !important;
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color .25s var(--v2-ease), transform .15s var(--v2-ease);
+}
+#mainApp #bottomNav .pxn-item:active { transform: scale(.94); }
+#mainApp #bottomNav .pxn-item.on { color: var(--v2-accent) !important; }
+
+/* Capsule behind the icon. Set --v2-idle-capsule to show it on every tab. */
+#mainApp .pxn-cap {
+  position: relative;
+  width: min(56px, calc(100% - 6px));
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+}
+#mainApp .pxn-cap::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--v2-sky);
+  opacity: 0;
+  transform: scale(.55, .8);
+  transition: opacity .25s var(--v2-ease), transform .38s cubic-bezier(.3, 1.3, .5, 1);
+}
+#mainApp .pxn-item.on .pxn-cap::before { opacity: 1; transform: none; }
+#mainApp .pxn-cap .pxi { position: relative; width: 24px; height: 24px; }
+#mainApp .pxn-item.on .pxn-cap .pxi { stroke-width: 2; }
+#mainApp .pxn-item .pxn-f { fill: none; transition: fill .25s var(--v2-ease); }
+#mainApp .pxn-item.on .pxn-f { fill: currentColor; fill-opacity: .16; }
+
+#mainApp .pxn-label {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 11px;
+  line-height: 1.5;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (min-width: 400px) { #mainApp .pxn-label { font-size: 12px; } }
+
+/* Primary action: the same capsule, solid. */
+#mainApp #bottomNav .pxn-create { color: var(--v2-accent) !important; }
+#mainApp .pxn-create .pxn-cap {
+  width: min(62px, calc(100% - 4px));
+  height: 36px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #2b86ff 0%, var(--v2-accent) 100%);
+  color: #fff;
+  box-shadow: 0 8px 16px -6px rgba(2, 101, 255, .55);
+}
+#mainApp .pxn-create .pxn-cap::before { display: none; }
+#mainApp .pxn-create .pxi { stroke: #fff; stroke-width: 2.2; }
+
+/* Counters (ids are set by app.js: bnTxDot / bnProfileDot). */
+#mainApp .pxn-badge {
+  position: absolute;
+  top: -4px;
+  inset-inline-end: 8px;
+  z-index: 2;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 5px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 10px;
+  line-height: 1;
+  box-shadow: 0 0 0 2px #fff;
+}
+#mainApp .pxn-badge-plus { min-width: 16px; width: 16px; height: 16px; padding: 0; background: var(--v2-accent); }
+#mainApp .pxn-badge-plus svg { width: 10px; height: 10px; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; }
+
+@media (min-width: 1024px) {
+  body.has-nav { padding-bottom: 32px !important; }
+  #mainApp #bottomNav.pxn { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #mainApp .pxn-card.is-ready .pxn-line,
+  #mainApp .pxn-cap::before { transition-duration: .01ms; }
+}
+
+/* ═════════════════════════ PROFILE ═════════════════════════ */
+#mainApp #pageProfile { padding-top: 0; color: var(--v2-text); }
+
+/* toolbar */
+#mainApp .pfx-bar {
+  position: sticky;
+  top: 0;
+  z-index: 1100;
+  margin: 0 -14px 14px;
+  padding: env(safe-area-inset-top, 0px) 8px 0;
+  height: calc(56px + env(safe-area-inset-top, 0px));
+  display: grid;
+  grid-template-columns: 48px 1fr 48px;
+  align-items: center;
+  background: rgba(250, 250, 250, .88);
+  -webkit-backdrop-filter: saturate(1.6) blur(14px);
+  backdrop-filter: saturate(1.6) blur(14px);
+}
+#mainApp .pfx-bar h2 {
+  margin: 0;
+  color: var(--v2-ink);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.4;
+  text-align: center;
+}
+#mainApp .pfx-bar-btn {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: inline-grid;
+  place-items: center;
+  border: 0 !important;
+  border-radius: 14px;
+  background: transparent !important;
+  color: var(--v2-ink) !important;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+#mainApp .pfx-bar-btn:active { background: #eef2f8 !important; }
+
+/* cards */
+#mainApp .pfx-card {
+  margin: 0 0 14px;
+  padding: 18px 16px;
+  border: 1px solid var(--v2-line);
+  border-radius: var(--v2-r-card);
+  background: var(--v2-card);
+  box-shadow: var(--v2-shadow);
+}
+#mainApp .pfx-title {
+  margin: 0 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--v2-ink);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+#mainApp .pfx-title-ico {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  background: var(--v2-sky-soft);
+  color: var(--v2-accent);
+}
+#mainApp .pfx-title-ico .pxi { width: 19px; height: 19px; }
+
+/* hero */
+#mainApp .pfx-hero {
+  position: relative;
+  margin: 0 0 14px;
+  padding: 0 16px 18px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid var(--v2-line);
+  border-radius: var(--v2-r-card);
+  background: var(--v2-card);
+  box-shadow: var(--v2-shadow);
+  text-align: center;
+}
+#mainApp .pfx-cover {
+  align-self: stretch;
+  height: 84px;
+  margin: 0 -16px;
+  background:
+    radial-gradient(120px 80px at 18% 20%, rgba(255, 255, 255, .7), transparent 70%),
+    linear-gradient(135deg, #cfeaff 0%, #e4f3ff 55%, #f1f9ff 100%);
+}
+#mainApp .pfx-avatar-wrap { position: relative; margin-top: -40px; }
+#mainApp .pfx-avatar {
+  width: 80px;
+  height: 80px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 4px solid #fff;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e6f4ff, #cfe8fd);
+  color: var(--v2-accent);
+  font-size: 30px;
+  line-height: 1;
+  box-shadow: 0 8px 20px -10px rgba(2, 101, 255, .45);
+}
+#mainApp .pfx-avatar img { width: 100%; height: 100%; object-fit: cover; }
+#mainApp .pfx-verified {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline-end: -2px;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #16a34a;
+  color: #fff;
+}
+#mainApp .pfx-verified[hidden] { display: none; }
+#mainApp .pfx-verified .pxi { width: 15px; height: 15px; stroke-width: 2.4; }
+#mainApp .pfx-name {
+  max-width: 100%;
+  margin-top: 12px;
+  overflow: hidden;
+  color: var(--v2-ink);
+  font-size: 18px;
+  line-height: 1.5;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#mainApp .pfx-handle {
+  margin-top: 2px;
+  min-height: 32px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0 !important;
+  border-radius: 999px;
+  background: #f1f5fa !important;
+  color: var(--v2-muted) !important;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+#mainApp .pfx-handle .pxi { width: 14px; height: 14px; }
+#mainApp .pfx-handle:active { background: #e6ecf5 !important; }
+#mainApp .pfx-email {
+  max-width: 100%;
+  margin-top: 4px;
+  overflow: hidden;
+  color: var(--v2-muted);
+  font-size: 12px;
+  line-height: 1.6;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#mainApp .pfx-meta {
+  width: 100%;
+  margin-top: 14px;
+  padding-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-top: 1px solid var(--v2-line);
+}
+
+/* KYC status pill (state variables come from app.css) */
+#mainApp .pfx-hero .kyc-badge {
+  min-height: 36px;
+  margin: 0;
+  padding: 0 12px 0 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--kyc-bd, var(--v2-line)) !important;
+  border-radius: 999px;
+  background: var(--kyc-bg, #f1f5fa) !important;
+  color: var(--kyc-c, var(--v2-muted)) !important;
+  box-shadow: none !important;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.4;
+  cursor: pointer;
+}
+#mainApp .pfx-hero .kyc-badge-ico { width: 16px; height: 16px; display: inline-grid; place-items: center; }
+#mainApp .pfx-hero .kyc-badge-ico .icn,
+#mainApp .pfx-hero .kyc-badge-ico svg { width: 16px; height: 16px; }
+#mainApp .pfx-chip {
+  min-height: 36px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  background: #f1f5fa;
+  color: var(--v2-muted);
+  font-size: 12px;
+}
+#mainApp .pfx-chip .pxi { width: 15px; height: 15px; }
+#mainApp .pfx-chip.is-admin { background: var(--v2-sky-soft); color: var(--v2-accent); }
+
+/* balance */
+#mainApp .pfx-balance { padding: 16px; }
+#mainApp .pfx-balance-head {
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#mainApp .pfx-balance-head .pfx-title-ico { background: var(--v2-sky); }
+#mainApp .pfx-balance-head b {
+  flex: 1;
+  color: var(--v2-ink);
+  font-size: 14px;
+  font-weight: 400;
+}
+#mainApp .pfx-icon-btn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: inline-grid;
+  place-items: center;
+  border: 0 !important;
+  border-radius: 12px;
+  background: #f1f5fa !important;
+  color: var(--v2-muted) !important;
+  cursor: pointer;
+}
+#mainApp .pfx-icon-btn:active { background: #e6ecf5 !important; }
+#mainApp .pfx-icon-btn .pxi { width: 19px; height: 19px; }
+#mainApp .pfx-balance-values { display: grid; grid-template-columns: 1.25fr 1fr; gap: 10px; }
+#mainApp .pfx-balance-values > div {
+  min-width: 0;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-radius: 16px;
+  background: #f5f7fb;
+}
+#mainApp .pfx-balance-values .is-main { background: linear-gradient(135deg, #e3f3ff, #d6eeff); }
+#mainApp .pfx-balance-values span { color: var(--v2-muted); font-size: 12px; line-height: 1.6; }
+#mainApp .pfx-balance-values strong {
+  overflow: hidden;
+  color: var(--v2-ink);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#mainApp .pfx-balance-values .is-main strong { color: var(--v2-accent-deep); font-size: 20px; }
+
+/* wallet controls (ids/handlers untouched; legacy rules target these ids) */
+#mainApp #pageProfile #balanceSendSection.profile-wallet-controls {
+  margin: 12px 0 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+#mainApp #pageProfile .pfx-balance .pb-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+#mainApp #pageProfile .pfx-balance .pb-btn {
+  min-height: 48px;
+  height: 48px;
+  padding: 0 12px;
+  border: 0 !important;
+  border-radius: var(--v2-r-ctl) !important;
+  background: var(--v2-accent) !important;
+  color: #fff !important;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow: none !important;
+}
+#mainApp #pageProfile .pfx-balance .pb-btn:disabled { background: #dbe6f6 !important; color: #7b8aa3 !important; cursor: not-allowed; }
+#mainApp #pageProfile .pfx-balance .pb-btn.pb-secondary { background: #f1f5fa !important; color: var(--v2-text) !important; }
+#mainApp #pageProfile .pfx-balance .pb-message {
+  margin: 10px 2px 0;
+  color: var(--v2-muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+#mainApp #pageProfile .pfx-balance .pb-form { margin-top: 12px; }
+
+/* kyc card rendered by app.js */
+#mainApp #pageProfile .kyc-card { margin: 0 0 14px; border-radius: var(--v2-r-card); }
+
+/* personal info form */
+#mainApp .pfx-form .field { margin-bottom: 14px; }
+#mainApp .pfx-form .field-label {
+  margin-bottom: 6px;
+  display: block;
+  color: var(--v2-muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+#mainApp .pfx-form .input {
+  height: 48px;
+  border: 1px solid var(--v2-line);
+  border-radius: var(--v2-r-ctl);
+  background: #f8fafd;
+  color: var(--v2-ink);
+  font-size: 14px;
+  transition: border-color .2s var(--v2-ease), background .2s var(--v2-ease), box-shadow .2s var(--v2-ease);
+}
+#mainApp .pfx-form .input:focus {
+  border-color: var(--v2-accent);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(2, 101, 255, .10);
+  outline: 0;
+}
+#mainApp .pfx-note {
+  margin-top: 6px;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  color: #15803d;
+  font-size: 12px;
+  line-height: 1.7;
+}
+#mainApp .pfx-note[hidden] { display: none; }
+#mainApp .pfx-note .pxi { width: 15px; height: 15px; margin-top: 3px; }
+#mainApp .pfx-hint {
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  border-radius: 12px;
+  background: #f5f7fb;
+  color: var(--v2-muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+#mainApp .pfx-hint .pxi { width: 16px; height: 16px; margin-top: 3px; }
+#mainApp .pfx-hint.warn { background: #fff7e8; color: #a16207; }
+#mainApp .pfx-save {
+  width: 100%;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0 !important;
+  border-radius: var(--v2-r-ctl);
+  background: var(--v2-accent) !important;
+  color: #fff !important;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: none !important;
+}
+#mainApp .pfx-save:disabled { background: #cfe0fb !important; cursor: not-allowed; }
+#mainApp .pfx-save .pxi { width: 19px; height: 19px; }
+
+/* menu */
+#mainApp .pfx-menu {
+  margin: 0 0 14px;
+  padding: 4px 0;
+  overflow: hidden;
+  border: 1px solid var(--v2-line);
+  border-radius: var(--v2-r-card);
+  background: var(--v2-card);
+  box-shadow: var(--v2-shadow);
+}
+#mainApp .pfx-item {
+  width: 100%;
+  min-height: 68px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 0 !important;
+  background: transparent !important;
+  color: var(--v2-ink) !important;
+  font: inherit;
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+#mainApp .pfx-item + .pfx-item { border-top: 1px solid #f0f3f8 !important; }
+#mainApp .pfx-item:active { background: #f6f8fc !important; }
+#mainApp .pfx-item-ico {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  background: var(--v2-sky-soft);
+  color: var(--v2-accent);
+}
+#mainApp .pfx-item-ico .pxi { width: 21px; height: 21px; }
+#mainApp .pfx-item-txt { min-width: 0; flex: 1; display: flex; flex-direction: column; }
+#mainApp .pfx-item-txt b { font-size: 14px; font-weight: 400; line-height: 1.6; }
+#mainApp .pfx-item-txt small { color: var(--v2-muted); font-size: 12px; line-height: 1.6; }
+#mainApp .pfx-item-go { flex: 0 0 auto; color: #a6b1c2; }
+#mainApp .pfx-item-go .pxi { width: 18px; height: 18px; }
+
+#mainApp .pfx-logout {
+  width: 100%;
+  min-height: 52px;
+  margin: 0 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid #fadcdc !important;
+  border-radius: var(--v2-r-ctl);
+  background: #fff !important;
+  color: #dc2626 !important;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+#mainApp .pfx-logout:active { background: #fff5f5 !important; }
+#mainApp .pfx-logout .pxi { width: 19px; height: 19px; }
+#mainApp .pfx-version {
+  padding: 10px 0 6px;
+  color: #98a4b6;
+  font-size: 11px;
+  text-align: center;
+}

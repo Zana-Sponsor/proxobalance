@@ -100,6 +100,7 @@
 <link rel="stylesheet" href="/assets/css/proxo-app-shell.css?v=1">
 <link rel="stylesheet" href="/assets/css/proxo-balance-polish.css?v=1">
 <link rel="stylesheet" href="/assets/css/proxo-complete-theme.css?v=1">
+<link rel="stylesheet" href="/assets/css/proxo-ui-v2.css?v=1">
 <link rel="stylesheet" href="/assets/css/proxo-design-system.css?v=1">
 </head>
 
@@ -512,58 +513,27 @@
      ══════════════════════════════════════════════════════════════ -->
 <div class="app-wrapper" id="mainApp">
 
-  <header class="site-header" id="siteHeader">
-    <div class="site-header-inner">
+  <header class="pxh" id="siteHeader">
+    <div class="pxh-in">
 
-      <a class="hdr-logo" onclick="navigate('home')" role="button" tabindex="0" aria-label="Proxo">
-        <img class="proxo-header-wordmark" src="/assets/images/proxo-app/proxo-wordmark.png?v=1" alt="Proxo" width="1200" height="345" decoding="async">
+      <a class="pxh-brand" onclick="navigate('home')" role="button" tabindex="0" aria-label="Proxo">
+        <img src="/assets/images/proxo-app/proxo-wordmark.png?v=1" alt="Proxo" width="1200" height="345" decoding="async">
       </a>
 
-      <div class="hdr-rate" id="hdrRate" title="نرخی ئێستای ئەو ڕێگایەی هەڵتبژاردووە">
-        <span class="live-dot" aria-hidden="true"></span>
-        <span>نرخی ئێستا</span>
-        <b id="hdrRateVal">—</b>
-      </div>
-
-      <nav class="hdr-nav" aria-label="ڕێنیشاندەر">
-        <button type="button" class="hdr-nav-link on" data-route="home" onclick="navigate('home')">
-          <span class="icn icon--solar icon--solar--transfer-horizontal-linear" aria-hidden="true"></span>
-          ئاڵوگۆڕ
-        </button>
-        <button type="button" class="hdr-nav-link" data-route="transactions" onclick="navigate('transactions')">
-          <span class="icn icon--solar icon--solar--bill-list-linear" aria-hidden="true"></span>
-          مامەڵەکان
-        </button>
-        <button type="button" class="hdr-nav-link" data-route="changes" onclick="navigate('changes')">
-          <span class="icn icon--solar icon--solar--graph-up-linear" aria-hidden="true"></span>
-          نرخەکان
-        </button>
-        <button type="button" class="hdr-nav-link" data-route="rules" onclick="navigate('rules')">
-          <span class="icn icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span>
-          یاساکان
-        </button>
+      <nav class="pxh-nav" aria-label="ڕێنیشاندەر">
+        <button type="button" class="pxh-link on" data-route="home" onclick="navigate('home')"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>ئاڵوگۆڕ</button>
+        <button type="button" class="pxh-link" data-route="transactions" onclick="navigate('transactions')"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M14 8H8"/><path d="M16 12H8"/><path d="M13 16H8"/></svg>مامەڵەکان</button>
+        <button type="button" class="pxh-link" data-route="changes" onclick="navigate('changes')"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg>نرخەکان</button>
+        <button type="button" class="pxh-link" data-route="rules" onclick="navigate('rules')"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="pxn-f" d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="m9 15 2 2 4-4"/></svg>یاساکان</button>
       </nav>
 
-      <div class="hdr-actions">
-        <button type="button" class="hdr-cta" onclick="focusExchangeForm()">
-          <span class="icn icon--solar icon--solar--transfer-horizontal-linear" aria-hidden="true"></span>
-          ئاڵوگۆڕ بکە
+      <div class="pxh-actions">
+        <button type="button" class="pxh-btn" id="notifBellBtn" onclick="toggleNotifPanel()" aria-label="ئاگادارییەکان" aria-expanded="false" aria-controls="notifPanel">
+          <svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg>
+          <span class="notif-badge" id="notifBadge" style="display:none">0</span>
         </button>
-
-        <div style="position:relative">
-          <button type="button" class="icon-btn" id="notifBellBtn" onclick="toggleNotifPanel()" aria-label="ئاگادارییەکان" aria-expanded="false" aria-controls="notifPanel">
-            <span class="icn icon--solar icon--solar--bell-linear" aria-hidden="true"></span>
-            <span class="notif-badge" id="notifBadge" style="display:none">0</span>
-          </button>
-        </div>
-
-        <button type="button" class="icon-btn profile-top-btn" id="profileTopBtn" onclick="navigate('profile')" aria-label="پڕۆفایل">
-          <img src="/assets/images/proxo-app/nav/user-outline.png" alt="" width="21" height="21" decoding="async">
-        </button>
-
-        <a id="adminBtn" class="icon-btn" href="exchange-admin.html" style="display:none" aria-label="پانێڵی بەڕێوەبەر">
-          <span class="icn icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span>
-        </a>
+        <button type="button" class="pxh-btn pxh-profile" id="profileTopBtn" onclick="navigate('profile')" aria-label="پڕۆفایل"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle class="pxn-f" cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></svg></button>
+        <a id="adminBtn" class="pxh-btn" href="exchange-admin.html" style="display:none" aria-label="پانێڵی بەڕێوەبەر"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></a>
       </div>
 
     </div>
@@ -1171,160 +1141,121 @@
 
   <!-- ══════════════ PAGE: PROFILE (route "/profile") ══════════════ -->
   <section class="page" id="pageProfile" data-route="profile">
-    <div class="page-head">
-      <button type="button" class="profile-page-action" onclick="document.getElementById('pfName')?.focus()" aria-label="دەستکاریکردنی پڕۆفایل">
-        <span class="icn icon--solar icon--solar--pen-linear" aria-hidden="true"></span>
-      </button>
-      <h2>
-        <span class="icn icon--solar icon--solar--user-linear" aria-hidden="true"></span>
-        پڕۆفایل
-      </h2>
-      <button type="button" class="profile-page-back" onclick="navigate('home')" aria-label="گەڕانەوە">
-        <span class="icn icon--solar icon--solar--alt-arrow-right-linear" aria-hidden="true"></span>
-      </button>
+
+    <div class="pfx-bar">
+      <button type="button" class="pfx-bar-btn" onclick="navigate('home')" aria-label="گەڕانەوە"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"/></svg></button>
+      <h2>پڕۆفایل</h2>
+      <span aria-hidden="true"></span>
     </div>
 
-    <div class="pf-hero pf2-hero">
-      <div class="pf2-cover" aria-hidden="true"></div>
-      <div class="pf2-avatar-wrap">
-        <div class="pf-avatar pf2-avatar" id="pfAvatar">؟</div>
-        <span class="pf2-verified-dot" id="pfVerifiedDot" hidden title="ناسنامە پشتڕاستکراوەتەوە">
-          <span class="icn icon--solar icon--solar--verified-check-linear" aria-hidden="true"></span>
-        </span>
+    <div class="pfx-hero">
+      <div class="pfx-cover" aria-hidden="true"></div>
+      <div class="pfx-avatar-wrap">
+        <div class="pfx-avatar" id="pfAvatar">؟</div>
+        <span class="pfx-verified" id="pfVerifiedDot" hidden title="ناسنامە پشتڕاستکراوەتەوە"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5"/></svg></span>
       </div>
-      <div class="pf2-identity">
-        <div class="pf-name" id="pfNameLbl">—</div>
-        <button type="button" class="pf2-handle" id="pfUsernameBtn" onclick="copyUsername()" aria-label="کۆپیکردنی ناوی بەکارهێنەر">
-          <span id="pfUsername" dir="ltr">@—</span>
-          <span class="icn icn-sm icon--solar icon--solar--copy-linear" aria-hidden="true"></span>
+      <div class="pfx-name" id="pfNameLbl">—</div>
+      <button type="button" class="pfx-handle" id="pfUsernameBtn" onclick="copyUsername()" aria-label="کۆپیکردنی ناوی بەکارهێنەر">
+        <span id="pfUsername" dir="ltr">@—</span>
+        <svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+      </button>
+      <div class="pfx-email" id="pfEmailLbl">—</div>
+
+      <div class="pfx-meta">
+        <button type="button" class="kyc-badge" id="pfKycBadge" data-state="loading" onclick="openVerifyPage()" aria-live="polite">
+          <span class="kyc-badge-ico" id="pfKycBadgeIco"><span class="icn icn-sm icn-spin icon--solar icon--solar--refresh-linear" aria-hidden="true"></span></span>
+          <span id="pfKycBadgeText">دۆخی ناسنامە...</span>
         </button>
-        <div class="pf-email" id="pfEmailLbl">—</div>
-      </div>
-
-      <button type="button" class="kyc-badge" id="pfKycBadge" data-state="loading" onclick="openVerifyPage()" aria-live="polite">
-        <span class="kyc-badge-ico" id="pfKycBadgeIco"><span class="icn icn-sm icn-spin icon--solar icon--solar--refresh-linear" aria-hidden="true"></span></span>
-        <span id="pfKycBadgeText">دۆخی ناسنامە...</span>
-      </button>
-
-      <div class="pf-chips">
-        <span class="pf-chip" id="pfJoinedChip">
-          <span class="icn icon--solar icon--solar--calendar-linear" aria-hidden="true"></span>
-          <span id="pfJoined">—</span>
-        </span>
-        <span class="pf-chip admin" id="pfAdminChip" style="display:none">
-          <span class="icn icon--solar icon--solar--shield-linear" aria-hidden="true"></span>
-          <span id="pfAdminChipText">بەڕێوەبەر</span>
-        </span>
+        <span class="pfx-chip" id="pfJoinedChip"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><span id="pfJoined">—</span></span>
+        <span class="pfx-chip is-admin" id="pfAdminChip" style="display:none"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg><span id="pfAdminChipText">بەڕێوەبەر</span></span>
       </div>
     </div>
 
-    <section class="profile-balance-card" aria-label="باڵانسی هەژمار">
-      <div class="profile-balance-heading">
-        <div>
-          <span class="profile-balance-brand-icon icn icon--solar icon--solar--wallet-linear" aria-hidden="true"></span>
-          <span><small>باڵانسی هەژمار</small><span>باڵانسی بەردەست و بڕی چاوەڕوان</span></span>
+    <section class="pfx-card pfx-balance" aria-label="باڵانسی هەژمار">
+      <div class="pfx-balance-head">
+        <span class="pfx-title-ico"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></span>
+        <b>باڵانسی هەژمار</b>
+        <button type="button" class="pfx-icon-btn" onclick="loadMyBalance()" aria-label="نوێکردنەوەی باڵانس"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg></button>
+      </div>
+      <div class="pfx-balance-values">
+        <div class="is-main"><span>بەردەست</span><strong id="profileBalanceAvailable">—</strong></div>
+        <div><span>لە چاوەڕوانیدا</span><strong id="profileBalanceHeld">—</strong></div>
+      </div>
+      <!-- Profile wallet controls; payouts still require authenticated manual approval. -->
+      <section class="pb-balance profile-wallet-controls" id="balanceSendSection" aria-label="باڵانسی هەژمار">
+        <div hidden aria-hidden="true"><span id="balanceAvailable">—</span><span id="balanceHeld">—</span></div>
+        <div class="pb-actions">
+          <button type="button" id="balancePayoutToggle" class="pb-btn" onclick="openAccountBalanceSend()" disabled>ناردن لە باڵانس</button>
+          <button type="button" class="pb-btn pb-secondary" onclick="toggleBalanceHistory()">مێژووی باڵانس</button>
         </div>
-        <button type="button" class="profile-balance-refresh" onclick="loadMyBalance()" aria-label="نوێکردنەوەی باڵانس"><span class="icn icon--solar icon--solar--refresh-linear" aria-hidden="true"></span></button>
-      </div>
-      <div class="profile-balance-values">
-        <div class="profile-balance-available"><span>بەردەست</span><strong id="profileBalanceAvailable">—</strong></div>
-        <div class="profile-balance-held"><span>لە چاوەڕوانیدا</span><strong id="profileBalanceHeld">—</strong></div>
-      </div>
-    <!-- Profile wallet controls; payouts still require authenticated manual approval. -->
-    <section class="pb-balance profile-wallet-controls" id="balanceSendSection" aria-label="باڵانسی هەژمار">
-      <div hidden aria-hidden="true"><span id="balanceAvailable">—</span><span id="balanceHeld">—</span></div>
-      <div class="pb-actions">
-        <button type="button" id="balancePayoutToggle" class="pb-btn" onclick="openAccountBalanceSend()" disabled>ناردن لە باڵانس</button>
-        <button type="button" class="pb-btn pb-secondary" onclick="toggleBalanceHistory()">مێژووی باڵانس</button>
-      </div>
-      <p class="pb-message" id="balanceStatusMessage" tabindex="-1" role="status">باڵانس بار دەکرێت...</p>
-      <form id="balancePayoutForm" class="pb-form" hidden onsubmit="requestBalancePayout(event)">
-        <label for="balanceDestWallet">جزدانی وەرگر</label>
-        <select id="balanceDestWallet" required></select>
-        <label for="balanceDestNumber">ژمارەی جزدانی خاوەنی هەژمار</label>
-        <input id="balanceDestNumber" required autocomplete="off" inputmode="numeric" dir="ltr" placeholder="ژمارەی جزدان">
-        <label for="balancePayoutAmount">بڕی ناردن (دینار)</label>
-        <input id="balancePayoutAmount" type="number" min="10000" step="1" required dir="ltr" placeholder="10000">
-        <p class="pb-message">ناردن دەستییە؛ دوای پشتڕاستکردنەوەی بەڕێوەبەر و خاوەندارێتی جزدان ئەنجام دەدرێت.</p>
-        <button type="submit" id="balancePayoutSubmit" class="pb-btn">داواکاری ناردن</button>
-      </form>
-      <div id="balanceHistoryList" class="pb-history" hidden></div>
-    </section>
+        <p class="pb-message" id="balanceStatusMessage" tabindex="-1" role="status">باڵانس بار دەکرێت...</p>
+        <form id="balancePayoutForm" class="pb-form" hidden onsubmit="requestBalancePayout(event)">
+          <label for="balanceDestWallet">جزدانی وەرگر</label>
+          <select id="balanceDestWallet" required></select>
+          <label for="balanceDestNumber">ژمارەی جزدانی خاوەنی هەژمار</label>
+          <input id="balanceDestNumber" required autocomplete="off" inputmode="numeric" dir="ltr" placeholder="ژمارەی جزدان">
+          <label for="balancePayoutAmount">بڕی ناردن (دینار)</label>
+          <input id="balancePayoutAmount" type="number" min="10000" step="1" required dir="ltr" placeholder="10000">
+          <p class="pb-message">ناردن دەستییە؛ دوای پشتڕاستکردنەوەی بەڕێوەبەر و خاوەندارێتی جزدان ئەنجام دەدرێت.</p>
+          <button type="submit" id="balancePayoutSubmit" class="pb-btn">داواکاری ناردن</button>
+        </form>
+        <div id="balanceHistoryList" class="pb-history" hidden></div>
+      </section>
     </section>
 
     <!-- Identity verification status (rendered by renderKycProfile) -->
     <div class="kyc-card" id="pfKycCard" data-state="loading" hidden></div>
 
-    <div class="pf-card">
-      <div class="pf-card-title">
-        <span class="icn icon--solar icon--solar--pen-linear" aria-hidden="true"></span>
-        زانیاری کەسی
-      </div>
+    <section class="pfx-card pfx-form" aria-label="زانیاری کەسی">
+      <div class="pfx-title"><span class="pfx-title-ico"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg></span>زانیاری کەسی</div>
 
       <div class="field">
         <span class="field-label">ناوی تەواو</span>
         <input type="text" class="input" id="pfName" placeholder="ناوی تەواو" oninput="clearFieldError('pfName')">
         <span class="field-error" id="pfNameError"></span>
-        <span class="pf-name-kyc-hint" id="pfNameKycHint" hidden>
-          <span class="icn icn-sm icon--solar icon--solar--verified-check-linear" aria-hidden="true"></span>
-          ناوەکەت بە ناسنامە پشتڕاستکراوەتەوە و ناگۆڕدرێت.
-        </span>
+        <span class="pfx-note" id="pfNameKycHint" hidden><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></svg>ناوەکەت بە ناسنامە پشتڕاستکراوەتەوە و ناگۆڕدرێت.</span>
       </div>
 
       <div class="field">
         <span class="field-label">ژمارەی مۆبایل</span>
         <input type="tel" class="input" id="pfPhone" placeholder="07xxxxxxxxx" dir="ltr" maxlength="11" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,''); clearFieldError('pfPhone')">
-        <span class="phone-format-hint" dir="ltr">07xxxxxxxxx</span>
         <span class="field-error" id="pfPhoneError"></span>
       </div>
 
-      <div class="xc-hint" id="pfCooldownHint" aria-live="polite">
-        <span class="icn icon--solar icon--solar--clock-circle-linear" aria-hidden="true"></span>
-        <span id="pfCooldownText">ناو و ژمارەی مۆبایل هەر ٧ ڕۆژ جارێک دەتوانرێت بگۆڕدرێت.</span>
-      </div>
+      <div class="pfx-hint" id="pfCooldownHint" aria-live="polite"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span id="pfCooldownText">ناو و ژمارەی مۆبایل هەر ٧ ڕۆژ جارێک دەتوانرێت بگۆڕدرێت.</span></div>
 
-      <button type="button" class="btn btn-primary btn-block" id="pfSaveBtn" onclick="saveProfile()"><span class="icn icon--solar icon--solar--diskette-linear" aria-hidden="true"></span>پاشەکەوتکردن</button>
+      <button type="button" class="pfx-save" id="pfSaveBtn" onclick="saveProfile()"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5"/></svg>پاشەکەوتکردن</button>
+    </section>
+
+    <div class="pfx-menu">
+      <button type="button" class="pfx-item" onclick="openVerifyPage()">
+        <span class="pfx-item-ico"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M16 10h2"/><path d="M16 14h2"/><path d="M6.17 15a3 3 0 0 1 5.66 0"/><circle cx="9" cy="11" r="2"/><rect x="2" y="5" width="20" height="14" rx="2"/></svg></span>
+        <span class="pfx-item-txt"><b>پشتڕاستکردنەوەی ناسنامە</b><small id="pfMenuKycSub">کارتی نیشتیمانی یان مۆڵەتی شوفێری</small></span>
+        <span class="pfx-item-go"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg></span>
+      </button>
+      <button type="button" class="pfx-item" onclick="navigate('changes')">
+        <span class="pfx-item-ico"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span>
+        <span class="pfx-item-txt"><b>گۆڕانکاری نرخەکان</b><small>دوایین گۆڕانکاری حمولەی دراوەکان</small></span>
+        <span class="pfx-item-go"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg></span>
+      </button>
     </div>
 
-    <div class="pf-menu">
-      <button type="button" class="pf-menu-item" onclick="openVerifyPage()">
-        <span class="pf-menu-ico"><span class="icn icon--solar icon--solar--user-id-linear" aria-hidden="true"></span></span>
-        <span class="pf-menu-txt"><b>پشتڕاستکردنەوەی ناسنامە</b><span id="pfMenuKycSub">کارتی نیشتیمانی یان مۆڵەتی شوفێری</span></span>
-        <span class="pf-menu-arrow"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-left-linear" aria-hidden="true"></span></span>
+    <div class="pfx-menu">
+      <button type="button" class="pfx-item" onclick="navigate('support')">
+        <span class="pfx-item-ico"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"/><path d="M21 16v2a4 4 0 0 1-4 4h-5"/></svg></span>
+        <span class="pfx-item-txt"><b>پشتگیری و کەیسەکان</b><small>کێشەیەک بنێرە و دۆخی چارەسەرکردنی ببینە</small></span>
+        <span class="pfx-item-go"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg></span>
       </button>
-      <button type="button" class="pf-menu-item" onclick="navigate('transactions')">
-        <span class="pf-menu-ico"><span class="icn icon--solar icon--solar--bill-list-linear" aria-hidden="true"></span></span>
-        <span class="pf-menu-txt"><b>مامەڵەکان</b><span>مێژووی داواکارییەکان و کۆی پارە</span></span>
-        <span class="pf-menu-arrow"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-left-linear" aria-hidden="true"></span></span>
-      </button>
-      <button type="button" class="pf-menu-item" onclick="navigate('changes')">
-        <span class="pf-menu-ico"><span class="icn icon--solar icon--solar--graph-up-linear" aria-hidden="true"></span></span>
-        <span class="pf-menu-txt"><b>گۆڕانکاری نرخەکان</b><span>دوایین گۆڕانکاری حمولەی دراوەکان</span></span>
-        <span class="pf-menu-arrow"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-left-linear" aria-hidden="true"></span></span>
-      </button>
-      <button type="button" class="pf-menu-item" onclick="navigate('rules')">
-        <span class="pf-menu-ico"><span class="icn icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span></span>
-        <span class="pf-menu-txt"><b>یاساکانی ئەپ</b><span>مەرجەکانی بەکارهێنان</span></span>
-        <span class="pf-menu-arrow"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-left-linear" aria-hidden="true"></span></span>
-      </button>
-      
-      <button type="button" class="pf-menu-item" onclick="navigate('support')">
-        <span class="pf-menu-ico"><span class="icn icon--solar icon--solar--headphones-round-linear" aria-hidden="true"></span></span>
-        <span class="pf-menu-txt"><b>پشتگیری و کەیسەکان</b><span>کێشەیەک بنێرە و دۆخی چارەسەرکردنی ببینە</span></span>
-        <span class="pf-menu-arrow"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-left-linear" aria-hidden="true"></span></span>
-      </button>
-      <a class="pf-menu-item" href="https://t.me/proxo_exchange" target="_blank" rel="noopener">
-        <span class="pf-menu-ico"><span class="icn icon--solar icon--solar--plain-2-linear" aria-hidden="true"></span></span>
-        <span class="pf-menu-txt"><b>تیلیگرامی پشتگیری</b><span>پەیوەندی ڕاستەوخۆ بە تیمی پڕۆکسۆ</span></span>
-        <span class="pf-menu-arrow"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-left-linear" aria-hidden="true"></span></span>
+      <a class="pfx-item" href="https://t.me/proxo_exchange" target="_blank" rel="noopener">
+        <span class="pfx-item-ico"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg></span>
+        <span class="pfx-item-txt"><b>تیلیگرامی پشتگیری</b><small>پەیوەندی ڕاستەوخۆ بە تیمی پڕۆکسۆ</small></span>
+        <span class="pfx-item-go"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg></span>
       </a>
-      <button type="button" class="pf-menu-item danger" onclick="logout()">
-        <span class="pf-menu-ico"><span class="icn icon--solar icon--solar--power-linear" aria-hidden="true"></span></span>
-        <span class="pf-menu-txt"><b>چوونەدەرەوە</b><span>دەرچوون لەم هەژمارە</span></span>
-      </button>
     </div>
 
-    <div class="pf-app-version">Proxo Balance • v3.0</div>
+    <button type="button" class="pfx-logout" onclick="logout()"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2v10"/><path d="M18.4 6.6a9 9 0 1 1-12.77.04"/></svg>چوونەدەرەوە</button>
+
+    <div class="pfx-version">Proxo Balance • v3.0</div>
   </section>
 
   <!-- ══════════════ PAGE: IDENTITY VERIFICATION (route "/verify") ══════════════ -->
@@ -1564,28 +1495,31 @@
   </section>
 
   <!-- ══════════════ BOTTOM NAV ══════════════ -->
-  <nav class="bottom-nav" id="bottomNav" aria-label="ڕێنیشاندەری سەرەکی">
-    <div class="bottom-nav-inner">
-      <button type="button" class="bn-item on" data-route="home" onclick="navigate('home')" aria-label="ئاڵوگۆڕ">
-        <span class="bn-ico" aria-hidden="true"><img class="bn-icon bn-icon-idle" src="/assets/images/proxo-app/nav/home.png" alt=""><img class="bn-icon bn-icon-active" src="/assets/images/proxo-app/nav/home-fill.png" alt=""></span>
-        <span class="bn-label">ئاڵوگۆڕ</span>
+  <nav class="pxn" id="bottomNav" aria-label="ڕێنیشاندەری سەرەکی">
+    <div class="pxn-card">
+      <span class="pxn-line" aria-hidden="true"></span>
+      <div class="pxn-inner">
+      <button type="button" class="pxn-item on" data-route="home" onclick="navigate('home')" aria-label="ئاڵوگۆڕ">
+        <span class="pxn-cap" aria-hidden="true"><svg class="pxi pxn-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg></span>
+        <span class="pxn-label">ئاڵوگۆڕ</span>
       </button>
-      <button type="button" class="bn-item" data-route="transactions" onclick="navigate('transactions')" aria-label="مامەڵەکان">
-        <span class="bn-ico" aria-hidden="true"><img class="bn-icon bn-icon-idle" src="/assets/images/proxo-app/nav/transactions.png" alt=""><img class="bn-icon bn-icon-active" src="/assets/images/proxo-app/nav/transactions.png" alt=""><span class="bn-dot" id="bnTxDot">0</span></span>
-        <span class="bn-label">مامەڵەکان</span>
+      <button type="button" class="pxn-item" data-route="transactions" onclick="navigate('transactions')" aria-label="مامەڵەکان">
+        <span class="pxn-cap" aria-hidden="true"><svg class="pxi pxn-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="pxn-f" d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M14 8H8"/><path d="M16 12H8"/><path d="M13 16H8"/></svg><span class="pxn-badge" id="bnTxDot">0</span></span>
+        <span class="pxn-label">مامەڵەکان</span>
       </button>
-      <button type="button" class="bn-item bn-create" onclick="focusExchangeForm()" aria-label="دروستکردنی داواکاری">
-        <span class="bn-create-button" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>
-        <span class="bn-label">دروستکردنی داواکاری</span>
+      <button type="button" class="pxn-item pxn-create" onclick="focusExchangeForm()" aria-label="دروستکردنی داواکاری">
+        <span class="pxn-cap" aria-hidden="true"><svg class="pxi pxn-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg></span>
+        <span class="pxn-label">داواکاری</span>
       </button>
-      <button type="button" class="bn-item" data-route="rules" onclick="navigate('rules')" aria-label="یاساکان">
-        <span class="bn-ico" aria-hidden="true"><img class="bn-icon bn-icon-idle" src="/assets/images/proxo-app/nav/rules.png" alt=""><img class="bn-icon bn-icon-active" src="/assets/images/proxo-app/nav/rules.png" alt=""></span>
-        <span class="bn-label">یاساکان</span>
+      <button type="button" class="pxn-item" data-route="rules" onclick="navigate('rules')" aria-label="یاساکان">
+        <span class="pxn-cap" aria-hidden="true"><svg class="pxi pxn-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="pxn-f" d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="m9 15 2 2 4-4"/></svg></span>
+        <span class="pxn-label">یاساکان</span>
       </button>
-      <button type="button" class="bn-item" data-route="profile" onclick="navigate('profile')" aria-label="پڕۆفایل">
-        <span class="bn-ico" aria-hidden="true"><img class="bn-icon bn-icon-idle" src="/assets/images/proxo-app/nav/user-outline.png" alt=""><img class="bn-icon bn-icon-active" src="/assets/images/proxo-app/nav/user-filled.png" alt=""><span class="bn-dot bn-dot-plus" id="bnProfileDot" aria-label="زیادکردنی پشتڕاستکردنەوەی ناسنامە"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span></span>
-        <span class="bn-label">پڕۆفایل</span>
+      <button type="button" class="pxn-item" data-route="profile" onclick="navigate('profile')" aria-label="پڕۆفایل">
+        <span class="pxn-cap" aria-hidden="true"><svg class="pxi pxn-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle class="pxn-f" cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></svg><span class="pxn-badge pxn-badge-plus" id="bnProfileDot" aria-label="زیادکردنی پشتڕاستکردنەوەی ناسنامە"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span></span>
+        <span class="pxn-label">پڕۆفایل</span>
       </button>
+      </div>
     </div>
   </nav>
 
@@ -1596,7 +1530,8 @@
 <script src="/assets/js/exchange-reward-pricing.js?v=3"></script>
 <script src="/assets/js/exchange-payout-rounding.js?v=1"></script>
 <script src="/assets/js/exchange-live.js?v=1"></script>
-<script src="/assets/js/app.js?v=58"></script>
+<script src="/assets/js/app.js?v=59"></script>
+<script src="/assets/js/proxo-ui-v2.js?v=1"></script>
 <script src="/assets/js/exchange-customer-features.js?v=3"></script>
 <script src="/assets/js/exchange-balance.js?v=7"></script>
 <script src="/assets/js/exchange-ux.js?v=1"></script>

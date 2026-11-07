@@ -45,7 +45,7 @@ test('Design layer leaves hidden/route mechanics untouched and provides accessib
 
 test('Production smoke waits for the changed customer version and verifies its design contract',()=>{
   const workflow=read('.github/workflows/exchange-production-smoke.yml');
-  assert(workflow.includes('app.js?v=58'));
+  assert(workflow.includes('app.js?v=59'));
   assert(workflow.includes('proxo-design-system.css?v=1'));
-  assert(html.includes('/assets/js/app.js?v=58'));
+  assert(html.includes('/assets/js/app.js?v=59'));
 });
