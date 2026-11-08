@@ -54,3 +54,44 @@
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
   schedule();
 })();
+
+
+/* Proxo UI v2 — bottom nav hides while scrolling down and returns smoothly
+   on the way back up. Only toggles the `.is-hidden` class; the CSS animates it.
+   It is always shown near the top and at the very bottom of the page. */
+(function () {
+  'use strict';
+  var nav = document.getElementById('bottomNav');
+  if (!nav) return;
+  var DOWN = 14;         // px scrolled down in one go before it hides
+  var UP = 8;            // px scrolled up before it returns
+  var NEAR_TOP = 24;
+  var lastY = Math.max(0, window.scrollY || 0), run = 0, hidden = false, queued = false;
+
+  function set(h) {
+    if (h === hidden) return;
+    hidden = h;
+    nav.classList.toggle('is-hidden', h);
+  }
+
+  function update() {
+    queued = false;
+    var y = Math.max(0, window.scrollY || 0);                    // iOS rubber-band can go negative
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    var d = y - lastY;
+    lastY = y;
+    if (y <= NEAR_TOP || y >= max - 4) { run = 0; set(false); return; }
+    if (!d) return;
+    run = (d > 0) === (run > 0) ? run + d : d;                    // a change of direction starts a new run
+    if (run > DOWN) set(true);
+    else if (run < -UP) set(false);
+  }
+
+  window.addEventListener('scroll', function () {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(update);
+  }, { passive: true });
+  window.addEventListener('popstate', function () { run = 0; set(false); });
+  nav.addEventListener('focusin', function () { set(false); });
+})();

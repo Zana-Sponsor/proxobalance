@@ -222,28 +222,9 @@ function selectPickerOption(value){
 }
 
 // ══════════════════════════════════════════════════════════════
-// ═══ TOASTS ═════════════════════════════════════════════════════
+// ═══ TOASTS — showToast()/hideToast() live in /assets/js/proxo-toast.js
+// ═══ (loaded before this file). Same call: showToast(message, type, title, opts)
 // ══════════════════════════════════════════════════════════════
-const TOAST_ICON = { success:ICON.check, error:ICON.cross, warning:ICON.warn, info:ICON.info };
-function showToast(message, type='info', title){
-  type = TOAST_ICON[type] ? type : 'info';
-  const container = document.getElementById('toastContainer');
-  const el = document.createElement('div');
-  el.className = 'toast '+type;
-  el.innerHTML =
-    '<span class="toast-ico">'+TOAST_ICON[type]+'</span>'
-    + '<span class="toast-text">'
-      + (title?'<div class="toast-title">'+title+'</div>':'')
-      + '<div class="toast-msg">'+message+'</div>'
-    + '</span>'
-    + '<button type="button" class="toast-x" aria-label="داخستن"><span class="icn icn-sm icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span></button>';
-  const remove=()=>{ el.classList.add('leaving'); setTimeout(()=>el.remove(),220); };
-  el.querySelector('.toast-x').onclick=remove;
-  container.appendChild(el);
-  const life = type==='error' ? 5200 : 3800;
-  setTimeout(remove, life);
-  while(container.children.length>3) container.removeChild(container.firstChild);
-}
 
 // ══════════════════════════════════════════════════════════════
 // ═══ RESULT MODAL (success / error / warning — replaces alert()) ═
@@ -1794,6 +1775,7 @@ function calc(){
   for(const id of ['bdPayoutRow','bdRoundingRow','payoutRoundingNote']){
     const node=document.getElementById(id);if(node)node.hidden=true;
   }
+  document.getElementById('xcSumResult')?.classList.remove('has-payout');
   const feeEl=document.getElementById('feeDisplay');
   feeEl.hidden=true;
   const rewardBanner=document.getElementById('rewardBanner');
@@ -1897,6 +1879,7 @@ function calc(){
   const payout=typeof ProxoPayoutRounding==='object'?ProxoPayoutRounding.plan(expected,to):null;
   const expectedLabel=document.getElementById('bdExpectedLabel');
   if(expectedLabel)expectedLabel.textContent=payout?.applies?'بڕ دوای لێبڕین':'بڕی وەرگیراو';
+  const resultBox=document.getElementById('xcSumResult');
   if(amt>0&&payout?.applies){
     const payoutRow=document.getElementById('bdPayoutRow'),creditRow=document.getElementById('bdRoundingRow');
     const payoutValue=document.getElementById('payoutDisplay'),creditValue=document.getElementById('roundingDisplay');
@@ -1915,6 +1898,8 @@ function calc(){
     }
     if(!payout.valid){const btn=document.getElementById('submitBtn');if(btn)btn.disabled=true;}
   }
+  // when the payout row is shown it is the final line; otherwise «بڕی وەرگیراو» is
+  if(resultBox)resultBox.classList.toggle('has-payout',!!(amt>0&&payout?.applies));
   return payout;
 }
 
@@ -1980,7 +1965,7 @@ async function openOrderConfirm(){
   const payoutRows=payout?.applies&&payout.valid?
     '<div class="confirm-row"><span class="confirm-row-label">بڕ دوای لێبڕین</span><span class="confirm-row-value" dir="ltr">'+escHtml(totalTxt)+'</span></div>'+
     '<div class="confirm-row"><span class="confirm-row-label">بڕی ناردن بۆ وەرگر</span><span class="confirm-row-value accent" dir="ltr">'+formatNum(payout.payout_iqd)+' IQD</span></div>'+
-    '<div class="confirm-row"><span class="confirm-row-label">گەڕاندنەوەی خۆکار بۆ باڵانست</span><span class="confirm-row-value" dir="ltr">'+formatNum(payout.remainder_iqd)+' IQD</span></div>'+
+    '<div class="confirm-row"><span class="confirm-row-label">بڕی باڵانسی نەنێردراو</span><span class="confirm-row-value" dir="ltr">'+formatNum(payout.remainder_iqd)+' IQD</span></div>'+
     '<p class="payout-rounding-note">'+(payout.payout_iqd===0?'هیچ ناردنێکی دەرەکی ئەنجام نادرێت. ':'')+
       (payout.remainder_iqd>0?'بڕی ماوە دوای پەسەندکردنی ئادمین بۆ باڵانسی هەژماری تۆ دەگەڕێتەوە.':'بڕێک بۆ گەڕاندنەوە نەماوەتەوە.')+'</p>':
     '<div class="confirm-row"><span class="confirm-row-label">بڕی وەرگیراو</span><span class="confirm-row-value accent" dir="ltr">'+escHtml(totalTxt)+'</span></div>';
@@ -1994,6 +1979,15 @@ async function openOrderConfirm(){
     + '<div class="confirm-row"><span class="confirm-row-label">ژمارەی وەرگر</span><span class="confirm-row-value" dir="ltr">'+escHtml(phone)+'</span></div>';
   const overlay=document.getElementById('confirmSheet');
   openSheet(overlay);
+}
+// «بڕی باڵانسی نەنێردراو» — the (i) next to it opens a bottom sheet that explains why.
+function openRoundingInfo(){
+  const sheet=document.getElementById('roundingInfoSheet');
+  if(sheet) openSheet(sheet);
+}
+function closeRoundingInfo(){
+  const sheet=document.getElementById('roundingInfoSheet');
+  if(sheet) closeSheet(sheet);
 }
 function closeOrderConfirm(){
   closeSheet(document.getElementById('confirmSheet'));
@@ -2196,10 +2190,37 @@ function orderCodeOf(o){
   return 'P' + String((o && o.order_number) || 0).padStart(11,'0');
 }
 function fmtCode(code){ return '\u2068' + code + '\u2069'; }
+// ── copy ───────────────────────────────────────────────────────
+// "Copied" is shown on the button itself (a check mark + «کۆپی کرا» for 1.6 s),
+// not in a toast. A toast is only used when the copy really failed.
+async function copyText(text){
+  try{ if(navigator.clipboard && navigator.clipboard.writeText){ await navigator.clipboard.writeText(text); return true; } }catch(_){}
+  try{
+    const ta=document.createElement('textarea');
+    ta.value=text; ta.setAttribute('readonly',''); ta.style.cssText='position:fixed;top:-1000px;opacity:0';
+    document.body.appendChild(ta); ta.select();
+    const ok=document.execCommand('copy'); ta.remove(); return ok;
+  }catch(_){ return false; }
+}
+function flashCopied(btn){
+  if(!btn) return;
+  if(btn._copyTimer) clearTimeout(btn._copyTimer);
+  else{ btn._copyHTML=btn.innerHTML; btn.style.minWidth=btn.offsetWidth+'px'; }
+  btn.classList.add('is-copied');
+  btn.innerHTML='<svg class="pxi pxi-copied" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5"/></svg><span>کۆپی کرا</span>';
+  btn._copyTimer=setTimeout(()=>{
+    btn.innerHTML=btn._copyHTML; btn.classList.remove('is-copied'); btn.style.minWidth='';
+    btn._copyTimer=null; btn._copyHTML=null;
+  },1600);
+}
+async function copyWithFeedback(text, btn){
+  if(await copyText(text)) flashCopied(btn);
+  else showToast('نەتوانرا کۆپی بکرێت','error');
+}
 function copyOrderCode(code, ev){
   if(ev){ ev.stopPropagation(); }
-  try{ navigator.clipboard.writeText(code); showToast('ئایدی مامەڵە کۆپی کرا','success'); }
-  catch(_){ showToast('نەتوانرا کۆپی بکرێت','error'); }
+  const btn=ev && ev.currentTarget;      // read before the first await: currentTarget is cleared afterwards
+  copyWithFeedback(code, btn);
 }
 
 // The list remains compact; saved fees, receipts and notes are in the detail sheet.
@@ -2211,13 +2232,33 @@ const TX_STATE = {
   'چاوەڕوانە':               { key:'pending',  cls:''                  }
 };
 function txStateOf(o){ return o?.balance_refunded_at ? {key:'done',cls:'status-success'} : (TX_STATE[o && o.status] || {key:'pending',cls:''}); }
-function txLabelOf(o){ return o?.balance_refunded_at?'پارە گەڕێندرایەوە':(o?.status||''); }
+// Labels shown to the customer. The stored status values stay as they are.
+const TX_LABEL = { 'ڕەتکرا':'ڕەتکرایەوە', 'چاوەڕوانە':'چاوەڕوانی' };
+function txLabelOf(o){
+  if(o?.balance_refunded_at) return 'پارە گەڕێندرایەوە';
+  const s=o?.status||'';
+  return TX_LABEL[s]||s;
+}
 function txAmount(value, method){
   if(value===null||value===undefined||value===''||!['number','string'].includes(typeof value)||
     (typeof value==='string'&&!/^\d+(?:\.\d+)?$/.test(value))||!Number.isFinite(Number(value))||Number(value)<0)return '—';
   return formatNum(Number(value)) + (method==='USDT' ? ' $' : ' IQD');
 }
-function txWhen(iso, withTime){ return kycFmtDate(iso, withTime); }   // shared Sorani date formatter
+// Date as «DD - MM - YYYY — HH:mm». txWhen() is plain text; txWhenHTML() wraps it in a
+// right-to-left isolate so day, month, year and time keep their order inside any container.
+function txWhen(iso, withTime){
+  if(!iso) return '—';
+  const d=new Date(iso); if(isNaN(d)) return '—';
+  const p=n=>String(n).padStart(2,'0');
+  const date=p(d.getDate())+' - '+p(d.getMonth()+1)+' - '+d.getFullYear();
+  return withTime ? date+' — '+p(d.getHours())+':'+p(d.getMinutes()) : date;
+}
+function txWhenHTML(iso, withTime){ return '<bdi class="tx-date" dir="rtl">'+escHtml(txWhen(iso,withTime))+'</bdi>'; }
+
+// Direction: always «from → to», left to right, so Latin wallet names (Fastpay → FIB)
+// read in the order they are sent. The arrow points the way the money goes.
+const TX_ARROW='<span class="tx-route-arrow" aria-hidden="true"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>';
+function txRouteInner(from,to){ return '<span class="tx-route-end">'+escHtml(methodLabel(from))+'</span>'+TX_ARROW+'<span class="tx-route-end">'+escHtml(methodLabel(to))+'</span>'; }
 function orderCardHTML(o){
   const code=orderCodeOf(o);
   const st=txStateOf(o);
@@ -2226,9 +2267,6 @@ function orderCardHTML(o){
   const payout=typeof ProxoPayoutRounding==='object'?ProxoPayoutRounding.forOrder(o):null;
   const rounded=!refunded&&payout&&(payout.planned||payout.has_settlement);
   const received=payout?payout.display_amount:o.total;
-  const roundingNote=rounded&&payout.valid&&payout.remainder_iqd>0?
-    '<div class="tx-rounding-credit">'+(payout.settled?'گەڕاوەتەوە بۆ باڵانست: ':'دوای پەسەندکردن بۆ باڵانست: ')+
-      '<bdi>'+txAmount(payout.remainder_iqd,'IQD')+'</bdi></div>':'';
   return '<article class="tx-card'+(needsAction?' needs-action':'')+(st.key==='done'?' is-complete':'')+'" tabindex="0" role="button"'
     + ' onclick="openTxDetail(\''+escHtml(String(o.id))+'\')"'
     + ' onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openTxDetail(\''+escHtml(String(o.id))+'\');}">'
@@ -2236,14 +2274,11 @@ function orderCardHTML(o){
       + '<span class="tx-code" dir="ltr">'+escHtml(code)+'</span>'
       + '<span class="status-badge '+st.cls+'">'+escHtml(txLabelOf(o))+'</span>'
     + '</div>'
-    + '<div class="tx-card-content"><div class="tx-route">'+escHtml(methodLabel(o.from_method))
-      + '<span class="tx-route-arrow" aria-hidden="true">'+ICON.arrowLeftLong+'</span>'
-      + escHtml(methodLabel(refunded?'AccountBalance':o.to_method))+'</div>'
+    + '<div class="tx-card-content"><div class="tx-route" dir="ltr">'+txRouteInner(o.from_method,refunded?'AccountBalance':o.to_method)+'</div>'
       + '<div class="tx-card-value"><small>'+(refunded?'گەڕاوە بۆ باڵانس':rounded?'بڕی ناردن بۆ وەرگر':'وەرگرتنت')+'</small><span class="tx-amount" dir="ltr">'+txAmount(refunded?o.amount:received,refunded?'AccountBalance':o.to_method)+'</span></div>'
     + '</div>'
-    + roundingNote
     + '<div class="tx-card-foot">'
-      + '<span class="tx-when">'+escHtml(txWhen(o.created_at,true))+'</span>'
+      + '<span class="tx-when">'+txWhenHTML(o.created_at,true)+'</span>'
       + '<span class="tx-detail-link">وردەکاری <svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg></span>'
     + '</div>'
     + (needsAction ? '<div class="tx-card-action">پێویستی بە ڕاستکردنەوەی تۆ هەیە</div>' : '')
@@ -2265,7 +2300,7 @@ function feedbackOrderSnapshot(order){
     '<div class="feedback-order-top"><span>مامەڵەی پەسەندکراو</span><b dir="ltr">'+escHtml(orderCodeOf(order))+'</b></div>'+
     '<div class="feedback-order-route"><span>'+escHtml(methodLabel(order.from_method))+'</span><span class="feedback-route-arrow" aria-hidden="true">←</span><span>'+escHtml(methodLabel(order.to_method))+'</span></div>'+
     '<div class="feedback-order-amounts"><div><small>ناردنت</small><b dir="ltr">'+escHtml(txAmount(order.amount,order.from_method))+'</b></div><div><small>وەرگرتنت</small><b dir="ltr">'+escHtml(txAmount(received,order.to_method))+'</b></div></div>'+
-    '<div class="feedback-order-date"><span>بەرواری مامەڵە</span><b>'+escHtml(txWhen(order.decided_at||order.created_at,true))+'</b></div></div>';
+    '<div class="feedback-order-date"><span>بەرواری مامەڵە</span><b>'+txWhenHTML(order.decided_at||order.created_at,true)+'</b></div></div>';
 }
 function feedbackRewardCard(order,earned){
   return '<div class="feedback-reward-card'+(earned?' is-earned':'')+'" role="status">'+
@@ -2344,33 +2379,28 @@ function openTxDetail(id){
       + '<span dir="ltr">'+escHtml(code)+'</span>'+ICON.copy+'</button>'
     + '</div>'
     + '<div class="tx-damounts">'
-      + '<div><small>ناردنت</small><b dir="ltr">'+txAmount(o.amount,o.from_method)+'</b></div>'
-      + '<div><small>'+(o.balance_refunded_at?'گەڕاوە بۆ باڵانس':rounded?'بڕی ناردن بۆ وەرگر':'وەرگرتنت')+'</small><b class="recv" dir="ltr">'+txAmount(o.balance_refunded_at?o.amount:received,o.balance_refunded_at?'AccountBalance':o.to_method)+'</b></div>'
+      + '<div><small>ناردراو</small><b dir="ltr">'+txAmount(o.amount,o.from_method)+'</b></div>'
+      + '<div><small>'+(o.balance_refunded_at?'گەڕاوە بۆ باڵانس':'وەرگیراو')+'</small><b class="recv" dir="ltr">'+txAmount(o.balance_refunded_at?o.amount:received,o.balance_refunded_at?'AccountBalance':o.to_method)+'</b></div>'
     + '</div>'
     + '<div class="tx-dgroup">'
-    // same direction rendering as the list card: source on the right, arrow, destination
-    + txRow('ئاڕاستە', '<span class="tx-droute">'+escHtml(methodLabel(o.from_method))
-        + '<span class="tx-route-arrow" aria-hidden="true">'+ICON.arrowLeftLong+'</span>'
-        + escHtml(methodLabel(o.to_method))+'</span>', {html:true})
+    // same direction as the list card: from → to, left to right
+    + txRow('ئاڕاستە', '<span class="tx-droute" dir="ltr">'+txRouteInner(o.from_method,o.to_method)+'</span>', {html:true})
     // A rate only means something across currencies; IQD → IQD is a fee.
     + (isUsdt && rate ? txRow('نرخی ئاڵوگۆڕ', '1 $ = '+formatNum(Math.round(rate))+' IQD', {ltr:true}) : '')
     + (!o.balance_refunded_at && !isUsdt && o.to_method!=='USDT' ? txRow('کرێی خزمەتگوزاری', formatNum(fee)+' IQD', {ltr:true}) : '')
     + (!o.balance_refunded_at && discountIqd>0 ? txRow('سوودی داشکاندن','<span class="tx-save" dir="ltr">'+formatNum(discountIqd)+' IQD</span>',{html:true}) : '')
     + (rounded?txRow('بڕی سەرەکی دوای لێبڕین',txAmount(o.total,o.to_method),{ltr:true}):'')
-    + (rounded?txRow(payout.settled?'گەڕاندنەوەی خۆکار بۆ باڵانست':'گەڕاندنەوە بۆ باڵانست دوای پەسەندکردن',txAmount(payout.remainder_iqd,'IQD'),{ltr:true}):'')
+    + (rounded?txRow('بڕی باڵانسی نەنێردراو',txAmount(payout.remainder_iqd,'IQD'),{ltr:true}):'')
     + (rounded&&payout.valid&&payout.payout_iqd===0?txRow('ناردنی دەرەکی','هیچ ناردنێک بۆ وەرگر ئەنجام نادرێت'):'')
     + txRow('ژمارەی وەرگر', o.phone, {ltr:true})
     + (o.sender_phone ? txRow('ژمارەی نێرەر', o.sender_phone, {ltr:true}) : '')
-    + txRow('بەرواری ناردن', txWhen(o.created_at,true))
-    + (o.balance_refunded_at ? txRow('ڕیفاوند بۆ باڵانس',txWhen(o.balance_refunded_at,true)) : '')
-    + ((o.status==='پەسەندکرا'||o.status==='ڕەتکرا') && o.decided_at ? txRow('بەرواری بڕیار', txWhen(o.decided_at,true)) : '')
+    + txRow('بەرواری ناردن', txWhenHTML(o.created_at,true), {html:true})
+    + (o.balance_refunded_at ? txRow('ڕیفاوند بۆ باڵانس',txWhenHTML(o.balance_refunded_at,true),{html:true}) : '')
+    + ((o.status==='پەسەندکرا'||o.status==='ڕەتکرا') && o.decided_at ? txRow('بەرواری بڕیار', txWhenHTML(o.decided_at,true), {html:true}) : '')
     + (o.extra_info ? txRow('زانیاری زیاتر', o.extra_info) : '')
     + '</div>';
-  if(rounded&&payout.planned&&payout.valid&&payout.remainder_iqd>0){
-    html+='<p class="payout-rounding-note">بڕی ماوە تەنها دوای پەسەندکردنی مامەڵە خۆکارانە بۆ باڵانسی هەژمارەکەت دەگەڕێتەوە.</p>';
-  }
   if(o.admin_note){
-    html+='<div class="tx-dnote"><b>تێبینی ئادمین</b><p>'+escHtml(o.admin_note)+'</p></div>';
+    html+='<div class="tx-dnote'+(o.status==='ڕەتکرا'?' is-reason':'')+'"><b>'+(o.status==='ڕەتکرا'?'هۆکاری ڕەتکردنەوە':'تێبینی ئادمین')+'</b><p>'+escHtml(o.admin_note)+'</p></div>';
   }
   if(o.status==='ڕەتکرا'){
     html+='<div class="tx-dnote warn"><b>داواکارییەکە ڕەتکراوەتەوە</b>'
@@ -2812,7 +2842,11 @@ function renderTxList(){
   }
   el.innerHTML = list.map(orderCardHTML).join('');
 }
-function copyNum(){ navigator.clipboard.writeText(document.getElementById('myNum').innerText); showToast('ژمارەکە کۆپی کرا بۆ کلیپبۆرد','success'); }
+function copyNum(btn){
+  const num=(document.getElementById('myNum').innerText||'').trim();
+  if(!num || num==='---') return;
+  copyWithFeedback(num, btn);
+}
 
 // Admin panel now lives in its own page — see exchange-admin.html
 
@@ -3180,15 +3214,10 @@ function setAvatar(el, name){
   img.onload=()=>{ el.textContent=''; el.appendChild(img); el.classList.add('has-photo'); };
   img.src=url;
 }
-function copyUsername(){
+function copyUsername(btn){
   const u=curProfile && curProfile.username;
   if(!u) return;
-  const text='@'+u;
-  const done=()=>showToast('ناوی بەکارهێنەر کۆپی کرا: '+text,'success');
-  try{
-    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(done).catch(()=>{}); return; }
-  }catch(_){}
-  done();
+  copyWithFeedback('@'+u, btn);
 }
 
 function fillProfileForm(){
@@ -4541,13 +4570,21 @@ document.addEventListener('keydown', (e)=>{
   if(document.getElementById('txSheet') && !document.getElementById('txSheet').hidden){ closeTxDetail(); return; }
   const notifP=document.getElementById('notifPanel'); if(notifP && notifP.classList.contains('open')){ closeNotifPanel(); return; }
   const picker=document.getElementById('pickerSheet'); if(picker.classList.contains('open')){ closePicker(); return; }
+  const roundingS=document.getElementById('roundingInfoSheet'); if(roundingS && roundingS.classList.contains('open')){ closeRoundingInfo(); return; }
   const confirmS=document.getElementById('confirmSheet'); if(confirmS.classList.contains('open')){ closeOrderConfirm(); return; }
   const result=document.getElementById('resultModal'); if(result.style.display==='flex'){ closeResultModal(); return; }
   const supportImage=document.getElementById('supportImageModal'); if(supportImage?.style.display==='flex'){ closeSupportImage(); return; }
   const orderCorrection=document.getElementById('orderCorrectionModal'); if(orderCorrection?.style.display==='flex'){ closeOrderCorrection(); return; }
 });
-window.addEventListener('offline', ()=>showToast('پەیوەندیت بە ئینتەرنێت بڕایەوە','error','کێشەی تۆڕ'));
-window.addEventListener('online', ()=>{ showToast('پەیوەندیت بە ئینتەرنێت گەڕایەوە','success'); flushQueuedErrorLogs(); });
+// One toast with the id "net": «no internet» stays until the connection is back,
+// then the SAME card turns green and goes away after a few seconds.
+const _showOffline=()=>showToast('پەیوەندیت بە ئینتەرنێت بڕاوە','warning','ئینتەرنێت نییە',{id:'net',sticky:true});
+window.addEventListener('offline', _showOffline);
+window.addEventListener('online', ()=>{
+  showToast('ئینتەرنێت دووبارە کار دەکات','success','پەیوەندی گەڕایەوە',{id:'net',duration:3000});
+  flushQueuedErrorLogs();
+});
+if(typeof navigator!=='undefined' && navigator.onLine===false) _showOffline();
 window.addEventListener('error', event=>{
   if(!event?.message) return;
   reportAppError(event.error||new Error(event.message),{
