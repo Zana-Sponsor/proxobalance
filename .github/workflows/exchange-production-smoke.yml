@@ -15,12 +15,13 @@ jobs:
           set -euo pipefail
           for attempt in $(seq 1 24); do
             if curl -fLsS --max-time 15 'https://www.proxobalance.app/' -o current-index.html &&
-               grep -q 'app.js?v=61' current-index.html &&
-               grep -q 'proxo-ui-v2.css?v=3' current-index.html &&
-               grep -q 'proxo-ui-v2.js?v=3' current-index.html &&
+               grep -q 'app.js?v=62' current-index.html &&
+               grep -q 'proxo-ui-v2.css?v=5' current-index.html &&
+               grep -q 'proxo-ui-v2.js?v=4' current-index.html &&
                grep -q 'proxo-toast.js?v=1' current-index.html &&
-               grep -q 'proxo-ui-v2.css?v=3' current-index.html &&
-               grep -q 'proxo-ui-v2.js?v=3' current-index.html &&
+               grep -q 'id="savedRecipientsShortcut"' current-index.html &&
+               grep -q 'proxo-ui-v2.css?v=5' current-index.html &&
+               grep -q 'proxo-ui-v2.js?v=4' current-index.html &&
                grep -q 'exchange-payout-rounding.js?v=1' current-index.html &&
                grep -q 'exchange-customer-polish.css?v=2' current-index.html &&
                grep -q 'exchange-feedback.css?v=3' current-index.html &&
@@ -46,7 +47,7 @@ jobs:
                grep -q 'exchange-profit.js?v=5' current-admin.html &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-profit.js?v=5' -o current-profit.js &&
                grep -q 'ex_admin_deduction_stats_filtered' current-profit.js &&
-               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/app.js?v=61' -o current-app.js &&
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/app.js?v=62' -o current-app.js &&
                grep -q 'accountBalanceSourceOption' current-app.js &&
                grep -q 'dismissAppSplash' current-app.js &&
                grep -q 'هەڵسەنگاندنی داواکاری' current-app.js &&
@@ -82,22 +83,27 @@ jobs:
             echo 'FAIL: completed transactions summary is still published.'
             exit 1
           fi
-          grep -q 'app.js?v=61' index.html
-          grep -q 'proxo-ui-v2.css?v=3' index.html
-          grep -q 'proxo-ui-v2.js?v=3' index.html
+          grep -q 'app.js?v=62' index.html
+          grep -q 'proxo-ui-v2.css?v=5' index.html
+          grep -q 'proxo-ui-v2.js?v=4' index.html
           grep -q 'proxo-toast.js?v=1' index.html
           grep -q 'id="savedRecipientsShortcut"' index.html
-          curl -fLsS --max-time 25 "$root/assets/css/proxo-ui-v2.css?v=3" -o proxo-ui-v2.css
+          curl -fLsS --max-time 25 "$root/assets/css/proxo-ui-v2.css?v=5" -o proxo-ui-v2.css
           grep -q 'pxt-stack' proxo-ui-v2.css
+          grep -q 'field-error.show' proxo-ui-v2.css
+          grep -q 'notif-reason' proxo-ui-v2.css
           curl -fLsS --max-time 25 "$root/assets/js/proxo-toast.js?v=1" -o proxo-toast.js
           grep -q 'window.showToast = showToast' proxo-toast.js
-          curl -fLsS --max-time 25 "$root/assets/js/proxo-ui-v2.js?v=3" -o proxo-ui-v2.js
+          curl -fLsS --max-time 25 "$root/assets/js/proxo-ui-v2.js?v=4" -o proxo-ui-v2.js
           grep -q 'function place()' proxo-ui-v2.js
-          grep -q 'proxo-ui-v2.css?v=3' index.html
-          grep -q 'proxo-ui-v2.js?v=3' index.html
-          curl -fLsS --max-time 25 "$root/assets/css/proxo-ui-v2.css?v=3" -o proxo-ui-v2.css
+          curl -fLsS --max-time 25 "$root/assets/js/app.js?v=62" -o app-v62.js
+          grep -q 'function notifRich' app-v62.js
+          grep -q 'escHtml(String(msg' app-v62.js
+          grep -q 'proxo-ui-v2.css?v=5' index.html
+          grep -q 'proxo-ui-v2.js?v=4' index.html
+          curl -fLsS --max-time 25 "$root/assets/css/proxo-ui-v2.css?v=5" -o proxo-ui-v2.css
           grep -q 'pxn-pill' proxo-ui-v2.css
-          curl -fLsS --max-time 25 "$root/assets/js/proxo-ui-v2.js?v=3" -o proxo-ui-v2.js
+          curl -fLsS --max-time 25 "$root/assets/js/proxo-ui-v2.js?v=4" -o proxo-ui-v2.js
           grep -q 'pxn-pill' proxo-ui-v2.js
           curl -fLsS --max-time 25 "$root/assets/css/app-ui-polish.css?v=2" -o app-ui-polish.css
           grep -q 'app-splash-content' app-ui-polish.css

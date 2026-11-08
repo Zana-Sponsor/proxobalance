@@ -256,7 +256,7 @@ function closeResultModal(){ document.getElementById('resultModal').style.displa
 function setFieldError(inputId, msg){
   const inp=document.getElementById(inputId); const err=document.getElementById(inputId+'Error');
   if(inp) inp.classList.add('has-error');
-  if(err){ err.innerHTML=ICON.warn+'<span>'+msg+'</span>'; err.classList.add('show'); }
+  if(err){ err.innerHTML='<i class="fe-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v6.2"/><path d="M12 17.2h.01"/></svg></i><span class="fe-txt">'+escHtml(String(msg==null?'':msg))+'</span>'; err.setAttribute('role','alert'); err.classList.add('show'); }
 }
 function clearFieldError(inputId){
   const inp=document.getElementById(inputId); const err=document.getElementById(inputId+'Error');
@@ -400,6 +400,22 @@ function updateNotifBadge(){
   if(head){ head.style.display = unread>0 ? 'inline-flex' : 'none'; head.textContent = String(unread); }
 }
 
+// Titles/messages come from the database and may carry emoji or a long order code.
+// notifClean() drops emoji, notifRich() puts order codes in their own left-to-right box so
+// they do not scramble the Kurdish sentence around them, and notifSplit() pulls a
+// «هۆکار: …» (reason) out of a message so it can be shown on its own line.
+function notifClean(s){
+  return String(s==null?'':s).replace(/[\p{Extended_Pictographic}\uFE0F\u200D]/gu,'').replace(/[ \t]{2,}/g,' ').trim();
+}
+function notifRich(s){
+  return escHtml(notifClean(s)).replace(/\b[A-Z0-9]{8,}\b/g,'<bdi class="notif-code" dir="ltr">$&</bdi>').replace(/<\/bdi>\s+[-–—]\s+/g,'</bdi>: ');   // «CODE - status» -> «CODE: status»
+}
+function notifSplit(msg){
+  const t=notifClean(msg);
+  const m=t.match(/^([\s\S]*?)[\s.،؛:-]*هۆکار\s*:\s*([\s\S]+)$/);
+  return m ? {main:m[1].trim(), reason:m[2].trim()} : {main:t, reason:''};
+}
+
 function renderNotifPanel(){
   const body=document.getElementById('notifPanelBody');
   if(!body) return;
@@ -415,12 +431,14 @@ function renderNotifPanel(){
     const dk=dayKey(n.created_at);
     if(dk!==lastDay){ lastDay=dk; html += '<div class="notif-day">'+dayLabel(n.created_at)+'</div>'; }
     const k=_notifKind(n.type);
+    const msg=notifSplit(n.message);
     html += '<button type="button" class="notif-item '+k+(n.is_read?'':' unread')+'" onclick="openNotifItem(\''+n.id+'\')">'
-      + '<span class="notif-item-ico '+k+'">'+_notifIcon(n.type)+'</span>'
+      + '<span class="notif-item-ico '+k+'">'+_notifIcon(n.type)+(n.is_read?'':'<span class="notif-unread-dot" aria-label="نەخوێندراوە"></span>')+'</span>'
       + '<span class="notif-item-text">'
-        + '<span class="notif-item-title">'+escHtml(n.title||'')+(n.is_read?'':'<span class="notif-unread-dot"></span>')+'</span>'
-        + '<span class="notif-item-msg">'+escHtml(n.message||'')+'</span>'
-        + '<span class="notif-item-time">'+ICON.clock+timeAgo(n.created_at)+'</span>'
+        + '<span class="notif-item-title">'+notifRich(n.title)+'</span>'
+        + (msg.main?'<span class="notif-item-msg">'+notifRich(msg.main)+'</span>':'')
+        + (msg.reason?'<span class="notif-reason"><b>هۆکار</b><span>'+notifRich(msg.reason)+'</span></span>':'')
+        + '<span class="notif-item-time">'+timeAgo(n.created_at)+'</span>'
       + '</span>'
       + '</button>';
   });
@@ -530,8 +548,8 @@ function showNotifBar(n){
   ico.className='notif-bar-ico '+kind;
   ico.style.background='';
   ico.innerHTML = _notifIcon(n.type);
-  document.getElementById('notifBarTitle').textContent = n.title;
-  document.getElementById('notifBarMsg').textContent = n.message;
+  document.getElementById('notifBarTitle').textContent = notifClean(n.title);
+  document.getElementById('notifBarMsg').textContent = notifClean(n.message);
   bar.className='notif-bar '+n.type;
   bar.style.display='flex';
   bar.dataset.id = n.id;
@@ -2267,21 +2285,28 @@ function orderCardHTML(o){
   const payout=typeof ProxoPayoutRounding==='object'?ProxoPayoutRounding.forOrder(o):null;
   const rounded=!refunded&&payout&&(payout.planned||payout.has_settlement);
   const received=payout?payout.display_amount:o.total;
-  return '<article class="tx-card'+(needsAction?' needs-action':'')+(st.key==='done'?' is-complete':'')+'" tabindex="0" role="button"'
+  const sentAmt=txAmount(o.amount,o.from_method);
+  const gotAmt=txAmount(refunded?o.amount:received,refunded?'AccountBalance':o.to_method);
+  const gotLbl=refunded?'گەڕاوە بۆ باڵانس':'وەرگیراو';
+  const line=(k,v)=>'<div class="rc-line"><span class="rc-k">'+k+'</span><i class="rc-dots" aria-hidden="true"></i><b class="rc-v" dir="ltr">'+escHtml(v)+'</b></div>';
+  return '<article class="tx-card tx-receipt'+(needsAction?' needs-action':'')+(st.key==='done'?' is-complete':'')+'" tabindex="0" role="button"'
     + ' onclick="openTxDetail(\''+escHtml(String(o.id))+'\')"'
     + ' onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openTxDetail(\''+escHtml(String(o.id))+'\');}">'
-    + '<div class="tx-card-top">'
-      + '<span class="tx-code" dir="ltr">'+escHtml(code)+'</span>'
-      + '<span class="status-badge '+st.cls+'">'+escHtml(txLabelOf(o))+'</span>'
+    + '<div class="rc-top">'
+      + '<div class="rc-head">'
+        + '<span class="rc-id"><small>پسووڵە</small><span class="tx-code" dir="ltr">'+escHtml(code)+'</span></span>'
+        + '<span class="status-badge '+st.cls+'">'+escHtml(txLabelOf(o))+'</span>'
+      + '</div>'
+      + '<div class="tx-route" dir="ltr">'+txRouteInner(o.from_method,refunded?'AccountBalance':o.to_method)+'</div>'
+      + '<div class="rc-lines">'+line('ناردراو',sentAmt)+line(gotLbl,gotAmt)+'</div>'
     + '</div>'
-    + '<div class="tx-card-content"><div class="tx-route" dir="ltr">'+txRouteInner(o.from_method,refunded?'AccountBalance':o.to_method)+'</div>'
-      + '<div class="tx-card-value"><small>'+(refunded?'گەڕاوە بۆ باڵانس':rounded?'بڕی ناردن بۆ وەرگر':'وەرگرتنت')+'</small><span class="tx-amount" dir="ltr">'+txAmount(refunded?o.amount:received,refunded?'AccountBalance':o.to_method)+'</span></div>'
+    + '<div class="rc-bot">'
+      + '<div class="rc-foot">'
+        + '<span class="tx-when">'+txWhenHTML(o.created_at,true)+'</span>'
+        + '<span class="tx-detail-link">وردەکاری <svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg></span>'
+      + '</div>'
+      + (needsAction ? '<div class="tx-card-action">پێویستی بە ڕاستکردنەوەی تۆ هەیە</div>' : '')
     + '</div>'
-    + '<div class="tx-card-foot">'
-      + '<span class="tx-when">'+txWhenHTML(o.created_at,true)+'</span>'
-      + '<span class="tx-detail-link">وردەکاری <svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg></span>'
-    + '</div>'
-    + (needsAction ? '<div class="tx-card-action">پێویستی بە ڕاستکردنەوەی تۆ هەیە</div>' : '')
     + '</article>';
 }
 
@@ -3560,7 +3585,7 @@ const KYC_STATES = {
   none:     { label:'پشتڕاست نەکراوەتەوە',                    icon:'shield-linear' },
   required: { label:'پشتڕاستکردنەوەی ناسنامە پێویستە',         icon:'shield-warning-linear' },
   pending:  { label:'لە ژێر پشکنینە',                          icon:'clock-circle-linear' },
-  approved: { label:'ناسنامە پشتڕاستکراوەتەوە ✓',              icon:'verified-check-linear' },
+  approved: { label:'پشتڕاستکراوەتەوە',              icon:'verified-check-linear' },
   rejected: { label:'پێویستی بە دووبارە ناردنەوە هەیە',        icon:'shield-cross-linear' }
 };
 const KYC_ERRORS = {
@@ -3637,6 +3662,23 @@ function kycSolar(name, extra){
   return '<span class="icn '+(extra||'')+' icon--solar icon--solar--'+name+'" aria-hidden="true"></span>';
 }
 
+/* One badge system for every verification state: a shield with a mark.
+   ok ✓ verified · warn ! not verified / required · wait ◔ under review · bad ✕ rejected · idle – unknown */
+const KYC_SHIELD_PATH='M12 2.6 4.6 5.6v5.5c0 4.5 3 8.3 7.4 10.3 4.4-2 7.4-5.8 7.4-10.3V5.6L12 2.6z';
+const KYC_GLYPH={ ok:'M8.3 12.2l2.6 2.6 4.8-5.2', warn:'M12 8v4.7M12 15.8h.01', wait:'M12 7.8v4.5l2.9 1.7', bad:'M9.4 9.4l5.2 5.2M14.6 9.4l-5.2 5.2', idle:'M9.2 12h5.6' };
+function kycTone(status){
+  return status==='approved' ? 'ok'
+    : (status==='none'||status==='required') ? 'warn'
+    : status==='pending' ? 'wait'
+    : status==='rejected' ? 'bad' : 'idle';
+}
+function kycBadgeSvg(status){
+  return '<svg class="kyc-shield" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="ks-bg" d="'+KYC_SHIELD_PATH+'"/><path class="ks-glyph" d="'+KYC_GLYPH[kycTone(status)]+'"/></svg>';
+}
+function kycIco(status, cls){
+  return '<span class="kyc-ico'+(cls?' '+cls:'')+'" data-tone="'+kycTone(status)+'">'+kycBadgeSvg(status)+'</span>';
+}
+
 async function loadKycStatus(silent){
   if(!sb || !curUser) return null;
   if(_kycLoadPromise) return _kycLoadPromise;
@@ -3692,14 +3734,17 @@ function renderKycProfile(){
   if(badge){
     badge.dataset.state=status;
     const ico=document.getElementById('pfKycBadgeIco');
-    if(ico) ico.innerHTML=(status==='none'||status==='required')
-      ? '<svg class="receipt-plus-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>'
-      : kycSolar(meta.icon,'icn-sm'+(meta.spin?' icn-spin':''));
+    if(ico) ico.innerHTML = status==='loading' ? kycSolar(meta.icon,'icn-sm icn-spin') : kycBadgeSvg(status);
     const txt=document.getElementById('pfKycBadgeText');
     if(txt) txt.textContent=meta.label;
   }
   const dot=document.getElementById('pfVerifiedDot');
-  if(dot) dot.hidden = status!=='approved';
+  if(dot){
+    dot.hidden = status==='loading' || status==='error';
+    dot.dataset.tone = kycTone(status);
+    dot.title = meta.label;
+    dot.innerHTML = kycBadgeSvg(status);
+  }
   const sub=document.getElementById('pfMenuKycSub');
   if(sub) sub.textContent = status==='loading'||status==='error' ? 'کارتی نیشتیمانی یان مۆڵەتی شوفێری' : meta.label;
   // Profile tab shows the verification state: approved / pending / not verified.
@@ -3729,7 +3774,7 @@ function renderKycProfile(){
   if(status==='loading' || status==='error'){
     card.hidden = status==='loading';
     if(status==='error'){
-      html=`<div class="kyc-card-head"><span class="kyc-card-ico">${kycSolar('danger-triangle-linear')}</span>
+      html=`<div class="kyc-card-head">${kycIco('error','kyc-card-ico')}
         <div><b>نەتوانرا دۆخی ناسنامە باربکرێت</b><small>پەیوەندییەکەت بپشکنە و دووبارە هەوڵبدەوە.</small></div></div>
         <button type="button" class="btn btn-ghost btn-block kyc-card-btn" onclick="loadKycStatus()">${kycSolar('refresh-linear')} دووبارە هەوڵدانەوە</button>`;
     }
@@ -3738,33 +3783,33 @@ function renderKycProfile(){
   }
   card.hidden=false;
   if(status==='required'){
-    html=`<div class="kyc-card-head"><span class="kyc-card-ico">${kycSolar('shield-warning-linear')}</span>
+    html=`<div class="kyc-card-head">${kycIco('required','kyc-card-ico')}
       <div><b>پشتڕاستکردنەوەی ناسنامە پێویستە</b><small>تیمی پڕۆکسۆ داوای پشتڕاستکردنەوەی ناسنامەکەتی کردووە${req?.created_at?' — '+escHtml(kycFmtDate(req.created_at)):''}.</small></div></div>
       ${req?.reason?`<div class="kyc-note"><b>تێبینی ئادمین</b><p>${escHtml(req.reason)}</p></div>`:''}
       <button type="button" class="btn btn-primary btn-block kyc-card-btn" onclick="openVerifyPage()">${kycSolar('user-id-linear')} دەستپێکردنی پشتڕاستکردنەوە</button>`;
   }else if(status==='rejected'){
-    html=`<div class="kyc-card-head"><span class="kyc-card-ico">${kycSolar('shield-cross-linear')}</span>
+    html=`<div class="kyc-card-head">${kycIco('rejected','kyc-card-ico')}
       <div><b>پشتڕاستکردنەوەکەت ڕەتکرایەوە</b><small>زانیاری یان وێنەکان ڕاست بکەرەوە و دووبارە بینێرە.</small></div></div>
       <div class="kyc-note danger"><b>هۆکاری ڕەتکردنەوە</b><p>${escHtml(v?.rejection_reason||'—')}</p></div>
       ${req?.reason?`<div class="kyc-note"><b>تێبینی ئادمین</b><p>${escHtml(req.reason)}</p></div>`:''}
       <button type="button" class="btn btn-primary btn-block kyc-card-btn" onclick="openVerifyPage()">${kycSolar('refresh-linear')} ڕاستکردنەوە و دووبارە ناردن</button>`;
   }else if(status==='pending'){
-    html=`<div class="kyc-card-head"><span class="kyc-card-ico">${kycSolar('clock-circle-linear')}</span>
+    html=`<div class="kyc-card-head">${kycIco('pending','kyc-card-ico')}
       <div><b>داواکارییەکەت نێردرا و لە ژێر پشکنینە</b><small>ئەنجامەکەت بە ئاگادارییەک پێ ڕادەگەیەنین.</small></div></div>
       <div class="kyc-facts">
         <span><small>جۆری بەڵگەنامە</small><b>${escHtml(docLabel||'—')}</b></span>
         <span><small>کاتی ناردن</small><b>${escHtml(kycFmtDate(v?.submitted_at,true))}</b></span>
       </div>`;
   }else if(status==='approved'){
-    html=`<div class="kyc-card-head"><span class="kyc-card-ico">${kycSolar('verified-check-linear')}</span>
-      <div><b>ناسنامە پشتڕاستکراوەتەوە ✓</b><small>هەژمارەکەت بە بەڵگەنامەی فەرمی پشتڕاستکراوەتەوە.</small></div></div>
+    html=`<div class="kyc-card-head">${kycIco('approved','kyc-card-ico')}
+      <div><b>ناسنامە پشتڕاستکراوەتەوە</b><small>هەژمارەکەت بە بەڵگەنامەی فەرمی پشتڕاستکراوەتەوە.</small></div></div>
       <div class="kyc-facts">
         <span><small>جۆری بەڵگەنامە</small><b>${escHtml(docLabel||'—')}</b></span>
         <span><small>بەرواری پشتڕاستکردنەوە</small><b>${escHtml(kycFmtDate(v?.reviewed_at))}</b></span>
       </div>`;
   }else{ // none
     if(!KYC_SELF_START_ENABLED){ card.hidden=true; card.innerHTML=''; return; }
-    html=`<div class="kyc-card-head"><span class="kyc-card-ico">${kycSolar('user-id-linear')}</span>
+    html=`<div class="kyc-card-head">${kycIco('none','kyc-card-ico')}
       <div><b>ناسنامەکەت پشتڕاست بکەرەوە</b><small>بە کارتی نیشتیمانی یان مۆڵەتی شوفێری، هەژمارەکەت پارێزراوتر و متمانەپێکراوتر دەبێت.</small></div></div>
       <button type="button" class="btn btn-ghost btn-block kyc-card-btn" onclick="openVerifyPage()">${kycSolar('shield-check-linear')} دەستپێکردنی پشتڕاستکردنەوە</button>`;
   }
@@ -3789,28 +3834,28 @@ function renderVerifyPage(){
   if(status==='none' && !KYC_SELF_START_ENABLED) canSubmit=false;
 
   if(status==='loading'){
-    banner.innerHTML=`${kycSolar('refresh-linear','icn-spin')}<div><b>بارکردنی دۆخی ناسنامە...</b></div>`;
+    banner.innerHTML=`${kycIco('loading')}<div><b>بارکردنی دۆخی ناسنامە...</b></div>`;
     form.hidden=true; return;
   }
   if(status==='error'){
-    banner.innerHTML=`${kycSolar('danger-triangle-linear')}<div><b>نەتوانرا دۆخی ناسنامە باربکرێت</b><p>پەیوەندییەکەت بپشکنە.</p>
+    banner.innerHTML=`${kycIco('error')}<div><b>نەتوانرا دۆخی ناسنامە باربکرێت</b><p>پەیوەندییەکەت بپشکنە.</p>
       <button type="button" class="kyc-mini-btn" onclick="loadKycStatus()">دووبارە هەوڵدانەوە</button></div>`;
     form.hidden=true; return;
   }
   if(status==='pending'){
-    banner.innerHTML=`${kycSolar('clock-circle-linear')}<div><b>داواکارییەکەت نێردرا و لە ژێر پشکنینە</b>
+    banner.innerHTML=`${kycIco('pending')}<div><b>داواکارییەکەت نێردرا و لە ژێر پشکنینە</b>
       <p>${escHtml(KYC_DOC_TYPES[v?.document_type]?.label||'')} — ${escHtml(kycFmtDate(v?.submitted_at,true))}</p></div>`;
   }else if(status==='approved'){
-    banner.innerHTML=`${kycSolar('verified-check-linear')}<div><b>ناسنامە پشتڕاستکراوەتەوە ✓</b>
+    banner.innerHTML=`${kycIco('approved')}<div><b>ناسنامە پشتڕاستکراوەتەوە</b>
       <p>پێویست بە هیچ کارێکی تر ناکات. بەرواری پشتڕاستکردنەوە: ${escHtml(kycFmtDate(v?.reviewed_at))}</p></div>`;
   }else if(status==='required'){
-    banner.innerHTML=`${kycSolar('shield-warning-linear')}<div><b>پشتڕاستکردنەوەی ناسنامە پێویستە</b>
+    banner.innerHTML=`${kycIco('required')}<div><b>پشتڕاستکردنەوەی ناسنامە پێویستە</b>
       <p>${escHtml(req?.reason||'تکایە بۆ بەردەوامبوون لە بەکارهێنانی خزمەتگوزارییەکان ناسنامەکەت پشتڕاست بکەرەوە.')}</p></div>`;
   }else if(status==='rejected'){
-    banner.innerHTML=`${kycSolar('shield-cross-linear')}<div><b>پێویستی بە دووبارە ناردنەوە هەیە</b>
+    banner.innerHTML=`${kycIco('rejected')}<div><b>پێویستی بە دووبارە ناردنەوە هەیە</b>
       <p><strong>هۆکار:</strong> ${escHtml(v?.rejection_reason||'—')}</p></div>`;
   }else{
-    banner.innerHTML=`${kycSolar('shield-linear')}<div><b>پشتڕاست نەکراوەتەوە</b>
+    banner.innerHTML=`${kycIco('none')}<div><b>پشتڕاست نەکراوەتەوە</b>
       <p>سێ هەنگاوی کورت: جۆری بەڵگەنامە، زانیارییەکان، وێنەکان.</p></div>`;
   }
   form.hidden=!canSubmit;

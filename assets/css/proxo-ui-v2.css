@@ -1490,7 +1490,8 @@ body #mainApp #pageHome #exchangeCard .file-picker .file-picker-action { display
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 12px 16px 10px;
+  padding: 12px 12px 15px 12px;
+  overflow: hidden;                          /* the countdown line is cut by the rounded corners */
   border: 1px solid rgba(20, 35, 60, .07);
   border-radius: 14px;                       /* soft corners, not a pill */
   background: #fff;
@@ -1498,7 +1499,6 @@ body #mainApp #pageHome #exchangeCard .file-picker .file-picker-action { display
   color: #1f2d44;
   font-family: inherit;
   transform-origin: 50% 0;
-  transform-style: preserve-3d;
   /* position in the stack: lower, further back, a little smaller */
   transform:
     translate3d(var(--dx, 0px), calc(var(--i) * 16px), calc(var(--i) * -30px))
@@ -1526,7 +1526,7 @@ body #mainApp #pageHome #exchangeCard .file-picker .file-picker-action { display
   display: flex;
   align-items: center;
   gap: 10px;
-  transform: translate3d(var(--tx, 0px), var(--ty, 0px), 26px);
+  transform: translate3d(var(--tx, 0px), var(--ty, 0px), 0);   /* the content drifts a little against the card when it tilts */
   transition: opacity .3s ease .08s;
 }
 .pxt-ico {
@@ -1535,10 +1535,9 @@ body #mainApp #pageHome #exchangeCard .file-picker .file-picker-action { display
   flex: 0 0 auto;
   display: grid;
   place-items: center;
-  border-radius: 10px;
+  border-radius: 50%;
   background: var(--c-bg);
   color: var(--c);
-  box-shadow: 0 6px 10px -6px var(--c);
 }
 .pxt-ico svg { width: 17px; height: 17px; }
 .pxt-text {
@@ -1547,11 +1546,10 @@ body #mainApp #pageHome #exchangeCard .file-picker .file-picker-action { display
   display: flex;
   flex-direction: column;
   gap: 1px;
-  text-shadow: 0 1px 0 #fff, 0 3px 6px rgba(20, 35, 60, .14);   /* lifts the words off the card */
 }
-.pxt-title { color: #1f2d44; font-size: 13.5px; font-weight: 400; line-height: 1.6; }
+.pxt-title { color: #1f2d44; font-size: 13.5px; font-weight: 400; line-height: 1.6; text-shadow: 0 1px 1px rgba(20, 35, 60, .12); }
 .pxt-msg   { color: #5b6980; font-size: 12.5px; line-height: 1.7; overflow-wrap: anywhere; }
-.pxt.no-title .pxt-msg { color: #1f2d44; font-size: 13.5px; }
+.pxt.no-title .pxt-msg { color: #1f2d44; font-size: 13.5px; text-shadow: 0 1px 1px rgba(20, 35, 60, .12); }
 .pxt-n {
   flex: 0 0 auto;
   min-width: 26px;
@@ -1575,7 +1573,6 @@ body #mainApp #pageHome #exchangeCard .file-picker .file-picker-action { display
   background: none;
   color: #8793a6;
   cursor: pointer;
-  transform: translate3d(0, 0, 26px);
   transition: background .2s, color .2s, opacity .3s;
   -webkit-tap-highlight-color: transparent;
 }
@@ -1585,12 +1582,12 @@ body #mainApp #pageHome #exchangeCard .file-picker .file-picker-action { display
 /* time left: a thin line at the bottom, it only runs on the front card */
 .pxt-bar {
   position: absolute;
-  inset-inline: 14px;
-  bottom: 7px;
+  left: 0;
+  right: 0;
+  bottom: 0;
   height: 3px;
-  border-radius: 3px;
   background: var(--c);
-  opacity: .8;
+  opacity: .85;
   transform-origin: 100% 50%;
   animation: pxt-life 5s linear forwards;
 }
@@ -1652,7 +1649,6 @@ body #mainApp #pageHome #exchangeCard .file-picker .file-picker-action { display
 @media (prefers-reduced-motion: reduce) {
   .pxt { transition: opacity .2s linear; transform: translate3d(var(--dx, 0px), calc(var(--i) * 12px), 0) scale(calc(1 - var(--i) * .04)); }
   .pxt-body { transform: none; }
-  .pxt-x { transform: none; }
   .pxt-bar { opacity: 0; }            /* the countdown still runs, it is just not drawn */
   .pxt.is-bump { animation: none; }
 }
@@ -1800,6 +1796,389 @@ body #mainApp #pageHome #exchangeCard .xc-info-btn .pxi { width: 18px; height: 1
 #roundingInfoSheet .xc-info-body p { margin: 0 0 12px; color: #3a4962; font-size: 14px; line-height: 2; }
 #roundingInfoSheet .xc-info-body p:first-child { color: #1f2d44; }
 #roundingInfoSheet .xc-info-body p:last-child { margin-bottom: 0; }
+
+
+/* ═════════════════════════════════════════════════════════════════
+   FIELD ERRORS (under inputs) — a small soft-red callout that hangs from
+   the field: a tiny pointer on the start side, a solid round "!" badge and
+   the text, all centred on one axis. Same box on every field.
+   ═════════════════════════════════════════════════════════════════ */
+body .field-error.show {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 9px !important;
+  box-sizing: border-box !important;
+  margin: 9px 0 0 !important;
+  padding: 8px 11px !important;
+  min-height: 38px !important;
+  background: #fff3f3 !important;
+  border: 1px solid #f5c9cb !important;
+  border-radius: 10px !important;
+  color: #a4262c !important;
+  font-size: 12.5px !important;
+  font-weight: 400 !important;
+  line-height: 1.7 !important;
+  text-align: start !important;
+}
+/* pointer toward the field */
+body .field-error.show::before {
+  content: "" !important;
+  position: absolute !important;
+  inset-block-start: -5px !important;
+  inset-inline-start: 18px !important;
+  width: 8px !important;
+  height: 8px !important;
+  background: #fff3f3 !important;
+  border-block-start: 1px solid #f5c9cb !important;
+  border-inline-start: 1px solid #f5c9cb !important;
+  transform: rotate(45deg) !important;
+}
+body .field-error.show > .fe-ico {
+  flex: 0 0 auto !important;
+  width: 20px !important;
+  height: 20px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 50% !important;
+  background: #e5484d !important;
+  color: #fff !important;
+  font-style: normal !important;
+}
+body .field-error.show > .fe-ico svg { width: 12px !important; height: 12px !important; display: block; }
+body .field-error.show > .fe-txt { flex: 1 1 auto; min-width: 0; unicode-bidi: plaintext; }
+body .field-error.show > :is(.icn, .icon--solar) { display: none !important; }
+body .xc-hint + .field-error.show { margin-top: 8px !important; }
+body .input.has-error, body .field.has-error .input {
+  border-color: #e5484d !important;
+  background: #fffafa !important;
+  box-shadow: 0 0 0 3px rgba(229, 72, 77, .10) !important;
+}
+
+
+/* ═════════════════════════════════════════════════════════════════
+   NOTIFICATIONS — one tidy card
+   [icon]  title
+           message (codes in their own box)
+           ┃ هۆکار  …            (only when there is a reason)
+           time
+   The unread dot sits on the icon, the time has no second clock icon,
+   and every card has the same padding, gaps and text sizes.
+   ═════════════════════════════════════════════════════════════════ */
+body #mainApp #notifPanel .notif-panel-body { scrollbar-width: none; }
+body #mainApp #notifPanel .notif-panel-body::-webkit-scrollbar { display: none; }
+body #mainApp #notifPanel .notif-day { margin: 14px 6px 8px !important; font-size: 12px !important; }
+body #mainApp #notifPanel .notif-day:first-child { margin-top: 4px !important; }
+
+body #mainApp #notifPanel .notif-item {
+  margin: 0 0 10px !important;
+  padding: 14px !important;
+  gap: 12px !important;
+  align-items: flex-start !important;
+  border-radius: 16px !important;
+  box-shadow: 0 1px 2px rgba(20, 35, 60, .04) !important;
+  transition: background .2s, border-color .2s, transform .15s;
+}
+body #mainApp #notifPanel .notif-item:active { transform: scale(.985); }
+body #mainApp #notifPanel .notif-item.unread { background: #f7fbff !important; border-color: #cfe3ff !important; }
+
+body #mainApp #notifPanel .notif-item-ico {
+  position: relative;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  background: #e8f1ff !important;
+  color: #0265ff !important;
+}
+body #mainApp #notifPanel .notif-item-ico.msg { background: #eef2f8 !important; color: #5b6980 !important; }
+body #mainApp #notifPanel .notif-item-ico.ok  { background: #e6f6ec !important; color: #15803d !important; }
+body #mainApp #notifPanel .notif-item-ico.no  { background: #fdeceb !important; color: #c0392b !important; }
+body #mainApp #notifPanel .notif-item-ico .pxi { width: 20px !important; height: 20px !important; }
+/* unread dot on the icon corner */
+body #mainApp #notifPanel .notif-item-ico .notif-unread-dot {
+  position: absolute;
+  top: -1px;
+  inset-inline-start: -1px;
+  width: 11px !important;
+  height: 11px !important;
+  border: 2px solid #fff;
+  border-radius: 50% !important;
+  background: #ef4444 !important;
+  box-sizing: border-box;
+}
+
+body #mainApp #notifPanel .notif-item-text { gap: 3px !important; padding-top: 1px; }
+body #mainApp #notifPanel .notif-item-title { display: block !important; color: var(--v2-ink) !important; font-size: 14px !important; line-height: 1.7 !important; }
+body #mainApp #notifPanel .notif-item-msg { display: block; color: #5b6980 !important; font-size: 12.5px !important; line-height: 1.85 !important; overflow-wrap: anywhere; }
+body #mainApp #notifPanel .notif-item-time { margin-top: 4px !important; color: #8793a6 !important; font-size: 11.5px !important; line-height: 1.5; }
+
+/* order code: left-to-right, own box */
+body #mainApp #notifPanel .notif-code {
+  display: inline-block;
+  padding: 0 7px;
+  border-radius: 7px;
+  background: #eef2f8;
+  color: var(--v2-ink);
+  font-size: 12px;
+  line-height: 1.7;
+  letter-spacing: .2px;
+  unicode-bidi: isolate;
+}
+body #mainApp #notifPanel .notif-item-title .notif-code { font-size: 12.5px; }
+
+/* reason of a rejection */
+body #mainApp #notifPanel .notif-reason {
+  margin-top: 4px;
+  padding: 7px 10px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  border-radius: 10px;
+  background: #fdf1f0;
+  color: #7a2a22;
+  font-size: 12.5px;
+  line-height: 1.8;
+}
+body #mainApp #notifPanel .notif-reason b { flex: 0 0 auto; color: #c0392b; font-weight: 400; }
+body #mainApp #notifPanel .notif-reason span { min-width: 0; overflow-wrap: anywhere; }
+
+/* the banner on the home page uses the same clean text */
+body #mainApp #notifBar .notif-bar-title, body #mainApp #notifBar .notif-bar-msg { unicode-bidi: plaintext; }
+
+
+/* ═════════════════════════════════════════════════════════════════
+   TRANSACTION CARD = RECEIPT (پسووڵە)
+   ┌──────────────────────┐   top  : title + code · status · route · lines
+   ╞ ╌ ╌ ╌ ╌ ╌ ╌ ╌ ╌ ╌ ╌ ╡   tear : dashed line with a notch on each side
+   └ ╲╱╲╱╲╱╲╱╲╱╲╱╲╱╲╱╲╱ ┘   foot : date + details, zig-zag paper edge
+   The outline is a drop-shadow, so the notches and the zig-zag edge are
+   outlined too.
+   ═════════════════════════════════════════════════════════════════ */
+body #mainApp #pageTx .tx-card.tx-receipt {
+  --rc-paper: #fff;
+  --rc-ink: #0f172a;
+  --rc-muted: #6b7a90;
+  --rc-dash: #cdd5e2;
+  position: relative;
+  margin: 0 0 20px !important;
+  padding: 0 !important;
+  display: block !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 0 .6px rgba(71, 85, 105, .55)) drop-shadow(0 5px 7px rgba(15, 23, 42, .06));
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+body #mainApp #pageTx .tx-card.tx-receipt:active { transform: scale(.992); }
+body #mainApp #pageTx .tx-card.tx-receipt:focus-visible { outline: 2px solid var(--v2-accent); outline-offset: 3px; }
+
+body #mainApp #pageTx .tx-receipt .rc-top,
+body #mainApp #pageTx .tx-receipt .rc-bot {
+  position: relative;
+  background: var(--rc-paper);
+}
+body #mainApp #pageTx .tx-receipt .rc-top {
+  padding: 14px 16px 16px;
+  border-radius: 14px 14px 0 0;
+  /* notch cut from both bottom corners */
+  -webkit-mask: radial-gradient(circle 8px at 0 100%, #0000 97%, #000) left / 51% 100% no-repeat,
+                radial-gradient(circle 8px at 100% 100%, #0000 97%, #000) right / 51% 100% no-repeat;
+          mask: radial-gradient(circle 8px at 0 100%, #0000 97%, #000) left / 51% 100% no-repeat,
+                radial-gradient(circle 8px at 100% 100%, #0000 97%, #000) right / 51% 100% no-repeat;
+}
+body #mainApp #pageTx .tx-receipt .rc-bot {
+  padding: 12px 16px 13px;
+  -webkit-mask: radial-gradient(circle 8px at 0 0, #0000 97%, #000) left / 51% 100% no-repeat,
+                radial-gradient(circle 8px at 100% 0, #0000 97%, #000) right / 51% 100% no-repeat;
+          mask: radial-gradient(circle 8px at 0 0, #0000 97%, #000) left / 51% 100% no-repeat,
+                radial-gradient(circle 8px at 100% 0, #0000 97%, #000) right / 51% 100% no-repeat;
+}
+/* the dashed tear line, between the two notches */
+body #mainApp #pageTx .tx-receipt .rc-bot::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 14px;
+  border-block-start: 1.5px dashed var(--rc-dash);
+}
+/* zig-zag paper edge */
+body #mainApp #pageTx .tx-card.tx-receipt::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: calc(100% - .5px);
+  height: 7px;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='7' viewBox='0 0 14 7'><path d='M0 0h14L7 7z' fill='%23ffffff'/></svg>") left top / 14px 7px repeat-x;
+}
+body #mainApp #pageTx .tx-receipt.needs-action .rc-top,
+body #mainApp #pageTx .tx-receipt.needs-action .rc-bot { background: #fffcf5; }
+body #mainApp #pageTx .tx-card.tx-receipt.needs-action::after {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='7' viewBox='0 0 14 7'><path d='M0 0h14L7 7z' fill='%23fffcf5'/></svg>");
+}
+
+/* head: «پسووڵە / code» on one side, status on the other */
+body #mainApp #pageTx .tx-receipt .rc-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  margin: 0 0 12px;
+}
+body #mainApp #pageTx .tx-receipt .rc-id { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; min-width: 0; }
+body #mainApp #pageTx .tx-receipt .rc-id small { color: var(--rc-muted); font-size: 11px; line-height: 1.4; letter-spacing: .2px; }
+body #mainApp #pageTx .tx-receipt .tx-code {
+  color: var(--rc-ink) !important;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  letter-spacing: .6px !important;
+  direction: ltr; unicode-bidi: isolate;
+}
+
+/* route as a quiet strip */
+body #mainApp #pageTx .tx-receipt .tx-route {
+  margin: 0 0 12px !important;
+  padding: 8px 10px !important;
+  display: flex !important; align-items: center !important; justify-content: center !important; gap: 10px !important;
+  border-radius: 9px;
+  background: #f3f6fb;
+  color: var(--rc-ink) !important;
+  font-size: 13px !important;
+}
+
+/* the two money lines with dotted leaders */
+body #mainApp #pageTx .tx-receipt .rc-lines { display: grid; gap: 9px; }
+body #mainApp #pageTx .tx-receipt .rc-line { display: flex; align-items: baseline; gap: 8px; }
+body #mainApp #pageTx .tx-receipt .rc-k { flex: 0 0 auto; color: var(--rc-muted); font-size: 12.5px; }
+body #mainApp #pageTx .tx-receipt .rc-dots {
+  flex: 1 1 auto; min-width: 12px; height: 0;
+  border-block-end: 1.5px dotted #c3ccdb;
+  transform: translateY(-3px);
+}
+body #mainApp #pageTx .tx-receipt .rc-v {
+  flex: 0 0 auto; color: var(--rc-ink); font-size: 14.5px; font-weight: 500;
+  font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate;
+}
+body #mainApp #pageTx .tx-receipt .rc-line:last-child .rc-v { font-size: 16px; font-weight: 600; }
+
+/* foot */
+body #mainApp #pageTx .tx-receipt .rc-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+body #mainApp #pageTx .tx-receipt .tx-when { color: var(--rc-muted) !important; font-size: 12px !important; }
+body #mainApp #pageTx .tx-receipt .tx-detail-link { display: inline-flex !important; align-items: center !important; gap: 2px !important; color: var(--v2-accent) !important; font-size: 12px !important; }
+body #mainApp #pageTx .tx-receipt .tx-card-action {
+  margin: 11px 0 0 !important; padding: 8px 11px !important;
+  border-radius: 9px !important; background: #fff1d6 !important; color: #96590a !important;
+  font-size: 12px !important; text-align: center;
+}
+
+
+/* ═════════════════════════════════════════════════════════════════
+   ACCOUNT VERIFICATION — one badge system, every state
+   The same shield-with-a-mark is used on the avatar, the status pill,
+   the profile card and the verify page:
+     ✓ green  verified          ! amber  not verified / required
+     ◔ blue   under review      ✕ red    rejected          – grey  unknown
+   ═════════════════════════════════════════════════════════════════ */
+/* tone tokens */
+body :is(.kyc-badge, .kyc-card, .kyc-banner)[data-state="approved"],
+body :is(.kyc-ico, .pfx-verified)[data-tone="ok"]    { --kt: #16a34a; --kt-ink: #146c35; --kt-bg: #ecf8f1; --kt-bd: #c2e8d1; }
+body :is(.kyc-badge, .kyc-card, .kyc-banner)[data-state="none"],
+body :is(.kyc-badge, .kyc-card, .kyc-banner)[data-state="required"],
+body :is(.kyc-ico, .pfx-verified)[data-tone="warn"]  { --kt: #e08a00; --kt-ink: #8a5300; --kt-bg: #fff6e3; --kt-bd: #f6dba6; }
+body :is(.kyc-badge, .kyc-card, .kyc-banner)[data-state="pending"],
+body :is(.kyc-ico, .pfx-verified)[data-tone="wait"]  { --kt: #2563eb; --kt-ink: #1d4fb8; --kt-bg: #eef4ff; --kt-bd: #c6d8fb; }
+body :is(.kyc-badge, .kyc-card, .kyc-banner)[data-state="rejected"],
+body :is(.kyc-ico, .pfx-verified)[data-tone="bad"]   { --kt: #dc2626; --kt-ink: #a11d1d; --kt-bg: #fff0f0; --kt-bd: #f5c6c6; }
+body :is(.kyc-badge, .kyc-card, .kyc-banner)[data-state="loading"],
+body :is(.kyc-badge, .kyc-card, .kyc-banner)[data-state="error"],
+body :is(.kyc-ico, .pfx-verified)[data-tone="idle"]  { --kt: #8a97ab; --kt-ink: #5b6a80; --kt-bg: #f3f6fa; --kt-bd: #dde3ec; }
+
+/* the shield itself */
+body .kyc-shield { display: block; width: 100%; height: 100%; }
+body .kyc-shield .ks-bg { fill: var(--kt, #8a97ab); stroke: none; }
+body .kyc-shield .ks-glyph { fill: none; stroke: #fff; stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
+
+/* avatar corner: shield with a white ring */
+body #mainApp .pfx-verified {
+  width: 30px !important; height: 30px !important;
+  inset-inline-end: -4px !important; inset-block-end: -3px !important;
+  padding: 0 !important; border: 0 !important; border-radius: 0 !important;
+  background: transparent !important; color: inherit !important;
+  filter: drop-shadow(0 2px 3px rgba(15, 23, 42, .22));
+}
+body #mainApp .pfx-verified .kyc-shield .ks-bg { stroke: #fff; stroke-width: 2.4; stroke-linejoin: round; paint-order: stroke; }
+body #mainApp .pfx-verified .kyc-shield { overflow: visible; }
+
+/* status pill under the name */
+body #mainApp .pfx-hero .kyc-badge {
+  min-height: 36px !important;
+  padding: 0 14px 0 12px !important;
+  gap: 8px !important;
+  border: 1px solid var(--kt-bd) !important;
+  background: var(--kt-bg) !important;
+  color: var(--kt-ink) !important;
+  font-size: 12.5px !important;
+  font-weight: 500 !important;
+}
+body #mainApp .pfx-hero .kyc-badge-ico { width: 20px !important; height: 20px !important; display: inline-grid !important; place-items: center; color: var(--kt) !important; }
+body #mainApp .pfx-hero .kyc-badge-ico .kyc-shield { width: 20px; height: 20px; }
+body #mainApp .pfx-hero .kyc-badge-ico .icn { width: 16px; height: 16px; }
+
+/* icon tile used in the card and on the verify page */
+body .kyc-ico {
+  flex: 0 0 auto !important;
+  width: 46px !important; height: 46px !important;
+  display: grid !important; place-items: center !important;
+  margin: 0 !important; padding: 0 !important;
+  border: 1px solid var(--kt-bd) !important;
+  border-radius: 14px !important;
+  background: var(--kt-bg) !important;
+  color: var(--kt) !important;
+}
+body .kyc-ico .kyc-shield { width: 28px; height: 28px; }
+
+/* profile card + verify banner: same panel */
+body #mainApp :is(.kyc-card, .kyc-banner) {
+  position: relative;
+  box-sizing: border-box !important;
+  margin: 0 0 14px !important;
+  padding: 14px !important;
+  border: 1px solid var(--kt-bd, #e3e7f0) !important;
+  border-radius: 16px !important;
+  background: #fff !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, .04) !important;
+  color: var(--v2-ink, #0f172a) !important;
+}
+body #mainApp .kyc-banner { display: flex !important; align-items: center !important; gap: 12px !important; }
+body #mainApp .kyc-banner > div { flex: 1 1 auto; min-width: 0; }
+body #mainApp .kyc-banner b, body #mainApp .kyc-card-head b { display: block; margin: 0; color: var(--v2-ink, #0f172a) !important; font-size: 14.5px; font-weight: 600; line-height: 1.6; }
+body #mainApp .kyc-banner p, body #mainApp .kyc-card-head small { display: block; margin: 2px 0 0 !important; color: #5f6f86 !important; font-size: 12.5px; line-height: 1.8; }
+body #mainApp .kyc-banner .kyc-mini-btn { margin-top: 8px; }
+body #mainApp .kyc-card-head { display: flex !important; align-items: center !important; gap: 12px !important; margin: 0 !important; padding: 0 !important; border: 0 !important; background: transparent !important; }
+body #mainApp .kyc-card-head > div { flex: 1 1 auto; min-width: 0; }
+body #mainApp .kyc-card .kyc-card-btn { margin-top: 14px !important; }
+
+/* admin note / rejection reason */
+body #mainApp .kyc-card .kyc-note {
+  margin: 12px 0 0 !important; padding: 10px 12px !important;
+  border: 0 !important; border-radius: 12px !important;
+  background: #f4f7fb !important;
+}
+body #mainApp .kyc-card .kyc-note.danger { background: #fff0f0 !important; }
+body #mainApp .kyc-card .kyc-note b { display: block; margin: 0 0 2px; color: #5f6f86 !important; font-size: 11.5px; font-weight: 500; }
+body #mainApp .kyc-card .kyc-note.danger b { color: #a11d1d !important; }
+body #mainApp .kyc-card .kyc-note p { margin: 0; color: var(--v2-ink, #0f172a) !important; font-size: 13px; line-height: 1.8; }
+
+/* facts: two equal cells */
+body #mainApp .kyc-card .kyc-facts {
+  display: grid !important; grid-template-columns: 1fr 1fr; gap: 0;
+  margin: 12px 0 0 !important; padding: 0 !important;
+  border: 1px solid var(--v2-line, #e3e7f0) !important; border-radius: 12px; overflow: hidden;
+  background: #fafbfd;
+}
+body #mainApp .kyc-card .kyc-facts > span { display: flex; flex-direction: column; gap: 2px; padding: 9px 12px; min-width: 0; }
+body #mainApp .kyc-card .kyc-facts > span + span { border-inline-start: 1px solid var(--v2-line, #e3e7f0); }
+body #mainApp .kyc-card .kyc-facts small { color: #6b7a90 !important; font-size: 11.5px; }
+body #mainApp .kyc-card .kyc-facts b { color: var(--v2-ink, #0f172a) !important; font-size: 13px; font-weight: 500; overflow-wrap: anywhere; }
 
 
 /* Compact saved-recipient access remains available in the receive step. */
