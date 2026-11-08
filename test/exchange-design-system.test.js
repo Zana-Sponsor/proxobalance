@@ -46,16 +46,19 @@ test('Design layer leaves hidden/route mechanics untouched and provides accessib
 
 test('Production smoke waits for the changed customer version and verifies its design contract',()=>{
   const workflow=read('.github/workflows/exchange-production-smoke.yml');
-  assert(workflow.includes('app.js?v=62'));
+  assert(workflow.includes('app.js?v=65'));
   assert(workflow.includes('proxo-design-system.css?v=1'));
-  assert(html.includes('/assets/js/app.js?v=62'));
-  assert(html.includes('/assets/css/proxo-ui-v2.css?v=5'));
-  assert(html.includes('/assets/js/proxo-ui-v2.js?v=4'));
+  assert(html.includes('/assets/js/app.js?v=65'));
+  assert(html.includes('/assets/css/proxo-ui-v2.css?v=8'));
+  assert(html.includes('/assets/js/proxo-ui-v2.js?v=3'));
   assert(html.includes('/assets/js/proxo-toast.js?v=1'));
-  assert(html.indexOf('proxo-toast.js?v=1') < html.indexOf('app.js?v=62'));
+  assert(html.indexOf('proxo-toast.js?v=1') < html.indexOf('app.js?v=65'));
   assert(shellCss.includes('.pxt-stack'));
   assert(shellCss.includes('.pxn-pill'));
   assert(shellCss.includes('.field-error.show'));
   assert(shellCss.includes('.notif-reason'));
   assert(read('assets/js/app.js').includes("escHtml(String(msg==null?'':msg))"));
+  assert(html.includes('id="feedbackSheet"'));
+  assert(html.includes('id="savedRecipientsShortcut"'));
+  assert(html.includes('proxo-dark.css?v=3'));
 });

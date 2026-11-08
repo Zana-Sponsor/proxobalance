@@ -564,14 +564,21 @@ async function dismissNotifBar(){
 // ══════════════════════════════════════════════════════════════
 // ═══ THEME ═══════════════════════════════════════════════════════
 // ══════════════════════════════════════════════════════════════
-// Light-only interface: a legacy saved dark preference must never re-enable dark mode.
+// The interface follows the phone's system setting (light / dark) and changes live when it does.
+const _darkMQ = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
 function applyTheme(){
-  document.documentElement.setAttribute('data-theme','light');
-  try{ localStorage.setItem('zex_theme','light'); }catch(_){}
-  const meta=document.getElementById('themeColorMeta');
-  if(meta)meta.setAttribute('content','#fafafa');
+  const dark = !!(_darkMQ && _darkMQ.matches);
+  const root = document.documentElement;
+  root.setAttribute('data-theme', dark ? 'dark' : 'light');
+  root.style.colorScheme = dark ? 'dark' : 'light';
+  const meta = document.getElementById('themeColorMeta');
+  if(meta) meta.setAttribute('content', dark ? '#0b1220' : '#fafafa');
 }
 function toggleTheme(){ applyTheme(); }
+if(_darkMQ){
+  if(_darkMQ.addEventListener) _darkMQ.addEventListener('change', applyTheme);
+  else if(_darkMQ.addListener) _darkMQ.addListener(applyTheme);
+}
 
 // ══════════════════════════════════════════════════════════════
 // ═══ SUPABASE + FIREBASE (news only) ═══════════════════════════
@@ -2318,48 +2325,92 @@ let _homeFeedbackPromptQueued=false;
 function hasOrderFeedbackReward(order){
   return !!order.feedbackRewardGranted || MY_REWARDS.some(reward=>reward.campaign_key==='order_feedback_v1:'+String(order.id));
 }
+const FEEDBACK_REWARD={ percent:50, maxIqd:10000 };            // 50% off the next fee, up to 10,000 IQD
+const FEEDBACK_LABELS=['زۆر خراپ','خراپ','مام ناوەند','باش','زۆر باش'];
+const FB_STAR='<svg class="fb-star-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3.2l2.6 5.4 5.9.8-4.3 4.1 1.1 5.9L12 16.6 6.7 19.4l1.1-5.9L3.5 9.4l5.9-.8L12 3.2z"/></svg>';
+const FB_GIFT='<svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="8.5" width="17" height="4" rx="1"/><path d="M5 12.5V20h14v-7.5"/><path d="M12 8.5V20"/><path d="M12 8.5c-1.6 0-4.5-.3-4.5-2.4 0-1.3 1-2.1 2.2-2.1 1.9 0 2.3 2.8 2.3 4.5zM12 8.5c1.6 0 4.5-.3 4.5-2.4 0-1.3-1-2.1-2.2-2.1-1.9 0-2.3 2.8-2.3 4.5z"/></svg>';
+const FB_CHECK='<svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5"/></svg>';
+function fbEn(n){ return Number(n).toLocaleString('en-US'); }
+
 function feedbackOrderSnapshot(order){
   const payout=typeof ProxoPayoutRounding==='object'?ProxoPayoutRounding.forOrder(order):null;
   const received=payout?payout.display_amount:order.total;
-  return '<div class="feedback-order-snapshot" aria-label="پوختەی مامەڵە">'+
-    '<div class="feedback-order-top"><span>مامەڵەی پەسەندکراو</span><b dir="ltr">'+escHtml(orderCodeOf(order))+'</b></div>'+
-    '<div class="feedback-order-route"><span>'+escHtml(methodLabel(order.from_method))+'</span><span class="feedback-route-arrow" aria-hidden="true">←</span><span>'+escHtml(methodLabel(order.to_method))+'</span></div>'+
-    '<div class="feedback-order-amounts"><div><small>ناردنت</small><b dir="ltr">'+escHtml(txAmount(order.amount,order.from_method))+'</b></div><div><small>وەرگرتنت</small><b dir="ltr">'+escHtml(txAmount(received,order.to_method))+'</b></div></div>'+
-    '<div class="feedback-order-date"><span>بەرواری مامەڵە</span><b>'+txWhenHTML(order.decided_at||order.created_at,true)+'</b></div></div>';
+  const line=(k,v)=>'<div class="fb-line"><span class="fb-k">'+k+'</span><i class="fb-dots" aria-hidden="true"></i><b class="fb-v" dir="ltr">'+escHtml(v)+'</b></div>';
+  return '<div class="fb-order" aria-label="پوختەی مامەڵە">'+
+    '<div class="fb-order-top"><span class="fb-chip">مامەڵەی پەسەندکراو</span><b class="fb-code" dir="ltr">'+escHtml(orderCodeOf(order))+'</b></div>'+
+    '<div class="fb-route" dir="ltr">'+txRouteInner(order.from_method,order.to_method)+'</div>'+
+    '<div class="fb-lines">'+line('ناردراو',txAmount(order.amount,order.from_method))+line('وەرگیراو',txAmount(received,order.to_method))+'</div>'+
+    '<div class="fb-date">'+txWhenHTML(order.decided_at||order.created_at,true)+'</div></div>';
 }
+/* The reward as two equal cells: what you get · the most it can be. */
 function feedbackRewardCard(order,earned){
-  return '<div class="feedback-reward-card'+(earned?' is-earned':'')+'" role="status">'+
-    '<div class="feedback-reward-icon" aria-hidden="true">'+(earned?'<svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5"/></svg>':'<svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m19 5-14 14"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>')+'</div>'+
-    '<div class="feedback-reward-copy"><b>'+(earned?'پاداشتەکەت ئامادەیە':'پاداشت')+'</b>'+
-    '<strong>٥٠٪ داشکاندن لە کرێی مامەڵەی داهاتوو</strong>'+
-    '<span>یەکجار · تا ١٠٬٠٠٠ دینار · بۆ ماوەی ٧ ڕۆژ</span></div></div>';
+  return '<div class="fb-reward'+(earned?' is-earned':'')+'" role="status">'+
+    '<div class="fb-reward-head"><span class="fb-reward-ico" aria-hidden="true">'+(earned?FB_CHECK:FB_GIFT)+'</span>'+
+    '<div><b>'+(earned?'پاداشتەکەت ئامادەیە':'پاداشی هەڵسەنگاندن')+'</b><small>بۆ مامەڵەی داهاتووت</small></div></div>'+
+    '<div class="fb-reward-grid">'+
+      '<div class="fb-reward-cell"><small>داشکاندن لە کرێ</small><b dir="ltr">'+FEEDBACK_REWARD.percent+'%</b></div>'+
+      '<div class="fb-reward-cell"><small>زۆرترین داشکاندن</small><b dir="ltr">'+fbEn(FEEDBACK_REWARD.maxIqd)+' IQD</b></div>'+
+    '</div></div>';
 }
-function renderOrderFeedback(order){
+function renderOrderFeedback(order,opts){
   if(order.status!=='پەسەندکرا') return '';
+  opts=opts||{};
   const feedback=order.feedback;
   const rewardEarned=hasOrderFeedbackReward(order);
-  const snapshot=feedbackOrderSnapshot(order);
   if(feedback){
-    return '<section class="order-feedback is-submitted"><div class="feedback-section-heading"><div><h3>هەڵسەنگاندنی تۆ</h3></div><span class="feedback-submitted-badge"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5"/></svg> نێردرا</span></div>'+feedbackRewardCard(order,rewardEarned)+'<div class="feedback-stars" aria-label="'+escHtml(String(feedback.rating))+' لە ٥ ئەستێرە">'+
-      Array.from({length:5},(_,i)=>'<span class="'+(i<Number(feedback.rating)?'filled':'')+'" aria-hidden="true">★</span>').join('')+
-      '</div>'+(feedback.comment?'<div class="feedback-comment-box"><small>تێبینیی تۆ</small><p class="feedback-comment">'+escHtml(feedback.comment)+'</p></div>':'')+
-      '<p class="feedback-thanks">سوپاس بۆ هەڵسەنگاندنەکەت.</p></section>';
+    const r=Number(feedback.rating)||0;
+    return '<section class="fb is-submitted"><div class="fb-head"><span class="fb-head-ico" aria-hidden="true">'+FB_CHECK+'</span><div><h3>هەڵسەنگاندنی تۆ</h3><p>نێردرا، سوپاس</p></div></div>'+
+      feedbackRewardCard(order,rewardEarned)+
+      '<div class="fb-stars is-readonly" aria-label="'+r+' لە 5 ئەستێرە">'+
+        Array.from({length:5},(_,i)=>'<span class="fb-star'+(i<r?' selected':'')+'" aria-hidden="true">'+FB_STAR+'</span>').join('')+'</div>'+
+      '<div class="fb-rating-label is-set">'+escHtml(FEEDBACK_LABELS[r-1]||'')+'</div>'+
+      (feedback.comment?'<div class="fb-comment"><small>تێبینیی تۆ</small><p>'+escHtml(feedback.comment)+'</p></div>':'')+
+      '</section>';
   }
-  return '<section class="order-feedback"><div class="feedback-section-heading"><div><h3>هەڵسەنگاندن</h3><p>چەند ئەستێرەی دەدەیت؟</p></div><span class="feedback-heading-icon" aria-hidden="true"><span class="icn icon--solar icon--solar--star-linear"></span></span></div>'+feedbackRewardCard(order,false)+'<label class="feedback-input-label">هەڵسەنگاندنی تۆ <span>ئەستێرەکان هەڵبژێرە</span></label>'+
-    '<div class="feedback-star-picker" role="radiogroup" aria-label="هەڵبژاردنی ئەستێرە">'+Array.from({length:5},(_,i)=>'<button type="button" class="feedback-star" data-rating="'+(i+1)+'" aria-label="'+(i+1)+' ئەستێرە" aria-checked="false" role="radio" onclick="selectOrderFeedbackRating('+(i+1)+')"><span class="icn icon--solar icon--solar--star-linear" aria-hidden="true"></span></button>').join('')+'</div>'+
-    '<textarea id="orderFeedbackComment" maxlength="1000" placeholder="تێبینی (ئارەزوومەندانە)" aria-label="تێبینی"></textarea>'+
-    '<button type="button" class="btn btn-primary btn-block feedback-submit-btn" id="orderFeedbackSubmit" onclick="submitOrderFeedback(\''+escHtml(String(order.id))+'\')"><span class="icn icon--solar icon--solar--star-linear" aria-hidden="true"></span> ناردنی هەڵسەنگاندن</button><div class="feedback-error" id="orderFeedbackError" role="alert"></div></section>';
+  return '<section class="fb">'+
+    (opts.sheet?'':'<div class="fb-head"><span class="fb-head-ico" aria-hidden="true">'+FB_STAR+'</span><div><h3>هەڵسەنگاندن</h3><p>چەند ئەستێرەی دەدەیت؟</p></div></div>')+
+    feedbackRewardCard(order,false)+
+    '<div class="fb-block"><div class="fb-label"><b>'+(opts.sheet?'چەند ئەستێرەی دەدەیت؟':'ئەستێرە هەڵبژێرە')+'</b></div>'+
+    '<div class="fb-stars feedback-star-picker" role="radiogroup" aria-label="هەڵبژاردنی ئەستێرە">'+Array.from({length:5},(_,i)=>'<button type="button" class="fb-star feedback-star" data-rating="'+(i+1)+'" aria-label="'+(i+1)+' ئەستێرە" aria-checked="false" role="radio" onclick="selectOrderFeedbackRating('+(i+1)+')">'+FB_STAR+'</button>').join('')+'</div>'+
+    '<div class="fb-rating-label" id="fbRatingLabel" aria-live="polite">ئەستێرەیەک هەڵبژێرە</div></div>'+
+    '<div class="fb-block"><div class="fb-label"><b>تێبینی</b><small>ئارەزوومەندانە</small></div>'+
+    '<textarea id="orderFeedbackComment" class="fb-text" maxlength="1000" rows="3" placeholder="چۆن بوو؟ هەر شتێک بنووسە..." aria-label="تێبینی" oninput="document.getElementById(\'fbCount\').textContent=this.value.length+\' / 1000\'"></textarea>'+
+    '<div class="fb-count" id="fbCount" dir="ltr">0 / 1000</div></div>'+
+    '<button type="button" class="btn btn-primary btn-block fb-submit" id="orderFeedbackSubmit" onclick="submitOrderFeedback(\''+escHtml(String(order.id))+'\')"><span class="fb-submit-ico" aria-hidden="true">'+FB_STAR+'</span> ناردنی هەڵسەنگاندن</button>'+
+    '<div class="fb-error" id="orderFeedbackError" role="alert"></div></section>';
+}
+
+/* Feedback on the home page is a bottom sheet of its own (not the transaction details). */
+let _feedbackSheetId=null;
+function openFeedbackSheet(orderId){
+  const order=_orders.find(row=>String(row.id)===String(orderId));
+  const sheet=document.getElementById('feedbackSheet'), body=document.getElementById('feedbackSheetBody');
+  if(!order||order.status!=='پەسەندکرا'||order.feedback||!sheet||!body) return;
+  _feedbackSheetId=String(order.id);
+  _feedbackDraftRating=0;
+  body.innerHTML=feedbackOrderSnapshot(order)+renderOrderFeedback(order,{sheet:true});
+  body.scrollTop=0;
+  openSheet(sheet);
+}
+function closeFeedbackSheet(){
+  const sheet=document.getElementById('feedbackSheet');
+  _feedbackSheetId=null;
+  if(sheet) closeSheet(sheet);
 }
 function selectOrderFeedbackRating(rating){
   _feedbackDraftRating=Math.max(1,Math.min(5,Number(rating)||0));
-  document.querySelectorAll('.feedback-star-picker .feedback-star').forEach((button,index)=>{
+  document.querySelectorAll('.fb-stars .fb-star').forEach((button,index)=>{
     const selected=index<_feedbackDraftRating;button.classList.toggle('selected',selected);button.setAttribute('aria-checked',String(Number(button.dataset.rating)===_feedbackDraftRating));
   });
+  const label=document.getElementById('fbRatingLabel');
+  if(label){ label.textContent=FEEDBACK_LABELS[_feedbackDraftRating-1]||''; label.classList.add('is-set'); }
+  const err=document.getElementById('orderFeedbackError'); if(err) err.textContent='';
 }
 async function submitOrderFeedback(orderId){
   const order=_orders.find(row=>String(row.id)===String(orderId));
   const errorEl=document.getElementById('orderFeedbackError'),button=document.getElementById('orderFeedbackSubmit');
-  if(!order||String(order.id)!==String(_txSheetId)||order.status!=='پەسەندکرا'||order.feedback)return;
+  const fromSheet=String(order?.id)===String(_feedbackSheetId);
+  if(!order||(String(order.id)!==String(_txSheetId)&&!fromSheet)||order.status!=='پەسەندکرا'||order.feedback)return;
   if(!_feedbackDraftRating){if(errorEl)errorEl.textContent='تکایە ژمارەی ئەستێرە هەڵبژێرە.';return;}
   if(!curUser?.id){if(errorEl)errorEl.textContent='بۆ ناردنی هەڵسەنگاندن بچۆ ژوورەوە.';return;}
   const comment=(document.getElementById('orderFeedbackComment')?.value||'').trim();
@@ -2369,12 +2420,12 @@ async function submitOrderFeedback(orderId){
     const {data,error}=await sb.from('ex_order_feedback').insert({order_id:order.id,user_id:curUser.id,rating:_feedbackDraftRating,comment}).select('order_id,rating,comment,created_at').single();
     if(error)throw error;
     order.feedback=data;order.feedbackRewardGranted=true;_feedbackDraftRating=0;renderHomeFeedbackPrompt();await loadMyRewards();
-    closeTxDetail();
-    navigate('home',true);
-    showToast('سوپاس! داشکاندنی ٥٠٪ تا ١٠,٠٠٠ دینار بۆ مامەڵەی داهاتووت زیادکرا.','success');
+    if(fromSheet){ closeFeedbackSheet(); }
+    else { closeTxDetail(); navigate('home',true); }
+    showToast('سوپاس! داشکاندنی '+FEEDBACK_REWARD.percent+'% تا '+fbEn(FEEDBACK_REWARD.maxIqd)+' دینار بۆ مامەڵەی داهاتووت زیادکرا.','success');
   }catch(error){
     if(errorEl)errorEl.textContent=error.code==='23505'?'هەڵسەنگاندنی ئەم داواکارییە پێشتر تۆمار کراوە.':'نەتوانرا هەڵسەنگاندنەکەت تۆمار بکرێت؛ تکایە دووبارە هەوڵ بدەرەوە.';
-    if(button){button.disabled=false;button.innerHTML='<span class="icn icon--solar icon--solar--star-linear" aria-hidden="true"></span> ناردنی هەڵسەنگاندن';}
+    if(button){button.disabled=false;button.innerHTML='<span class="fb-submit-ico" aria-hidden="true">'+FB_STAR+'</span> ناردنی هەڵسەنگاندن';}
   }
 }
 function txRow(label, value, opts){
@@ -2751,8 +2802,8 @@ function openHomePendingFeedback(){
   markFeedbackRead(order.id);
   _homeFeedbackPromptShownThisSession=true;
   _homeFeedbackPromptQueued=false;
-  navigate('transactions');
-  openTxDetail(order.id);
+  if(_route!=='home') navigate('home');
+  openFeedbackSheet(order.id);
 }
 function maybePromptHomeFeedback(){
   if(_homeFeedbackPromptShownThisSession||_homeFeedbackPromptQueued||!curUser||_route!=='home'||_txSheetId)return;
@@ -2762,12 +2813,12 @@ function maybePromptHomeFeedback(){
   const orderId=String(order.id);
   setTimeout(()=>{
     _homeFeedbackPromptQueued=false;
-    if(!curUser||_route!=='home'||_txSheetId)return;
+    if(!curUser||_route!=='home'||_txSheetId||_feedbackSheetId)return;
     const stillPending=_orders.find(row=>String(row.id)===orderId && row.status==='پەسەندکرا' && !row.feedback);
     if(!stillPending||isFeedbackRead(orderId))return;
     markFeedbackRead(orderId);
     _homeFeedbackPromptShownThisSession=true;
-    openTxDetail(stillPending.id);
+    openFeedbackSheet(stillPending.id);
   },850);
 }
 function renderHomePreview(){
@@ -2945,7 +2996,10 @@ function urlFor(route){
 function navigate(route, push){
   if(push===undefined) push=true;
   if(!ROUTES[route]) route='home';
+  const _prevRoute=_route;
   _route=route;
+  // leaving a section: whatever was typed, picked or filtered there starts fresh next time
+  if(_prevRoute && _prevRoute!==route){ try{ resetSection(_prevRoute); }catch(_){} }
   Object.keys(ROUTES).forEach(r=>{
     const el=document.getElementById(ROUTES[r]);
     if(el) el.classList.toggle('active', r===route);
@@ -2968,6 +3022,91 @@ function navigate(route, push){
   if(route==='verify')     { renderVerifyPage(); loadKycStatus(true); }
   if(route==='support')      loadSupportCases();
 }
+// ══════════════════════════════════════════════════════════════
+// ═══ SECTION LIFECYCLE
+// ═══  • leaving a section resets its fields, picked files and filters
+// ═══  • tapping the active bottom-nav tab twice refreshes that section
+// ══════════════════════════════════════════════════════════════
+function resetHomeForm(){
+  const sub=document.getElementById('submitBtn');
+  if(sub && sub.dataset.submitting==='1') return;           // never wipe an order that is being sent
+  ['amt','userPhone','userSenderPhone'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  const file=document.getElementById('fileInput');
+  if(file){ file.value=''; try{ onFileSelected(file); }catch(_){} }
+  clearAllOrderFieldErrors();
+  try{ closeRoundingInfo(); }catch(_){}
+  try{ closeFeedbackSheet(); }catch(_){}
+  calc();
+}
+function resetTxFilters(){
+  _txStatus='all'; _txTime='all'; _txQuery='';
+  const box=document.getElementById('txSearch'); if(box) box.value='';
+  const clr=document.getElementById('txSearchClear'); if(clr) clr.classList.remove('show');
+  ['txStatusFilters','txTimeFilters'].forEach(id=>{
+    document.querySelectorAll('#'+id+' .filter-chip').forEach(c=>c.classList.toggle('on', /'all'/.test(c.getAttribute('onclick')||'')));
+  });
+  try{ if(_txSheetId) closeTxDetail(); }catch(_){}
+}
+function resetProfileForms(){
+  try{ fillProfileForm(); }catch(_){}
+  const form=document.getElementById('balancePayoutForm');
+  if(form){ try{ form.reset(); }catch(_){} form.hidden=true; }
+  const hist=document.getElementById('balanceHistoryList'); if(hist) hist.hidden=true;
+}
+function resetSupportForm(){
+  const cat=document.getElementById('supportCategory'); if(cat) cat.selectedIndex=0;
+  ['supportOrderCode','supportDescription'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  clearFieldError('supportDescription');
+  try{ updateSupportDescriptionCount(); }catch(_){}
+  try{ removeSupportImage(); }catch(_){}
+}
+function resetSection(route){
+  if(route==='home')         resetHomeForm();
+  else if(route==='transactions') { resetTxFilters(); renderTxPage(); }
+  else if(route==='profile') resetProfileForms();
+  else if(route==='verify')  { if(!_kycSubmitting) kycResetForm(); }
+  else if(route==='support') resetSupportForm();
+}
+
+let _refreshing=false;
+async function refreshSection(route){
+  if(_refreshing || !curUser) return;
+  _refreshing=true;
+  const item=document.querySelector('#bottomNav .pxn-item[data-route="'+route+'"]');
+  if(item) item.classList.add('is-refreshing');
+  showToast('نوێدەکرێتەوە...','info','نوێکردنەوە',{id:'refresh',sticky:true});
+  const started=Date.now();
+  try{
+    resetSection(route);
+    if(route==='home')              await Promise.all([loadHistory(), loadRates(), loadWallets(), loadMyRewards(), typeof loadMyBalance==='function'?loadMyBalance():null]);
+    else if(route==='transactions') await loadHistory();
+    else if(route==='profile')      await Promise.all([loadKycStatus(true), typeof loadMyBalance==='function'?loadMyBalance():null]);
+    else if(route==='changes')      await loadChangeLog(true);
+    if(route==='home'){ try{ calc(); }catch(_){} }
+    const wait=Math.max(0, 750-(Date.now()-started));        // long enough to read, short enough not to nag
+    if(wait) await new Promise(r=>setTimeout(r,wait));
+    window.scrollTo({ top:0, behavior:'smooth' });
+    showToast('نوێکرایەوە','success','تەواو بوو',{id:'refresh',duration:1800});
+  }catch(e){
+    showToast('نەتوانرا نوێ بکرێتەوە، دووبارە هەوڵبدەوە','error',null,{id:'refresh',duration:3200});
+  }finally{
+    _refreshing=false;
+    if(item) item.classList.remove('is-refreshing');
+  }
+}
+(function wireNavDoubleTap(){
+  let lastBtn=null, lastAt=0;
+  document.addEventListener('click', function(e){
+    const btn=e.target.closest && e.target.closest('#bottomNav .pxn-item'); if(!btn) return;
+    const route=btn.dataset.route, now=Date.now();
+    const again = lastBtn===btn && (now-lastAt)<420 && _route===route;
+    lastBtn=btn; lastAt=now;
+    if(!again) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    lastBtn=null;
+    refreshSection(route);
+  }, true);                                                    // capture: runs before the button's own onclick
+})();
 window.addEventListener('popstate', function(){
   const requested=authRouteFromLocation();
   if(!curUser){
@@ -4615,6 +4754,7 @@ document.addEventListener('keydown', (e)=>{
   if(document.getElementById('txSheet') && !document.getElementById('txSheet').hidden){ closeTxDetail(); return; }
   const notifP=document.getElementById('notifPanel'); if(notifP && notifP.classList.contains('open')){ closeNotifPanel(); return; }
   const picker=document.getElementById('pickerSheet'); if(picker.classList.contains('open')){ closePicker(); return; }
+  const feedbackS=document.getElementById('feedbackSheet'); if(feedbackS && feedbackS.classList.contains('open')){ closeFeedbackSheet(); return; }
   const roundingS=document.getElementById('roundingInfoSheet'); if(roundingS && roundingS.classList.contains('open')){ closeRoundingInfo(); return; }
   const confirmS=document.getElementById('confirmSheet'); if(confirmS.classList.contains('open')){ closeOrderConfirm(); return; }
   const result=document.getElementById('resultModal'); if(result.style.display==='flex'){ closeResultModal(); return; }
@@ -4651,7 +4791,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     setTimeout(()=>appSplash.classList.add('is-hidden'),wait);
   };
   setTimeout(dismissAppSplash,4200);
-  applyTheme(document.documentElement.getAttribute('data-theme')||'light');
+  applyTheme();
   // Public trust numbers need no session — visitors see them on the login screen.
   loadPublicProof();
   document.querySelectorAll('.pass-eye-ico').forEach(el=>{ el.innerHTML=ICON.eye; });

@@ -69,6 +69,12 @@
 </script>
 
 <meta name="theme-color" id="themeColorMeta" content="#fafafa">
+<script>
+/* follow the phone's light/dark setting before the first paint */
+(function(){try{var d=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches;
+var r=document.documentElement;r.setAttribute('data-theme',d?'dark':'light');r.style.colorScheme=d?'dark':'light';
+document.getElementById('themeColorMeta').setAttribute('content',d?'#0b1220':'#fafafa');}catch(e){}})();
+</script>
 <script src="/assets/js/security-bootstrap.js?v=1"></script>
 
 <!-- Firebase kept only for the live announcement banner (Realtime DB) -->
@@ -100,7 +106,8 @@
 <link rel="stylesheet" href="/assets/css/proxo-app-shell.css?v=1">
 <link rel="stylesheet" href="/assets/css/proxo-balance-polish.css?v=1">
 <link rel="stylesheet" href="/assets/css/proxo-complete-theme.css?v=1">
-<link rel="stylesheet" href="/assets/css/proxo-ui-v2.css?v=5">
+<link rel="stylesheet" href="/assets/css/proxo-ui-v2.css?v=8">
+<link rel="stylesheet" href="/assets/css/proxo-dark.css?v=3">
 <link rel="stylesheet" href="/assets/css/proxo-design-system.css?v=1">
 </head>
 
@@ -267,6 +274,19 @@
 <!-- ══════════════════════════════════════════════════════════════
      WHY THE ROUNDING AMOUNT GOES BACK TO THE BALANCE
      ══════════════════════════════════════════════════════════════ -->
+<div id="feedbackSheet" class="sheet-overlay" role="dialog" aria-modal="true" aria-labelledby="feedbackSheetTitle" aria-hidden="true" onclick="if(event.target===this) closeFeedbackSheet()">
+  <div class="sheet fb-sheet">
+    <div class="sheet-grabber"></div>
+    <div class="sheet-head">
+      <h3 id="feedbackSheetTitle">هەڵسەنگاندنی مامەڵە</h3>
+      <button type="button" class="sheet-close" onclick="closeFeedbackSheet()" aria-label="داخستن">
+        <span class="icn icn-sm icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="sheet-body" id="feedbackSheetBody"></div>
+  </div>
+</div>
+
 <div id="roundingInfoSheet" class="sheet-overlay" role="dialog" aria-modal="true" aria-labelledby="roundingInfoTitle" aria-hidden="true" onclick="if(event.target===this) closeRoundingInfo()">
   <div class="sheet">
     <div class="sheet-grabber"></div>
@@ -1529,8 +1549,8 @@
 <script src="/assets/js/exchange-payout-rounding.js?v=1"></script>
 <script src="/assets/js/exchange-live.js?v=1"></script>
 <script src="/assets/js/proxo-toast.js?v=1"></script>
-<script src="/assets/js/app.js?v=62"></script>
-<script src="/assets/js/proxo-ui-v2.js?v=4"></script>
+<script src="/assets/js/app.js?v=65"></script>
+<script src="/assets/js/proxo-ui-v2.js?v=3"></script>
 <script src="/assets/js/exchange-customer-features.js?v=3"></script>
 <script src="/assets/js/exchange-balance.js?v=7"></script>
 <script src="/assets/js/exchange-ux.js?v=1"></script>

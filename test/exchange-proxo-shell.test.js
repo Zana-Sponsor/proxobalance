@@ -13,12 +13,12 @@ function reminderContext(rows=[{...approved}]){
   const element={hidden:true,innerHTML:''},timers=[],opened=[],routes=[];
   const context=vm.createContext({
     _orders:rows,curUser:{id:'user-1'},_route:'home',_txSheetId:null,
-    _homeFeedbackPromptShownThisSession:false,_homeFeedbackPromptQueued:false,
+    _homeFeedbackPromptShownThisSession:false,_homeFeedbackPromptQueued:false,_feedbackSheetId:null,
     document:{getElementById:()=>element},
     escHtml:s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),
     orderCodeOf:order=>order.order_code,
     setTimeout:fn=>timers.push(fn),
-    navigate:route=>routes.push(route),openTxDetail:id=>opened.push(id)
+    navigate:route=>routes.push(route),openTxDetail:id=>opened.push(id),openFeedbackSheet:id=>opened.push(id),markFeedbackRead(){},localStorage:{setItem(){},getItem(){return null}}
   });
   vm.runInContext(reminderCode,context);
   return {context,element,timers,opened,routes};
@@ -50,7 +50,7 @@ test('Home reminder escapes displayed order identifiers',()=>{
   assert(element.innerHTML.includes('&lt;script&gt;'));
 });
 
-test('Home detail prompt queues once and does not reopen after closing',()=>{
+test('Home feedback sheet prompt queues once per session',()=>{
   const {context,timers,opened}=reminderContext();
   context.maybePromptHomeFeedback();context.maybePromptHomeFeedback();
   assert.equal(timers.length,1);
@@ -67,10 +67,10 @@ test('Leaving Home before the delay prevents a stale rating popup',()=>{
   assert.equal(context._homeFeedbackPromptQueued,false);
 });
 
-test('Home rating action opens the matching transaction and successful rating hides the reminder',()=>{
+test('Home rating action opens the matching feedback sheet and successful rating hides the reminder',()=>{
   const {context,routes,opened,element}=reminderContext();
   context.openHomePendingFeedback();
-  assert.deepEqual(routes,['transactions']);assert.deepEqual(opened,['order-1']);
+  assert.deepEqual(routes,[]);assert.deepEqual(opened,['order-1']);
   context._orders[0].feedback={rating:5};context.renderHomeFeedbackPrompt();
   assert.equal(element.hidden,true);assert.equal(element.innerHTML,'');
 });
@@ -80,7 +80,7 @@ test('Same-tab navigation does not create duplicate browser history entries',()=
   const context=vm.createContext({
     ROUTES:{home:'pageHome',profile:'pageProfile',transactions:'pageTx'},_route:'profile',curUser:null,
     ROUTE_TITLES:{profile:'پڕۆفایل — Proxo'},location:{pathname:'/profile',hash:''},
-    document:{getElementById:()=>({classList:{toggle(){}}}),querySelectorAll:()=>[{dataset:{route:'profile'},classList:{toggle:(name,on)=>selected.push(on)}}]},
+    document:{getElementById:()=>({classList:{toggle(){}}}),querySelectorAll:()=>[{dataset:{route:'profile'},classList:{toggle:(name,on)=>selected.push(on)}}],addEventListener(){}},
     history:{pushState:(state,title,url)=>pushed.push(url)},urlFor:r=>r==='home'?'/':'/'+r,
     closeNotifPanel(){},window:{scrollTo(){}},renderTxPage(){},renderHomeFeedbackPrompt(){},maybePromptHomeFeedback(){},fillProfileForm(){},loadKycStatus(){}
   });

@@ -56,19 +56,27 @@
 })();
 
 
-/* Proxo UI v2 — bottom nav hides while scrolling down and returns smoothly
-   on the way back up. Only toggles the `.is-hidden` class; the CSS animates it.
-   It is always shown near the top and at the very bottom of the page. */
+/* Proxo UI v2 — bottom nav hides while scrolling down and comes back as soon as
+   the page is scrolled up (not only at the very bottom). It only toggles the
+   `.is-hidden` class; the CSS animates it.
+
+   The direction is judged from an "anchor": the furthest point reached in the
+   current direction. A phone's address bar and momentum scrolling make
+   scrollY jitter by a pixel or two the other way; with an anchor that jitter can
+   never cancel a real movement, so scrolling up always shows the bar again. */
 (function () {
   'use strict';
   var nav = document.getElementById('bottomNav');
   if (!nav) return;
-  var DOWN = 14;         // px scrolled down in one go before it hides
-  var UP = 8;            // px scrolled up before it returns
+  var HIDE_AFTER = 12;     // px of real downward scrolling before it hides
+  var SHOW_AFTER = 6;      // px of real upward scrolling before it returns
   var NEAR_TOP = 24;
-  var lastY = Math.max(0, window.scrollY || 0), run = 0, hidden = false, queued = false;
+  var hidden = false, queued = false;
+  var anchor = Math.max(0, window.scrollY || 0);
 
+  function scrollable() { return document.documentElement.scrollHeight - window.innerHeight > 60; }
   function set(h) {
+    anchor = Math.max(0, window.scrollY || 0);
     if (h === hidden) return;
     hidden = h;
     nav.classList.toggle('is-hidden', h);
@@ -78,13 +86,14 @@
     queued = false;
     var y = Math.max(0, window.scrollY || 0);                    // iOS rubber-band can go negative
     var max = document.documentElement.scrollHeight - window.innerHeight;
-    var d = y - lastY;
-    lastY = y;
-    if (y <= NEAR_TOP || y >= max - 4) { run = 0; set(false); return; }
-    if (!d) return;
-    run = (d > 0) === (run > 0) ? run + d : d;                    // a change of direction starts a new run
-    if (run > DOWN) set(true);
-    else if (run < -UP) set(false);
+    if (y <= NEAR_TOP || y >= max - 4) { set(false); return; }   // top and bottom of the page: always visible
+    if (!hidden) {
+      if (y < anchor) anchor = y;                                // follow the page up
+      else if (y - anchor > HIDE_AFTER) set(true);
+    } else {
+      if (y > anchor) anchor = y;                                // follow the page down
+      else if (anchor - y > SHOW_AFTER) set(false);
+    }
   }
 
   window.addEventListener('scroll', function () {
@@ -92,6 +101,29 @@
     queued = true;
     requestAnimationFrame(update);
   }, { passive: true });
-  window.addEventListener('popstate', function () { run = 0; set(false); });
+
+  /* The finger is a second, steadier signal: a finger moving down the screen is
+     scrolling the page up, and that must bring the bar back immediately. */
+  var fMin = 0, fMax = 0;
+  window.addEventListener('touchstart', function (e) {
+    if (!e.touches.length) return;
+    fMin = fMax = e.touches[0].clientY;
+  }, { passive: true });
+  window.addEventListener('touchmove', function (e) {
+    if (!e.touches.length || !scrollable()) return;
+    var y = e.touches[0].clientY, top = (window.scrollY || 0) <= NEAR_TOP;
+    if (y < fMin) fMin = y;
+    if (y > fMax) fMax = y;
+    if (y - fMin > 10) {                                         // finger moved down → page moves up
+      if (hidden) set(false);
+      fMin = fMax = y;
+    } else if (fMax - y > 16 && !top) {                          // finger moved up → page moves down
+      if (!hidden) set(true);
+      fMin = fMax = y;
+    }
+  }, { passive: true });
+
+  window.addEventListener('popstate', function () { set(false); });
   nav.addEventListener('focusin', function () { set(false); });
+  window.pxShowNav = function () { set(false); };
 })();
