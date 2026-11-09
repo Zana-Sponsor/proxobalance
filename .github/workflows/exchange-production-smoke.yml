@@ -103,7 +103,7 @@ jobs:
           grep -q 'proxo-toast.js?v=1' index.html
           grep -q 'id="savedRecipientsShortcut"' index.html
           curl -fLsS --max-time 25 "$root/assets/css/proxo-ui-v2.css?v=9" -o proxo-ui-v2.css
-          grep -q 'un-sheet' proxo-ui-v2.css
+          grep -q '#usernameSheet .sheet-body' proxo-ui-v2.css
           grep -q 'pxt-stack' proxo-ui-v2.css
           grep -q 'field-error.show' proxo-ui-v2.css
           grep -q 'notif-reason' proxo-ui-v2.css

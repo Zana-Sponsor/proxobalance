@@ -65,5 +65,6 @@ test('Production smoke waits for the changed customer version and verifies its d
   assert(read('assets/js/app.js').includes('مامەڵەکەت چۆن بوو؟'));
   assert(html.includes('id="savedRecipientsShortcut"'));
   assert(shellCss.includes('.xc-step-head .xc-saved-recipients-btn'));
+  assert(shellCss.includes('#usernameSheet .sheet-body'));
   assert(html.includes('proxo-dark.css?v=4'));
 });
