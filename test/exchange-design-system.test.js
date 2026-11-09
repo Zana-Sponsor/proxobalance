@@ -8,7 +8,7 @@ const shellCss=read('assets/css/proxo-ui-v2.css');
 
 test('Customer design contract is loaded after every legacy stylesheet',()=>{
   const sheets=[...html.matchAll(/<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"/g)].map(m=>m[1]);
-  assert.equal(sheets.at(-1),'/assets/css/proxo-design-system.css?v=2');
+  assert.equal(sheets.at(-1),'/assets/css/proxo-design-system.css?v=3');
   assert(!read('exchange-admin.html').includes('proxo-design-system.css'));
 });
 
@@ -19,8 +19,13 @@ test('Shared contract defines the approved Proxo palette and local font family',
 
 test('Profile balance and splash mark use restrained, consistent proportions',()=>{
   assert(css.includes('clamp(24px, 7vw, 30px)'));
-  assert(css.includes('.pfx-balance .bx-btn'));
-  assert(html.includes('width:min(46vw,196px)'));
+  assert(css.includes('.pfx-balance .bx-head {\n  justify-content: center !important;'));
+  assert(css.includes('.pfx-balance .bx-amount { justify-content: center !important;'));
+  assert(html.includes('width:min(42vw,180px)'));
+  assert(html.includes('animation:spIn 1.15s'));
+  assert(html.includes('transform:scale(.55)'));
+  assert(html.includes('transform:scale(1.08)'));
+  assert(read('assets/js/app.js').includes('1400-(performance.now()-appSplashStartedAt)'));
   assert(html.includes('transform:scale(1.04)'));
   assert(!html.includes('transform:scale(6)'));
 });
@@ -55,8 +60,9 @@ test('Design layer leaves hidden/route mechanics untouched and provides accessib
 test('Production smoke waits for the changed customer version and verifies its design contract',()=>{
   const workflow=read('.github/workflows/exchange-production-smoke.yml');
   assert(workflow.includes('app.js?v=67'));
-  assert(workflow.includes('proxo-design-system.css?v=2'));
-  assert(workflow.includes("grep -q 'width:min(46vw,196px)' current-index.html"));
+  assert(workflow.includes('proxo-design-system.css?v=3'));
+  assert(workflow.includes("grep -q 'width:min(42vw,180px)' current-index.html"));
+  assert(workflow.includes("grep -q 'animation:spIn 1.15s' current-index.html"));
   assert(workflow.includes("grep -q 'clamp(24px, 7vw, 30px)' proxo-design-system.css"));
   assert(html.includes('/assets/js/app.js?v=67'));
   assert(html.includes('/assets/css/proxo-ui-v2.css?v=10'));

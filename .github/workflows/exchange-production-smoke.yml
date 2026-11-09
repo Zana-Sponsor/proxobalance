@@ -38,8 +38,9 @@ jobs:
                grep -q 'proxo-app-icon.png?v=1' current-index.html &&
                grep -q 'proxo-wordmark.png?v=1' current-index.html &&
                grep -q 'proxo-app-shell.css?v=1' current-index.html &&
-               grep -q 'proxo-design-system.css?v=2' current-index.html &&
-               grep -q 'width:min(46vw,196px)' current-index.html &&
+               grep -q 'proxo-design-system.css?v=3' current-index.html &&
+               grep -q 'width:min(42vw,180px)' current-index.html &&
+               grep -q 'animation:spIn 1.15s' current-index.html &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin' -o current-admin.html &&
                grep -q 'href="exchange-admin-balance.html"' current-admin.html &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin-balance.html' -o current-balance-admin.html &&
@@ -146,10 +147,10 @@ jobs:
           curl -fLsS --max-time 25 "$root/assets/css/proxo-app-shell.css?v=1" -o proxo-app-shell.css
           grep -q 'bottom-nav-inner' proxo-app-shell.css
           grep -q 'profile-balance-card' proxo-app-shell.css
-          curl -fLsS --max-time 25 "$root/assets/css/proxo-design-system.css?v=2" -o proxo-design-system.css
+          curl -fLsS --max-time 25 "$root/assets/css/proxo-design-system.css?v=3" -o proxo-design-system.css
           grep -q -- "--proxo-accent: #0265ff" proxo-design-system.css
           grep -q 'clamp(24px, 7vw, 30px)' proxo-design-system.css
-          grep -q "proxo-design-system.css?v=2" index.html
+          grep -q "proxo-design-system.css?v=3" index.html
           curl -fLsS --max-time 25 "$root/assets/images/proxo-app/proxo-app-icon.png?v=1" -o app-icon.png
           file --brief --mime-type app-icon.png | grep -q '^image/png$'
           curl -fLsS --max-time 25 "$root/assets/images/proxo-app/proxo-wordmark.png?v=1" -o proxo-wordmark.png

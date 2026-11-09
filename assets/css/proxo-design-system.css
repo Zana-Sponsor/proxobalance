@@ -583,7 +583,7 @@ html body #mainApp #pageProfile .pfx-card.pfx-balance {
 }
 html body #mainApp #pageProfile .pfx-balance::before { display: none !important; }
 html body #mainApp #pageProfile .pfx-balance .bx-head {
-  justify-content: flex-start !important;
+  justify-content: center !important;
   gap: 8px !important;
   font-size: 13px !important;
 }
@@ -593,7 +593,7 @@ html body #mainApp #pageProfile .pfx-balance .bx-ico {
   border-radius: 9px !important;
 }
 html body #mainApp #pageProfile .pfx-balance .bx-ico .pxi { width: 16px !important; height: 16px !important; }
-html body #mainApp #pageProfile .pfx-balance .bx-amount { justify-content: flex-start !important; padding: 0 2px 1px !important; }
+html body #mainApp #pageProfile .pfx-balance .bx-amount { justify-content: center !important; padding: 0 2px 1px !important; }
 html body #mainApp #pageProfile .pfx-balance .bx-amount strong {
   font-size: clamp(24px, 7vw, 30px) !important;
   line-height: 1.2 !important;
