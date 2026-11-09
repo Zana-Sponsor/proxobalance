@@ -164,10 +164,12 @@ jobs:
           curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/exchange-admin" -o exchange-admin.html
           grep -q 'href="exchange-admin-balance.html"' exchange-admin.html
           curl -fLsS --max-time 25 "$root/exchange-admin-balance.html" -o exchange-admin-balance.html
+          grep -q 'assets/js/exchange-admin-balance.js?v=1' exchange-admin-balance.html
+          curl -fLsS --max-time 25 "$root/assets/js/exchange-admin-balance.js?v=1" -o exchange-admin-balance.js
+          grep -q 'ex_admin_find_accounts' exchange-admin-balance.js
+          grep -q 'ex_admin_adjust_balance' exchange-admin-balance.js
+          grep -q 'ex_admin_balance_history' exchange-admin-balance.js
           grep -q 'name="robots" content="noindex,nofollow"' exchange-admin-balance.html
-          grep -q 'ex_admin_find_accounts' exchange-admin-balance.html
-          grep -q 'ex_admin_adjust_balance' exchange-admin-balance.html
-          grep -q 'ex_admin_balance_history' exchange-admin-balance.html
           grep -q 'proxo-app-icon.png?v=1' exchange-admin.html
           grep -q 'id="pgBalance"' exchange-admin.html
           grep -q 'id="pgRewards"' exchange-admin.html
