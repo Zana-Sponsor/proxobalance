@@ -571,3 +571,63 @@ body :is(#recipientSheet,#pickerSheet,#confirmSheet) .sheet,
 #mainApp #pageProfile > .page-head .profile-page-back { grid-column: 3 !important; }
 #mainApp #pageProfile > .page-head :is(.profile-page-action,.profile-page-back) .icn { width: 22px !important; height: 22px !important; }
 #mainApp #pageProfile > .page-head :is(.profile-page-action,.profile-page-back):hover { background: #fafafa !important; }
+
+
+/* Profile balance: compact, calm and proportionate to the other account cards. */
+html body #mainApp #pageProfile .pfx-card.pfx-balance {
+  display: grid !important;
+  gap: 9px !important;
+  margin: 10px 0 12px !important;
+  padding: 13px !important;
+  border-radius: 16px !important;
+}
+html body #mainApp #pageProfile .pfx-balance::before { display: none !important; }
+html body #mainApp #pageProfile .pfx-balance .bx-head {
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  font-size: 13px !important;
+}
+html body #mainApp #pageProfile .pfx-balance .bx-ico {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 9px !important;
+}
+html body #mainApp #pageProfile .pfx-balance .bx-ico .pxi { width: 16px !important; height: 16px !important; }
+html body #mainApp #pageProfile .pfx-balance .bx-amount { justify-content: flex-start !important; padding: 0 2px 1px !important; }
+html body #mainApp #pageProfile .pfx-balance .bx-amount strong {
+  font-size: clamp(24px, 7vw, 30px) !important;
+  line-height: 1.2 !important;
+}
+html body #mainApp #pageProfile .pfx-balance .bx-actions { gap: 8px !important; }
+html body #mainApp #pageProfile .pfx-balance .bx-btn {
+  height: 44px !important;
+  min-height: 44px !important;
+  padding: 0 8px !important;
+  gap: 6px !important;
+  border-radius: 11px !important;
+  font-size: 12px !important;
+}
+html body #mainApp #pageProfile .pfx-balance .bx-btn .pxi { width: 16px !important; height: 16px !important; }
+html:not([data-theme="dark"]) body #mainApp #pageProfile .pfx-card.pfx-balance {
+  background: #fff !important;
+  border: 1px solid var(--proxo-line) !important;
+  box-shadow: none !important;
+  color: var(--proxo-ink) !important;
+}
+html:not([data-theme="dark"]) body #mainApp #pageProfile .pfx-balance .bx-head { color: var(--proxo-muted) !important; }
+html:not([data-theme="dark"]) body #mainApp #pageProfile .pfx-balance .bx-ico {
+  background: var(--proxo-accent-soft) !important;
+  color: var(--proxo-accent) !important;
+}
+html:not([data-theme="dark"]) body #mainApp #pageProfile .pfx-balance .bx-title { color: var(--proxo-ink) !important; font-weight: 500 !important; }
+html:not([data-theme="dark"]) body #mainApp #pageProfile .pfx-balance .bx-amount strong { color: var(--proxo-ink) !important; }
+html:not([data-theme="dark"]) body #mainApp #pageProfile .pfx-balance .bx-btn {
+  background: var(--proxo-accent) !important;
+  border-color: var(--proxo-accent) !important;
+  color: #fff !important;
+}
+html:not([data-theme="dark"]) body #mainApp #pageProfile .pfx-balance .bx-btn.bx-secondary {
+  background: #f5f7fa !important;
+  border-color: var(--proxo-line) !important;
+  color: #334155 !important;
+}

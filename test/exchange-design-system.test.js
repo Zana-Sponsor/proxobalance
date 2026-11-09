@@ -8,13 +8,21 @@ const shellCss=read('assets/css/proxo-ui-v2.css');
 
 test('Customer design contract is loaded after every legacy stylesheet',()=>{
   const sheets=[...html.matchAll(/<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"/g)].map(m=>m[1]);
-  assert.equal(sheets.at(-1),'/assets/css/proxo-design-system.css?v=1');
+  assert.equal(sheets.at(-1),'/assets/css/proxo-design-system.css?v=2');
   assert(!read('exchange-admin.html').includes('proxo-design-system.css'));
 });
 
 test('Shared contract defines the approved Proxo palette and local font family',()=>{
   for(const token of ['--proxo-accent: #0265ff','--proxo-canvas: #fafafa','--proxo-ink: #0f172a','--proxo-muted: #64748b','--proxo-line: #e3e7f0','--proxo-font: Rabar, Arial, sans-serif'])assert(css.includes(token));
   assert(read('assets/css/app-ui-polish.css').includes('/assets/fonts/Rabar_021.ttf'));
+});
+
+test('Profile balance and splash mark use restrained, consistent proportions',()=>{
+  assert(css.includes('clamp(24px, 7vw, 30px)'));
+  assert(css.includes('.pfx-balance .bx-btn'));
+  assert(html.includes('width:min(46vw,196px)'));
+  assert(html.includes('transform:scale(1.04)'));
+  assert(!html.includes('transform:scale(6)'));
 });
 
 test('Auth remains full-bleed and password recovery gets the same email icon',()=>{
@@ -47,7 +55,9 @@ test('Design layer leaves hidden/route mechanics untouched and provides accessib
 test('Production smoke waits for the changed customer version and verifies its design contract',()=>{
   const workflow=read('.github/workflows/exchange-production-smoke.yml');
   assert(workflow.includes('app.js?v=67'));
-  assert(workflow.includes('proxo-design-system.css?v=1'));
+  assert(workflow.includes('proxo-design-system.css?v=2'));
+  assert(workflow.includes("grep -q 'width:min(46vw,196px)' current-index.html"));
+  assert(workflow.includes("grep -q 'clamp(24px, 7vw, 30px)' proxo-design-system.css"));
   assert(html.includes('/assets/js/app.js?v=67'));
   assert(html.includes('/assets/css/proxo-ui-v2.css?v=10'));
   assert(html.includes('/assets/js/proxo-ui-v2.js?v=4'));
