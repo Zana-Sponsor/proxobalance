@@ -2793,7 +2793,7 @@ function renderHomeFeedbackPrompt(){
   if(!order||isFeedbackRead(order.id)){el.hidden=true;el.innerHTML='';return;}
   el.hidden=false;
   el.innerHTML='<span class="home-feedback-icon" aria-hidden="true"><span class="icn icon--solar icon--solar--star-linear"></span></span>'+
-    '<span class="home-feedback-copy"><b>هەڵسەنگاندنی داواکاری</b><span>مامەڵەی '+escHtml(orderCodeOf(order))+' پەسەندکراوە؛ هەڵسەنگاندنەکەت ماوە.</span></span>'+
+    '<span class="home-feedback-copy"><b>مامەڵەکەت چۆن بوو؟</b><span>هەڵسەنگاندنەکەت بنێرە و '+FEEDBACK_REWARD.percent+'% داشکان بۆ مامەڵەی داهاتوو وەربگرە.</span></span>'+
     '<button type="button" class="home-feedback-action" onclick="openHomePendingFeedback()">هەڵسەنگاندن</button>';
 }
 function openHomePendingFeedback(){
@@ -3048,6 +3048,7 @@ function resetTxFilters(){
   try{ if(_txSheetId) closeTxDetail(); }catch(_){}
 }
 function resetProfileForms(){
+  try{ closeUsernameSheet(); }catch(_){}
   try{ fillProfileForm(); }catch(_){}
   const form=document.getElementById('balancePayoutForm');
   if(form){ try{ form.reset(); }catch(_){} form.hidden=true; }
@@ -3347,6 +3348,8 @@ function applyProfileToUI(){
   setAvatar(document.getElementById('pfAvatar'), name);
   const handle=document.getElementById('pfUsername');
   if(handle) handle.textContent=(curProfile && curProfile.username) ? '@'+curProfile.username : '@—';
+  const unEdit=document.getElementById('pfUsernameEdit');
+  if(unEdit) unEdit.hidden=!(curProfile && curProfile.username && !curProfile.username_changed_at);
   const pfName=document.getElementById('pfNameLbl'); if(pfName) pfName.textContent=name||'—';
   const pfMail=document.getElementById('pfEmailLbl'); if(pfMail) pfMail.textContent=(curUser&&curUser.email)||'—';
   syncSenderIdentity();
@@ -3382,6 +3385,93 @@ function copyUsername(btn){
   const u=curProfile && curProfile.username;
   if(!u) return;
   copyWithFeedback('@'+u, btn);
+}
+
+/* ── Username change: allowed once per account (enforced by ex_change_username in the database) ── */
+const UN_RE=/^[a-z][a-z0-9_]{2,19}$/;
+const UN_RESERVED=/^(admin|support|staff|proxo|root|system|moderator|official)/;
+const UN_ERRORS={
+  USERNAME_ALREADY_CHANGED:'ناوی بەکارهێنەرەکەت پێشتر گۆڕدراوە و جارێکی تر ناگۆڕدرێت.',
+  USERNAME_INVALID:'ناوەکە دروست نییە. ٣ بۆ ٢٠ پیت، بە پیتی ئینگلیزی دەست پێ بکات و تەنها a-z، 0-9 و _ بێت.',
+  USERNAME_RESERVED:'ئەم ناوە پارێزراوە؛ ناوێکی تر هەڵبژێرە.',
+  USERNAME_UNCHANGED:'ئەمە هەمان ناوی ئێستای تۆیە.',
+  USERNAME_TAKEN:'ئەم ناوە پێشتر بەکارهێنراوە؛ ناوێکی تر تاقی بکەرەوە.',
+  ACCOUNT_BANNED:'ئەم هەژمارە ناتوانێت ئەم کردارە ئەنجام بدات.',
+  AUTH_REQUIRED:'تکایە دووبارە بچۆ ژوورەوە.',
+  PROFILE_NOT_FOUND:'پڕۆفایلەکە نەدۆزرایەوە.'
+};
+let _unBusy=false;
+function usernameValue(){ const el=document.getElementById('unInput'); return el ? String(el.value||'').trim().toLowerCase() : ''; }
+function usernameValidate(){
+  const el=document.getElementById('unInput'); if(!el) return false;
+  const raw=el.value, v=raw.trim().toLowerCase();
+  const rules={
+    len:v.length>=3 && v.length<=20,
+    start:/^[a-z]/.test(v),
+    chars:v.length>0 && /^[a-z0-9_]+$/.test(v)
+  };
+  document.querySelectorAll('#unRules li').forEach(li=>{
+    const ok=rules[li.dataset.rule];
+    li.classList.toggle('is-ok', !!ok && v.length>0);
+    li.classList.toggle('is-bad', !ok && v.length>0);
+  });
+  const same=!!(curProfile && v===curProfile.username);
+  const reserved=UN_RESERVED.test(v);
+  const err=document.getElementById('unError');
+  if(err){
+    err.textContent = (v && UN_RE.test(v) && same) ? UN_ERRORS.USERNAME_UNCHANGED : (v && UN_RE.test(v) && reserved) ? UN_ERRORS.USERNAME_RESERVED : '';
+    err.classList.toggle('show', !!err.textContent);
+  }
+  const field=document.getElementById('unField'); if(field) field.classList.toggle('is-bad', !!(err && err.textContent));
+  const valid=UN_RE.test(v) && !same && !reserved;
+  const confirmed=!!(document.getElementById('unConfirm') && document.getElementById('unConfirm').checked);
+  const btn=document.getElementById('unSubmit'); if(btn) btn.disabled=!(valid && confirmed) || _unBusy;
+  return valid;
+}
+function openUsernameSheet(){
+  const sheet=document.getElementById('usernameSheet');
+  if(!sheet || !curProfile || curProfile.username_changed_at) return;
+  const cur=document.getElementById('unCurrent'); if(cur) cur.textContent='@'+(curProfile.username||'—');
+  const input=document.getElementById('unInput'); if(input) input.value='';
+  const ok=document.getElementById('unConfirm'); if(ok) ok.checked=false;
+  const err=document.getElementById('unError'); if(err){ err.textContent=''; err.classList.remove('show'); }
+  usernameValidate();
+  openSheet(sheet);
+  setTimeout(()=>{ try{ input && input.focus({preventScroll:true}); }catch(_){} }, 320);
+}
+function closeUsernameSheet(){
+  const sheet=document.getElementById('usernameSheet');
+  if(sheet && sheet.classList.contains('open')) closeSheet(sheet);
+}
+async function submitUsernameChange(ev){
+  if(ev) ev.preventDefault();
+  if(_unBusy || !usernameValidate()) return;
+  const v=usernameValue(), btn=document.getElementById('unSubmit'), err=document.getElementById('unError');
+  _unBusy=true;
+  if(btn){ btn.disabled=true; btn.classList.add('is-busy'); btn.textContent='کەمێک چاوەڕێ بکە...'; }
+  try{
+    const {data,error}=await sb.rpc('ex_change_username',{p_username:v});
+    if(error) throw error;
+    const saved=(data && data.username) || v;
+    curProfile.username=saved;
+    curProfile.username_changed_at=(data && data.changed_at) || new Date().toISOString();
+    applyProfileToUI();
+    closeUsernameSheet();
+    showToast('ناوی بەکارهێنەرەکەت بوو بە @'+saved,'success','گۆڕدرا');
+  }catch(e){
+    const msg=String((e && (e.message||e.details))||'');
+    const code=Object.keys(UN_ERRORS).find(k=>msg.includes(k));
+    if(code==='USERNAME_ALREADY_CHANGED' && curProfile){
+      curProfile.username_changed_at=curProfile.username_changed_at||new Date().toISOString();
+      applyProfileToUI();
+    }
+    if(err){ err.textContent=code ? UN_ERRORS[code] : 'گۆڕینەکە سەرنەکەوت. دووبارە هەوڵ بدەرەوە.'; err.classList.add('show'); }
+    const field=document.getElementById('unField'); if(field) field.classList.add('is-bad');
+  }finally{
+    _unBusy=false;
+    if(btn){ btn.classList.remove('is-busy'); btn.textContent='گۆڕینی ناوی بەکارهێنەر'; }
+    usernameValidate();
+  }
 }
 
 function fillProfileForm(){
@@ -4754,6 +4844,7 @@ document.addEventListener('keydown', (e)=>{
   if(document.getElementById('txSheet') && !document.getElementById('txSheet').hidden){ closeTxDetail(); return; }
   const notifP=document.getElementById('notifPanel'); if(notifP && notifP.classList.contains('open')){ closeNotifPanel(); return; }
   const picker=document.getElementById('pickerSheet'); if(picker.classList.contains('open')){ closePicker(); return; }
+  const usernameS=document.getElementById('usernameSheet'); if(usernameS && usernameS.classList.contains('open')){ closeUsernameSheet(); return; }
   const feedbackS=document.getElementById('feedbackSheet'); if(feedbackS && feedbackS.classList.contains('open')){ closeFeedbackSheet(); return; }
   const roundingS=document.getElementById('roundingInfoSheet'); if(roundingS && roundingS.classList.contains('open')){ closeRoundingInfo(); return; }
   const confirmS=document.getElementById('confirmSheet'); if(confirmS.classList.contains('open')){ closeOrderConfirm(); return; }
@@ -4787,7 +4878,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   const dismissAppSplash=()=>{
     if(!appSplash||appSplashDismissQueued)return;
     appSplashDismissQueued=true;
-    const wait=Math.max(0,950-(performance.now()-appSplashStartedAt));
+    const wait=Math.max(0,1400-(performance.now()-appSplashStartedAt));
     setTimeout(()=>appSplash.classList.add('is-hidden'),wait);
   };
   setTimeout(dismissAppSplash,4200);

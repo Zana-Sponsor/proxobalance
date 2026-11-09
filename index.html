@@ -87,6 +87,22 @@ document.getElementById('themeColorMeta').setAttribute('content',d?'#0b1220':'#f
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <!-- Solar Icons (480 Design, CC BY 4.0) — all icons as CSS mask images -->
+<style id="splashStyle">
+html body #appSplash{position:fixed!important;inset:0!important;z-index:100000!important;display:grid!important;place-items:center!important;overflow:hidden!important;background:radial-gradient(120% 85% at 50% 36%,#fff 0%,#eef6ff 52%,#d9e9ff 100%)!important;opacity:1;visibility:visible;transition:opacity .55s ease,visibility 0s linear 0s!important}
+html body #appSplash.is-hidden{opacity:0!important;visibility:hidden!important;pointer-events:none!important;transition:opacity .55s ease,visibility 0s linear .55s!important}
+html body #appSplash .app-splash-content{position:relative!important;display:grid!important;justify-items:center!important;gap:30px!important;width:100%!important;max-width:none!important;padding:0 20px!important;background:none!important;transition:transform .6s cubic-bezier(.4,0,.2,1)!important}
+html body #appSplash.is-hidden .app-splash-content{transform:scale(1.14)!important}
+html body #appSplash .app-splash-content::before{content:"";position:absolute;inset-inline:0;inset-block-start:50%;width:min(92vw,520px);height:min(92vw,520px);margin:0 auto;transform:translateY(-62%);border-radius:50%;background:radial-gradient(circle,rgba(2,101,255,.20) 0%,rgba(2,101,255,0) 68%);animation:spGlow 2.6s ease-in-out infinite;pointer-events:none}
+html body #appSplash .app-splash-icon{position:relative!important;display:block!important;width:min(80vw,380px)!important;max-width:none!important;height:auto!important;margin:0!important;animation:spIn .9s cubic-bezier(.2,.9,.25,1.15) both,spFloat 3.2s ease-in-out .9s infinite!important;filter:drop-shadow(0 18px 28px rgba(2,101,255,.20))}
+html body #appSplash .app-splash-bar{position:relative;display:block;width:min(34vw,128px);height:4px;overflow:hidden;border-radius:4px;background:rgba(2,101,255,.15);animation:spFade .6s ease .5s both}
+html body #appSplash .app-splash-bar i{display:block;width:42%;height:100%;border-radius:4px;background:#0265ff;animation:spBar 1.15s ease-in-out infinite}
+@keyframes spIn{0%{opacity:0;transform:scale(.72) translateY(14px)}100%{opacity:1;transform:none}}
+@keyframes spFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes spGlow{0%,100%{opacity:.7;transform:translateY(-62%) scale(.94)}50%{opacity:1;transform:translateY(-62%) scale(1.06)}}
+@keyframes spBar{0%{transform:translateX(-120%)}100%{transform:translateX(260%)}}
+@keyframes spFade{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){html body #appSplash .app-splash-icon,html body #appSplash .app-splash-content::before,html body #appSplash .app-splash-bar i{animation:none!important}html body #appSplash.is-hidden .app-splash-content{transform:none!important}}
+</style>
 <link rel="stylesheet" href="/assets/css/tokens.css?v=4">
 <link rel="stylesheet" href="/assets/css/app.css?v=24">
 <link rel="stylesheet" href="/assets/css/proxo-refresh.css?v=1">
@@ -106,8 +122,8 @@ document.getElementById('themeColorMeta').setAttribute('content',d?'#0b1220':'#f
 <link rel="stylesheet" href="/assets/css/proxo-app-shell.css?v=1">
 <link rel="stylesheet" href="/assets/css/proxo-balance-polish.css?v=1">
 <link rel="stylesheet" href="/assets/css/proxo-complete-theme.css?v=1">
-<link rel="stylesheet" href="/assets/css/proxo-ui-v2.css?v=8">
-<link rel="stylesheet" href="/assets/css/proxo-dark.css?v=3">
+<link rel="stylesheet" href="/assets/css/proxo-ui-v2.css?v=9">
+<link rel="stylesheet" href="/assets/css/proxo-dark.css?v=4">
 <link rel="stylesheet" href="/assets/css/proxo-design-system.css?v=1">
 </head>
 
@@ -115,6 +131,7 @@ document.getElementById('themeColorMeta').setAttribute('content',d?'#0b1220':'#f
 <div id="appSplash" aria-hidden="true">
   <div class="app-splash-content">
     <img class="app-splash-icon" src="/assets/images/proxo-app/proxo-wordmark.png?v=1" alt="Proxo" width="1200" height="345" decoding="async">
+    <span class="app-splash-bar" aria-hidden="true"><i></i></span>
   </div>
 </div>
 
@@ -284,6 +301,43 @@ document.getElementById('themeColorMeta').setAttribute('content',d?'#0b1220':'#f
       </button>
     </div>
     <div class="sheet-body" id="feedbackSheetBody"></div>
+  </div>
+</div>
+
+<div id="usernameSheet" class="sheet-overlay" role="dialog" aria-modal="true" aria-labelledby="usernameSheetTitle" aria-hidden="true" onclick="if(event.target===this) closeUsernameSheet()">
+  <div class="sheet un-sheet">
+    <div class="sheet-grabber"></div>
+    <div class="sheet-head">
+      <h3 id="usernameSheetTitle">گۆڕینی ناوی بەکارهێنەر</h3>
+      <button type="button" class="sheet-close" onclick="closeUsernameSheet()" aria-label="داخستن">
+        <span class="icn icn-sm icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="sheet-body">
+      <form class="un-body" id="usernameForm" onsubmit="submitUsernameChange(event)" novalidate>
+        <div class="un-warn" role="note">
+          <svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+          <p>تەنها <b>یەک جار</b> دەتوانیت ناوی بەکارهێنەر بگۆڕیت. دوای گۆڕین ناتوانیت جارێکی تر بیگۆڕیتەوە.</p>
+        </div>
+        <div class="un-current"><span>ناوی ئێستا</span><b dir="ltr" id="unCurrent">@—</b></div>
+        <label class="un-label" for="unInput">ناوی نوێ</label>
+        <div class="un-field" id="unField">
+          <span class="un-at" aria-hidden="true">@</span>
+          <input id="unInput" type="text" dir="ltr" maxlength="20" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" inputmode="text" placeholder="username" oninput="usernameValidate()">
+        </div>
+        <ul class="un-rules" id="unRules" aria-live="polite">
+          <li data-rule="len"><i></i>٣ بۆ ٢٠ پیت یان ژمارە</li>
+          <li data-rule="start"><i></i>بە پیتی ئینگلیزی دەست پێ بکات</li>
+          <li data-rule="chars"><i></i>تەنها a-z، 0-9 و _ (پیتی بچووک)</li>
+        </ul>
+        <div class="un-error" id="unError" role="alert"></div>
+        <label class="un-confirm" for="unConfirm">
+          <input type="checkbox" id="unConfirm" onchange="usernameValidate()">
+          <span>تێگەیشتم کە ئەمە تەنها یەک جار دەگۆڕدرێت</span>
+        </label>
+        <button type="submit" class="un-submit" id="unSubmit" disabled>گۆڕینی ناوی بەکارهێنەر</button>
+      </form>
+    </div>
   </div>
 </div>
 
@@ -1176,10 +1230,16 @@ document.getElementById('themeColorMeta').setAttribute('content',d?'#0b1220':'#f
         <span class="pfx-verified" id="pfVerifiedDot" hidden title="ناسنامە پشتڕاستکراوەتەوە"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5"/></svg></span>
       </div>
       <div class="pfx-name" id="pfNameLbl">—</div>
-      <button type="button" class="pfx-handle" id="pfUsernameBtn" onclick="copyUsername(this)" aria-label="کۆپیکردنی ناوی بەکارهێنەر">
-        <span id="pfUsername" dir="ltr">@—</span>
-        <svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-      </button>
+      <div class="un-row">
+        <button type="button" class="pfx-handle" id="pfUsernameBtn" onclick="copyUsername(this)" aria-label="کۆپیکردنی ناوی بەکارهێنەر">
+          <span id="pfUsername" dir="ltr">@—</span>
+          <svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+        </button>
+        <button type="button" class="un-edit" id="pfUsernameEdit" onclick="openUsernameSheet()" hidden aria-label="گۆڕینی ناوی بەکارهێنەر">
+          <svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          <span>گۆڕین</span>
+        </button>
+      </div>
       <div class="pfx-email" id="pfEmailLbl">—</div>
 
       <div class="pfx-meta">
@@ -1299,7 +1359,7 @@ document.getElementById('themeColorMeta').setAttribute('content',d?'#0b1220':'#f
       <div><b>بارکردنی دۆخی ناسنامە...</b></div>
     </div>
 
-    <div class="kyc-form-card" id="kycFormCard" hidden>
+    <div class="kyc-form-card kf" id="kycFormCard" hidden>
       <ol class="kyc-steps" aria-hidden="true">
         <li id="kycStep1" class="on"><span>١</span>جۆری بەڵگەنامە</li>
         <li id="kycStep2"><span>٢</span>زانیاری</li>
@@ -1408,16 +1468,17 @@ document.getElementById('themeColorMeta').setAttribute('content',d?'#0b1220':'#f
         </ul>
       </section>
 
-      <div class="kyc-privacy">
-        <span class="icn icon--solar icon--solar--lock-linear" aria-hidden="true"></span>
-        <p>وێنەکان بە نهێنی لە کۆگایەکی تایبەتدا هەڵدەگیرێن. تەنها تیمی پشکنینی پڕۆکسۆ دەتوانێت بیانبینێت و هیچ بەستەرێکی گشتییان نییە.</p>
+      <div class="kf-confirm">
+        <div class="kyc-privacy">
+          <span class="icn icon--solar icon--solar--lock-linear" aria-hidden="true"></span>
+          <p>وێنەکان بە نهێنی لە کۆگایەکی تایبەتدا هەڵدەگیرێن. تەنها تیمی پشکنینی پڕۆکسۆ دەتوانێت بیانبینێت و هیچ بەستەرێکی گشتییان نییە.</p>
+        </div>
+        <label class="kyc-consent">
+          <input type="checkbox" id="kycConsent" onchange="clearFieldError('kycConsent')">
+          <span>دڵنیام کە ئەم زانیارییانە ڕاستن و بەڵگەنامەکە هی خۆمە.</span>
+        </label>
+        <span class="field-error" id="kycConsentError"></span>
       </div>
-
-      <label class="kyc-consent">
-        <input type="checkbox" id="kycConsent" onchange="clearFieldError('kycConsent')">
-        <span>دڵنیام کە ئەم زانیارییانە ڕاستن و بەڵگەنامەکە هی خۆمە.</span>
-      </label>
-      <span class="field-error" id="kycConsentError"></span>
 
       <div class="kyc-form-error" id="kycFormError" role="alert" hidden></div>
 
@@ -1549,7 +1610,7 @@ document.getElementById('themeColorMeta').setAttribute('content',d?'#0b1220':'#f
 <script src="/assets/js/exchange-payout-rounding.js?v=1"></script>
 <script src="/assets/js/exchange-live.js?v=1"></script>
 <script src="/assets/js/proxo-toast.js?v=1"></script>
-<script src="/assets/js/app.js?v=65"></script>
+<script src="/assets/js/app.js?v=66"></script>
 <script src="/assets/js/proxo-ui-v2.js?v=3"></script>
 <script src="/assets/js/exchange-customer-features.js?v=3"></script>
 <script src="/assets/js/exchange-balance.js?v=7"></script>

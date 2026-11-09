@@ -734,6 +734,188 @@ html[data-theme="dark"] body .fb-error:not(:empty) {
   background: #300505 !important;
   color: #e28d91 !important;
 }
+html[data-theme="dark"] body .un-body {
+  color: #bdc9e6 !important;
+}
+html[data-theme="dark"] body .un-warn {
+  border-color: #5e4b1b !important;
+  background: #352606 !important;
+}
+html[data-theme="dark"] body .un-warn .pxi {
+  stroke: #fbc574 !important;
+}
+html[data-theme="dark"] body .un-warn p {
+  color: #f4ce81 !important;
+}
+html[data-theme="dark"] body .un-warn b {
+  color: #fbb765 !important;
+}
+html[data-theme="dark"] body .un-current {
+  background: #111a26 !important;
+}
+html[data-theme="dark"] body .un-current span {
+  color: #acb5c3 !important;
+}
+html[data-theme="dark"] body .un-current b {
+  color: #bdc9e6 !important;
+}
+html[data-theme="dark"] body .un-label {
+  color: #a6b3c9 !important;
+}
+html[data-theme="dark"] body .un-field {
+  border-color: #212a39 !important;
+  background: #131c2e !important;
+}
+html[data-theme="dark"] body .un-at {
+  color: #acb4c3 !important;
+}
+html[data-theme="dark"] body .un-field input {
+  color: #bdc9e6 !important;
+}
+html[data-theme="dark"] body .un-rules li {
+  color: #acb5c3 !important;
+}
+html[data-theme="dark"] body .un-rules i {
+  border-color: #313a4a !important;
+  background: #131c2e !important;
+}
+html[data-theme="dark"] body .un-rules li.is-ok {
+  color: #83e5a8 !important;
+}
+html[data-theme="dark"] body .un-rules li.is-ok i::after {
+  border-color: #131c2e !important;
+}
+html[data-theme="dark"] body .un-rules li.is-bad {
+  color: #e28d91 !important;
+}
+html[data-theme="dark"] body .un-error.show {
+  border-color: #4b1618 !important;
+  background: #300505 !important;
+  color: #e28d91 !important;
+}
+html[data-theme="dark"] body .un-confirm {
+  border-color: #1d2432 !important;
+  background: #0c1423 !important;
+  color: #bdc9e6 !important;
+}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance::before {
+  background: radial-gradient(circle, rgba(19,28,46,.20), rgba(19,28,46,0) 70%) !important;
+}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance-head .pfx-title-ico {
+  background: rgba(19,28,46,.18) !important;
+}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pfx-icon-btn {
+  background: rgba(19,28,46,.18) !important;
+}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pfx-icon-btn:active {
+  background: rgba(19,28,46,.3) !important;
+}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance-values {
+  border-color: rgba(19,28,46,.22) !important;
+  background: rgba(19,28,46,.13) !important;
+}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance-values > div + div {
+  border-inline-start-color: rgba(19,28,46,.22) !important;
+}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance-values span {
+  color: rgba(255,255,255,.8) !important;
+}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-actions .pb-btn {
+  background: #131c2e !important;
+  color: #7aa3f5 !important;
+}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-actions .pb-btn.pb-secondary {
+  border-color: rgba(19,28,46,.3) !important;
+  background: rgba(19,28,46,.14) !important;
+}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-actions .pb-btn:disabled {
+  background: rgba(19,28,46,.32) !important;
+  color: rgba(255,255,255,.82) !important;
+}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-message {
+  background: rgba(19,28,46,.12) !important;
+  color: rgba(255,255,255,.92) !important;
+}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-form:not([hidden]) {
+  background: #131c2e !important;
+  color: #aabbd7 !important;
+}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-form label {
+  color: #a6b3c9 !important;
+}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-form :is(input, select) {
+  border-color: #1f2838 !important;
+  background: #131c2e !important;
+  color: #aabbd7 !important;
+}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-form .pb-message {
+  background: #111a26 !important;
+  color: #acb5c3 !important;
+}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-history:not([hidden]) {
+  background: #131c2e !important;
+  color: #aabbd7 !important;
+}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-history > * {
+  border-bottom-color: #1b222d !important;
+}
+html[data-theme="dark"] body #mainApp #kycFormCard.kf .kyc-steps li > span {
+  border-color: #273141 !important;
+}
+html[data-theme="dark"] body #mainApp #kycFormCard.kf .kyc-steps li:not(:last-child)::after {
+  background: #1e2633 !important;
+}
+html[data-theme="dark"] body #mainApp #kycFormCard.kf .kyc-steps li.done {
+  color: #73e49d !important;
+}
+html[data-theme="dark"] body #mainApp #kycFormCard.kf .kyc-steps li.done > span::after {
+  border-color: #131c2e !important;
+}
+html[data-theme="dark"] body #mainApp #kycFormCard.kf .kyc-steps li.done:not(:last-child)::after {
+  background: #2f834e !important;
+}
+html[data-theme="dark"] body #mainApp #kycFormCard.kf .kyc-doc-check {
+  border-color: #313a4a !important;
+}
+html[data-theme="dark"] body #mainApp #kycFormCard.kf .kyc-doc.on .kyc-doc-check::after {
+  border-color: #131c2e !important;
+}
+html[data-theme="dark"] body #mainApp #kycFormCard.kf .kyc-sec .input {
+  border-color: #1f2838 !important;
+}
+html[data-theme="dark"] body #mainApp #kycFormCard.kf .kyc-name-note {
+  background: #3c2b07 !important;
+  color: #fbbf65 !important;
+}
+html[data-theme="dark"] body #mainApp #kycFormCard.kf .kyc-name-note.ok {
+  background: #142c1e !important;
+  color: #83e5a8 !important;
+}
+html[data-theme="dark"] body #mainApp #kycFormCard.kf .kyc-drop {
+  border-color: #2a3a54 !important;
+}
+html[data-theme="dark"] body #mainApp #kycFormCard.kf .kyc-src-btn {
+  border-color: #222f44 !important;
+}
+html[data-theme="dark"] body #mainApp #kycFormCard.kf .kyc-preview img {
+  background: #151e2a !important;
+}
+html[data-theme="dark"] body #mainApp #kycFormCard.kf .kyc-mini-btn {
+  border-color: #212c3d !important;
+}
+html[data-theme="dark"] body #mainApp #kycFormCard.kf .kyc-mini-btn.danger {
+  border-color: #4e1a1a !important;
+  background: #300505 !important;
+  color: #eb8b84 !important;
+}
+html[data-theme="dark"] body #mainApp #kycFormCard.kf .kyc-tips {
+  background: #111a26 !important;
+}
+html[data-theme="dark"] body #mainApp #kycFormCard.kf .kyc-form-error:not([hidden]) {
+  border-color: #4b1618 !important;
+  background: #300505 !important;
+  color: #e28d91 !important;
+}
 
 /* ── part 2: hand-tuned tokens and fixes (win over part 1) ───────────── */
 html[data-theme="dark"],
@@ -797,3 +979,17 @@ html[data-theme="dark"] body #mainApp #pageHome #exchangeCard .btn-submit,
 html[data-theme="dark"] body #mainApp #pageHome #exchangeCard .btn.btn-primary { background: #2563eb !important; color: #fff !important; }
 html[data-theme="dark"] body #mainApp #pageHome #exchangeCard #submitBtn.btn-submit { background: #2563eb !important; color: #fff !important; box-shadow: 0 10px 22px -12px rgba(37, 99, 235, .7) !important; }
 html[data-theme="dark"] body #mainApp ::placeholder { color: #8493ab !important; opacity: 1; }
+
+/* v8: wallet panel keeps a deep blue gradient; its inset cards go dark */
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-card.pfx-balance{background:linear-gradient(145deg,#1d4fbf 0%,#1741a3 55%,#122f78 100%)!important;box-shadow:0 18px 32px -20px rgba(0,0,0,.7)!important;}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-actions .pb-btn{background:#e8f0ff!important;color:#123a99!important;}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-actions .pb-btn.pb-secondary{background:rgba(255,255,255,.12)!important;color:#fff!important;}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-actions .pb-btn:disabled{background:rgba(255,255,255,.22)!important;color:rgba(255,255,255,.8)!important;}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-form:not([hidden]),
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-history:not([hidden]){background:#162033!important;color:#e6ecf7!important;}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-form label{color:#b8c4d9!important;}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-form :is(input,select){background:#0f1727!important;color:#e6ecf7!important;border-color:#2c3a54!important;}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-form .pb-message{background:#1d2a42!important;color:#aab7cf!important;}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-history > *{border-bottom-color:#27344e!important;}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-form .pb-btn{background:#2f7bff!important;color:#fff!important;}
+html[data-theme="dark"] body #mainApp #kycFormCard.kf .kyc-num{background:#1e5ccf!important;color:#fff!important;}
