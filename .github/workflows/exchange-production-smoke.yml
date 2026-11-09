@@ -40,6 +40,10 @@ jobs:
                grep -q 'proxo-app-shell.css?v=1' current-index.html &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin' -o current-admin.html &&
                grep -q 'href="exchange-admin-balance.html"' current-admin.html &&
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin-balance.html' -o current-balance-admin.html &&
+               grep -q 'assets/js/exchange-admin-balance.js?v=1' current-balance-admin.html &&
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-admin-balance.js?v=1' -o current-balance-admin.js &&
+               grep -q 'ex_admin_adjust_balance' current-balance-admin.js &&
                grep -q 'assets/js/admin.js?v=29' current-admin.html &&
                grep -q 'exchange-feedback.css?v=3' current-admin.html &&
                grep -q 'app-ui-polish.css?v=2' current-admin.html &&
