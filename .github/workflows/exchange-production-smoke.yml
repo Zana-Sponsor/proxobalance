@@ -56,7 +56,7 @@ jobs:
                curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/app.js?v=66' -o current-app.js &&
                grep -q 'accountBalanceSourceOption' current-app.js &&
                grep -q 'dismissAppSplash' current-app.js &&
-               grep -q 'هەڵسەنگاندنی داواکاری' current-app.js &&
+               grep -q 'مامەڵەکەت چۆن بوو؟' current-app.js &&
                grep -q 'pendingHomeFeedbackOrder' current-app.js &&
                grep -q 'ex_change_username' current-app.js &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-balance.js?v=7' -o current-balance.js &&

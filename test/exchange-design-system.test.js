@@ -62,6 +62,7 @@ test('Production smoke waits for the changed customer version and verifies its d
   assert(html.includes('id="usernameSheet"'));
   assert(html.includes('id="pfUsernameEdit"'));
   assert(read('assets/js/app.js').includes('ex_change_username'));
+  assert(read('assets/js/app.js').includes('مامەڵەکەت چۆن بوو؟'));
   assert(html.includes('id="savedRecipientsShortcut"'));
   assert(shellCss.includes('.xc-step-head .xc-saved-recipients-btn'));
   assert(html.includes('proxo-dark.css?v=4'));
