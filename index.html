@@ -88,20 +88,13 @@ document.getElementById('themeColorMeta').setAttribute('content',d?'#0b1220':'#f
 
 <!-- Solar Icons (480 Design, CC BY 4.0) — all icons as CSS mask images -->
 <style id="splashStyle">
-html body #appSplash{position:fixed!important;inset:0!important;z-index:100000!important;display:grid!important;place-items:center!important;overflow:hidden!important;background:radial-gradient(120% 85% at 50% 36%,#fff 0%,#eef6ff 52%,#d9e9ff 100%)!important;opacity:1;visibility:visible;transition:opacity .55s ease,visibility 0s linear 0s!important}
-html body #appSplash.is-hidden{opacity:0!important;visibility:hidden!important;pointer-events:none!important;transition:opacity .55s ease,visibility 0s linear .55s!important}
-html body #appSplash .app-splash-content{position:relative!important;display:grid!important;justify-items:center!important;gap:30px!important;width:100%!important;max-width:none!important;padding:0 20px!important;background:none!important;transition:transform .6s cubic-bezier(.4,0,.2,1)!important}
-html body #appSplash.is-hidden .app-splash-content{transform:scale(1.14)!important}
-html body #appSplash .app-splash-content::before{content:"";position:absolute;inset-inline:0;inset-block-start:50%;width:min(92vw,520px);height:min(92vw,520px);margin:0 auto;transform:translateY(-62%);border-radius:50%;background:radial-gradient(circle,rgba(2,101,255,.20) 0%,rgba(2,101,255,0) 68%);animation:spGlow 2.6s ease-in-out infinite;pointer-events:none}
-html body #appSplash .app-splash-icon{position:relative!important;display:block!important;width:min(80vw,380px)!important;max-width:none!important;height:auto!important;margin:0!important;animation:spIn .9s cubic-bezier(.2,.9,.25,1.15) both,spFloat 3.2s ease-in-out .9s infinite!important;filter:drop-shadow(0 18px 28px rgba(2,101,255,.20))}
-html body #appSplash .app-splash-bar{position:relative;display:block;width:min(34vw,128px);height:4px;overflow:hidden;border-radius:4px;background:rgba(2,101,255,.15);animation:spFade .6s ease .5s both}
-html body #appSplash .app-splash-bar i{display:block;width:42%;height:100%;border-radius:4px;background:#0265ff;animation:spBar 1.15s ease-in-out infinite}
-@keyframes spIn{0%{opacity:0;transform:scale(.72) translateY(14px)}100%{opacity:1;transform:none}}
-@keyframes spFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-@keyframes spGlow{0%,100%{opacity:.7;transform:translateY(-62%) scale(.94)}50%{opacity:1;transform:translateY(-62%) scale(1.06)}}
-@keyframes spBar{0%{transform:translateX(-120%)}100%{transform:translateX(260%)}}
-@keyframes spFade{from{opacity:0}to{opacity:1}}
-@media (prefers-reduced-motion:reduce){html body #appSplash .app-splash-icon,html body #appSplash .app-splash-content::before,html body #appSplash .app-splash-bar i{animation:none!important}html body #appSplash.is-hidden .app-splash-content{transform:none!important}}
+html body #appSplash{position:fixed!important;inset:0!important;z-index:100000!important;display:grid!important;place-items:center!important;overflow:hidden!important;background:#fff!important;opacity:1;visibility:visible;transition:opacity .7s cubic-bezier(.4,0,.2,1) .1s,visibility 0s linear 0s!important}
+html body #appSplash .app-splash-content{display:grid!important;place-items:center!important;width:100%!important;padding:0 24px!important;background:none!important;transform:scale(1);transform-origin:50% 50%;will-change:transform,opacity;transition:transform .8s cubic-bezier(.5,0,.15,1),opacity .55s ease .15s!important}
+html body #appSplash .app-splash-icon{display:block!important;width:min(62vw,300px)!important;max-width:none!important;height:auto!important;margin:0!important;animation:spIn .45s ease-out both}
+html body #appSplash.is-hidden{opacity:0!important;visibility:hidden!important;pointer-events:none!important;transition:opacity .7s cubic-bezier(.4,0,.2,1) .1s,visibility 0s linear .8s!important}
+html body #appSplash.is-hidden .app-splash-content{transform:scale(6)!important;opacity:0!important}
+@keyframes spIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){html body #appSplash .app-splash-icon{animation:none!important}html body #appSplash.is-hidden .app-splash-content{transform:none!important}}
 </style>
 <link rel="stylesheet" href="/assets/css/tokens.css?v=4">
 <link rel="stylesheet" href="/assets/css/app.css?v=24">
@@ -122,8 +115,8 @@ html body #appSplash .app-splash-bar i{display:block;width:42%;height:100%;borde
 <link rel="stylesheet" href="/assets/css/proxo-app-shell.css?v=1">
 <link rel="stylesheet" href="/assets/css/proxo-balance-polish.css?v=1">
 <link rel="stylesheet" href="/assets/css/proxo-complete-theme.css?v=1">
-<link rel="stylesheet" href="/assets/css/proxo-ui-v2.css?v=9">
-<link rel="stylesheet" href="/assets/css/proxo-dark.css?v=4">
+<link rel="stylesheet" href="/assets/css/proxo-ui-v2.css?v=10">
+<link rel="stylesheet" href="/assets/css/proxo-dark.css?v=5">
 <link rel="stylesheet" href="/assets/css/proxo-design-system.css?v=1">
 </head>
 
@@ -131,7 +124,6 @@ html body #appSplash .app-splash-bar i{display:block;width:42%;height:100%;borde
 <div id="appSplash" aria-hidden="true">
   <div class="app-splash-content">
     <img class="app-splash-icon" src="/assets/images/proxo-app/proxo-wordmark.png?v=1" alt="Proxo" width="1200" height="345" decoding="async">
-    <span class="app-splash-bar" aria-hidden="true"><i></i></span>
   </div>
 </div>
 
@@ -1253,11 +1245,23 @@ html body #appSplash .app-splash-bar i{display:block;width:42%;height:100%;borde
     </div>
 
     <section class="pfx-card pfx-balance" aria-label="باڵانسی هەژمار">
-      <div class="pfx-balance-head">
-        <span class="pfx-title-ico"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></span>
-        <b>باڵانسی هەژمار</b>
-        <button type="button" class="pfx-icon-btn" onclick="loadMyBalance()" aria-label="نوێکردنەوەی باڵانس"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg></button>
+      <div class="bx-head">
+        <span class="bx-ico"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></span>
+        <span class="bx-title">باڵانسی هەژمار</span>
       </div>
+      <div class="bx-amount" aria-live="polite"><strong id="bxAmount" dir="ltr">—</strong></div>
+      <div class="bx-actions">
+        <button type="button" class="bx-btn" id="bxRefreshBtn" onclick="pxBalanceRefresh()">
+          <svg class="pxi bx-spin" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+          <span>نوێکردنەوەی باڵانس</span>
+        </button>
+        <button type="button" class="bx-btn bx-secondary" onclick="navigate('balance')">
+          <svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>
+          <span>مێژووی مامەڵەکان</span>
+        </button>
+      </div>
+      <!-- Hidden hooks for exchange-balance.js (payouts are not shown on the profile any more). -->
+      <div class="bx-legacy" hidden aria-hidden="true">
       <div class="pfx-balance-values">
         <div class="is-main"><span>بەردەست</span><strong id="profileBalanceAvailable">—</strong></div>
         <div><span>لە چاوەڕوانیدا</span><strong id="profileBalanceHeld">—</strong></div>
@@ -1282,6 +1286,7 @@ html body #appSplash .app-splash-bar i{display:block;width:42%;height:100%;borde
         </form>
         <div id="balanceHistoryList" class="pb-history" hidden></div>
       </section>
+      </div>
     </section>
 
     <!-- Identity verification status (rendered by renderKycProfile) -->
@@ -1501,6 +1506,21 @@ html body #appSplash .app-splash-bar i{display:block;width:42%;height:100%;borde
   </section>
 
   <!-- ══════════════ PAGE: CUSTOMER SUPPORT ══════════════ -->
+  <!-- Account balance history: balance added by an admin + refunds -->
+  <section class="page" id="pageBalance" data-route="balance">
+    <div class="page-head support-page-head">
+      <button type="button" class="support-back" onclick="navigate('profile')" aria-label="گەڕانەوە بۆ پڕۆفایل">
+        <span class="icn icon--solar icon--solar--alt-arrow-right-linear" aria-hidden="true"></span>
+      </button>
+      <div>
+        <h2>مێژووی مامەڵەکان</h2>
+        <p>زیادکردنی باڵانس و گەڕاندنەوەکانی هەژمارەکەت.</p>
+      </div>
+    </div>
+    <div class="bh-list" id="bhList" aria-live="polite"></div>
+    <button type="button" class="bh-more" id="bhMore" onclick="pxBalHistMore()" hidden>بینینی زیاتر</button>
+  </section>
+
   <section class="page" id="pageSupport" data-route="support">
     <div class="page-head support-page-head">
       <button type="button" class="support-back" onclick="navigate('profile')" aria-label="گەڕانەوە بۆ پڕۆفایل">
@@ -1610,8 +1630,8 @@ html body #appSplash .app-splash-bar i{display:block;width:42%;height:100%;borde
 <script src="/assets/js/exchange-payout-rounding.js?v=1"></script>
 <script src="/assets/js/exchange-live.js?v=1"></script>
 <script src="/assets/js/proxo-toast.js?v=1"></script>
-<script src="/assets/js/app.js?v=66"></script>
-<script src="/assets/js/proxo-ui-v2.js?v=3"></script>
+<script src="/assets/js/app.js?v=67"></script>
+<script src="/assets/js/proxo-ui-v2.js?v=4"></script>
 <script src="/assets/js/exchange-customer-features.js?v=3"></script>
 <script src="/assets/js/exchange-balance.js?v=7"></script>
 <script src="/assets/js/exchange-ux.js?v=1"></script>

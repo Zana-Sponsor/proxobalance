@@ -127,3 +127,120 @@
   nav.addEventListener('focusin', function () { set(false); });
   window.pxShowNav = function () { set(false); };
 })();
+
+/* ── Pull to refresh ─────────────────────────────────────────────
+   Pull the active screen down from the very top: it slides down, a pill shows
+   «نوێدەکرێتەوە...», only that screen's data is reloaded (refreshSection),
+   then «نوێکرایەوە» shows and the screen slides back. The page never reloads. */
+(function pullToRefresh(){
+  var THRESHOLD = 64, MAX = 120, HOLD = 54;
+  var ptr = null, label = null, page = null;
+  var startY = 0, startX = 0, dy = 0, tracking = false, pulling = false, busy = false;
+
+  function build(){
+    if (ptr) return;
+    ptr = document.createElement('div');
+    ptr.className = 'px-ptr';
+    ptr.setAttribute('role', 'status');
+    ptr.setAttribute('aria-live', 'polite');
+    ptr.innerHTML = '<span class="px-ptr-pill"><span class="px-ptr-ico">'
+      + '<svg class="px-ptr-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>'
+      + '<svg class="px-ptr-check" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>'
+      + '</span><span class="px-ptr-text"></span></span>';
+    document.body.appendChild(ptr);
+    label = ptr.querySelector('.px-ptr-text');
+  }
+  function activePage(){ return document.querySelector('#mainApp .page.active'); }
+  function place(offset){
+    var hdr = document.getElementById('siteHeader');
+    var top = hdr ? Math.max(0, hdr.getBoundingClientRect().bottom) : 0;
+    ptr.style.top = (top + Math.max(0, (offset - 38) / 2)) + 'px';
+  }
+  function setText(t){ if (label.textContent !== t) label.textContent = t; }
+  function move(offset){
+    page.style.transform = offset > 0 ? 'translate3d(0,' + offset + 'px,0)' : '';
+    place(offset);
+  }
+  function blocked(target){
+    if (document.body.style.overflow === 'hidden') return true;                       // a sheet is open
+    if (target && target.closest && target.closest('.sheet-overlay, .notif-panel, textarea, [data-no-ptr]')) return true;
+    var np = document.getElementById('notifPanel');
+    if (np && np.classList.contains('open')) return true;
+    return false;
+  }
+  function scrollTop(){ return window.pageYOffset || document.documentElement.scrollTop || 0; }
+  function canRefresh(){ return typeof refreshSection === 'function' && typeof curUser !== 'undefined' && curUser; }
+
+  function reset(animate){
+    if (!page) return;
+    var p = page;
+    if (animate){
+      p.classList.add('px-ptr-settle');
+      p.style.transform = '';
+      setTimeout(function(){ p.classList.remove('px-ptr-settle', 'px-ptr-moving'); }, 360);
+    } else {
+      p.style.transform = ''; p.classList.remove('px-ptr-settle', 'px-ptr-moving');
+    }
+    if (ptr){ ptr.classList.remove('is-on'); }
+    pulling = false; tracking = false; dy = 0;
+  }
+
+  document.addEventListener('touchstart', function(e){
+    if (busy || e.touches.length !== 1) return;
+    if (scrollTop() > 0 || blocked(e.target) || !canRefresh()) return;
+    page = activePage(); if (!page) return;
+    startY = e.touches[0].clientY; startX = e.touches[0].clientX; dy = 0; tracking = true; pulling = false;
+  }, { passive: true });
+
+  document.addEventListener('touchmove', function(e){
+    if (!tracking || busy) return;
+    var t = e.touches[0], ddy = t.clientY - startY, ddx = t.clientX - startX;
+    if (!pulling){
+      if (Math.abs(ddx) > Math.abs(ddy) || ddy < -6){ tracking = false; return; }        // sideways / scrolling up: not ours
+      if (ddy < 10) return;
+      if (scrollTop() > 0){ tracking = false; return; }
+      pulling = true; build();
+      page.classList.add('px-ptr-moving');
+      ptr.classList.remove('is-loading', 'is-done', 'is-error');
+      ptr.classList.add('is-on');
+    }
+    if (e.cancelable) e.preventDefault();
+    dy = Math.min(MAX, (ddy - 10) * 0.55);
+    if (dy < 0) dy = 0;
+    move(dy);
+    setText(dy >= THRESHOLD ? 'ئازادی بکە بۆ نوێکردنەوە' : 'ڕایبکێشە بۆ نوێکردنەوە');
+    var arrow = ptr.querySelector('.px-ptr-arrow');
+    if (arrow) arrow.style.transform = 'rotate(' + Math.round(Math.min(1, dy / THRESHOLD) * 270) + 'deg)';
+  }, { passive: false });
+
+  function release(){
+    if (!tracking && !pulling) return;
+    tracking = false;
+    if (!pulling) return;
+    pulling = false;
+    var arrow = ptr.querySelector('.px-ptr-arrow'); if (arrow) arrow.style.transform = '';
+    if (dy < THRESHOLD){ reset(true); return; }
+    run();
+  }
+  document.addEventListener('touchend', release, { passive: true });
+  document.addEventListener('touchcancel', release, { passive: true });
+
+  async function run(){
+    busy = true;
+    var p = page, route = (typeof _route !== 'undefined') ? _route : 'home';
+    p.classList.add('px-ptr-settle');
+    move(HOLD);
+    ptr.classList.add('is-on', 'is-loading');
+    setText('نوێدەکرێتەوە...');
+    var t0 = Date.now(), ok = false;
+    try { ok = (await refreshSection(route, { keepForms: true })) !== false; } catch (_) { ok = false; }
+    var wait = Math.max(0, 700 - (Date.now() - t0));
+    if (wait) await new Promise(function(r){ setTimeout(r, wait); });
+    ptr.classList.remove('is-loading');
+    ptr.classList.add(ok ? 'is-done' : 'is-error');
+    setText(ok ? 'نوێکرایەوە' : 'نەتوانرا نوێ بکرێتەوە');
+    await new Promise(function(r){ setTimeout(r, ok ? 650 : 1100); });
+    reset(true);
+    setTimeout(function(){ if (ptr) ptr.classList.remove('is-done', 'is-error'); busy = false; }, 380);
+  }
+})();

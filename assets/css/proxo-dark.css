@@ -801,6 +801,318 @@ html[data-theme="dark"] body .un-confirm {
 html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance::before {
   background: radial-gradient(circle, rgba(19,28,46,.20), rgba(19,28,46,0) 70%) !important;
 }
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .bx-head {
+  color: rgba(255,255,255,.88) !important;
+}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .bx-ico {
+  background: rgba(19,28,46,.18) !important;
+}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .bx-btn {
+  background: #131c2e !important;
+  color: #7aa3f5 !important;
+}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .bx-btn.bx-secondary {
+  border-color: rgba(19,28,46,.32) !important;
+  background: rgba(19,28,46,.14) !important;
+}
+html[data-theme="dark"] body #mainApp #pageBalance .bh-item.is-added .bh-ico {
+  background: #153121 !important;
+  color: #73e49d !important;
+}
+html[data-theme="dark"] body #mainApp #pageBalance .bh-item.is-added .bh-amt {
+  color: #73e49d !important;
+}
+html[data-theme="dark"] body #mainApp #pageBalance .bh-skel {
+  background: linear-gradient(90deg, #151e2a 25%, #101725 50%, #151e2a 75%) !important;
+}
+html[data-theme="dark"] body #mainApp #pageBalance .bh-state {
+  border-color: #222f44 !important;
+}
+html[data-theme="dark"] .px-ptr-pill {
+  border-color: #14243c !important;
+  background: #131c2e !important;
+  color: #bdc9e6 !important;
+}
+html[data-theme="dark"] .px-ptr-ico {
+  color: #74a9fb !important;
+}
+html[data-theme="dark"] .px-ptr.is-done .px-ptr-ico {
+  color: #73e49d !important;
+}
+html[data-theme="dark"] .px-ptr.is-error .px-ptr-ico {
+  color: #eb8b84 !important;
+}
+html[data-theme="dark"] body #mainApp .kyc-steps li > span {
+  border-color: #273141 !important;
+}
+html[data-theme="dark"] body #mainApp .kyc-steps li:not(:last-child)::after {
+  background: #1e2633 !important;
+}
+html[data-theme="dark"] body #mainApp .kyc-steps li.done {
+  color: #73e49d !important;
+}
+html[data-theme="dark"] body #mainApp .kyc-steps li.done > span::after {
+  border-color: #131c2e !important;
+}
+html[data-theme="dark"] body #mainApp .kyc-steps li.done:not(:last-child)::after {
+  background: #2f834e !important;
+}
+html[data-theme="dark"] body #mainApp .kyc-sec {
+  background: #0c1423 !important;
+}
+html[data-theme="dark"] body #mainApp .kyc-doc-check {
+  border-color: #2a3544 !important;
+}
+html[data-theme="dark"] body #mainApp .kyc-doc.on .kyc-doc-check::after {
+  border-color: #131c2e !important;
+}
+html[data-theme="dark"] body #mainApp .kyc-sec .input {
+  border-color: #1f2838 !important;
+}
+html[data-theme="dark"] body #mainApp .kyc-name-note {
+  background: #3c2b07 !important;
+  color: #fbbf65 !important;
+}
+html[data-theme="dark"] body #mainApp .kyc-name-note.ok {
+  background: #142c1e !important;
+  color: #83e5a8 !important;
+}
+html[data-theme="dark"] body #mainApp .kyc-drop {
+  border-color: #28364b !important;
+}
+html[data-theme="dark"] body #mainApp .kyc-src-btn {
+  border-color: #212c3d !important;
+}
+html[data-theme="dark"] body #mainApp .kyc-preview img {
+  background: #151e2a !important;
+}
+html[data-theme="dark"] body #mainApp .kyc-mini-btn {
+  border-color: #212c3d !important;
+}
+html[data-theme="dark"] body #mainApp .kyc-mini-btn.danger {
+  border-color: #4e1a1a !important;
+  background: #300505 !important;
+  color: #eb8b84 !important;
+}
+html[data-theme="dark"] body #mainApp .kyc-tips {
+  border-top-color: #212c3d !important;
+}
+html[data-theme="dark"] body #mainApp .kyc-form-error:not([hidden]) {
+  border-color: #4b1618 !important;
+  background: #300505 !important;
+  color: #e28d91 !important;
+}
+html[data-theme="dark"] body #mainApp .kyc-form-error .icn {
+  color: #eb8588 !important;
+}
+html[data-theme="dark"] body #mainApp .kyc-progress-track {
+  background: #1a2333 !important;
+}
+html[data-theme="dark"] body #mainApp .kyc-success {
+  border-color: #244d34 !important;
+}
+html[data-theme="dark"] body #mainApp .kyc-success-ico {
+  background: #142c1e !important;
+  color: #84ebaa !important;
+}
+html[data-theme="dark"] body .fb, html[data-theme="dark"] body .fb-order {
+  color: #bdc9e6 !important;
+}
+html[data-theme="dark"] body .fb-order {
+  border-color: #1d2432 !important;
+  background: #0c1423 !important;
+}
+html[data-theme="dark"] body .fb-chip {
+  background: #142c1e !important;
+  color: #83e5a8 !important;
+}
+html[data-theme="dark"] body .fb-code {
+  color: #bdc9e6 !important;
+}
+html[data-theme="dark"] body .fb-route {
+  background: #101b2a !important;
+  color: #bdc9e6 !important;
+}
+html[data-theme="dark"] body .fb-route svg {
+  stroke: #acb4c3 !important;
+}
+html[data-theme="dark"] body .fb-k {
+  color: #acb5c3 !important;
+}
+html[data-theme="dark"] body .fb-dots {
+  border-block-end-color: #313a4a !important;
+}
+html[data-theme="dark"] body .fb-v {
+  color: #bdc9e6 !important;
+}
+html[data-theme="dark"] body .fb-date {
+  border-top-color: #242d3c !important;
+  color: #acb5c3 !important;
+}
+html[data-theme="dark"] body .fb-head-ico {
+  background: #463508 !important;
+  color: #f8c877 !important;
+}
+html[data-theme="dark"] body .fb.is-submitted .fb-head-ico {
+  background: #142c1e !important;
+  color: #84ebaa !important;
+}
+html[data-theme="dark"] body .fb-head h3 {
+  color: #bdc9e6 !important;
+}
+html[data-theme="dark"] body .fb-head p {
+  color: #acb5c3 !important;
+}
+html[data-theme="dark"] body .fb-reward {
+  border-color: #5e4b1b !important;
+  background: #352606 !important;
+}
+html[data-theme="dark"] body .fb-reward-ico {
+  background: #60460b !important;
+  color: #fbc574 !important;
+}
+html[data-theme="dark"] body .fb-reward-head b {
+  color: #bdc9e6 !important;
+}
+html[data-theme="dark"] body .fb-reward-head small {
+  color: #acb5c3 !important;
+}
+html[data-theme="dark"] body .fb-reward-cell {
+  border-color: #53441a !important;
+  background: #131c2e !important;
+}
+html[data-theme="dark"] body .fb-reward-cell small {
+  color: #acb5c3 !important;
+}
+html[data-theme="dark"] body .fb-reward-cell b {
+  color: #bdc9e6 !important;
+}
+html[data-theme="dark"] body .fb-reward.is-earned {
+  border-color: #244d34 !important;
+  background: #12291c !important;
+}
+html[data-theme="dark"] body .fb-reward.is-earned .fb-reward-ico {
+  background: #1b3f29 !important;
+  color: #84ebaa !important;
+}
+html[data-theme="dark"] body .fb-reward.is-earned .fb-reward-cell {
+  border-color: #234231 !important;
+}
+html[data-theme="dark"] body .fb-label b {
+  color: #bdc9e6 !important;
+}
+html[data-theme="dark"] body .fb-label small {
+  color: #acb5c3 !important;
+}
+html[data-theme="dark"] body .fb-star {
+  border-color: #1d2634 !important;
+  background: #131c2e !important;
+  color: #8e9eb8 !important;
+}
+html[data-theme="dark"] body .fb-star.selected {
+  border-color: #b98811 !important;
+  background: #3f3107 !important;
+  color: #fbd674 !important;
+}
+html[data-theme="dark"] body .fb-star.selected .fb-star-svg {
+  fill: #fbd674 !important;
+  stroke: #fbd274 !important;
+}
+html[data-theme="dark"] body .fb-rating-label {
+  color: #acb5c3 !important;
+}
+html[data-theme="dark"] body .fb-rating-label.is-set {
+  color: #bdc9e6 !important;
+}
+html[data-theme="dark"] body .fb-text {
+  border-color: #212a39 !important;
+  background: #131c2e !important;
+  color: #bdc9e6 !important;
+}
+html[data-theme="dark"] body .fb-count {
+  color: #acb5c3 !important;
+}
+html[data-theme="dark"] body .fb-comment {
+  background: #111a26 !important;
+}
+html[data-theme="dark"] body .fb-comment small {
+  color: #acb5c3 !important;
+}
+html[data-theme="dark"] body .fb-comment p {
+  color: #bdc9e6 !important;
+}
+html[data-theme="dark"] body .fb-error:not(:empty) {
+  border-color: #4b1618 !important;
+  background: #300505 !important;
+  color: #e28d91 !important;
+}
+html[data-theme="dark"] body .un-body {
+  color: #bdc9e6 !important;
+}
+html[data-theme="dark"] body .un-warn {
+  border-color: #5e4b1b !important;
+  background: #352606 !important;
+}
+html[data-theme="dark"] body .un-warn .pxi {
+  stroke: #fbc574 !important;
+}
+html[data-theme="dark"] body .un-warn p {
+  color: #f4ce81 !important;
+}
+html[data-theme="dark"] body .un-warn b {
+  color: #fbb765 !important;
+}
+html[data-theme="dark"] body .un-current {
+  background: #111a26 !important;
+}
+html[data-theme="dark"] body .un-current span {
+  color: #acb5c3 !important;
+}
+html[data-theme="dark"] body .un-current b {
+  color: #bdc9e6 !important;
+}
+html[data-theme="dark"] body .un-label {
+  color: #a6b3c9 !important;
+}
+html[data-theme="dark"] body .un-field {
+  border-color: #212a39 !important;
+  background: #131c2e !important;
+}
+html[data-theme="dark"] body .un-at {
+  color: #acb4c3 !important;
+}
+html[data-theme="dark"] body .un-field input {
+  color: #bdc9e6 !important;
+}
+html[data-theme="dark"] body .un-rules li {
+  color: #acb5c3 !important;
+}
+html[data-theme="dark"] body .un-rules i {
+  border-color: #313a4a !important;
+  background: #131c2e !important;
+}
+html[data-theme="dark"] body .un-rules li.is-ok {
+  color: #83e5a8 !important;
+}
+html[data-theme="dark"] body .un-rules li.is-ok i::after {
+  border-color: #131c2e !important;
+}
+html[data-theme="dark"] body .un-rules li.is-bad {
+  color: #e28d91 !important;
+}
+html[data-theme="dark"] body .un-error.show {
+  border-color: #4b1618 !important;
+  background: #300505 !important;
+  color: #e28d91 !important;
+}
+html[data-theme="dark"] body .un-confirm {
+  border-color: #1d2432 !important;
+  background: #0c1423 !important;
+  color: #bdc9e6 !important;
+}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance::before {
+  background: radial-gradient(circle, rgba(19,28,46,.20), rgba(19,28,46,0) 70%) !important;
+}
 html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance-head .pfx-title-ico {
   background: rgba(19,28,46,.18) !important;
 }
@@ -980,16 +1292,13 @@ html[data-theme="dark"] body #mainApp #pageHome #exchangeCard .btn.btn-primary {
 html[data-theme="dark"] body #mainApp #pageHome #exchangeCard #submitBtn.btn-submit { background: #2563eb !important; color: #fff !important; box-shadow: 0 10px 22px -12px rgba(37, 99, 235, .7) !important; }
 html[data-theme="dark"] body #mainApp ::placeholder { color: #8493ab !important; opacity: 1; }
 
-/* v8: wallet panel keeps a deep blue gradient; its inset cards go dark */
+/* v9: wallet card keeps a deep blue gradient in dark mode */
 html[data-theme="dark"] body #mainApp #pageProfile .pfx-card.pfx-balance{background:linear-gradient(145deg,#1d4fbf 0%,#1741a3 55%,#122f78 100%)!important;box-shadow:0 18px 32px -20px rgba(0,0,0,.7)!important;}
-html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-actions .pb-btn{background:#e8f0ff!important;color:#123a99!important;}
-html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-actions .pb-btn.pb-secondary{background:rgba(255,255,255,.12)!important;color:#fff!important;}
-html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-actions .pb-btn:disabled{background:rgba(255,255,255,.22)!important;color:rgba(255,255,255,.8)!important;}
-html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-form:not([hidden]),
-html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-history:not([hidden]){background:#162033!important;color:#e6ecf7!important;}
-html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-form label{color:#b8c4d9!important;}
-html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-form :is(input,select){background:#0f1727!important;color:#e6ecf7!important;border-color:#2c3a54!important;}
-html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-form .pb-message{background:#1d2a42!important;color:#aab7cf!important;}
-html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-history > *{border-bottom-color:#27344e!important;}
-html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .pb-form .pb-btn{background:#2f7bff!important;color:#fff!important;}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .bx-btn{background:#e8f0ff!important;color:#123a99!important;}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-balance .bx-btn.bx-secondary{background:rgba(255,255,255,.12)!important;color:#fff!important;border-color:rgba(255,255,255,.28)!important;}
+html[data-theme="dark"] body #mainApp #pageBalance .bh-item.is-added .bh-ico{background:#10301f!important;color:#4ade80!important;}
+html[data-theme="dark"] body #mainApp #pageBalance .bh-item.is-added .bh-amt{color:#4ade80!important;}
+html[data-theme="dark"] .px-ptr-pill{background:#162033!important;border-color:#2c3a54!important;color:#e6ecf7!important;}
+html[data-theme="dark"] .px-ptr-ico{color:#6aa5ff!important;}
+html[data-theme="dark"] .px-ptr.is-done .px-ptr-ico{color:#4ade80!important;}
 html[data-theme="dark"] body #mainApp #kycFormCard.kf .kyc-num{background:#1e5ccf!important;color:#fff!important;}

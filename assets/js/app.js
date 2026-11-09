@@ -256,7 +256,7 @@ function closeResultModal(){ document.getElementById('resultModal').style.displa
 function setFieldError(inputId, msg){
   const inp=document.getElementById(inputId); const err=document.getElementById(inputId+'Error');
   if(inp) inp.classList.add('has-error');
-  if(err){ err.innerHTML='<i class="fe-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v6.2"/><path d="M12 17.2h.01"/></svg></i><span class="fe-txt">'+escHtml(String(msg==null?'':msg))+'</span>'; err.setAttribute('role','alert'); err.classList.add('show'); }
+  if(err){ err.innerHTML='<i class="fe-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v6.2"/><path d="M12 17.2h.01"/></svg></i><span class="fe-txt">'+msg+'</span>'; err.setAttribute('role','alert'); err.classList.add('show'); }
 }
 function clearFieldError(inputId){
   const inp=document.getElementById(inputId); const err=document.getElementById(inputId+'Error');
@@ -2959,7 +2959,7 @@ Object.assign(ICON, {
 //   'hash' → www.domain.com/#/profile. Works on ANY static host with no
 //            server config at all. Switch to this if you cannot add rewrites.
 const ROUTE_MODE = 'path';
-const ROUTES = { home:'pageHome', transactions:'pageTx', changes:'pageChanges', rules:'pageRules', profile:'pageProfile', support:'pageSupport', verify:'pageVerify' };
+const ROUTES = { home:'pageHome', transactions:'pageTx', changes:'pageChanges', rules:'pageRules', profile:'pageProfile', support:'pageSupport', verify:'pageVerify', balance:'pageBalance' };
 const ROUTE_TITLES = {
   home:'Proxo — ئاڵوگۆڕی دراو',
   transactions:'مامەڵەکان — Proxo',
@@ -2967,7 +2967,8 @@ const ROUTE_TITLES = {
   rules:'یاساکانی ئەپ — Proxo',
   profile:'پڕۆفایل — Proxo',
   support:'پشتگیری — Proxo',
-  verify:'پشتڕاستکردنەوەی ناسنامە — Proxo'
+  verify:'پشتڕاستکردنەوەی ناسنامە — Proxo',
+  balance:'مێژووی مامەڵەکان — Proxo'
 };
 // Everything before the route segment, so the app works at the domain root
 // (/profile) and inside a sub-folder (/exchange/profile) with no edits.
@@ -2991,6 +2992,7 @@ function routeFromLocation(){
 }
 function urlFor(route){
   if(route==='home') return BASE_PATH;
+  if(route==='balance') return BASE_PATH+'#/balance';          // sub-screen of the profile: needs no server rewrite
   return ROUTE_MODE==='hash' ? BASE_PATH+'#/'+route : BASE_PATH+route;
 }
 function navigate(route, push){
@@ -3005,7 +3007,7 @@ function navigate(route, push){
     if(el) el.classList.toggle('active', r===route);
   });
   // /changes lives under the profile tab
-  const navRoute = (route==='changes' || route==='support' || route==='verify') ? 'profile' : route;
+  const navRoute = (route==='changes' || route==='support' || route==='verify' || route==='balance') ? 'profile' : route;
   document.querySelectorAll('.bn-item, .hdr-nav-link, .pxn-item, .pxh-link').forEach(b=>b.classList.toggle('on', b.dataset.route===navRoute));
   if(push && location.pathname+location.hash!==urlFor(route)){ try{ history.pushState({route:route}, '', urlFor(route)); }catch(_){} }
   document.title = ROUTE_TITLES[route] || 'Proxo';
@@ -3018,7 +3020,8 @@ function navigate(route, push){
     if(curUser && typeof loadMyBalance==='function')loadMyBalance();
   }
   if(route==='changes')      loadChangeLog();
-  if(route==='profile')    { fillProfileForm(); loadKycStatus(true); if(curUser && typeof loadMyBalance==='function')loadMyBalance(); }
+  if(route==='profile')    { fillProfileForm(); loadKycStatus(true); if(curUser && typeof loadMyBalance==='function')loadMyBalance(); pxBalanceLoad(); }
+  if(route==='balance')    pxBalHistLoad(true);
   if(route==='verify')     { renderVerifyPage(); loadKycStatus(true); }
   if(route==='support')      loadSupportCases();
 }
@@ -3067,47 +3070,130 @@ function resetSection(route){
   else if(route==='profile') resetProfileForms();
   else if(route==='verify')  { if(!_kycSubmitting) kycResetForm(); }
   else if(route==='support') resetSupportForm();
+  else if(route==='balance') pxBalHistReset();
 }
 
 let _refreshing=false;
-async function refreshSection(route){
-  if(_refreshing || !curUser) return;
+/* Refreshes only the data of one screen (used by pull-to-refresh). Never reloads the page. */
+async function refreshSection(route, opts){
+  opts=opts||{};
+  if(_refreshing || !curUser) return false;
   _refreshing=true;
-  const item=document.querySelector('#bottomNav .pxn-item[data-route="'+route+'"]');
-  if(item) item.classList.add('is-refreshing');
-  showToast('نوێدەکرێتەوە...','info','نوێکردنەوە',{id:'refresh',sticky:true});
-  const started=Date.now();
   try{
-    resetSection(route);
-    if(route==='home')              await Promise.all([loadHistory(), loadRates(), loadWallets(), loadMyRewards(), typeof loadMyBalance==='function'?loadMyBalance():null]);
-    else if(route==='transactions') await loadHistory();
-    else if(route==='profile')      await Promise.all([loadKycStatus(true), typeof loadMyBalance==='function'?loadMyBalance():null]);
-    else if(route==='changes')      await loadChangeLog(true);
+    if(!opts.keepForms) resetSection(route);
+    const legacy=()=>{ try{ return typeof loadMyBalance==='function' ? Promise.resolve(loadMyBalance()).catch(()=>{}) : null; }catch(_){ return null; } };
+    const jobs=[];
+    if(route==='home')              jobs.push(loadHistory(), loadRates(), loadWallets(), loadMyRewards(), legacy());
+    else if(route==='transactions') jobs.push(loadHistory());
+    else if(route==='profile')      jobs.push(loadKycStatus(true), pxBalanceLoad(true), legacy());
+    else if(route==='balance')      jobs.push(pxBalHistLoad(true), pxBalanceLoad(true));
+    else if(route==='changes')      jobs.push(loadChangeLog(true));
+    else if(route==='support')      jobs.push(loadSupportCases());
+    else if(route==='verify')       jobs.push(loadKycStatus(true));
+    const out=await Promise.all(jobs);
+    if(out.some(v=>v===false)) return false;
     if(route==='home'){ try{ calc(); }catch(_){} }
-    const wait=Math.max(0, 750-(Date.now()-started));        // long enough to read, short enough not to nag
-    if(wait) await new Promise(r=>setTimeout(r,wait));
-    window.scrollTo({ top:0, behavior:'smooth' });
-    showToast('نوێکرایەوە','success','تەواو بوو',{id:'refresh',duration:1800});
+    return true;
   }catch(e){
-    showToast('نەتوانرا نوێ بکرێتەوە، دووبارە هەوڵبدەوە','error',null,{id:'refresh',duration:3200});
+    return false;
   }finally{
     _refreshing=false;
-    if(item) item.classList.remove('is-refreshing');
   }
 }
-(function wireNavDoubleTap(){
-  let lastBtn=null, lastAt=0;
-  document.addEventListener('click', function(e){
-    const btn=e.target.closest && e.target.closest('#bottomNav .pxn-item'); if(!btn) return;
-    const route=btn.dataset.route, now=Date.now();
-    const again = lastBtn===btn && (now-lastAt)<420 && _route===route;
-    lastBtn=btn; lastAt=now;
-    if(!again) return;
-    e.preventDefault(); e.stopImmediatePropagation();
-    lastBtn=null;
-    refreshSection(route);
-  }, true);                                                    // capture: runs before the button's own onclick
-})();
+window.refreshSection=refreshSection;
+
+// ══════════════════════════════════════════════════════════════
+// ═══ ACCOUNT BALANCE CARD + HISTORY SCREEN (Supabase: Exchange)
+// ═══  card   → ex_customer_balances (own row, RLS)
+// ═══  screen → ex_my_balance_activity(): only balance added by an admin + refunds
+// ══════════════════════════════════════════════════════════════
+const BAL_HIST_PAGE=20;
+let _balAt=0, _balBusy=null;
+let _bhRows=[], _bhDone=false, _bhBusy=false, _bhError=false;
+function pxIqd(n){ return Number(n||0).toLocaleString('en-US')+' IQD'; }
+function pxBalanceLoad(force){
+  if(!curUser || typeof sb==='undefined' || !sb) return Promise.resolve(true);
+  if(_balBusy) return _balBusy;
+  if(!force && Date.now()-_balAt<10000) return Promise.resolve(true);
+  const btn=document.getElementById('bxRefreshBtn'), out=document.getElementById('bxAmount');
+  if(btn){ btn.classList.add('is-loading'); btn.disabled=true; }
+  const started=Date.now();
+  _balBusy=(async()=>{
+    let ok=true;
+    try{
+      const {data,error}=await sb.from('ex_customer_balances').select('available_iqd').eq('user_id',curUser.id).maybeSingle();
+      if(error) throw error;
+      if(out){ out.textContent=pxIqd(data ? data.available_iqd : 0); out.classList.remove('is-error'); }
+      _balAt=Date.now();
+    }catch(e){
+      ok=false;
+      if(out && !/\d/.test(out.textContent||'')){ out.textContent='—'; }
+    }
+    const wait=Math.max(0, 650-(Date.now()-started));        // let the icon turn at least once
+    if(wait) await new Promise(r=>setTimeout(r,wait));
+    if(btn){ btn.classList.remove('is-loading'); btn.disabled=false; }
+    _balBusy=null;
+    return ok;
+  })();
+  return _balBusy;
+}
+async function pxBalanceRefresh(){
+  const ok=await pxBalanceLoad(true);
+  if(!ok) showToast('نەتوانرا باڵانس نوێ بکرێتەوە، دووبارە هەوڵبدەوە','error','هەڵە',{id:'bal-refresh',duration:3200});
+}
+function pxBalHistReset(){ _bhRows=[]; _bhDone=false; _bhError=false; const l=document.getElementById('bhList'); if(l) l.innerHTML=''; const m=document.getElementById('bhMore'); if(m) m.hidden=true; }
+const BH_ICONS={
+  added:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>',
+  refund:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>'
+};
+const BH_LABEL={ added:'زیادکردنی باڵانس', refund:'گەڕاندنەوەی باڵانس' };
+function bhDateTime(iso){
+  const d=new Date(iso); if(isNaN(d)) return '';
+  const p=n=>String(n).padStart(2,'0');
+  return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'  '+p(d.getHours())+':'+p(d.getMinutes());
+}
+function renderBalHist(){
+  const list=document.getElementById('bhList'), more=document.getElementById('bhMore'); if(!list) return;
+  if(_bhError && !_bhRows.length){
+    list.innerHTML='<div class="bh-state"><b>نەتوانرا مێژووەکە بار بکرێت</b><span>پەیوەندی ئینتەرنێتەکەت بپشکنە و دووبارە هەوڵبدەرەوە.</span><button type="button" onclick="pxBalHistLoad(true)">دووبارە هەوڵبدەرەوە</button></div>';
+  }else if(_bhBusy && !_bhRows.length){
+    list.innerHTML='<div class="bh-skel"></div><div class="bh-skel"></div><div class="bh-skel"></div>';
+  }else if(!_bhRows.length){
+    list.innerHTML='<div class="bh-state"><b>هێشتا هیچ مامەڵەیەک نییە</b><span>کاتێک باڵانس بۆ هەژمارەکەت زیاد بکرێت یان بگەڕێندرێتەوە، لێرە دەردەکەوێت.</span></div>';
+  }else{
+    list.innerHTML=_bhRows.map(r=>{
+      const k=r.kind==='refund'?'refund':'added';
+      const sub=[r.order_code?('مامەڵە '+r.order_code):'', r.note||''].filter(Boolean).join(' · ');
+      return '<article class="bh-item is-'+k+'">'
+        +'<span class="bh-ico">'+BH_ICONS[k]+'</span>'
+        +'<div class="bh-main"><b>'+BH_LABEL[k]+'</b>'
+        +(sub?'<small>'+escHtml(sub)+'</small>':'')
+        +'<time dir="ltr">'+escHtml(bhDateTime(r.created_at))+'</time></div>'
+        +'<strong class="bh-amt" dir="ltr">+'+escHtml(pxIqd(r.delta_iqd))+'</strong>'
+        +'</article>';
+    }).join('');
+  }
+  if(more){ more.hidden=_bhDone || !_bhRows.length; more.disabled=_bhBusy; }
+}
+async function pxBalHistLoad(reset){
+  if(!curUser || typeof sb==='undefined' || !sb) return true;
+  if(_bhBusy) return true;
+  if(reset){ _bhRows=[]; _bhDone=false; }
+  _bhBusy=true; _bhError=false; renderBalHist();
+  let ok=true;
+  try{
+    const before=_bhRows.length ? _bhRows[_bhRows.length-1].created_at : null;
+    const {data,error}=await sb.rpc('ex_my_balance_activity',{p_limit:BAL_HIST_PAGE,p_before:before});
+    if(error) throw error;
+    const rows=Array.isArray(data)?data:[];
+    _bhRows=_bhRows.concat(rows);
+    if(rows.length<BAL_HIST_PAGE) _bhDone=true;
+  }catch(e){ ok=false; _bhError=true; }
+  _bhBusy=false; renderBalHist();
+  return ok;
+}
+function pxBalHistMore(){ return pxBalHistLoad(false); }
+
 window.addEventListener('popstate', function(){
   const requested=authRouteFromLocation();
   if(!curUser){

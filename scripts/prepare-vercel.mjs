@@ -25,6 +25,9 @@ copyFileSync(join(root,'ip-blocked.html'),join(output,'ip-blocked.html'));
 const sourceAdmin = join(root, 'exchange-admin.html');
 if (!existsSync(sourceAdmin)) throw new Error('Missing root Exchange admin panel.');
 copyFileSync(sourceAdmin, join(output, 'exchange-admin.html'));
+const sourceBalanceAdmin = join(root, 'exchange-admin-balance.html');
+if (!existsSync(sourceBalanceAdmin)) throw new Error('Missing Exchange balance admin page.');
+copyFileSync(sourceBalanceAdmin, join(output, 'exchange-admin-balance.html'));
 
 const html = readFileSync(sourceIndex, 'utf8');
 if (!html.includes('id="pageHome"') || !html.includes('id="exchangeCard"')) {
@@ -42,4 +45,3 @@ for (const asset of new Set(assetRefs)) {
 
 console.log('Deployment prepared from ROOT index.html and ROOT assets/.');
 console.log('Output: public/index.html; verified ' + new Set(assetRefs).size + ' referenced assets.');
-

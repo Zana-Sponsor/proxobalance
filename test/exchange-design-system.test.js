@@ -46,18 +46,19 @@ test('Design layer leaves hidden/route mechanics untouched and provides accessib
 
 test('Production smoke waits for the changed customer version and verifies its design contract',()=>{
   const workflow=read('.github/workflows/exchange-production-smoke.yml');
-  assert(workflow.includes('app.js?v=66'));
+  assert(workflow.includes('app.js?v=67'));
   assert(workflow.includes('proxo-design-system.css?v=1'));
-  assert(html.includes('/assets/js/app.js?v=66'));
-  assert(html.includes('/assets/css/proxo-ui-v2.css?v=9'));
-  assert(html.includes('/assets/js/proxo-ui-v2.js?v=3'));
+  assert(html.includes('/assets/js/app.js?v=67'));
+  assert(html.includes('/assets/css/proxo-ui-v2.css?v=10'));
+  assert(html.includes('/assets/js/proxo-ui-v2.js?v=4'));
   assert(html.includes('/assets/js/proxo-toast.js?v=1'));
-  assert(html.indexOf('proxo-toast.js?v=1') < html.indexOf('app.js?v=66'));
+  assert(html.indexOf('proxo-toast.js?v=1') < html.indexOf('app.js?v=67'));
   assert(shellCss.includes('.pxt-stack'));
   assert(shellCss.includes('.pxn-pill'));
   assert(shellCss.includes('.field-error.show'));
   assert(shellCss.includes('.notif-reason'));
-  assert(read('assets/js/app.js').includes("escHtml(String(msg==null?'':msg))"));
+  assert(read('assets/js/app.js').includes('escHtml(notifClean(s))'));
+  assert(read('assets/js/app.js').includes('function notifRich(s)'));
   assert(html.includes('id="feedbackSheet"'));
   assert(html.includes('id="usernameSheet"'));
   assert(html.includes('id="pfUsernameEdit"'));
@@ -66,5 +67,21 @@ test('Production smoke waits for the changed customer version and verifies its d
   assert(html.includes('id="savedRecipientsShortcut"'));
   assert(shellCss.includes('.xc-step-head .xc-saved-recipients-btn'));
   assert(shellCss.includes('#usernameSheet .sheet-body'));
-  assert(html.includes('proxo-dark.css?v=4'));
+  assert(html.includes('proxo-dark.css?v=5'));
+  assert(html.includes('id="savedRecipientsShortcut"'));
+  assert(html.includes('بەبێ بەڵگەی ناردن داواکارییەکە ڕەت دەکرێتەوە.'));
+  assert(html.includes('id="pageBalance" data-route="balance"'));
+  assert(html.includes("navigate('balance')"));
+  assert(html.includes('id="bxAmount"'));
+  assert(shellCss.includes('.xc-step-head .xc-saved-recipients-btn'));
+  assert(shellCss.includes('.bh-item'));
+  assert(shellCss.includes('.px-ptr-pill'));
+  const app=read('assets/js/app.js');
+  assert(app.includes("sb.rpc('ex_my_balance_activity'"));
+  assert(app.includes('escHtml(sub)'));
+  const balanceAdmin=read('exchange-admin-balance.html');
+  for(const marker of ['id="gate"','id="app"','ex_admin_find_accounts','ex_admin_adjust_balance','ex_admin_balance_history','pending.key'])assert(balanceAdmin.includes(marker));
+  assert(read('exchange-admin.html').includes('href="exchange-admin-balance.html"'));
+  const build=read('scripts/prepare-vercel.mjs');
+  assert(build.includes("join(output, 'exchange-admin-balance.html')"));
 });
