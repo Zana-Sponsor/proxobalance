@@ -128,6 +128,12 @@ test('Tiered fees are opt-in per directed route and leave existing flat commissi
   assert(!/UPDATE\s+public\.ex_rates\s+SET\s+(?:rate_type|rate_value)\s*=/i.test(migration));
 });
 
+test('production smoke wait loop has a defined root and v10 release markers',()=>{
+  const workflow=read('.github/workflows/exchange-production-smoke.yml');
+  assert(workflow.includes("root='https://www.proxobalance.app'"));
+  assert(workflow.includes("grep -q 'fee_tier_enabled' current-app.js"));
+  assert(workflow.includes("exchange-balance-manual.js?v=1"));
+});
 test('manual balance administration is server-authorized and uses the versioned same-origin client',()=>{
   const admin=read('exchange-admin.html');
   const api=read('api/admin.js');
