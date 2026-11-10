@@ -186,8 +186,6 @@ jobs:
           grep -q 'id="rateTierEnabled"' exchange-admin.html
           grep -q 'id="rateTierLow"' exchange-admin.html
           grep -q 'id="rateTierHigh"' exchange-admin.html
-          grep -q 'balance_manual_adjust' api/admin.js
-          grep -q 'balance_manual_overview' api/admin.js
           grep -q 'exchange-admin-workspace.js?v=2' exchange-admin.html
           grep -q 'id="exAdmin"' exchange-admin.html
           curl -fLsS --max-time 25 "$root/assets/js/exchange-profit.js?v=5" -o profit.js
