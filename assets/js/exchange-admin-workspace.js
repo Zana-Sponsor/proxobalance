@@ -18,11 +18,13 @@ function methodLabel(key){return allWallets.find(w=>w.key===key)?.name||METHOD_M
 function filterAdminRates(){renderRates();if(typeof exRenderRateCards==='function')exRenderRateCards();}
 function updateAdminRatePreview(){
  const el=document.getElementById('adminRatePreview');if(!el)return;
- const value=Number(document.getElementById('rateValue').value),type=document.getElementById('rateType').value;
+ let value=Number(document.getElementById('rateValue').value);const type=document.getElementById('rateType').value;
  const amount=Number(document.getElementById('adminRateExample').value);
+ const tier=document.getElementById('rateTierEnabled')?.checked;
+ if(tier){const limit=Number(document.getElementById('rateTierLimit').value);const raw=amount<=limit?document.getElementById('rateTierLow').value:document.getElementById('rateTierHigh').value;if(!raw){el.textContent='بڕی سنوور و ڕێژەکان دیاری بکە';return;}value=Number(raw);}
  if(!Number.isFinite(value)||value<0||!Number.isFinite(amount)||amount<=0){el.textContent='بەهای دروست بنووسە';return;}
- const receive=type==='fee_percent'?amount*(1-value/100):type==='fee_fixed'?amount-value:amount*value;
- el.textContent=methodLabel(document.getElementById('rateFrom').value)+' → '+methodLabel(document.getElementById('rateTo').value)+' : '+formatNum(amount)+' → '+formatNum(receive);
+ const receive=tier?amount*(1-value/100):type==='fee_percent'?amount*(1-value/100):type==='fee_fixed'?amount-value:amount*value;
+ el.textContent=methodLabel(document.getElementById('rateFrom').value)+' → '+methodLabel(document.getElementById('rateTo').value)+' : '+formatNum(amount)+' → '+formatNum(receive)+(tier?' · '+value+'%':'');
 }
 let monthlyActivityOwner=null;
 async function loadMyMonthlyActivity(){

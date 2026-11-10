@@ -14,7 +14,7 @@ function response(data, status = 200) {
   });
 }
 
-test('calculates a configured route, ignores forged rewards and returns the saved discount', async (t) => {
+test('calculates the saved route fee tier, ignores forged rewards and returns the saved discount', async (t) => {
   const calls = [];
   const originalFetch = globalThis.fetch;
 
@@ -30,7 +30,8 @@ test('calculates a configured route, ignores forged rewards and returns the save
     if (url.pathname === '/rest/v1/ex_rates') {
       assert.equal(url.searchParams.get('from_method'), 'eq.NassWallet');
       assert.equal(url.searchParams.get('to_method'), 'eq.QiCard');
-      return response([{ rate_type: 'fee_percent', rate_value: '1.5' }]);
+      assert.match(url.searchParams.get('select'), /fee_tier_enabled/);
+      return response([{ rate_type: 'fee_percent', rate_value: '1.5', fee_tier_enabled: true, fee_tier_limit_iqd: 500000, fee_tier_low_percent: 2, fee_tier_high_percent: 1 }]);
     }
     if (url.pathname === '/rest/v1/ex_wallets') {
       return response([
@@ -49,7 +50,7 @@ test('calculates a configured route, ignores forged rewards and returns the save
       const payload = JSON.parse(options.body);
       assert.equal(payload.from_method, 'NassWallet');
       assert.equal(payload.to_method, 'QiCard');
-      assert.equal(payload.total, 9850);
+      assert.equal(payload.total, 9800);
       assert.equal(payload.user_id, 'user-1');
       for (const field of ['fee', 'reward_id', 'reward_discount_iqd', 'reward_original_fee_iqd',
         'payout_iqd', 'payout_rounding_iqd', 'payout_settlement_id', 'payout_plan']) {

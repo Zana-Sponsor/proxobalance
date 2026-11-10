@@ -1302,3 +1302,9 @@ html[data-theme="dark"] .px-ptr-pill{background:#162033!important;border-color:#
 html[data-theme="dark"] .px-ptr-ico{color:#6aa5ff!important;}
 html[data-theme="dark"] .px-ptr.is-done .px-ptr-ico{color:#4ade80!important;}
 html[data-theme="dark"] body #mainApp #kycFormCard.kf .kyc-num{background:#1e5ccf!important;color:#fff!important;}
+/* Profile balance (dark): title row + amount panel aligned with the other cards */
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-card.pfx-balance .bx-amount{border-color:rgba(255,255,255,.16)!important;background:rgba(255,255,255,.09)!important;}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-card.pfx-balance .bx-amount .bx-cur{color:rgba(255,255,255,.72)!important;}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-card.pfx-balance .bx-amount strong{color:#fff!important;}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-card.pfx-balance .bx-title{color:#fff!important;}
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-card.pfx-balance .bx-ico{background:rgba(255,255,255,.16)!important;color:#fff!important;}

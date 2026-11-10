@@ -59,16 +59,19 @@ test('Design layer leaves hidden/route mechanics untouched and provides accessib
 
 test('Production smoke waits for the changed customer version and verifies its design contract',()=>{
   const workflow=read('.github/workflows/exchange-production-smoke.yml');
-  assert(workflow.includes('app.js?v=67'));
+  assert(workflow.includes('app.js?v=69'));
   assert(workflow.includes('proxo-design-system.css?v=3'));
   assert(workflow.includes("grep -q 'width:min(42vw,180px)' current-index.html"));
   assert(workflow.includes("grep -q 'animation:spIn 1.15s' current-index.html"));
   assert(workflow.includes("grep -q 'clamp(24px, 7vw, 30px)' proxo-design-system.css"));
-  assert(html.includes('/assets/js/app.js?v=67'));
-  assert(html.includes('/assets/css/proxo-ui-v2.css?v=10'));
+  assert(html.includes('/assets/js/app.js?v=69'));
+  assert(html.includes('proxo-ui-v2.css?v=11'));
+  assert(html.includes('proxo-dark.css?v=6'));
+  assert(html.includes('exchange-balance.css?v=6'));
+  assert(html.includes('/assets/css/proxo-ui-v2.css?v=11'));
   assert(html.includes('/assets/js/proxo-ui-v2.js?v=4'));
   assert(html.includes('/assets/js/proxo-toast.js?v=1'));
-  assert(html.indexOf('proxo-toast.js?v=1') < html.indexOf('app.js?v=67'));
+  assert(html.indexOf('proxo-toast.js?v=1') < html.indexOf('app.js?v=69'));
   assert(shellCss.includes('.pxt-stack'));
   assert(shellCss.includes('.pxn-pill'));
   assert(shellCss.includes('.field-error.show'));
@@ -83,7 +86,8 @@ test('Production smoke waits for the changed customer version and verifies its d
   assert(html.includes('id="savedRecipientsShortcut"'));
   assert(shellCss.includes('.xc-step-head .xc-saved-recipients-btn'));
   assert(shellCss.includes('#usernameSheet .sheet-body'));
-  assert(html.includes('proxo-dark.css?v=5'));
+  assert(html.includes('proxo-dark.css?v=6'));
+  assert(html.includes('exchange-balance.css?v=6'));
   assert(html.includes('id="savedRecipientsShortcut"'));
   assert(html.includes('بەبێ بەڵگەی ناردن داواکارییەکە ڕەت دەکرێتەوە.'));
   assert(html.includes('id="pageBalance" data-route="balance"'));
@@ -103,4 +107,36 @@ test('Production smoke waits for the changed customer version and verifies its d
   assert(read('exchange-admin.html').includes('href="exchange-admin-balance.html"'));
   const build=read('scripts/prepare-vercel.mjs');
   assert(build.includes("join(output, 'exchange-admin-balance.html')"));
+});
+
+test('Tiered fees are opt-in per directed route and leave existing flat commissions untouched',()=>{
+  const admin=read('exchange-admin.html');
+  const adminJs=read('assets/js/admin.js');
+  const api=read('api/orders.js');
+  const migration=read('SUPABASE_EXCHANGE_ROUTE_FEE_TIERS.sql');
+  for(const id of ['rateTierEnabled','rateTierLimit','rateTierLow','rateTierHigh'])assert(admin.includes(`id="${id}"`));
+  assert(!/id="rateTier(?:Low|High)"[^>]*value="[^"]+"/.test(admin));
+  assert(adminJs.includes("rate_type==='multiplier'&&rate_value>=0&&rate_value<=1"));
+  assert(api.includes('feeLikeMultiplier'));
+  assert(adminJs.includes('fee_tier_enabled:tierEnabled'));
+  assert(adminJs.includes('fee_tier_low_percent:tierEnabled?tierLow:null'));
+  assert(adminJs.includes('fee_tier_high_percent:tierEnabled?tierHigh:null'));
+  assert(adminJs.includes('fee_tier_enabled:prev?.fee_tier_enabled??false'));
+  assert(api.includes('effectiveRate(amount, rate, fromMethod)'));
+  assert(api.includes('calculateTotal(amount, effectiveRate(amount, rate, fromMethod))'));
+  assert(migration.includes('fee_tier_enabled boolean NOT NULL DEFAULT false'));
+  assert(!/UPDATE\s+public\.ex_rates\s+SET\s+(?:rate_type|rate_value)\s*=/i.test(migration));
+});
+
+test('manual balance administration is server-authorized and uses the versioned same-origin client',()=>{
+  const admin=read('exchange-admin.html');
+  const api=read('api/admin.js');
+  const client=read('assets/js/exchange-balance-manual.js');
+  assert(admin.includes('id=\"bmPanel\"'));
+  assert(admin.includes('exchange-balance-manual.js?v=1'));
+  assert(admin.includes('exchange-balance.css?v=7'));
+  for(const action of ['balance_manual_find','balance_manual_overview','balance_manual_adjust'])assert(api.includes(action));
+  assert(api.includes('ex_admin_adjust_balance'));
+  assert(client.includes('confirmed:true'));
+  assert(client.includes('request_key:pending.key'));
 });

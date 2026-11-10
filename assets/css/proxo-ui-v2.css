@@ -3124,3 +3124,33 @@ body #mainApp .xc-step-head .xc-saved-recipients-btn {
 }
 body #mainApp .xc-step-head .xc-saved-recipients-btn .icn { width: 19px; height: 19px; }
 body #mainApp .xc-step-head .xc-saved-recipients-btn:active { background: var(--v2-sky, #eef5ff) !important; transform: scale(.96); }
+
+
+/* ═════════════════════════════════════════════════════════════════
+   PROFILE BALANCE — title and amount aligned with the other account cards
+   (title row identical to .pfx-title; amount in a soft panel with a quiet unit).
+   The two action buttons are intentionally not touched here.
+   ═════════════════════════════════════════════════════════════════ */
+html body #mainApp #pageProfile .pfx-card.pfx-balance { gap: 12px !important; padding: 16px !important; }
+html body #mainApp #pageProfile .pfx-card.pfx-balance .bx-head {
+  justify-content: flex-start !important; gap: 10px !important; margin: 0 !important;
+  font-size: 14px !important; font-weight: 400 !important; line-height: 1.5 !important;
+}
+html body #mainApp #pageProfile .pfx-card.pfx-balance .bx-ico {
+  width: 34px !important; height: 34px !important; flex: 0 0 34px; border-radius: 11px !important;
+}
+html body #mainApp #pageProfile .pfx-card.pfx-balance .bx-ico .pxi { width: 19px !important; height: 19px !important; }
+html:not([data-theme="dark"]) body #mainApp #pageProfile .pfx-card.pfx-balance .bx-title { font-size: 14px !important; font-weight: 400 !important; line-height: 1.5 !important; }
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-card.pfx-balance .bx-title { font-size: 14px !important; font-weight: 400 !important; line-height: 1.5 !important; }
+html body #mainApp #pageProfile .pfx-card.pfx-balance .bx-amount {
+  display: flex !important; align-items: center; justify-content: center !important; box-sizing: border-box;
+  padding: 14px 12px !important; border: 1px solid #e0e9fb; border-radius: 14px; background: linear-gradient(180deg, #f6f9ff, #eef4ff);
+}
+html body #mainApp #pageProfile .pfx-card.pfx-balance .bx-amount strong {
+  display: inline-flex !important; align-items: baseline; justify-content: center; gap: 7px; max-width: 100%;
+  font-size: clamp(28px, 8.6vw, 34px) !important; font-weight: 600 !important; line-height: 1.2 !important; letter-spacing: 0;
+}
+html body #mainApp #pageProfile .pfx-card.pfx-balance .bx-amount .bx-num { overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+html body #mainApp #pageProfile .pfx-card.pfx-balance .bx-amount .bx-cur {
+  flex: 0 0 auto; font-size: 13px; font-weight: 500; letter-spacing: .6px; color: #64748b; text-transform: uppercase;
+}

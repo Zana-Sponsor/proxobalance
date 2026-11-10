@@ -2168,14 +2168,21 @@ function buildToMethodKeys(){
   return [...set];
 }
 function rateTypeLabel(t){ return t==='fee_percent' ? 'حمولە %' : t==='fee_fixed' ? 'حمولەی جێگیر' : 'مەزراپ'; }
+function feeTierSummary(r){return r.fee_tier_enabled?'پەلەیی: '+fmtPct(r.fee_tier_low_percent)+'% تا '+formatNum(r.fee_tier_limit_iqd)+' · '+fmtPct(r.fee_tier_high_percent)+'% زیاتر':'';}
+function updateRateTierFields(){
+ const cb=document.getElementById('rateTierEnabled'),box=document.getElementById('rateTierFields');if(!cb||!box)return;
+ const type=document.getElementById('rateType').value,rateInput=document.getElementById('rateValue'),value=Number(rateInput.value);
+ const supported=(type==='fee_percent'||(type==='multiplier'&&rateInput.value.trim()!==''&&Number.isFinite(value)&&value>=0&&value<=1))&&!['USDT','AccountBalance'].includes(document.getElementById('rateFrom').value);
+ cb.disabled=!supported;if(!supported)cb.checked=false;box.hidden=!supported||!cb.checked;
+}
 function renderRates(){
   if(!allRates.length){ document.getElementById('ratesTableWrap').innerHTML='<div class="empty"><i class="fas fa-percent"></i><p>هیچ ڕێگایەک زیاد نەکراوە</p></div>'; return; }
   document.getElementById('ratesTableWrap').innerHTML = `<table><thead><tr><th>لە</th><th>بۆ</th><th>جۆر</th><th>بەها</th><th>چالاک</th><th>کردار</th></tr></thead><tbody>
     ${filteredAdminRates().map(r=>`<tr>
       <td>${methodPill(r.from_method)}</td>
       <td>${methodPill(r.to_method)}</td>
-      <td style="font-size:12px">${rateTypeLabel(r.rate_type)}</td>
-      <td style="font-family:'Inter';font-weight:800;direction:ltr;text-align:right">${r.rate_type==='multiplier' && Number(r.rate_value)<1
+      <td style="font-size:12px">${r.fee_tier_enabled?'لێبڕینی پەلەیی':rateTypeLabel(r.rate_type)}</td>
+      <td style="font-family:'Inter';font-weight:800;direction:ltr;text-align:right">${r.fee_tier_enabled?esc(feeTierSummary(r)):r.rate_type==='multiplier' && Number(r.rate_value)<1
         ? `×${esc(r.rate_value)} <span style="font-family:'R';font-size:10.5px;font-weight:700;color:var(--mt2)">(${esc(fmtPairValue(r.rate_type,r.rate_value))})</span>`
         : esc(fmtPairValue(r.rate_type,r.rate_value))}</td>
       <td><label class="mswitch"><input type="checkbox" ${r.is_active?'checked':''} onchange="toggleRateActive('${r.id}',this.checked)"><span class="track"></span></label></td>
@@ -2214,6 +2221,10 @@ async function openRateModal(rate){
     document.getElementById('rateType').value=rate.rate_type;
     document.getElementById('rateValue').value=rate.rate_value;
     document.getElementById('rateActive').checked=rate.is_active;
+    document.getElementById('rateTierEnabled').checked=rate.fee_tier_enabled===true;
+    document.getElementById('rateTierLimit').value=rate.fee_tier_limit_iqd??500000;
+    document.getElementById('rateTierLow').value=rate.fee_tier_low_percent??'';
+    document.getElementById('rateTierHigh').value=rate.fee_tier_high_percent??'';
   }else{
     document.getElementById('rateModalTitle').textContent='زیادکردنی ڕێگای نوێ';
     document.getElementById('rateId').value='';
@@ -2221,8 +2232,12 @@ async function openRateModal(rate){
     document.getElementById('rateType').value='fee_percent';
     document.getElementById('rateValue').value='';
     document.getElementById('rateActive').checked=true;
+    document.getElementById('rateTierEnabled').checked=false;
+    document.getElementById('rateTierLimit').value=500000;
+    document.getElementById('rateTierLow').value='';
+    document.getElementById('rateTierHigh').value='';
   }
-  updateRateValueHint();updateAdminRatePreview();
+  updateRateTierFields();updateRateValueHint();updateAdminRatePreview();
   openMo('moRate');
 }
 function updateRateValueHint(){
@@ -2237,11 +2252,17 @@ async function saveRate(){
  const id=document.getElementById('rateId').value;
  const from=document.getElementById('rateFrom').value,to=document.getElementById('rateTo').value;
  const rate_type=document.getElementById('rateType').value;
- const rate_value=Number(document.getElementById('rateValue').value),is_active=document.getElementById('rateActive').checked;
+ const tierEnabled=document.getElementById('rateTierEnabled').checked;
+ const tierLimit=Number(document.getElementById('rateTierLimit').value),tierLowRaw=document.getElementById('rateTierLow').value.trim(),tierHighRaw=document.getElementById('rateTierHigh').value.trim();
+ const tierLow=tierLowRaw===''?null:Number(tierLowRaw),tierHigh=tierHighRaw===''?null:Number(tierHighRaw);
+ let rate_value=Number(document.getElementById('rateValue').value);const is_active=document.getElementById('rateActive').checked;
+ if(tierEnabled){
+  if((rate_type!=='fee_percent'&&!(rate_type==='multiplier'&&rate_value>=0&&rate_value<=1))||['USDT','AccountBalance'].includes(from)||!Number.isSafeInteger(tierLimit)||tierLimit<1000||tierLimit>1000000000||tierLow===null||!Number.isFinite(tierLow)||tierLow<0||tierLow>100||tierHigh===null||!Number.isFinite(tierHigh)||tierHigh<0||tierHigh>100){showToast('سنوور و هەردوو ڕێژەکە بە تەواوی دیاری بکە؛ نرخەکانی ئێستا خۆکارانە ناگۆڕدرێن','rd');return;}
+ }
  if(from===to||!document.getElementById('rateValue').value.trim()||!Number.isFinite(rate_value)||rate_value<0){showToast('ڕێگا و بەهای دروست هەڵبژێرە','rd');return;}
  const btn=document.getElementById('rateSaveBtn');if(btn.disabled)return;btn.disabled=true;
  try{
-  const row={from_method:from,to_method:to,rate_type,rate_value,is_active};
+  const row={from_method:from,to_method:to,rate_type,rate_value,is_active,fee_tier_enabled:tierEnabled,fee_tier_limit_iqd:tierLimit,fee_tier_low_percent:tierEnabled?tierLow:null,fee_tier_high_percent:tierEnabled?tierHigh:null};
   const query=id?sb.from('ex_rates').update(row).eq('id',id):sb.from('ex_rates').insert(row);
   const {data,error}=await query.select('*').single();if(error)throw error;
   if(!data?.id)throw new Error('پاشەکەوتکردن پشتڕاست نەکرایەوە');
@@ -2569,8 +2590,8 @@ function walletPairRows(newKey,oldKey){
       const value=Number(st.value);
       if(String(st.value).trim()===''||!Number.isFinite(value)||value<0)throw new Error('بەهای حمولەی ڕێگای '+f+' ← '+t+' دروست بنووسە');
       if(!prev||prev.is_active!==true||prev.rate_type!==st.type||Number(prev.rate_value)!==value)
-        rows.push({from_method:f,to_method:t,rate_type:st.type,rate_value:value,is_active:true});
-    }else if(prev&&prev.is_active!==false)rows.push({from_method:f,to_method:t,rate_type:prev.rate_type,rate_value:prev.rate_value,is_active:false});
+        rows.push({from_method:f,to_method:t,rate_type:st.type,rate_value:value,is_active:true,fee_tier_enabled:prev?.fee_tier_enabled??false,fee_tier_limit_iqd:prev?.fee_tier_limit_iqd??500000,fee_tier_low_percent:prev?.fee_tier_low_percent??null,fee_tier_high_percent:prev?.fee_tier_high_percent??null});
+    }else if(prev&&prev.is_active!==false)rows.push({from_method:f,to_method:t,rate_type:prev.rate_type,rate_value:prev.rate_value,is_active:false,fee_tier_enabled:prev.fee_tier_enabled??false,fee_tier_limit_iqd:prev.fee_tier_limit_iqd??500000,fee_tier_low_percent:prev.fee_tier_low_percent??null,fee_tier_high_percent:prev.fee_tier_high_percent??null});
   };
   Object.keys(_pairDraft.out).forEach(k=>push(newKey,k,_pairDraft.out[k]));
   Object.keys(_pairDraft.in).forEach(k=>push(k,newKey,_pairDraft.in[k]));

@@ -25,6 +25,20 @@ function cleanReceiptUrl(value) {
   } catch { return null; }
 }
 
+function effectiveRate(amount, rate, fromMethod) {
+  if (rate.fee_tier_enabled !== true) return rate;
+  const limit = Number(rate.fee_tier_limit_iqd);
+  const low = Number(rate.fee_tier_low_percent);
+  const high = Number(rate.fee_tier_high_percent);
+  const feeLikeMultiplier = rate.rate_type === 'multiplier' && Number(rate.rate_value) <= 1;
+  if ((rate.rate_type !== 'fee_percent' && !feeLikeMultiplier) || fromMethod === 'USDT' || fromMethod === 'AccountBalance' ||
+      !Number.isSafeInteger(limit) || limit < 1000 || limit > 1_000_000_000 ||
+      !Number.isFinite(low) || low < 0 || low > 100 || !Number.isFinite(high) || high < 0 || high > 100) {
+    throw Object.assign(new Error('Invalid route fee tier configuration'), { status: 409 });
+  }
+  return { ...rate, rate_type: 'fee_percent', rate_value: amount <= limit ? low : high };
+}
+
 function calculateTotal(amount, rate) {
   const value = Number(rate.rate_value);
   if (!Number.isFinite(value) || value < 0) throw Object.assign(new Error('Invalid exchange rate'), { status: 409 });
@@ -217,7 +231,7 @@ export default withSecurity(async (req, res, { context, user }) => {
   if (!balanceSource && (!receiptUrl || !receiptHash)) return json(res, 422, { error: 'Receipt is required' });
 
   const rates = await serviceFetch(
-    `/rest/v1/ex_rates?from_method=eq.${encodeURIComponent(fromMethod)}&to_method=eq.${encodeURIComponent(toMethod)}&is_active=eq.true&select=rate_type,rate_value&limit=1`
+    `/rest/v1/ex_rates?from_method=eq.${encodeURIComponent(fromMethod)}&to_method=eq.${encodeURIComponent(toMethod)}&is_active=eq.true&select=rate_type,rate_value,fee_tier_enabled,fee_tier_limit_iqd,fee_tier_low_percent,fee_tier_high_percent&limit=1`
   );
   const rate = rates?.[0];
   if (!rate) return json(res, 409, { error: 'This exchange route is closed' });
@@ -272,7 +286,7 @@ export default withSecurity(async (req, res, { context, user }) => {
     return json(res, 409, RECEIPT_USED);
   }
 
-  const total = Math.floor(calculateTotal(amount, rate));
+  const total = Math.floor(calculateTotal(amount, effectiveRate(amount, rate, fromMethod)));
   const payload = {
     user_id: user.id,
     from_method: fromMethod,
@@ -325,3 +339,5 @@ export default withSecurity(async (req, res, { context, user }) => {
     throw error;
   }
 }, { auth: 'required', methods: ['POST', 'PATCH'] });
+
+export { effectiveRate, calculateTotal };

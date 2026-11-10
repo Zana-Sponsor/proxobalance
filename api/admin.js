@@ -246,6 +246,7 @@ export function assertStaffAction(profile,action){
     approve_order:'approve_orders',reject_order:'approve_orders',request_order_correction:'approve_orders',
     save_order_note:'approve_orders',save_payout_receipt:'approve_orders',
     balance_credit_refund:'refunds',balance_credit_shortfall:'refunds',balance_refund_report:'refunds',
+    balance_manual_find:'refunds',balance_manual_overview:'refunds',balance_manual_adjust:'refunds',
     balance_cancel_payout:'refunds',balance_abort_processing:'refunds',
     balance_claim_payout:'approve_orders',balance_mark_payout_paid:'approve_orders',
     grant_reward:'manage_rewards',revoke_reward:'manage_rewards'
@@ -253,6 +254,25 @@ export function assertStaffAction(profile,action){
   const required=permissions[action];
   if(!required || !profile.staff_permissions.includes(required))
     throw {status:403,code:'staff_permission_required',message:'مۆڵەتی ئەنجامدانی ئەم کارەت نییە'};
+}
+
+
+const MANUAL_BALANCE_ERRORS=[
+  ['ADMIN_REQUIRED',403,'staff_permission_required','مۆڵەتی گۆڕینی باڵانسی هەژمارەکانت نییە'],
+  ['ACCOUNT_NOT_FOUND',404,'account_not_found','ئەم هەژمارە نەدۆزرایەوە'],
+  ['AMOUNT_INVALID',400,'invalid_amount','بڕەکە دەبێت لە 1 بۆ 10,000,000 دینار بێت'],
+  ['NOTE_REQUIRED',400,'invalid_note','هۆکار پێویستە و دەبێت لە 5 بۆ 300 پیت بێت'],
+  ['ORDER_NOT_FOUND',404,'order_not_found','ئەم کۆدی مامەڵەیە بۆ ئەم هەژمارە نەدۆزرایەوە'],
+  ['INSUFFICIENT_BALANCE',409,'insufficient_balance','باڵانسی ئەم هەژمارە بەشی ئەم بڕە ناکات'],
+  ['DAILY_LIMIT_EXCEEDED',429,'daily_limit_exceeded','سنووری ڕۆژانەی کردارەکانی باڵانس (50,000,000 دینار) تەواو بووە'],
+  ['REQUEST_KEY_REUSED',409,'request_key_reused','ئەم کردارە پێشتر بە زانیارییەکی جیاواز تۆمار کراوە؛ لاپەڕەکە نوێ بکەرەوە'],
+  ['MODE_INVALID',400,'invalid_mode','جۆری کردارەکە دروست نییە']
+];
+function manualBalanceError(error){
+  const message=String(error?.message||'');
+  for(const [needle,status,code,text] of MANUAL_BALANCE_ERRORS)
+    if(message.includes(needle))return {status,code,message:text};
+  return {status:500,code:'manual_balance_failed',message:'کردارەکە ئەنجام نەدرا؛ دووبارە هەوڵ بدەرەوە'};
 }
 
 // ── actions ──────────────────────────────────────────────────
@@ -490,6 +510,53 @@ const actions = {
     if(!refund||typeof refund!=='object'||Array.isArray(refund)||typeof refund.id!=='string')
       throw {status:500,code:'shortfall_result_missing',message:'No credit result was returned; retry with the same submission'};
     return refund;
+  },
+
+  // Manual add / refund / deduct of a customer's balance. The database function
+  // re-checks the acting admin (active, refunds permission), the per-operation and
+  // daily caps, the idempotency key and posts the double-entry journal atomically.
+  async balance_manual_find({query},ctx){
+    const q=typeof query==='string'?query.trim().slice(0,80):'';
+    if(q.length<2)return [];
+    const {data,error}=await db.rpc('ex_admin_find_accounts',{p_query:q,p_admin_id:ctx.user.id});
+    if(error)throw manualBalanceError(error);
+    return data||[];
+  },
+  async balance_manual_overview({user_id,limit},ctx){
+    if(user_id!=null&&(typeof user_id!=='string'||!UUID.test(user_id)))
+      throw {status:400,code:'invalid_user',message:'هەژمارەکە دروست نییە'};
+    const n=Number.isSafeInteger(limit)?Math.min(Math.max(limit,1),100):30;
+    const [rows,totals]=await Promise.all([
+      db.rpc('ex_admin_manual_adjustments',{p_limit:n,p_user_id:user_id?user_id.toLowerCase():null,p_admin_id:ctx.user.id}),
+      db.rpc('ex_admin_adjustment_totals',{p_admin_id:ctx.user.id})
+    ]);
+    if(rows.error)throw manualBalanceError(rows.error);
+    if(totals.error)throw manualBalanceError(totals.error);
+    return {rows:rows.data||[],totals:totals.data||{}};
+  },
+  async balance_manual_adjust({user_id,mode,amount_iqd,note,request_key,order_code,confirmed},ctx){
+    if(typeof user_id!=='string'||!UUID.test(user_id))
+      throw {status:400,code:'invalid_user',message:'هەژمارەکە دروست نییە'};
+    if(!['add','refund','deduct'].includes(mode))
+      throw {status:400,code:'invalid_mode',message:'جۆری کردارەکە دروست نییە'};
+    if(typeof request_key!=='string'||!UUID.test(request_key))
+      throw {status:400,code:'invalid_request_key',message:'کلیلی داواکارییەکە دروست نییە'};
+    if(typeof amount_iqd!=='number'||!Number.isSafeInteger(amount_iqd)||amount_iqd<1||amount_iqd>10000000)
+      throw {status:400,code:'invalid_amount',message:'بڕەکە دەبێت لە 1 بۆ 10,000,000 دینار بێت'};
+    const text=typeof note==='string'?note.trim():'';
+    if(text.length<5||text.length>300)
+      throw {status:400,code:'invalid_note',message:'هۆکار پێویستە و دەبێت لە 5 بۆ 300 پیت بێت'};
+    if(confirmed!==true)
+      throw {status:400,code:'confirmation_required',message:'کردارەکە پشتڕاست بکەرەوە'};
+    const code=order_code==null||order_code===''?null:String(order_code).trim().toUpperCase().slice(0,40);
+    const {data,error}=await db.rpc('ex_admin_adjust_balance',{
+      p_user_id:user_id.toLowerCase(),p_mode:mode,p_amount_iqd:amount_iqd,p_note:text,
+      p_request_key:request_key.toLowerCase(),p_order_code:code,p_admin_id:ctx.user.id
+    });
+    if(error)throw manualBalanceError(error);
+    if(!data||typeof data!=='object'||typeof data.journal_id!=='string')
+      throw {status:500,code:'manual_result_missing',message:'ئەنجامی کردارەکە نەگەڕایەوە؛ بە هەمان زانیاری دووبارە هەوڵ بدەرەوە'};
+    return data;
   },
 
   async balance_claim_payout({payout_id,verification},ctx){

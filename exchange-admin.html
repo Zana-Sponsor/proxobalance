@@ -26,7 +26,7 @@
 <link rel="stylesheet" href="assets/css/admin-contracts.css?v=2">
 <link rel="stylesheet" href="assets/css/exchange-feedback.css?v=3">
 <link rel="stylesheet" href="assets/css/exchange-auth-app.css?v=1">
-<link rel="stylesheet" href="assets/css/exchange-balance.css?v=5">
+<link rel="stylesheet" href="assets/css/exchange-balance.css?v=7">
 <link rel="stylesheet" href="assets/css/app-ui-polish.css?v=2">
 <script src="assets/js/exchange-access.js?v=1"></script>
 </head>
@@ -386,6 +386,68 @@
       <div class="sec-hdr"><h3>ڕیفاوند و باڵانسی بەکارهێنەران</h3>
         <button type="button" class="act-btn dark" onclick="loadBalanceAdmin()"><i class="fas fa-rotate"></i> نوێکردنەوە</button></div>
       <p style="margin:0 0 14px"><a href="exchange-admin-balance.html" class="act-btn dark" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none"><i class="fas fa-sliders" aria-hidden="true"></i> بەڕێوەبردنی وردی باڵانس</a></p>
+      <!-- Manual add / refund / deduct -->
+      <section class="bm-panel" id="bmPanel" aria-labelledby="bmTitle">
+        <div class="bm-head">
+          <span class="bm-head-ic" aria-hidden="true"><i class="fas fa-wallet"></i></span>
+          <div><h4 id="bmTitle">زیادکردن و کەمکردنەوەی دەستیی باڵانس</h4>
+            <p class="bm-sub">هەژمارێک بدۆزەرەوە، جۆری کردارەکە و بڕەکە دیاری بکە. هەر کردارێک پێداچوونەوەی دەوێت و بە تەواوی تۆمار دەکرێت.</p></div>
+        </div>
+        <div class="bm-totals" id="bmTotals" aria-live="polite"></div>
+
+        <label class="modal-lbl" for="bmSearch">گەڕان بەدوای هەژمار (ناو، یوزەرنەیم، ئیمەیڵ یان ژمارە)</label>
+        <div class="bm-search">
+          <input class="minp" id="bmSearch" type="search" autocomplete="off" placeholder="لانی کەم ٢ پیت بنووسە" maxlength="80">
+          <button type="button" class="act-btn dark" id="bmSearchBtn"><i class="fas fa-magnifying-glass" aria-hidden="true"></i> دۆزینەوە</button>
+        </div>
+        <div class="bm-results" id="bmResults" role="listbox" aria-label="ئەنجامی گەڕان"></div>
+
+        <div class="bm-account" id="bmAccount" hidden>
+          <div class="bm-acc-top">
+            <div class="bm-acc-who"><b id="bmAccName">—</b><span id="bmAccSub" dir="ltr">—</span></div>
+            <button type="button" class="bm-acc-clear" id="bmAccClear" aria-label="گۆڕینی هەژمار"><i class="fas fa-xmark" aria-hidden="true"></i></button>
+          </div>
+          <div class="bm-acc-bal"><span>باڵانسی ئێستا</span><strong id="bmAccBal">0 د.ع</strong></div>
+        </div>
+
+        <form id="bmForm" class="bm-form" novalidate hidden>
+          <div class="bm-modes" role="tablist" aria-label="جۆری کردار">
+            <button type="button" role="tab" class="bm-mode on" data-mode="add" aria-selected="true"><i class="fas fa-plus" aria-hidden="true"></i> زیادکردن</button>
+            <button type="button" role="tab" class="bm-mode" data-mode="refund" aria-selected="false"><i class="fas fa-rotate-left" aria-hidden="true"></i> گەڕاندنەوە</button>
+            <button type="button" role="tab" class="bm-mode" data-mode="deduct" aria-selected="false"><i class="fas fa-minus" aria-hidden="true"></i> کەمکردنەوە</button>
+          </div>
+          <label class="modal-lbl" for="bmAmount">بڕ (دینار)</label>
+          <input class="minp bm-amount" id="bmAmount" type="text" inputmode="numeric" dir="ltr" autocomplete="off" maxlength="14" placeholder="0">
+          <div class="bm-chips" id="bmChips">
+            <button type="button" data-v="5000">5,000</button><button type="button" data-v="10000">10,000</button>
+            <button type="button" data-v="25000">25,000</button><button type="button" data-v="50000">50,000</button>
+            <button type="button" data-v="100000">100,000</button>
+          </div>
+          <div id="bmOrderWrap" hidden>
+            <label class="modal-lbl" for="bmOrder">کۆدی مامەڵە (ئارەزوومەندانە)</label>
+            <input class="minp" id="bmOrder" dir="ltr" autocomplete="off" maxlength="40" placeholder="PXXXXXXXXXXX">
+          </div>
+          <label class="modal-lbl" for="bmNote">هۆکار (بۆ کڕیار و تۆمار دەنێردرێت)</label>
+          <textarea class="minp mta" id="bmNote" rows="2" maxlength="300" placeholder="هۆکارەکە بە ڕوونی بنووسە (لانی کەم ٥ پیت)"></textarea>
+          <div class="bm-error" id="bmError" role="alert"></div>
+          <button type="submit" class="modal-btn dark bm-submit" id="bmSubmit" disabled>پێداچوونەوە</button>
+        </form>
+
+        <div class="bm-review" id="bmReview" hidden role="dialog" aria-modal="false" aria-labelledby="bmReviewTitle">
+          <h5 id="bmReviewTitle">پشتڕاستکردنەوەی کردار</h5>
+          <dl class="bm-review-list" id="bmReviewList"></dl>
+          <p class="bm-review-note" id="bmReviewNote"></p>
+          <div class="bm-review-actions">
+            <button type="button" class="modal-btn bm-confirm" id="bmConfirm">پشتڕاستکردنەوە و تۆمارکردن</button>
+            <button type="button" class="act-btn dark" id="bmBack">گەڕانەوە</button>
+          </div>
+        </div>
+        <div class="bm-success" id="bmSuccess" role="status" aria-live="polite" hidden></div>
+
+        <div class="sec-hdr bm-log-hdr"><h3 id="bmLogTitle">دوایین کردارە دەستییەکان</h3>
+          <button type="button" class="act-btn dark" id="bmLogRefresh"><i class="fas fa-rotate" aria-hidden="true"></i> نوێکردنەوە</button></div>
+        <div class="tbl-wrap"><div class="tbl-scroll" id="bmLog"><div class="loading">بارکردن...</div></div></div>
+      </section>
       <div class="ex-rates" id="balanceAdminStats"><div class="ex-note">زانیارییەکان بار دەکرێن...</div></div>
       <section class="balance-refund-report" aria-labelledby="balanceRefundReportTitle">
         <div><h4 id="balanceRefundReportTitle">ڕاپۆرتی گەڕاندنەوەی پارە</h4>
@@ -775,7 +837,7 @@
     <div class="modal-row">
       <div>
         <label class="modal-lbl">لە</label>
-        <select class="msel" id="rateFrom"></select>
+        <select class="msel" id="rateFrom" onchange="updateRateTierFields();updateAdminRatePreview()"></select>
       </div>
       <div>
         <label class="modal-lbl">بۆ</label>
@@ -783,14 +845,22 @@
       </div>
     </div>
     <label class="modal-lbl">جۆری نرخ</label>
-    <select class="msel" id="rateType" onchange="updateRateValueHint();updateAdminRatePreview()">
+    <select class="msel" id="rateType" onchange="updateRateValueHint();updateRateTierFields();updateAdminRatePreview()">
       <option value="multiplier">مەزراپ (Multiplier)</option>
       <option value="fee_percent">حمولە بە ڕێژە (Fee %)</option>
       <option value="fee_fixed">حمولەی جێگیر (د.ع)</option>
     </select>
     <label class="modal-lbl">بەها</label>
-    <input class="minp" type="number" step="0.0001" id="rateValue" dir="ltr" placeholder="0.00" oninput="updateAdminRatePreview()">
-    <div class="fee-toggle-note" id="rateValueHint"></div><section class="rate-example"><label class="modal-lbl" for="adminRateExample">نموونەی بڕی ناردن</label><input class="minp" type="number" id="adminRateExample" value="100000" min="1" dir="ltr" oninput="updateAdminRatePreview()"><output id="adminRatePreview" dir="ltr"></output><p>ئەمە نموونەی ئەم ڕێگایەیە؛ حمولەی جزدانەکانی تر ناگۆڕێت.</p></section>
+    <input class="minp" type="number" step="0.0001" id="rateValue" dir="ltr" placeholder="0.00" oninput="updateRateTierFields();updateAdminRatePreview()">
+    <div class="fee-toggle-note" id="rateValueHint"></div>
+    <div class="mswitch-row rate-tier-toggle"><span><b>لێبڕینی پەلەیی</b><small>تەنها بۆ ئەم ڕێڕەوەی ناردن → وەرگرتن</small></span><label class="mswitch"><input type="checkbox" id="rateTierEnabled" onchange="updateRateTierFields();updateAdminRatePreview()"><span class="track"></span></label></div>
+    <section id="rateTierFields" class="rate-tier-fields" hidden>
+      <div class="modal-row"><div><label class="modal-lbl" for="rateTierLimit">تا ئەم بڕەیە (IQD)</label><input class="minp" type="number" id="rateTierLimit" min="1000" max="1000000000" step="1" value="500000" dir="ltr" oninput="updateAdminRatePreview()"></div>
+      <div><label class="modal-lbl" for="rateTierLow">لێبڕین تا سنوور (%)</label><input class="minp" type="number" id="rateTierLow" min="0" max="100" step="0.01" placeholder="ڕێژەی خۆت بنووسە" dir="ltr" oninput="updateAdminRatePreview()"></div></div>
+      <label class="modal-lbl" for="rateTierHigh">لێبڕین لەسەر سنوور (%)</label><input class="minp" type="number" id="rateTierHigh" min="0" max="100" step="0.01" placeholder="ڕێژەی خۆت بنووسە" dir="ltr" oninput="updateAdminRatePreview()">
+      <div class="fee-toggle-note">خودی بڕی سنوور لە پلەی یەکەمە؛ تەنها بڕی زیاتر دەچێتە پلەی دووەم. سنوور بەپێی بڕی دیناری ناردنە.</div>
+    </section>
+    <section class="rate-example"><label class="modal-lbl" for="adminRateExample">نموونەی بڕی ناردن</label><input class="minp" type="number" id="adminRateExample" value="100000" min="1" dir="ltr" oninput="updateAdminRatePreview()"><output id="adminRatePreview" dir="ltr"></output><p>ئەمە نموونەی ئەم ڕێگایەیە؛ حمولەی جزدانەکانی تر ناگۆڕێت.</p></section>
     <div class="mswitch-row">
       <span>چالاکە (بەکاردەهێنرێت لە ئەپدا)</span>
       <label class="mswitch"><input type="checkbox" id="rateActive" checked><span class="track"></span></label>
@@ -1183,12 +1253,13 @@
   </div>
   <script src="assets/js/exchange-payout-rounding.js?v=1"></script>
   <script src="assets/js/exchange-live.js?v=1"></script>
-<script src="assets/js/admin.js?v=29"></script>
+<script src="assets/js/admin.js?v=30"></script>
 <script src="assets/js/admin-contracts.js?v=2"></script>
   <script src="assets/js/exchange-staff.js?v=8"></script>
   <script src="assets/js/exchange-balance-admin.js?v=8"></script>
+  <script src="assets/js/exchange-balance-manual.js?v=1"></script>
   <script src="assets/js/exchange-refund-report.js?v=2"></script>
   <script src="assets/js/exchange-insights.js?v=6"></script>
-  <script src="assets/js/exchange-profit.js?v=5"></script><script src="assets/js/exchange-admin-workspace.js?v=1"></script><script src="assets/js/track.js?v=3"></script>
+  <script src="assets/js/exchange-profit.js?v=5"></script><script src="assets/js/exchange-admin-workspace.js?v=2"></script><script src="assets/js/track.js?v=3"></script>
 </body>
 </html>
