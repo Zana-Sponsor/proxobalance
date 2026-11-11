@@ -117,7 +117,7 @@ jobs:
           curl -fLsS --max-time 25 "$root/assets/js/app.js?v=70" -o app-v70.js
           grep -q 'function notifRich' app-v70.js
           grep -q 'escHtml(notifClean(s))' app-v70.js
-          grep -q 'effectiveCustomerRate' app-v70.js
+          grep -q 'ProxoRewardPricing.effectiveRate' app-v70.js
           grep -q 'fee_tier_enabled' app-v70.js
           grep -q 'balanceHistory' app-v70.js
           grep -q 'data-theme="dark"' proxo-dark.css

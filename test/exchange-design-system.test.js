@@ -64,6 +64,8 @@ test('Production smoke waits for the changed customer version and verifies its d
   assert(workflow.includes('exchange-admin-workspace.js?v=3'));
   assert(workflow.includes('exchange-insights.js?v=7'));
   assert(workflow.includes('exchange-reward-pricing.js?v=4'));
+  assert(workflow.includes("grep -q 'ProxoRewardPricing.effectiveRate' app-v70.js"));
+  assert(!workflow.includes('effectiveCustomerRate'));
   assert(workflow.includes('proxo-design-system.css?v=3'));
   assert(workflow.includes("grep -q 'width:min(42vw,180px)' current-index.html"));
   assert(workflow.includes("grep -q 'animation:spIn 1.15s' current-index.html"));
