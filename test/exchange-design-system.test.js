@@ -59,19 +59,24 @@ test('Design layer leaves hidden/route mechanics untouched and provides accessib
 
 test('Production smoke waits for the changed customer version and verifies its design contract',()=>{
   const workflow=read('.github/workflows/exchange-production-smoke.yml');
-  assert(workflow.includes('app.js?v=69'));
+  assert(workflow.includes('app.js?v=70'));
+  assert(workflow.includes('admin.js?v=31'));
+  assert(workflow.includes('exchange-admin-workspace.js?v=3'));
+  assert(workflow.includes('exchange-insights.js?v=7'));
+  assert(workflow.includes('exchange-reward-pricing.js?v=4'));
   assert(workflow.includes('proxo-design-system.css?v=3'));
   assert(workflow.includes("grep -q 'width:min(42vw,180px)' current-index.html"));
   assert(workflow.includes("grep -q 'animation:spIn 1.15s' current-index.html"));
   assert(workflow.includes("grep -q 'clamp(24px, 7vw, 30px)' proxo-design-system.css"));
-  assert(html.includes('/assets/js/app.js?v=69'));
-  assert(html.includes('proxo-ui-v2.css?v=11'));
+  assert(html.includes('/assets/js/app.js?v=70'));
+  assert(html.includes('exchange-reward-pricing.js?v=4'));
+  assert(html.includes('proxo-ui-v2.css?v=12'));
   assert(html.includes('proxo-dark.css?v=6'));
   assert(html.includes('exchange-balance.css?v=6'));
-  assert(html.includes('/assets/css/proxo-ui-v2.css?v=11'));
+  assert(html.includes('/assets/css/proxo-ui-v2.css?v=12'));
   assert(html.includes('/assets/js/proxo-ui-v2.js?v=4'));
   assert(html.includes('/assets/js/proxo-toast.js?v=1'));
-  assert(html.indexOf('proxo-toast.js?v=1') < html.indexOf('app.js?v=69'));
+  assert(html.indexOf('proxo-toast.js?v=1') < html.indexOf('app.js?v=70'));
   assert(shellCss.includes('.pxt-stack'));
   assert(shellCss.includes('.pxn-pill'));
   assert(shellCss.includes('.field-error.show'));
@@ -109,21 +114,23 @@ test('Production smoke waits for the changed customer version and verifies its d
   assert(build.includes("join(output, 'exchange-admin-balance.html')"));
 });
 
-test('Tiered fees are opt-in per directed route and leave existing flat commissions untouched',()=>{
+test('Tiered fees are opt-in per directed wallet route and preserve existing commissions',()=>{
   const admin=read('exchange-admin.html');
   const adminJs=read('assets/js/admin.js');
+  assert(read('exchange-admin.html').includes('admin.js?v=31'));
+  assert(read('exchange-admin.html').includes('admin.css?v=10'));
+  assert(read('assets/css/admin.css').includes('.pair-tier'));
+  assert(read('assets/js/exchange-admin-workspace.js').includes('pairTierOf'));
   const api=read('api/orders.js');
   const migration=read('SUPABASE_EXCHANGE_ROUTE_FEE_TIERS.sql');
-  for(const id of ['rateTierEnabled','rateTierLimit','rateTierLow','rateTierHigh'])assert(admin.includes(`id="${id}"`));
-  assert(!/id="rateTier(?:Low|High)"[^>]*value="[^"]+"/.test(admin));
-  assert(adminJs.includes("rate_type==='multiplier'&&rate_value>=0&&rate_value<=1"));
-  assert(api.includes('feeLikeMultiplier'));
-  assert(adminJs.includes('fee_tier_enabled:tierEnabled'));
-  assert(adminJs.includes('fee_tier_low_percent:tierEnabled?tierLow:null'));
-  assert(adminJs.includes('fee_tier_high_percent:tierEnabled?tierHigh:null'));
-  assert(adminJs.includes('fee_tier_enabled:prev?.fee_tier_enabled??false'));
-  assert(api.includes('effectiveRate(amount, rate, fromMethod)'));
-  assert(api.includes('calculateTotal(amount, effectiveRate(amount, rate, fromMethod))'));
+  for(const id of ['pairTierBulkLimit','pairTierBulkLow','pairTierBulkHigh'])assert(admin.includes(`id="${id}"`));
+  assert(adminJs.includes('pairTierAllowed'));
+  assert(adminJs.includes('fee_tier_enabled:tierOn'));
+  assert(adminJs.includes('fee_tier_low_percent:low'));
+  assert(adminJs.includes('fee_tier_high_percent:high'));
+  assert(api.includes('effectiveRateValue(rate, amount)'));
+  assert(api.includes('calculateTotal(amount, rate)'));
+  assert(read('assets/js/exchange-reward-pricing.js').includes('function effectiveRate(rate,amount)'));
   assert(migration.includes('fee_tier_enabled boolean NOT NULL DEFAULT false'));
   assert(!/UPDATE\s+public\.ex_rates\s+SET\s+(?:rate_type|rate_value)\s*=/i.test(migration));
 });

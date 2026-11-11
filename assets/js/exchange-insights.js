@@ -153,6 +153,7 @@ function exRenderRateCards(){
     '<span class="badge '+(r.is_active?'approved':'rejected')+'">'+(r.is_active?'چالاک':'ناچالاک')+'</span></div>'+
     '<div class="ex-value">'+(r.rate_type==='fee_percent'?exNum(r.rate_value,2)+'%':r.rate_type==='fee_fixed'?exNum(r.rate_value,2):'×'+exNum(r.rate_value,4))+'</div>'+
     '<small>'+exSafe(typeof rateTypeLabel==='function'?rateTypeLabel(r.rate_type):r.rate_type)+'</small>'+
+    (typeof pairTierOf==='function'&&pairTierOf(r)?'<small style="display:block;margin-top:4px;color:#1d4ed8;font-weight:700">'+exSafe(pairTierText(pairTierOf(r)))+'</small>':'')+
     '<div class="ex-actions" style="margin-top:13px"><button type="button" class="ex-btn primary" data-ex-rate="'+exSafe(r.id)+'"><i class="fas fa-pen"></i> دەستکاری نرخ</button></div></article>').join('');
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-ex-rate]');if(!b)return;const rate=allRates.find(r=>String(r.id)===b.dataset.exRate);if(rate)openRateModal(rate)});

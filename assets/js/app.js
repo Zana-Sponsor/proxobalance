@@ -1569,12 +1569,20 @@ const FALLBACK_RATES = {
 // no silent swap to another wallet. The old hardcoded table is used only when the
 // database itself is unreachable, so a network blip can't close the whole site.
 let RATES_STRICT=false;
+// An enabled amount tier of an ex_rates row, or null. Disabled tiers leave the route's stored rate exactly as it is.
+function rateTierFromRow(r){
+  if(!r||!r.fee_tier_enabled||r.fee_tier_low_percent==null||r.fee_tier_high_percent==null||!(Number(r.fee_tier_limit_iqd)>0))return null;
+  return {limit:Number(r.fee_tier_limit_iqd),low:Number(r.fee_tier_low_percent),high:Number(r.fee_tier_high_percent)};
+}
+function tierHintText(t){
+  return 'تا '+formatNum(t.limit)+' IQD: '+fmtPct(t.low)+'% · لە سەروو: '+fmtPct(t.high)+'%';
+}
 async function loadRates(){
   RATES={}; RATES_STRICT=false;
   try{
     const {data,error}=await sb.from('ex_rates').select('*').eq('is_active',true);
     if(!error && data){
-      data.forEach(r=>{ RATES[r.from_method+'>'+r.to_method]={type:r.rate_type,value:Number(r.rate_value),fee_tier_enabled:r.fee_tier_enabled===true,fee_tier_limit_iqd:Number(r.fee_tier_limit_iqd??500000),fee_tier_low_percent:r.fee_tier_low_percent==null?null:Number(r.fee_tier_low_percent),fee_tier_high_percent:r.fee_tier_high_percent==null?null:Number(r.fee_tier_high_percent)}; });
+      data.forEach(r=>{ RATES[r.from_method+'>'+r.to_method]={type:r.rate_type,value:Number(r.rate_value),tier:rateTierFromRow(r)}; });
       RATES_STRICT=true;
     }
   }catch(e){}
@@ -1680,8 +1688,6 @@ function pickInitialWallets(){
 function fmtPct(n){ return String(Math.round(n*100)/100); }
 function formatNum(num){ return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
 function fmtOrderNo(n){ return '\u2068#P-'+String(n).padStart(6,'0')+'\u2069'; }
-function effectiveCustomerRate(r,amount){if(!r?.fee_tier_enabled)return r;return {type:'fee_percent',value:amount<=r.fee_tier_limit_iqd?r.fee_tier_low_percent:r.fee_tier_high_percent};}
-function customerTierLabel(r){return fmtPct(r.fee_tier_low_percent)+'% تا '+formatNum(r.fee_tier_limit_iqd)+' · '+fmtPct(r.fee_tier_high_percent)+'% زیاتر';}
 function closeModal(){ document.getElementById('tgModal').style.display='none'; }
 function updateWallet(){
   const key = document.getElementById('from').value;
@@ -1827,7 +1833,10 @@ function calc(){
   updateHeaderRate();
 
   if(from===to){ totalEl.innerText='هەمان واڵێت نابێت'; totalEl.classList.add('warn-text'); feeEl.innerText=''; setBd('—','—'); showRate(false); showFee(false); return; }
-  const r=RATES[from+'>'+to];
+  const rawRate=RATES[from+'>'+to];
+  const r=rawRate&&!isUsdt?ProxoRewardPricing.effectiveRate(rawRate,amt):rawRate;
+  const tierRow=document.getElementById('bdTierRow'),tierHint=document.getElementById('bdTierHint');
+  if(tierRow)tierRow.hidden=true;if(tierHint)tierHint.hidden=true;
   // Closed direction: show it as closed. Never fall back to a guessed rate and
   // never quietly move the order to a different wallet.
   if(!routeAllowed(from,to)){
@@ -1842,12 +1851,17 @@ function calc(){
   }
   totalEl.classList.remove('warn-text');
 
-  // Route-specific tiered fees replace only this directed route's flat percentage.
-  const quoteRate=effectiveCustomerRate(r,amt);
-  if(r.fee_tier_enabled)setBd('—',customerTierLabel(r));
-  else if(r.type==='multiplier')      setBd('1 = '+fmtPct(r.value), '—');
+  // rate line — the exact multiplier or fee the order will be settled at
+  if(r.type==='multiplier')      setBd('1 = '+fmtPct(r.value), '—');
   else if(r.type==='fee_percent')setBd('—', fmtPct(r.value)+'%');
   else                           setBd('—', formatNum(r.value)+' IQD');
+  // Amount-tiered fee: say which percentage this amount gets and where the tier changes.
+  if(rawRate&&rawRate.tier&&!isUsdt&&amt>0){
+    const pct=ProxoRewardPricing.tierPercent(rawRate,amt);
+    const pctEl=document.getElementById('bdTierPct');
+    if(tierRow&&pctEl&&pct!==null){pctEl.textContent=fmtPct(pct)+'%';tierRow.hidden=false;}
+    if(tierHint){tierHint.textContent=tierHintText(rawRate.tier);tierHint.hidden=false;}
+  }
 
   if(amt>0 && amt<MIN_AMOUNT){
     totalEl.innerText='کەمترین بڕ '+formatNum(MIN_AMOUNT)+' دینارە';
@@ -1859,32 +1873,32 @@ function calc(){
     totalEl.innerText='بڕەکە دەبێت دیناری تەواو بێت';totalEl.classList.add('warn-text');feeEl.innerText='';return;
   }
   let final=0, feeTxt='', feeVal=0,displayFee=0;
-  if(quoteRate.type==='fee_percent'){
-    feeVal=amt*quoteRate.value/100; final=amt-feeVal;
-    if(bdFee) bdFee.textContent = amt>0 ? (formatNum(Math.floor(feeVal))+' IQD ('+fmtPct(quoteRate.value)+'%)') : (fmtPct(quoteRate.value)+'%');
-  }else if(quoteRate.type==='fee_fixed'){
-    feeVal=quoteRate.value; final=Math.max(0, amt-feeVal);
+  if(r.type==='fee_percent'){
+    feeVal=amt*r.value/100; final=amt-feeVal;
+    if(bdFee) bdFee.textContent = amt>0 ? (formatNum(Math.floor(feeVal))+' IQD ('+fmtPct(r.value)+'%)') : (fmtPct(r.value)+'%');
+  }else if(r.type==='fee_fixed'){
+    feeVal=r.value; final=Math.max(0, amt-feeVal);
     if(bdFee) bdFee.textContent = formatNum(Math.floor(feeVal))+' IQD';
   }else{
-    final=amt*quoteRate.value;
+    final=amt*r.value;
     // A multiplier under 1 (Korek/Asiacell style transfers) is a straight cut off
     // the amount, so it reads as a rate — "کرێ: 15%" — rather than an amount.
-    if(quoteRate.value<1){
+    if(r.value<1){
       feeVal=amt-final;
       if(bdFee) bdFee.textContent = amt>0
-        ? (formatNum(Math.floor(feeVal))+' IQD ('+fmtPct(100-quoteRate.value*100)+'%)')
-        : (fmtPct(100-quoteRate.value*100)+'%');
+        ? (formatNum(Math.floor(feeVal))+' IQD ('+fmtPct(100-r.value*100)+'%)')
+        : (fmtPct(100-r.value*100)+'%');
     }else{ showFee(false); if(bdFee) bdFee.textContent='بێ کرێ'; }
   }
   // Match the database's decimal calculation, including the uncovered principal.
-  const baseQuote=isUsdt?null:ProxoRewardPricing.quote(amt,quoteRate,null);
+  const baseQuote=isUsdt?null:ProxoRewardPricing.quote(amt,r,null);
   const basePayout=baseQuote?baseQuote.total:Math.floor(final);
   const baseFee=baseQuote?baseQuote.fee:Math.max(0,amt-basePayout);
   displayFee=baseFee;
   if(baseQuote){final=baseQuote.total;if(bdFee&&amt>0)bdFee.textContent=formatNum(baseQuote.fee)+' IQD';}
   const reward=availableFeeReward(from,to,baseFee);
   if(reward){
-    const quote=ProxoRewardPricing.quote(amt,quoteRate,reward);
+    const quote=ProxoRewardPricing.quote(amt,r,reward);
     if(quote.discount_iqd>0){
       final=quote.total;displayFee=quote.fee;
       if(bdFee)bdFee.textContent=formatNum(quote.fee)+' IQD';
@@ -3225,7 +3239,7 @@ const SAMPLE_IQD = 100000;   // "for every 100,000 you send, you receive …"
 
 const CHG_FIELD_LABEL = {
   multiplier:'ڕێژەی گۆڕین', fee_percent:'ڕێژەی لێبڕین', fee_fixed:'لێبڕینی جێگیر',
-  new_route:'ڕێگایەکی نوێ', is_active:'دۆخی ڕێگا', new_wallet:'واڵێتێکی نوێ',
+  new_route:'ڕێگایەکی نوێ', is_active:'دۆخی ڕێگا', fee_tier_config:'پلەی لێبڕین', new_wallet:'واڵێتێکی نوێ',
   fee:'لێبڕین', price:'نرخ', is_locked:'دۆخی واڵێت', allow_receive:'وەرگرتن', allow_from:'ناردن'
 };
 
@@ -3250,6 +3264,10 @@ function chgHeadline(r){
     case 'is_locked':   return r.new_value==='true' ? 'واڵێت داخرا' : 'واڵێت کرایەوە';
     case 'allow_receive': return r.new_value==='true' ? 'وەرگرتن کرایەوە' : 'وەرگرتن داخرا';
     case 'allow_from':    return r.new_value==='true' ? 'ناردن کرایەوە' : 'ناردن داخرا';
+    case 'fee_tier_config': {
+      let on=false;try{on=!!JSON.parse(r.new_value||'{}').enabled;}catch(e){}
+      return on?'پلەی لێبڕین بەپێی بڕ دانرا':'پلەی لێبڕین لابرا';
+    }
     case 'new_route':   return 'ڕێگایەکی نوێ زیادکرا';
     case 'new_wallet':  return 'واڵێتێکی نوێ زیادکرا';
     default: return escHtml(CHG_FIELD_LABEL[r.field] || r.field);
@@ -3266,11 +3284,18 @@ function chgIcon(r){
   const t=chgTone(r);
   if(r.field==='is_locked' || r.field==='is_active' || r.field==='allow_from' || r.field==='allow_receive')
     return t==='good' ? ICON.lockOpen : ICON.lockClosed;
-  if(r.field==='new_route' || r.field==='new_wallet') return ICON.sparkles;
+  if(r.field==='new_route' || r.field==='new_wallet' || r.field==='fee_tier_config') return ICON.sparkles;
   return r.direction==='up' ? ICON.trendUp : ICON.trendDown;
 }
 function chgValueText(field, v){
   if(v===null || v===undefined || v==='') return '—';
+  if(field==='fee_tier_config'){
+    try{
+      const t=JSON.parse(v);
+      if(!t||!t.enabled) return 'نییە';
+      return tierHintText({limit:Number(t.limit_iqd),low:Number(t.low_percent),high:Number(t.high_percent)});
+    }catch(e){ return '—'; }
+  }
   if(field==='is_active' || field==='allow_from' || field==='allow_receive') return v==='true' ? 'کراوە' : 'داخراوە';
   if(field==='is_locked') return v==='true' ? 'داخراوە' : 'کراوە';
   const n=Number(v);
@@ -3299,7 +3324,10 @@ function chgRouteHTML(r){
 
 // ── the "what you get right now" board ───────────────────────
 function rateOutcome(amount, r){
-  const v=r.fee_tier_enabled?(amount<=Number(r.fee_tier_limit_iqd)?Number(r.fee_tier_low_percent):Number(r.fee_tier_high_percent)):Number(r.rate_value)||0;
+  const tier=rateTierFromRow(r);
+  const eff=tier&&(r.rate_type==='fee_percent'||r.rate_type==='multiplier')
+    ?ProxoRewardPricing.effectiveRate({type:r.rate_type,value:Number(r.rate_value),tier:tier},amount):null;
+  const v=Number(eff?eff.value:r.rate_value)||0;
   if(r.rate_type==='fee_percent') return { out: amount - (amount*v/100), fee: v>0 ? ('لێبڕین '+fmtPct(v)+'%') : 'بێ لێبڕین' };
   if(r.rate_type==='fee_fixed')   return { out: Math.max(0, amount-v),   fee: v>0 ? ('لێبڕین '+formatNum(v)+' IQD') : 'بێ لێبڕین' };
   return { out: amount*v, fee: v<1 ? ('لێبڕین '+fmtPct(100-v*100)+'%') : '' };
@@ -3331,6 +3359,7 @@ function renderRatesNow(rows){
         + '<span class="rate-out">'+outTxt+'</span>'
       + '</div>'
       + (o.fee ? '<div class="rate-fee">'+o.fee+'</div>' : '')
+      + (rateTierFromRow(r) ? '<div class="rate-fee rate-tier">'+tierHintText(rateTierFromRow(r))+'</div>' : '')
       + '</div>';
   }).join('');
 }
@@ -4824,10 +4853,11 @@ function refreshFormHints(){
 function updateHeaderRate(){
   const el=document.getElementById('hdrRateVal'); if(!el) return;
   const from=document.getElementById('from').value, to=document.getElementById('receiveVia').value;
-  const r=RATES[from+'>'+to];
-  if(from===to || !r || !routeAllowed(from,to)){ el.textContent='—'; return; }
-  if(r.fee_tier_enabled)el.textContent=customerTierLabel(r)+' کرێ';
-  else if(r.type==='multiplier')      el.textContent = '1 = '+fmtPct(r.value);
+  const raw=RATES[from+'>'+to];
+  if(from===to || !raw || !routeAllowed(from,to)){ el.textContent='—'; return; }
+  const typed=parseFloat(typeof getAmtRaw==='function'?getAmtRaw():'')||0;
+  const r=raw.tier&&typed>0&&from!=='USDT'&&to!=='USDT'?ProxoRewardPricing.effectiveRate(raw,typed):raw;
+  if(r.type==='multiplier')      el.textContent = '1 = '+fmtPct(r.value);
   else if(r.type==='fee_percent')el.textContent = fmtPct(r.value)+'% کرێ';
   else                           el.textContent = formatNum(r.value)+' IQD کرێ';
 }

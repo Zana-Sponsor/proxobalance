@@ -11,7 +11,7 @@
 <!-- Firebase — announcement banner control only (same project as exchange.html) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<link rel="stylesheet" href="assets/css/admin.css?v=9">
+<link rel="stylesheet" href="assets/css/admin.css?v=10">
 <link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/exchange-insights.css?v=2">
 <link rel="stylesheet" href="assets/css/exchange-features.css?v=3">
@@ -837,7 +837,7 @@
     <div class="modal-row">
       <div>
         <label class="modal-lbl">لە</label>
-        <select class="msel" id="rateFrom" onchange="updateRateTierFields();updateAdminRatePreview()"></select>
+        <select class="msel" id="rateFrom"></select>
       </div>
       <div>
         <label class="modal-lbl">بۆ</label>
@@ -845,22 +845,14 @@
       </div>
     </div>
     <label class="modal-lbl">جۆری نرخ</label>
-    <select class="msel" id="rateType" onchange="updateRateValueHint();updateRateTierFields();updateAdminRatePreview()">
+    <select class="msel" id="rateType" onchange="updateRateValueHint();updateAdminRatePreview()">
       <option value="multiplier">مەزراپ (Multiplier)</option>
       <option value="fee_percent">حمولە بە ڕێژە (Fee %)</option>
       <option value="fee_fixed">حمولەی جێگیر (د.ع)</option>
     </select>
     <label class="modal-lbl">بەها</label>
-    <input class="minp" type="number" step="0.0001" id="rateValue" dir="ltr" placeholder="0.00" oninput="updateRateTierFields();updateAdminRatePreview()">
-    <div class="fee-toggle-note" id="rateValueHint"></div>
-    <div class="mswitch-row rate-tier-toggle"><span><b>لێبڕینی پەلەیی</b><small>تەنها بۆ ئەم ڕێڕەوەی ناردن → وەرگرتن</small></span><label class="mswitch"><input type="checkbox" id="rateTierEnabled" onchange="updateRateTierFields();updateAdminRatePreview()"><span class="track"></span></label></div>
-    <section id="rateTierFields" class="rate-tier-fields" hidden>
-      <div class="modal-row"><div><label class="modal-lbl" for="rateTierLimit">تا ئەم بڕەیە (IQD)</label><input class="minp" type="number" id="rateTierLimit" min="1000" max="1000000000" step="1" value="500000" dir="ltr" oninput="updateAdminRatePreview()"></div>
-      <div><label class="modal-lbl" for="rateTierLow">لێبڕین تا سنوور (%)</label><input class="minp" type="number" id="rateTierLow" min="0" max="100" step="0.01" placeholder="ڕێژەی خۆت بنووسە" dir="ltr" oninput="updateAdminRatePreview()"></div></div>
-      <label class="modal-lbl" for="rateTierHigh">لێبڕین لەسەر سنوور (%)</label><input class="minp" type="number" id="rateTierHigh" min="0" max="100" step="0.01" placeholder="ڕێژەی خۆت بنووسە" dir="ltr" oninput="updateAdminRatePreview()">
-      <div class="fee-toggle-note">خودی بڕی سنوور لە پلەی یەکەمە؛ تەنها بڕی زیاتر دەچێتە پلەی دووەم. سنوور بەپێی بڕی دیناری ناردنە.</div>
-    </section>
-    <section class="rate-example"><label class="modal-lbl" for="adminRateExample">نموونەی بڕی ناردن</label><input class="minp" type="number" id="adminRateExample" value="100000" min="1" dir="ltr" oninput="updateAdminRatePreview()"><output id="adminRatePreview" dir="ltr"></output><p>ئەمە نموونەی ئەم ڕێگایەیە؛ حمولەی جزدانەکانی تر ناگۆڕێت.</p></section>
+    <input class="minp" type="number" step="0.0001" id="rateValue" dir="ltr" placeholder="0.00" oninput="updateAdminRatePreview()">
+    <div class="fee-toggle-note" id="rateValueHint"></div><section class="rate-example"><label class="modal-lbl" for="adminRateExample">نموونەی بڕی ناردن</label><input class="minp" type="number" id="adminRateExample" value="100000" min="1" dir="ltr" oninput="updateAdminRatePreview()"><output id="adminRatePreview" dir="ltr"></output><p>ئەمە نموونەی ئەم ڕێگایەیە؛ حمولەی جزدانەکانی تر ناگۆڕێت.</p></section>
     <div class="mswitch-row">
       <span>چالاکە (بەکاردەهێنرێت لە ئەپدا)</span>
       <label class="mswitch"><input type="checkbox" id="rateActive" checked><span class="track"></span></label>
@@ -948,7 +940,19 @@
         <input class="minp" id="pairBulkValue" type="number" step="0.0001" dir="ltr" placeholder="بەها">
         <button type="button" class="act-btn dark" onclick="applyPairBulk()"><i class="fas fa-bolt"></i> بۆ هەمووی</button>
       </div>
-      </details><div class="pair-list" id="pairListWrap"></div>
+      </details>
+      <details class="wallet-advanced"><summary>ڕێژەی جیاواز بەپێی بڕ بۆ هەموو ڕێگا کراوەکانی ئەم ئاراستەیە</summary><div class="pair-tier-bulk">
+        <small>بڕ و هەردوو ڕێژەکە خۆت دیاری دەکەیت. ئاراستەکە لە تابەکانی سەرەوە هەڵبژێرە («ناردن بۆ» یان «وەرگرتن لە»). ڕێژەی تاکی ڕێگاکان وەک خۆی دەمێنێتەوە و تەنها کاتێک بەکاردێت کە ئەم پلەیە چالاک بێت.</small>
+        <div class="pair-tier-grid">
+          <label class="pair-tier-f"><small>تا بڕی (IQD)</small><input class="minp" id="pairTierBulkLimit" type="number" min="1000" step="1" dir="ltr" inputmode="numeric" placeholder="بڕی سنوور"></label>
+          <label class="pair-tier-f"><small>حمولە تا ئەو بڕە %</small><input class="minp" id="pairTierBulkLow" type="number" min="0" max="100" step="0.0001" dir="ltr" inputmode="decimal" placeholder="%"></label>
+          <label class="pair-tier-f"><small>حمولە سەروو %</small><input class="minp" id="pairTierBulkHigh" type="number" min="0" max="100" step="0.0001" dir="ltr" inputmode="decimal" placeholder="%"></label>
+        </div>
+        <div class="pair-tier-actions">
+          <button type="button" class="act-btn dark" onclick="applyPairTierBulk()"><i class="fas fa-layer-group"></i> جێبەجێکردن بۆ هەمووی</button>
+          <button type="button" class="act-btn" onclick="clearPairTierBulk()"><i class="fas fa-xmark"></i> لابردنی پلە لە هەمووی</button>
+        </div>
+      </div></details><div class="pair-list" id="pairListWrap"></div>
     </div>
 
     </section><p id="walletSaveError" role="alert" style="color:var(--rd);font-size:13px"></p>
@@ -1253,13 +1257,13 @@
   </div>
   <script src="assets/js/exchange-payout-rounding.js?v=1"></script>
   <script src="assets/js/exchange-live.js?v=1"></script>
-<script src="assets/js/admin.js?v=30"></script>
+<script src="assets/js/admin.js?v=31"></script>
 <script src="assets/js/admin-contracts.js?v=2"></script>
   <script src="assets/js/exchange-staff.js?v=8"></script>
   <script src="assets/js/exchange-balance-admin.js?v=8"></script>
   <script src="assets/js/exchange-balance-manual.js?v=1"></script>
   <script src="assets/js/exchange-refund-report.js?v=2"></script>
-  <script src="assets/js/exchange-insights.js?v=6"></script>
-  <script src="assets/js/exchange-profit.js?v=5"></script><script src="assets/js/exchange-admin-workspace.js?v=2"></script><script src="assets/js/track.js?v=3"></script>
+  <script src="assets/js/exchange-insights.js?v=7"></script>
+  <script src="assets/js/exchange-profit.js?v=5"></script><script src="assets/js/exchange-admin-workspace.js?v=3"></script><script src="assets/js/track.js?v=3"></script>
 </body>
 </html>

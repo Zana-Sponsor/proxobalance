@@ -3154,3 +3154,8 @@ html body #mainApp #pageProfile .pfx-card.pfx-balance .bx-amount .bx-num { overf
 html body #mainApp #pageProfile .pfx-card.pfx-balance .bx-amount .bx-cur {
   flex: 0 0 auto; font-size: 13px; font-weight: 500; letter-spacing: .6px; color: #64748b; text-transform: uppercase;
 }
+
+/* Amount-tiered fee note under the transaction breakdown */
+.xc-tier-hint { margin: -2px 0 2px; padding: 0 2px; font-size: 11.5px; line-height: 1.6; color: var(--v2-muted, #64748b); text-align: start; }
+html[data-theme="dark"] .xc-tier-hint { color: rgba(255,255,255,.66); }
+.rate-card .rate-tier { margin-top: 2px; opacity: .85; }

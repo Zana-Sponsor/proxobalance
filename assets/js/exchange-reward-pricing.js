@@ -60,5 +60,23 @@
   function scopeLabel(scope){
     return scope==='korek'?'کۆڕەک':scope==='asiacell'?'ئاسیاسێڵ':'جزدانەکان';
   }
-  root.ProxoRewardPricing=Object.freeze({quote,routeScope,scopeLabel});
+  // Amount-tiered fees: up to the limit (inclusive) the low percent applies, above it the high percent.
+  // Returns a plain {type,value} so quote() stays unchanged; a route without an enabled tier is returned as is.
+  function tierOf(rate){
+    const t=rate&&rate.tier;
+    if(!t||!(Number(t.limit)>0)||!Number.isFinite(Number(t.low))||!Number.isFinite(Number(t.high)))return null;
+    return {limit:Number(t.limit),low:Number(t.low),high:Number(t.high)};
+  }
+  function tierPercent(rate,amount){
+    const t=tierOf(rate);
+    return t?(Number(amount)<=t.limit?t.low:t.high):null;
+  }
+  function effectiveRate(rate,amount){
+    const t=tierOf(rate);
+    if(!t||(rate.type!=='fee_percent'&&rate.type!=='multiplier'))return {type:rate.type,value:rate.value};
+    const pct=tierPercent(rate,amount);
+    // string arithmetic via toFixed keeps 1 - 2.2/100 exactly 0.978 (same as the database's numeric)
+    return {type:rate.type,value:rate.type==='fee_percent'?pct:Number((1-pct/100).toFixed(10))};
+  }
+  root.ProxoRewardPricing=Object.freeze({quote,routeScope,scopeLabel,effectiveRate,tierOf,tierPercent});
 })(globalThis);

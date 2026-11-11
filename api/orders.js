@@ -25,22 +25,29 @@ function cleanReceiptUrl(value) {
   } catch { return null; }
 }
 
-function effectiveRate(amount, rate, fromMethod) {
-  if (rate.fee_tier_enabled !== true) return rate;
+// Amount-tiered fees: up to the limit (inclusive) the low percent applies, above it the high percent.
+// A route without an enabled tier keeps its stored rate_value exactly as it is.
+function effectiveRateValue(rate, amount) {
+  if (!rate.fee_tier_enabled) return Number(rate.rate_value);
   const limit = Number(rate.fee_tier_limit_iqd);
   const low = Number(rate.fee_tier_low_percent);
   const high = Number(rate.fee_tier_high_percent);
-  const feeLikeMultiplier = rate.rate_type === 'multiplier' && Number(rate.rate_value) <= 1;
-  if ((rate.rate_type !== 'fee_percent' && !feeLikeMultiplier) || fromMethod === 'USDT' || fromMethod === 'AccountBalance' ||
-      !Number.isSafeInteger(limit) || limit < 1000 || limit > 1_000_000_000 ||
-      !Number.isFinite(low) || low < 0 || low > 100 || !Number.isFinite(high) || high < 0 || high > 100) {
-    throw Object.assign(new Error('Invalid route fee tier configuration'), { status: 409 });
+  const routeMethods = [rate.from_method, rate.to_method].filter(Boolean);
+  if (![limit, low, high].every(Number.isFinite) || limit <= 0 || low < 0 || low > 100 || high < 0 || high > 100 ||
+      rate.fee_tier_low_percent == null || rate.fee_tier_high_percent == null ||
+      routeMethods.some(method => method === 'USDT' || method === 'AccountBalance')) {
+    throw Object.assign(new Error('Invalid fee tier'), { status: 409 });
   }
-  return { ...rate, rate_type: 'fee_percent', rate_value: amount <= limit ? low : high };
+  const percent = amount <= limit ? low : high;
+  if (rate.rate_type === 'fee_percent') return percent;
+  if (rate.rate_type === 'multiplier' && Number(rate.rate_value) >= 0 && Number(rate.rate_value) <= 1) {
+    return Number((1 - percent / 100).toFixed(10));
+  }
+  throw Object.assign(new Error('Invalid fee tier route'), { status: 409 });
 }
 
 function calculateTotal(amount, rate) {
-  const value = Number(rate.rate_value);
+  const value = effectiveRateValue(rate, amount);
   if (!Number.isFinite(value) || value < 0) throw Object.assign(new Error('Invalid exchange rate'), { status: 409 });
   if (rate.rate_type === 'multiplier') return amount * value;
   if (rate.rate_type === 'fee_percent') return amount - (amount * value / 100);
@@ -231,7 +238,7 @@ export default withSecurity(async (req, res, { context, user }) => {
   if (!balanceSource && (!receiptUrl || !receiptHash)) return json(res, 422, { error: 'Receipt is required' });
 
   const rates = await serviceFetch(
-    `/rest/v1/ex_rates?from_method=eq.${encodeURIComponent(fromMethod)}&to_method=eq.${encodeURIComponent(toMethod)}&is_active=eq.true&select=rate_type,rate_value,fee_tier_enabled,fee_tier_limit_iqd,fee_tier_low_percent,fee_tier_high_percent&limit=1`
+    `/rest/v1/ex_rates?from_method=eq.${encodeURIComponent(fromMethod)}&to_method=eq.${encodeURIComponent(toMethod)}&is_active=eq.true&select=from_method,to_method,rate_type,rate_value,fee_tier_enabled,fee_tier_limit_iqd,fee_tier_low_percent,fee_tier_high_percent&limit=1`
   );
   const rate = rates?.[0];
   if (!rate) return json(res, 409, { error: 'This exchange route is closed' });
@@ -286,7 +293,7 @@ export default withSecurity(async (req, res, { context, user }) => {
     return json(res, 409, RECEIPT_USED);
   }
 
-  const total = Math.floor(calculateTotal(amount, effectiveRate(amount, rate, fromMethod)));
+  const total = Math.floor(calculateTotal(amount, rate));
   const payload = {
     user_id: user.id,
     from_method: fromMethod,
@@ -340,4 +347,4 @@ export default withSecurity(async (req, res, { context, user }) => {
   }
 }, { auth: 'required', methods: ['POST', 'PATCH'] });
 
-export { effectiveRate, calculateTotal };
+export { effectiveRateValue, calculateTotal };
