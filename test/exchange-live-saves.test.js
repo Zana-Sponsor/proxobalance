@@ -72,7 +72,7 @@ function wallet(){
   adminDbMessage:e=>e.message,handleDbWriteError:async()=>{},showToast:(msg,type)=>toasts.push({msg,type}),
   renderWalletsGrid(){},closeMo:id=>calls.push({closed:id}),loadWalletsAdmin:async()=>{}});
  vm.runInContext(src.slice(src.indexOf('async function saveWallet(){'),src.indexOf('// ═══ PER-PAIR ROUTES & FEES'))+
-  src.slice(src.indexOf('const PAIR_TIER_LIMIT'),src.indexOf('function switchPairTab('))+
+  src.slice(src.indexOf('function fmtPct('),src.indexOf('function switchPairTab('))+
   src.slice(src.indexOf('function walletPairRows('),src.indexOf('// ── Original admin module 5')),c);
  return {c,el,calls,toasts,respond:r=>{response=r;},fail:e=>{error=e;}};
 }
@@ -100,29 +100,42 @@ test('a label-only wallet edit does not rewrite unchanged fees',async()=>{
  const p=wallet();p.c._pairDraft.out.FIB.value='2';await p.c.saveWallet();
  assert.equal(p.calls[0].args.p_routes.length,0);
 });
-test('amount-tiered fees are saved with the route and stay when only a label changes',async()=>{
- const p=wallet();p.c._pairDraft.out.FIB.tier={on:true,limit:'500000',low:'2',high:'1'};await p.c.saveWallet();
+const BR3=[{upTo:'200000',percent:'1'},{upTo:'500000',percent:'2'},{upTo:'',percent:'3'}];
+const BR3_DB=[{up_to:200000,percent:1},{up_to:500000,percent:2},{up_to:null,percent:3}];
+test('several amount brackets are saved with the route and stay when only a label changes',async()=>{
+ const p=wallet();p.c._pairDraft.out.FIB.tier={on:true,rows:BR3.map(r=>({...r}))};await p.c.saveWallet();
  const row=p.calls[0].args.p_routes[0];
- assert.equal(row.fee_tier_enabled,true);assert.equal(row.fee_tier_limit_iqd,500000);
- assert.equal(row.fee_tier_low_percent,2);assert.equal(row.fee_tier_high_percent,1);
- const q=wallet();q.c.allPairs[0]={...q.c.allPairs[0],fee_tier_enabled:true,fee_tier_limit_iqd:500000,fee_tier_low_percent:2,fee_tier_high_percent:1};
- q.c._pairDraft.out.FIB={on:true,type:'fee_percent',value:'2',tier:{on:true,limit:'500000',low:'2',high:'1'}};await q.c.saveWallet();
+ assert.deepEqual(JSON.parse(JSON.stringify(row.fee_brackets)),BR3_DB);assert.equal(row.fee_tier_enabled,false);
+ const q=wallet();q.c.allPairs[0]={...q.c.allPairs[0],fee_brackets:BR3_DB};
+ q.c._pairDraft.out.FIB={on:true,type:'fee_percent',value:'2',tier:{on:true,rows:BR3.map(r=>({...r}))}};await q.c.saveWallet();
  assert.equal(q.calls[0].args.p_routes.length,0);
- const r=wallet();r.c.allPairs[0]={...r.c.allPairs[0],fee_tier_enabled:true,fee_tier_limit_iqd:500000,fee_tier_low_percent:2,fee_tier_high_percent:1};
- r.c._pairDraft.out.FIB={on:true,type:'fee_percent',value:'2',tier:{on:false,limit:'500000',low:'2',high:'1'}};await r.c.saveWallet();
- assert.equal(r.calls[0].args.p_routes[0].fee_tier_enabled,false);
+ const r=wallet();r.c.allPairs[0]={...r.c.allPairs[0],fee_brackets:BR3_DB};
+ r.c._pairDraft.out.FIB={on:true,type:'fee_percent',value:'2',tier:{on:false,rows:BR3.map(x=>({...x}))}};await r.c.saveWallet();
+ assert.equal(r.calls[0].args.p_routes[0].fee_brackets,null);
+ // an old two-step tier is read as two brackets and is not rewritten when nothing changed
+ const t=wallet();t.c.allPairs[0]={...t.c.allPairs[0],fee_tier_enabled:true,fee_tier_limit_iqd:500000,fee_tier_low_percent:2,fee_tier_high_percent:1};
+ t.c._pairDraft.out.FIB={on:true,type:'fee_percent',value:'2',tier:{on:true,rows:[{upTo:'500000',percent:'2'},{upTo:'',percent:'1'}]}};await t.c.saveWallet();
+ assert.equal(t.calls[0].args.p_routes.length,0);
 });
-test('an incomplete or out-of-range amount tier stops before any wallet write',async()=>{
- for(const tier of [{on:true,limit:'999',low:'2',high:'1'},{on:true,limit:'500000',low:'',high:'1'},{on:true,limit:'500000',low:'2',high:'101'},{on:true,limit:'500000.5',low:'2',high:'1'}]){
-  const p=wallet();p.c._pairDraft.out.FIB.tier=tier;await p.c.saveWallet();
+test('incomplete, unordered or out-of-range amount brackets stop before any wallet write',async()=>{
+ const bad=[
+  [{upTo:'999',percent:'2'},{upTo:'',percent:'1'}],
+  [{upTo:'500000',percent:''},{upTo:'',percent:'1'}],
+  [{upTo:'500000',percent:'2'},{upTo:'',percent:'101'}],
+  [{upTo:'500000.5',percent:'2'},{upTo:'',percent:'1'}],
+  [{upTo:'500000',percent:'2'},{upTo:'200000',percent:'1'},{upTo:'',percent:'1'}],
+  [{upTo:'',percent:'2'}]];
+ for(const rows of bad){
+  const p=wallet();p.c._pairDraft.out.FIB.tier={on:true,rows};await p.c.saveWallet();
   assert.equal(p.calls.length,0);assert.ok(p.el('walletSaveError').textContent);
  }
 });
-test('a tier is ignored for fixed fees and USDT routes instead of being sent',async()=>{
- const p=wallet();p.c._pairDraft.out.FIB={on:true,type:'fee_fixed',value:'500',tier:{on:true,limit:'500000',low:'2',high:'1'}};await p.c.saveWallet();
- assert.equal(p.calls[0].args.p_routes[0].fee_tier_enabled,false);
- const q=wallet();q.c._pairDraft.out.USDT={on:true,type:'fee_percent',value:'2',tier:{on:true,limit:'500000',low:'2',high:'1'}};await q.c.saveWallet();
- assert.equal(q.calls[0].args.p_routes.find(r=>r.to_method==='USDT').fee_tier_enabled,false);
+test('brackets are ignored for fixed fees and USDT routes instead of being sent',async()=>{
+ const tier=()=>({on:true,rows:BR3.map(r=>({...r}))});
+ const p=wallet();p.c._pairDraft.out.FIB={on:true,type:'fee_fixed',value:'500',tier:tier()};await p.c.saveWallet();
+ assert.ok(!p.calls[0].args.p_routes[0].fee_brackets);
+ const q=wallet();q.c._pairDraft.out.USDT={on:true,type:'fee_percent',value:'2',tier:tier()};await q.c.saveWallet();
+ assert.ok(!q.calls[0].args.p_routes.find(r=>r.to_method==='USDT').fee_brackets);
 });
 test('a temporary permission read failure does not report revoked admin access during live refresh',async()=>{
  const src=read('assets/js/admin.js');

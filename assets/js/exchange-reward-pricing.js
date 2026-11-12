@@ -60,35 +60,38 @@
   function scopeLabel(scope){
     return scope==='korek'?'کۆڕەک':scope==='asiacell'?'ئاسیاسێڵ':'جزدانەکان';
   }
-  // Amount-tiered fees: each max_iqd is inclusive; the final bracket is open-ended.
-  // Legacy {limit,low,high} settings are normalized into the same bracket list.
+  // Amount-tiered fees: the first bracket whose upper limit is >= the amount (inclusive) applies; the last
+  // bracket has no limit. A route with two brackets and the old {limit,low,high} shape are the same thing.
+  // Returns a plain {type,value} so quote() stays unchanged; a route without a tier is returned as is.
   function tierOf(rate){
-    const dbBrackets=rate&&(Array.isArray(rate.fee_brackets)&&rate.fee_brackets.length?rate.fee_brackets:rate.fee_tiers);
-    const t=rate&&(Array.isArray(dbBrackets)&&dbBrackets.length?dbBrackets:rate.tier?.tiers);
-    if(Array.isArray(t)&&t.length>=2&&t.length<=12){
-      let previous=0;
-      const tiers=[];
-      for(let i=0;i<t.length;i++){
-        const max=t[i]?.max_iqd,fee=Number(t[i]?.fee_percent);
-        if(!Number.isFinite(fee)||fee<0||fee>100||(i===t.length-1?max!==null:!Number.isSafeInteger(Number(max))||Number(max)<1||Number(max)>1000000000||Number(max)<=previous))return null;
-        if(i<t.length-1)previous=Number(max);
-        tiers.push({max_iqd:max===null?null:Number(max),fee_percent:fee});
-      }
-      return {tiers};
+    const t=rate&&rate.tier;
+    if(!t)return null;
+    let list=null;
+    if(Array.isArray(t.brackets)&&t.brackets.length>=2){
+      list=t.brackets.map(function(x){return {upTo:x.upTo==null?null:Number(x.upTo),percent:Number(x.percent)};});
+    }else if(Number(t.limit)>0&&Number.isFinite(Number(t.low))&&Number.isFinite(Number(t.high))){
+      list=[{upTo:Number(t.limit),percent:Number(t.low)},{upTo:null,percent:Number(t.high)}];
     }
-    const legacy=rate&&rate.tier?rate.tier:(rate?.fee_tier_enabled?{limit:rate.fee_tier_limit_iqd,low:rate.fee_tier_low_percent,high:rate.fee_tier_high_percent}:null);
-    if(!legacy||!(Number(legacy.limit)>0)||!Number.isFinite(Number(legacy.low))||!Number.isFinite(Number(legacy.high)))return null;
-    return {tiers:[{max_iqd:Number(legacy.limit),fee_percent:Number(legacy.low)},{max_iqd:null,fee_percent:Number(legacy.high)}]};
+    if(!list)return null;
+    for(let i=0;i<list.length;i++){
+      const x=list[i],last=i===list.length-1;
+      if(!Number.isFinite(x.percent)||(last?x.upTo!==null:!(x.upTo>0)))return null;
+    }
+    const out={brackets:list};
+    if(list.length===2){out.limit=list[0].upTo;out.low=list[0].percent;out.high=list[1].percent;}
+    return out;
   }
   function tierPercent(rate,amount){
     const t=tierOf(rate);
-    if(!t||!Number.isFinite(Number(amount)))return null;
-    const match=t.tiers.find(bracket=>bracket.max_iqd===null||Number(amount)<=bracket.max_iqd);
-    return match?match.fee_percent:null;
+    if(!t)return null;
+    const n=Number(amount);
+    for(const x of t.brackets)if(x.upTo===null||n<=x.upTo)return x.percent;
+    return null;
   }
   function effectiveRate(rate,amount){
+    const t=tierOf(rate);
+    if(!t||(rate.type!=='fee_percent'&&rate.type!=='multiplier'))return {type:rate.type,value:rate.value};
     const pct=tierPercent(rate,amount);
-    if(pct===null||(rate.type!=='fee_percent'&&rate.type!=='multiplier'))return {type:rate.type,value:rate.value};
     // string arithmetic via toFixed keeps 1 - 2.2/100 exactly 0.978 (same as the database's numeric)
     return {type:rate.type,value:rate.type==='fee_percent'?pct:Number((1-pct/100).toFixed(10))};
   }

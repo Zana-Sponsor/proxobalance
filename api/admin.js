@@ -240,16 +240,14 @@ export function assertStaffAction(profile,action){
   if(action==='set_ban' && profile.role!=='super_admin')throw {status:403,code:'super_admin_required',message:'SUPER_ADMIN_REQUIRED'};
   if(['error_log_summary','list_error_logs','resolve_error_log','resolve_all_error_logs'].includes(action)&&profile.role!=='super_admin')throw {status:403,code:'super_admin_required',message:'SUPER_ADMIN_REQUIRED'};
   if(profile.role==='super_admin' || profile.staff_permissions==null)return;
-  if(['update_order','delete_order_permanently'].includes(action))
-    throw {status:403,code:'full_admin_required',message:'ئەم کارە تەنها بۆ ئەدمینی تەواوە'};
   const permissions={
     ping:'view',account_balances:'view',balance_dashboard:'view',balance_lookup_order:'view',
     list_order_correction_history:'view',list_rewards:'view',
     approve_order:'approve_orders',reject_order:'approve_orders',request_order_correction:'approve_orders',
     save_order_note:'approve_orders',save_payout_receipt:'approve_orders',
-    update_order:'approve_orders',set_order_status:'approve_orders',delete_order_permanently:'approve_orders',
     balance_credit_refund:'refunds',balance_credit_shortfall:'refunds',balance_refund_report:'refunds',
     balance_manual_find:'refunds',balance_manual_overview:'refunds',balance_manual_adjust:'refunds',
+    order_set_status:'approve_orders',order_delete:'approve_orders',order_actions_list:'view',
     balance_cancel_payout:'refunds',balance_abort_processing:'refunds',
     balance_claim_payout:'approve_orders',balance_mark_payout_paid:'approve_orders',
     grant_reward:'manage_rewards',revoke_reward:'manage_rewards'
@@ -278,8 +276,114 @@ function manualBalanceError(error){
   return {status:500,code:'manual_balance_failed',message:'کردارەکە ئەنجام نەدرا؛ دووبارە هەوڵ بدەرەوە'};
 }
 
+const ORDER_ADMIN_STATUSES=['چاوەڕوانە','پێویستی بە ڕاستکردنەوەیە','ڕاستکراوەتەوە','پەسەندکرا','ڕەتکرا'];
+const ORDER_EDIT_FIELDS=['from_method','to_method','amount','total','phone','sender_name','sender_phone','receipt_url','receipt_hash',
+  'payout_receipt_url','transaction_reference','extra_info','admin_note','order_code','created_at','decided_at'];
+const ORDER_FIELD_LABELS={from_method:'ڕێگای ناردن',to_method:'ڕێگای وەرگرتن',amount:'بڕ',total:'کۆی وەرگیراو',phone:'ژمارەی وەرگر',
+  sender_name:'ناوی نێرەر',sender_phone:'ژمارەی نێرەر',receipt_url:'وێنەی وەسڵ',receipt_hash:'هاشی وەسڵ',payout_receipt_url:'وەسڵی پارەدان',
+  transaction_reference:'ژمارەی مامەڵە',extra_info:'زانیاری زیادە',admin_note:'تێبینی ئادمین',order_code:'کۆدی مامەڵە',
+  created_at:'کاتی دروستکردن',decided_at:'کاتی بڕیار'};
+const ORDER_ADMIN_ERRORS=[
+  ['ADMIN_REQUIRED',403,'staff_permission_required','مۆڵەتی ئەنجامدانی ئەم کارەت نییە'],
+  ['ORDER_NOT_FOUND',404,'order_not_found','ئەم مامەڵەیە نەدۆزرایەوە (لەوانەیە پێشتر سڕابێتەوە)'],
+  ['STATUS_INVALID',400,'invalid_status','دۆخی هەڵبژێردراو دروست نییە'],
+  ['NO_CHANGES',400,'no_changes','هیچ گۆڕانکارییەک نەکراوە'],
+  ['REASON_TOO_LONG',400,'reason_too_long','هۆکار دەبێت لە 500 پیت زیاتر نەبێت'],
+  ['ORDER_SETTLED_LOCKED',409,'order_settled_locked','ئەم مامەڵەیە پارەدانی تێدا کراوە و دۆخەکەی ناگۆڕدرێت؛ تەنها دەتوانیت لای بەکارھێنەر بیشاریتەوە'],
+  ['ORDER_REFUNDED_LOCKED',409,'order_refunded_locked','ئەم مامەڵەیە گەڕاندنەوەی تێدا کراوە و دۆخەکەی ناگۆڕدرێت'],
+  ['ORDER_SHORTFALL_LOCKED',409,'order_shortfall_locked','ئەم مامەڵەیە قەرەبووی کەمی تێدا کراوە و دۆخەکەی ناگۆڕدرێت'],
+  ['DUPLICATE_RECEIPT',409,'duplicate_receipt','وەسڵی ئەم مامەڵەیە لە مامەڵەیەکی چالاکی تر بەکارھاتووە'],
+  ['DUPLICATE_VALUE',409,'duplicate_value','ئەم کۆد/وەسڵە پێشتر لە مامەڵەیەکی تر بەکارھاتووە'],
+  ['SETTLEMENT_ORDER_IMMUTABLE',409,'order_settled_locked','ئەم مامەڵەیە پارەدانی تێدا کراوە و زانیارییە دارایییەکانی ناگۆڕدرێن'],
+  ['SETTLEMENT_RECEIPT_LOCKED',409,'order_settled_locked','وەسڵی پارەدانی ئەم مامەڵەیە داخراوە'],
+  ['SHORTFALL_ORDER_IMMUTABLE',409,'order_shortfall_locked','ئەم مامەڵەیە قەرەبووی کەمی تێدا کراوە و زانیارییە دارایییەکانی ناگۆڕدرێن'],
+  ['REFUNDED_ORDER_IMMUTABLE',409,'order_refunded_locked','ئەم مامەڵەیە گەڕاندنەوەی تێدا کراوە و ناگۆڕدرێت'],
+  ['REFUNDED_ORDER_CANNOT_BE_APPROVED',409,'order_refunded_locked','مامەڵەیەکی گەڕێندراوە ناتوانرێت پەسەند بکرێت'],
+  ['BALANCE_ORDER_FINANCIALS_IMMUTABLE',409,'balance_order_locked','بڕ و ڕێگاکانی مامەڵەی باڵانس ناگۆڕدرێن؛ تەنها زانیاری تر دەگۆڕدرێت'],
+  ['CHECK_FAILED:ex_orders_min_amount_check',400,'amount_too_low','کەمترین بڕ 10,000 دینارە'],
+  ['CHECK_FAILED',400,'invalid_field','یەکێک لە بەهاکان دروست نییە'],
+  ['ORDER_CODE_INVALID',400,'invalid_order_code','کۆدی مامەڵە دەبێت بە P دەست پێ بکات و لەگەڵ 11 پیت/ژمارەی گەورە تەواو بێت (وەک PABC123XYZ45)'],
+  ['FIELD_REQUIRED',400,'field_required','ئەم خانەیە نابێت بەتاڵ بێت'],
+  ['FIELD_TOO_LONG',400,'field_too_long','تێکستەکە زۆر درێژە'],
+  ['FIELD_INVALID',400,'invalid_field','یەکێک لە بەهاکان دروست نییە'],
+  ['FIELD_NOT_ALLOWED',400,'field_not_allowed','ئەم خانەیە ناگۆڕدرێت'],
+  ['ALREADY_HIDDEN',409,'already_hidden','ئەم مامەڵەیە پێشتر لای بەکارھێنەر شاردراوەتەوە'],
+  ['NOT_HIDDEN',409,'not_hidden','ئەم مامەڵەیە لای بەکارھێنەر شاردراوە نییە'],
+  ['MODE_INVALID',400,'invalid_mode','جۆری کردارەکە دروست نییە'],
+  ['ORDER_HAS_FINANCIAL_RECORDS',409,'order_has_financial_records','ئەم مامەڵەیە تۆماری دارایی پێوە بەستراوە (پارەدان/گەڕاندنەوە/باڵانس) و بە تەواوی ناسڕدرێتەوە؛ دەتوانیت لای بەکارھێنەر بیشاریتەوە']
+];
+function orderAdminError(error){
+  const message=String(error?.message||'');
+  for(const [needle,status,code,text] of ORDER_ADMIN_ERRORS)
+    if(message.includes(needle)){
+      let out=text;
+      if(needle==='FIELD_REQUIRED'||needle==='FIELD_TOO_LONG'||needle==='FIELD_INVALID'){
+        const m=message.match(/(?:FIELD_REQUIRED|FIELD_TOO_LONG|FIELD_INVALID):([a-z_]+)/);
+        if(m&&ORDER_FIELD_LABELS[m[1]])out=`${ORDER_FIELD_LABELS[m[1]]}: ${text}`;
+      }
+      return {status,code,message:out};
+    }
+  return {status:500,code:'order_admin_failed',message:'کردارەکە ئەنجام نەدرا؛ دووبارە هەوڵ بدەرەوە'};
+}
+
 // ── actions ──────────────────────────────────────────────────
 const actions = {
+  // Manual order control (status / edit / delete). Silent by design: nothing is sent to the
+  // customer unless the admin explicitly asks for it on a status change.
+  async order_set_status({order_id,status,reason,clear_reason,notify},ctx){
+    if(typeof order_id!=='string'||!UUID.test(order_id))
+      throw {status:400,code:'bad_input',message:'مامەڵەکە دروست نییە'};
+    if(!ORDER_ADMIN_STATUSES.includes(status))
+      throw {status:400,code:'invalid_status',message:'دۆخی هەڵبژێردراو دروست نییە'};
+    const text=typeof reason==='string'?reason.trim():'';
+    if(text.length>500)throw {status:400,code:'reason_too_long',message:'هۆکار دەبێت لە 500 پیت زیاتر نەبێت'};
+    const {data,error}=await db.rpc('ex_admin_order_set_status',{
+      p_order:order_id.toLowerCase(),p_status:status,p_reason:text||null,
+      p_clear_reason:clear_reason===true,p_notify:notify===true,p_admin_id:ctx.user.id
+    });
+    if(error)throw orderAdminError(error);
+    return data;
+  },
+  async order_update({order_id,fields,reason},ctx){
+    if(typeof order_id!=='string'||!UUID.test(order_id))
+      throw {status:400,code:'bad_input',message:'مامەڵەکە دروست نییە'};
+    if(!fields||typeof fields!=='object'||Array.isArray(fields))
+      throw {status:400,code:'bad_input',message:'زانیارییەکان دروست نین'};
+    const clean={};
+    for(const [k,v] of Object.entries(fields)){
+      if(!ORDER_EDIT_FIELDS.includes(k))throw {status:400,code:'field_not_allowed',message:'ئەم خانەیە ناگۆڕدرێت'};
+      if(v!==null&&!['string','number'].includes(typeof v))throw {status:400,code:'invalid_field',message:'بەهای خانەیەک دروست نییە'};
+      if(typeof v==='number'&&!Number.isFinite(v))throw {status:400,code:'invalid_field',message:'بەهای خانەیەک دروست نییە'};
+      clean[k]=v;
+    }
+    const text=typeof reason==='string'?reason.trim().slice(0,500):'';
+    const {data,error}=await db.rpc('ex_admin_order_update',{
+      p_order:order_id.toLowerCase(),p_fields:clean,p_reason:text||null,p_admin_id:ctx.user.id
+    });
+    if(error)throw orderAdminError(error);
+    return data;
+  },
+  async order_delete({order_id,mode,reason},ctx){
+    if(typeof order_id!=='string'||!UUID.test(order_id))
+      throw {status:400,code:'bad_input',message:'مامەڵەکە دروست نییە'};
+    if(!['user','restore','permanent'].includes(mode))
+      throw {status:400,code:'invalid_mode',message:'جۆری کردارەکە دروست نییە'};
+    const text=typeof reason==='string'?reason.trim().slice(0,500):'';
+    const {data,error}=await db.rpc('ex_admin_order_delete',{
+      p_order:order_id.toLowerCase(),p_mode:mode,p_reason:text||null,p_admin_id:ctx.user.id
+    });
+    if(error)throw orderAdminError(error);
+    return data;
+  },
+  async order_actions_list({order_id},ctx){
+    if(typeof order_id!=='string'||!UUID.test(order_id))
+      throw {status:400,code:'bad_input',message:'مامەڵەکە دروست نییە'};
+    const {data,error}=await db.from('ex_order_admin_actions')
+      .select('id,action,reason,notified,old_data,new_data,created_at,admin_id')
+      .eq('order_id',order_id.toLowerCase()).order('created_at',{ascending:false}).limit(30);
+    if(error)throw orderAdminError(error);
+    return data||[];
+  },
   async save_order_note({order_id,admin_note},ctx){
     const note=String(admin_note||'').trim();
     if(!order_id||note.length>500)throw {status:400,code:'bad_note',message:'Invalid order note'};
@@ -287,85 +391,6 @@ const actions = {
     if(error||!data)throw {status:404,code:'not_found',message:'Order not found'};
     await audit(ctx.user.id,'save_order_note',data.user_id,data.order_code);
     return data;
-  },
-  async update_order({order_id,changes,reason},ctx){
-    if(typeof order_id!=='string'||!UUID.test(order_id)||!changes||typeof changes!=='object'||Array.isArray(changes)||
-       Object.prototype.hasOwnProperty.call(changes,'status'))
-      throw {status:400,code:'invalid_order_update',message:'Check the transaction detail changes'};
-    const note=typeof reason==='string'?reason.trim().slice(0,500)||null:null;
-    const {data,error}=await db.rpc('ex_admin_order_update',{
-      p_order:order_id.toLowerCase(),p_fields:changes,p_reason:note,p_admin_id:ctx.user.id
-    });
-    if(error){
-      const message=String(error.message||'');
-      const mapped=[
-        ['ADMIN_REQUIRED',403,'staff_permission_required','مۆڵەتی دەستکاریکردنی مامەڵەت نییە'],
-        ['ORDER_NOT_FOUND',404,'order_not_found','مامەڵەکە نەدۆزرایەوە'],
-        ['FIELD_NOT_ALLOWED',400,'field_not_editable','ئەم خانەیە ناتوانرێت دەستکاری بکرێت'],
-        ['FIELDS_INVALID',400,'invalid_order_update','خانەکانی دەستکاری دروست نین'],
-        ['FIELD_REQUIRED',400,'field_required','خانەی پێویست ناتوانرێت بەتاڵ بێت'],
-        ['ORDER_CODE_INVALID',400,'invalid_order_code','کۆدی مامەڵە دروست نییە'],
-        ['DUPLICATE_VALUE',409,'duplicate_reference','ئەم بەهایە پێشتر بەکارهاتووە'],
-        ['CHECK_FAILED',400,'invalid_order_change','گۆڕانکارییەکە لەگەڵ یاساکانی مامەڵە ناگونجێت'],
-        ['NO_CHANGES',409,'no_changes','هیچ گۆڕانکارییەک نەکراوە']
-      ].find(([needle])=>message.includes(needle));
-      if(mapped)throw {status:mapped[1],code:mapped[2],message:mapped[3]};
-      throw {status:500,code:'order_update_failed',message:'نەتوانرا مامەڵەکە نوێ بکرێتەوە'};
-    }
-    const result=Array.isArray(data)?data[0]:data;
-    return result?.order||result;
-  },
-  async set_order_status({order_id,status,reason,clear_reason=false,notify_user=false},ctx){
-    if(typeof order_id!=='string'||!UUID.test(order_id)||!REVIEWABLE_ORDER_STATUSES.has(status)||
-       typeof clear_reason!=='boolean'||typeof notify_user!=='boolean')
-      throw {status:400,code:'invalid_order_status',message:'دۆخی داواکاری یان هەڵبژاردەی ئاگادارکردنەوە دروست نییە'};
-    const note=typeof reason==='string'?reason.trim().slice(0,500)||null:null;
-    const {data,error}=await db.rpc('ex_admin_order_set_status',{
-      p_order:order_id.toLowerCase(),p_status:status,p_reason:note,p_clear_reason:clear_reason,
-      p_notify:notify_user,p_admin_id:ctx.user.id
-    });
-    if(error){
-      const message=String(error.message||'');
-      const mapped=[
-        ['ADMIN_REQUIRED',403,'staff_permission_required','مۆڵەتی گۆڕینی دۆخی مامەڵەت نییە'],
-        ['ORDER_NOT_FOUND',404,'order_not_found','مامەڵەکە نەدۆزرایەوە'],
-        ['STATUS_INVALID',400,'invalid_order_status','دۆخی مامەڵە دروست نییە'],
-        ['ORDER_SETTLED_LOCKED',409,'settled_order_locked','مامەڵەی تەواوکراو ناتوانرێت بگۆڕدرێت'],
-        ['ORDER_REFUNDED_LOCKED',409,'refunded_order_locked','مامەڵەی پارەگەڕاوە ناتوانرێت بگۆڕدرێت'],
-        ['ORDER_SHORTFALL_LOCKED',409,'refunded_order_locked','مامەڵەی پارەگەڕاوە ناتوانرێت بگۆڕدرێت'],
-        ['DUPLICATE_RECEIPT',409,'duplicate_receipt','وەسڵی مامەڵەیەکی تر بەکارهاتووە'],
-        ['NO_CHANGES',409,'no_changes','هیچ گۆڕانکارییەک نەکراوە']
-      ].find(([needle])=>message.includes(needle));
-      if(mapped)throw {status:mapped[1],code:mapped[2],message:mapped[3]};
-      throw {status:500,code:'order_status_failed',message:'نەتوانرا دۆخی مامەڵە بگۆڕدرێت'};
-    }
-    const result=Array.isArray(data)?data[0]:data;
-    return result?.order?{...result.order,notification_sent:!!result.notified}:result;
-  },
-  async delete_order_permanently({order_id,confirm_order_code},ctx){
-    if(typeof order_id!=='string'||!UUID.test(order_id)||typeof confirm_order_code!=='string'||
-       !confirm_order_code.trim()||confirm_order_code.length>32)
-      throw {status:400,code:'invalid_delete_confirmation',message:'کۆدی مامەڵە دروست بنووسە بۆ پشتڕاستکردنەوە'};
-    const {data:order,error:lookupError}=await db.from('ex_orders').select('id,order_code').eq('id',order_id.toLowerCase()).maybeSingle();
-    if(lookupError||!order)throw {status:404,code:'order_not_found',message:'مامەڵەکە نەدۆزرایەوە'};
-    if(typeof order.order_code!=='string'||order.order_code.toUpperCase()!==confirm_order_code.trim().toUpperCase())
-      throw {status:400,code:'confirmation_mismatch',message:'کۆدی نووسراو لەگەڵ کۆدی مامەڵە یەک ناگرێتەوە'};
-    const {data,error}=await db.rpc('ex_admin_order_delete',{
-      p_order:order_id.toLowerCase(),p_mode:'permanent',p_reason:'Admin confirmed permanent deletion by order code',p_admin_id:ctx.user.id
-    });
-    if(error){
-      const message=String(error.message||'');
-      const mapped=[
-        ['ADMIN_REQUIRED',403,'staff_permission_required','مۆڵەتی سڕینەوەی مامەڵەت نییە'],
-        ['ORDER_NOT_FOUND',404,'order_not_found','مامەڵەکە نەدۆزرایەوە'],
-        ['ORDER_HAS_FINANCIAL_RECORDS',409,'financial_order_locked','مامەڵەی بە تۆماری دارایی، تەواوکراو یان باڵانس سڕدرێتەوە ناگرێت']
-      ].find(([needle])=>message.includes(needle));
-      if(mapped)throw {status:mapped[1],code:mapped[2],message:mapped[3]};
-      if(error.code==='23503')throw {status:409,code:'order_history_locked',message:'بەهۆی تۆماری پەیوەندیدارەوە ئەم مامەڵەیە ناتوانرێت بسڕدرێتەوە'};
-      throw {status:500,code:'order_delete_failed',message:'نەتوانرا مامەڵەکە بە هەمیشەیی بسڕدرێتەوە'};
-    }
-    const result=Array.isArray(data)?data[0]:data;
-    return {deleted:result?.mode==='permanent',id:result?.order_id||order_id};
   },
   async save_payout_receipt({order_id,payout_receipt_url},ctx){
     if(typeof order_id!=='string'||!UUID.test(order_id))

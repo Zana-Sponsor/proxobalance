@@ -25,39 +25,33 @@ function cleanReceiptUrl(value) {
   } catch { return null; }
 }
 
-// Amount-bracket fees take priority; legacy two-bracket routes remain unchanged until migrated by an admin.
-// Routes without configured brackets keep their stored rate_value exactly as it is.
+// Amount-tiered fees: up to the limit (inclusive) the low percent applies, above it the high percent.
+// A route without an enabled tier keeps its stored rate_value exactly as it is.
 function effectiveRateValue(rate, amount) {
-  let tiers = Array.isArray(rate.fee_brackets) && rate.fee_brackets.length ? rate.fee_brackets
-    : Array.isArray(rate.fee_tiers) && rate.fee_tiers.length ? rate.fee_tiers : null;
-  if (!tiers && rate.fee_tier_enabled) {
-    if (rate.fee_tier_limit_iqd == null || rate.fee_tier_low_percent == null || rate.fee_tier_high_percent == null) {
-      throw Object.assign(new Error('Invalid fee tier'), { status: 409 });
+  // Several brackets: the first bracket whose upper limit is >= the amount applies; the last has no limit.
+  if (Array.isArray(rate.fee_brackets) && rate.fee_brackets.length >= 2
+      && (rate.rate_type === 'fee_percent' || rate.rate_type === 'multiplier')) {
+    let bracketPercent = null;
+    for (const bracket of rate.fee_brackets) {
+      if (bracket.up_to === null || bracket.up_to === undefined || amount <= Number(bracket.up_to)) {
+        bracketPercent = Number(bracket.percent);
+        break;
+      }
     }
-    tiers = [{ max_iqd: Number(rate.fee_tier_limit_iqd), fee_percent: Number(rate.fee_tier_low_percent) },
-      { max_iqd: null, fee_percent: Number(rate.fee_tier_high_percent) }];
+    if (!Number.isFinite(bracketPercent)) throw Object.assign(new Error('Invalid fee tier'), { status: 409 });
+    return rate.rate_type === 'fee_percent' ? bracketPercent : Number((1 - bracketPercent / 100).toFixed(10));
   }
-  if (!tiers) return Number(rate.rate_value);
-  const routeMethods = [rate.from_method, rate.to_method].filter(Boolean);
-  if (tiers.length < 2 || tiers.length > 12 || routeMethods.some(method => method === 'USDT' || method === 'AccountBalance')) {
+  if (!rate.fee_tier_enabled) return Number(rate.rate_value);
+  const limit = Number(rate.fee_tier_limit_iqd);
+  const low = Number(rate.fee_tier_low_percent);
+  const high = Number(rate.fee_tier_high_percent);
+  if (![limit, low, high].every(Number.isFinite) || rate.fee_tier_low_percent === null || rate.fee_tier_high_percent === null) {
     throw Object.assign(new Error('Invalid fee tier'), { status: 409 });
   }
-  let previous = 0, percent = null;
-  for (let i = 0; i < tiers.length; i++) {
-    const tier = tiers[i], value = Number(tier?.fee_percent);
-    if (!tier || !Number.isFinite(value) || value < 0 || value > 100 ||
-        (i === tiers.length - 1 ? tier.max_iqd !== null : !Number.isSafeInteger(Number(tier.max_iqd)) || Number(tier.max_iqd) < 1 || Number(tier.max_iqd) > 1000000000 || Number(tier.max_iqd) <= previous)) {
-      throw Object.assign(new Error('Invalid fee tier'), { status: 409 });
-    }
-    if (i < tiers.length - 1) previous = Number(tier.max_iqd);
-    if (percent === null && (tier.max_iqd === null || amount <= Number(tier.max_iqd))) percent = value;
-  }
-  if (percent === null) throw Object.assign(new Error('Invalid fee tier'), { status: 409 });
+  const percent = amount <= limit ? low : high;
   if (rate.rate_type === 'fee_percent') return percent;
-  if (rate.rate_type === 'multiplier' && Number(rate.rate_value) >= 0 && Number(rate.rate_value) <= 1) {
-    return Number((1 - percent / 100).toFixed(10));
-  }
-  throw Object.assign(new Error('Invalid fee tier route'), { status: 409 });
+  if (rate.rate_type === 'multiplier') return Number((1 - percent / 100).toFixed(10));
+  return Number(rate.rate_value);
 }
 
 function calculateTotal(amount, rate) {
@@ -252,7 +246,7 @@ export default withSecurity(async (req, res, { context, user }) => {
   if (!balanceSource && (!receiptUrl || !receiptHash)) return json(res, 422, { error: 'Receipt is required' });
 
   const rates = await serviceFetch(
-    `/rest/v1/ex_rates?from_method=eq.${encodeURIComponent(fromMethod)}&to_method=eq.${encodeURIComponent(toMethod)}&is_active=eq.true&select=from_method,to_method,rate_type,rate_value,fee_brackets,fee_tier_enabled,fee_tier_limit_iqd,fee_tier_low_percent,fee_tier_high_percent&limit=1`
+    `/rest/v1/ex_rates?from_method=eq.${encodeURIComponent(fromMethod)}&to_method=eq.${encodeURIComponent(toMethod)}&is_active=eq.true&select=rate_type,rate_value,fee_tier_enabled,fee_tier_limit_iqd,fee_tier_low_percent,fee_tier_high_percent,fee_brackets&limit=1`
   );
   const rate = rates?.[0];
   if (!rate) return json(res, 409, { error: 'This exchange route is closed' });
@@ -360,5 +354,3 @@ export default withSecurity(async (req, res, { context, user }) => {
     throw error;
   }
 }, { auth: 'required', methods: ['POST', 'PATCH'] });
-
-export { effectiveRateValue, calculateTotal };
