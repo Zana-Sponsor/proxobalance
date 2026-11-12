@@ -1,11 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {effectiveRateValue, calculateTotal} from '../api/orders.js';
+import {effectiveRateValue, calculateTotal} from '../api-handlers/orders.js';
 
 const legacyMigration=readFileSync(new URL('../SUPABASE_EXCHANGE_ROUTE_FEE_TIERS.sql',import.meta.url),'utf8');
 const hideMigration=readFileSync(new URL('../SUPABASE_EXCHANGE_CUSTOMER_ORDER_HIDES.sql',import.meta.url),'utf8');
-const ordersApi=readFileSync(new URL('../api/orders.js',import.meta.url),'utf8');
+const ordersApi=readFileSync(new URL('../api-handlers/orders.js',import.meta.url),'utf8');
 
 test('an unconfigured route keeps its existing fee unchanged',()=>{
   const route={from_method:'FIB',to_method:'FastPay',rate_type:'fee_percent',rate_value:'2.5',fee_tier_enabled:false};

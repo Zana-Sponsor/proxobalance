@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import summaryApi from '../api/transaction-summary.js';
+import summaryApi from '../api-handlers/transaction-summary.js';
 
 const app = readFileSync(new URL('../assets/js/app.js', import.meta.url), 'utf8');
-const api = readFileSync(new URL('../api/transaction-summary.js', import.meta.url), 'utf8');
+const api = readFileSync(new URL('../api-handlers/transaction-summary.js', import.meta.url), 'utf8');
 const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const css = readFileSync(new URL('../assets/css/transaction-summary.css', import.meta.url), 'utf8');
 const vercel = JSON.parse(readFileSync(new URL('../vercel.json', import.meta.url), 'utf8'));

@@ -2,17 +2,19 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-import adminHandler from './api/admin.js';
-import errorLogHandler from './api/error-log.js';
-import supportCasesHandler from './api/support-cases.js';
-import notifyOrderHandler from './api/notify-order.js';
-import ordersHandler from './api/orders.js';
-import balanceHandler from './api/balance.js';
-import publicHandler from './api/public.js';
-import securityAdminHandler from './api/security-admin.js';
-import trackHandler from './api/track.js';
-import {stealthBanMiddleware} from './api/_lib/security.js';
-import proxoLinkHandler from './api/proxolink.js';
+import adminHandler from './api-handlers/admin.js';
+import formsHandler from './api-handlers/forms.js';
+import transactionSummaryHandler from './api-handlers/transaction-summary.js';
+import errorLogHandler from './api-handlers/error-log.js';
+import supportCasesHandler from './api-handlers/support-cases.js';
+import notifyOrderHandler from './api-handlers/notify-order.js';
+import ordersHandler from './api-handlers/orders.js';
+import balanceHandler from './api-handlers/balance.js';
+import publicHandler from './api-handlers/public.js';
+import securityAdminHandler from './api-handlers/security-admin.js';
+import trackHandler from './api-handlers/track.js';
+import {stealthBanMiddleware} from './api-handlers/_lib/security.js';
+import proxoLinkHandler from './api-handlers/proxolink.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -31,6 +33,8 @@ app.use((req,res,next)=>{
 
 // API route handlers
 app.all('/api/admin', adminHandler);
+app.all('/api/forms', formsHandler);
+app.all('/api/transaction-summary', transactionSummaryHandler);
 app.all('/api/error-log', errorLogHandler);
 app.all('/api/support-cases', supportCasesHandler);
 app.all('/api/notify-order', notifyOrderHandler);

@@ -7,7 +7,7 @@ const read=path=>readFileSync(new URL(path,import.meta.url),'utf8');
 const hideMigration=read('../SUPABASE_EXCHANGE_CUSTOMER_ORDER_HIDES.sql');
 const customer=read('../assets/js/app.js');
 const admin=read('../assets/js/admin.js');
-const adminApi=read('../api/admin.js');
+const adminApi=read('../api-handlers/admin.js');
 const adminHtml=read('../exchange-admin.html');
 
 test('customer quote reads live fee_brackets with inclusive thresholds and open-ended final rate',()=>{

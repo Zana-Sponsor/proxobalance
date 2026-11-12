@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
-import { payoutPlan } from '../api/_lib/payout-rounding.js';
+import { payoutPlan } from '../api-handlers/_lib/payout-rounding.js';
 
 const adminId='11111111-1111-4111-8111-111111111111';
 const userId='22222222-2222-4222-8222-222222222222';
@@ -25,7 +25,7 @@ function application(isAdmin=true,options={}){
       };return q;
     }
   };
-  const source=readFileSync(new URL('../api/admin.js',import.meta.url),'utf8')
+  const source=readFileSync(new URL('../api-handlers/admin.js',import.meta.url),'utf8')
     .replace("import { createClient } from '@supabase/supabase-js';",'const createClient=globalThis.createClient;')
     .replace("import { payoutPlan } from './_lib/payout-rounding.js';",'const payoutPlan=globalThis.payoutPlan;')
     .replace('export default async function handler','async function handler')

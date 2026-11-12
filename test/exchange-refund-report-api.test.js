@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
-import { payoutPlan } from '../api/_lib/payout-rounding.js';
+import { payoutPlan } from '../api-handlers/_lib/payout-rounding.js';
 
 const NOW = Date.parse('2026-10-17T12:00:00.000Z');
 const SNAPSHOT = new Date(NOW).toISOString();
@@ -103,7 +103,7 @@ function application(options = {}) {
     constructor(...args) { super(...(args.length ? args : [NOW])); }
     static now() { return NOW; }
   }
-  const source = readFileSync(new URL('../api/admin.js', import.meta.url), 'utf8')
+  const source = readFileSync(new URL('../api-handlers/admin.js', import.meta.url), 'utf8')
     .replace("import { createClient } from '@supabase/supabase-js';", 'const createClient=globalThis.createClient;')
     .replace("import { payoutPlan } from './_lib/payout-rounding.js';", 'const payoutPlan=globalThis.payoutPlan;')
     .replace('export default async function handler', 'async function handler')

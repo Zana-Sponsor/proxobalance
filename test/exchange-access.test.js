@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 process.env.SUPABASE_SERVICE_ROLE_KEY='fixture-service-key';
-const security=await import('../api/_lib/security.js');
+const security=await import('../api-handlers/_lib/security.js');
 function response(){return {statusCode:0,headers:{},setHeader(k,v){this.headers[k]=v;},end(value){this.body=value;}};}
 test('direct requests ignore spoofed IP headers; trusted Vercel requests use the platform IP',()=>{
  process.env.TRUSTED_PROXY='direct';delete process.env.VERCEL;

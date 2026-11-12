@@ -5,20 +5,20 @@ import { readFileSync, existsSync } from 'node:fs';
 process.env.PROXO_SUPABASE_URL='https://proxo-test.supabase.co';
 process.env.PROXO_SUPABASE_SERVICE_ROLE_KEY='server-test-key';
 process.env.PROXO_PREVIEW_SIGNING_SECRET='test-preview-key-at-least-32-characters';
-const {default:handler}=await import('../api/proxolink.js');
-const {makePreviewToken,makeTemplateToken,templateTokenData,validPreviewToken}=await import('../api/_lib/proxolink-preview.js');
-const {renderTemplate,normalizedPlatforms,privateTemplate,verifyPublicAvatar}=await import('../api/_lib/proxolink.js');
-const {destination,TEMPLATE_KEYS,TEMPLATE_VERSION,PROVIDERS}=await import('../api/_lib/proxolink-catalog.js');
+const {default:handler}=await import('../api-handlers/proxolink.js');
+const {makePreviewToken,makeTemplateToken,templateTokenData,validPreviewToken}=await import('../api-handlers/_lib/proxolink-preview.js');
+const {renderTemplate,normalizedPlatforms,privateTemplate,verifyPublicAvatar}=await import('../api-handlers/_lib/proxolink.js');
+const {destination,TEMPLATE_KEYS,TEMPLATE_VERSION,PROVIDERS}=await import('../api-handlers/_lib/proxolink-catalog.js');
 const owner='11111111-1111-4111-8111-111111111111';
 const id='22222222-2222-4222-8222-222222222222';
 const other='33333333-3333-4333-8333-333333333333';
 const token='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 const card={id,user_id:owner,name:'Proxo',bio:'Hello',tt:'proxo_iq',template_key:'pill-white',template_version:TEMPLATE_VERSION,page_type:'contact',color_theme:'purple',card_language:'ku',platforms:{wa:'07501234567',tg:'proxo_iq'},status:'active',publish_status:'ready',updated_at:'2026-10-06T00:00:00Z'};
 const templates=TEMPLATE_KEYS.map(key=>{
- const source=readFileSync(new URL('../api/_lib/proxolink-templates/'+key+'.html',import.meta.url),'utf8');
+ const source=readFileSync(new URL('../api-handlers/_lib/proxolink-templates/'+key+'.html',import.meta.url),'utf8');
  return {template_key:key,version:TEMPLATE_VERSION,display_name_ckb:key,display_name_en:key,storage_path:key+'/v'+TEMPLATE_VERSION+'/template.html',checksum_sha256:createHash('sha256').update(source).digest('hex'),requires_avatar:false,is_active:true,is_catalog_visible:true};
 });
-const source=readFileSync(new URL('../api/_lib/proxolink-templates/pill-white.html',import.meta.url),'utf8');
+const source=readFileSync(new URL('../api-handlers/_lib/proxolink-templates/pill-white.html',import.meta.url),'utf8');
 function response(){return {statusCode:0,headers:{},setHeader(k,v){this.headers[k.toLowerCase()]=v;},end(v=''){this.body=v;}};}
 function store({rows=[card],authUser=owner,failChecksum=false,adDependency=false}={}){
  const state={rows:new Map(rows.map(x=>[x.id,structuredClone(x)])),events:[],audits:[],writes:[],failChecksum,authUser,tick:0};

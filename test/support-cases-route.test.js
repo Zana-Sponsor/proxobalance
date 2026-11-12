@@ -5,7 +5,7 @@ process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-key';
 process.env.SECURITY_FINGERPRINT_SALT = 'test-fingerprint-salt';
 process.env.TRUSTED_PROXY = 'direct';
 
-const { default: supportCasesHandler } = await import('../api/support-cases.js');
+const { default: supportCasesHandler } = await import('../api-handlers/support-cases.js');
 
 function response(data, status = 200) {
   return new Response(data == null ? '' : JSON.stringify(data), {

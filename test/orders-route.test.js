@@ -5,7 +5,7 @@ process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-key';
 process.env.SECURITY_FINGERPRINT_SALT = 'test-fingerprint-salt';
 process.env.TRUSTED_PROXY = 'direct';
 
-const { default: ordersHandler } = await import('../api/orders.js');
+const { default: ordersHandler } = await import('../api-handlers/orders.js');
 
 function response(data, status = 200) {
   return new Response(data == null ? '' : JSON.stringify(data), {

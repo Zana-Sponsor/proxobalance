@@ -5,6 +5,54 @@
   "outputDirectory": "public",
   "rewrites": [
     {
+      "source": "/api/admin",
+      "destination": "/api/dispatch?__pb_api_route=admin"
+    },
+    {
+      "source": "/api/balance",
+      "destination": "/api/dispatch?__pb_api_route=balance"
+    },
+    {
+      "source": "/api/error-log",
+      "destination": "/api/dispatch?__pb_api_route=error-log"
+    },
+    {
+      "source": "/api/forms",
+      "destination": "/api/dispatch?__pb_api_route=forms"
+    },
+    {
+      "source": "/api/notify-order",
+      "destination": "/api/dispatch?__pb_api_route=notify-order"
+    },
+    {
+      "source": "/api/orders",
+      "destination": "/api/dispatch?__pb_api_route=orders"
+    },
+    {
+      "source": "/api/proxolink",
+      "destination": "/api/dispatch?__pb_api_route=proxolink"
+    },
+    {
+      "source": "/api/public",
+      "destination": "/api/dispatch?__pb_api_route=public"
+    },
+    {
+      "source": "/api/security-admin",
+      "destination": "/api/dispatch?__pb_api_route=security-admin"
+    },
+    {
+      "source": "/api/support-cases",
+      "destination": "/api/dispatch?__pb_api_route=support-cases"
+    },
+    {
+      "source": "/api/track",
+      "destination": "/api/dispatch?__pb_api_route=track"
+    },
+    {
+      "source": "/api/transaction-summary",
+      "destination": "/api/dispatch?__pb_api_route=transaction-summary"
+    },
+    {
       "source": "/exchange-admin",
       "destination": "/exchange-admin.html"
     },
@@ -14,47 +62,47 @@
     },
     {
       "source": "/contact-preview",
-      "destination": "/api/proxolink?op=template-preview"
+      "destination": "/api/dispatch?__pb_api_route=proxolink&op=template-preview"
     },
     {
       "source": "/api/contact-templates",
-      "destination": "/api/proxolink?op=templates"
+      "destination": "/api/dispatch?__pb_api_route=proxolink&op=templates"
     },
     {
       "source": "/api/contact-ad-links",
-      "destination": "/api/proxolink?op=ad-links"
+      "destination": "/api/dispatch?__pb_api_route=proxolink&op=ad-links"
     },
     {
       "source": "/api/contact-preview-token",
-      "destination": "/api/proxolink?op=preview-token"
+      "destination": "/api/dispatch?__pb_api_route=proxolink&op=preview-token"
     },
     {
       "source": "/api/contact-card-action",
-      "destination": "/api/proxolink?op=card-action"
+      "destination": "/api/dispatch?__pb_api_route=proxolink&op=card-action"
     },
     {
       "source": "/api/contact-cards",
-      "destination": "/api/proxolink?op=cards"
+      "destination": "/api/dispatch?__pb_api_route=proxolink&op=cards"
     },
     {
       "source": "/contact/:id/avatar",
-      "destination": "/api/proxolink?op=avatar&id=:id"
+      "destination": "/api/dispatch?__pb_api_route=proxolink&op=avatar&id=:id"
     },
     {
       "source": "/contact/:id",
-      "destination": "/api/proxolink?op=contact&id=:id"
+      "destination": "/api/dispatch?__pb_api_route=proxolink&op=contact&id=:id"
     },
     {
       "source": "/a/:token/avatar",
-      "destination": "/api/proxolink?op=avatar&token=:token"
+      "destination": "/api/dispatch?__pb_api_route=proxolink&op=avatar&token=:token"
     },
     {
       "source": "/a/:token/action/:action",
-      "destination": "/api/proxolink?op=ad&token=:token&action=:action"
+      "destination": "/api/dispatch?__pb_api_route=proxolink&op=ad&token=:token&action=:action"
     },
     {
       "source": "/a/:token",
-      "destination": "/api/proxolink?op=ad&token=:token"
+      "destination": "/api/dispatch?__pb_api_route=proxolink&op=ad&token=:token"
     },
     {
       "source": "/form-demo",
@@ -74,7 +122,7 @@
     }
   ],
   "functions": {
-    "api/*.js": {
+    "api/dispatch.js": {
       "maxDuration": 30
     }
   },
