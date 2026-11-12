@@ -50,6 +50,8 @@
     var headers = { 'Content-Type': 'application/json' };
     var token = readToken();
     if (token) headers.Authorization = 'Bearer ' + token;
+    var safeDetail = detail || location.pathname;
+    if (typeof safeDetail === 'string' && /^\/summarytransaction\/[^/]+\/?$/.test(safeDetail)) safeDetail = '/summarytransaction/:secure_token';
     try {
       fetch(ENDPOINT, {
         method: 'POST',
@@ -57,7 +59,7 @@
         keepalive: true,
         body: JSON.stringify({
           type: type || 'page_view',
-          detail: detail || location.pathname
+          detail: safeDetail
         })
       }).then(function(r){if(r.status===403)location.replace('/ip-blocked.html');}).catch(function () {});
     } catch (e) { /* tracking must never affect the page */ }
@@ -96,4 +98,3 @@
     if (e.persisted) send('page_view');
   });
 })();
-

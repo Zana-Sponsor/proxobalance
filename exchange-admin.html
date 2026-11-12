@@ -11,7 +11,7 @@
 <!-- Firebase — announcement banner control only (same project as exchange.html) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<link rel="stylesheet" href="assets/css/admin.css?v=10">
+<link rel="stylesheet" href="assets/css/admin.css?v=11">
 <link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/exchange-insights.css?v=2">
 <link rel="stylesheet" href="assets/css/exchange-features.css?v=3">
@@ -837,11 +837,11 @@
     <div class="modal-row">
       <div>
         <label class="modal-lbl">لە</label>
-        <select class="msel" id="rateFrom"></select>
+        <select class="msel" id="rateFrom" onchange="updateAdminRatePreview()"></select>
       </div>
       <div>
         <label class="modal-lbl">بۆ</label>
-        <select class="msel" id="rateTo"></select>
+        <select class="msel" id="rateTo" onchange="updateAdminRatePreview()"></select>
       </div>
     </div>
     <label class="modal-lbl">جۆری نرخ</label>
@@ -852,7 +852,14 @@
     </select>
     <label class="modal-lbl">بەها</label>
     <input class="minp" type="number" step="0.0001" id="rateValue" dir="ltr" placeholder="0.00" oninput="updateAdminRatePreview()">
-    <div class="fee-toggle-note" id="rateValueHint"></div><section class="rate-example"><label class="modal-lbl" for="adminRateExample">نموونەی بڕی ناردن</label><input class="minp" type="number" id="adminRateExample" value="100000" min="1" dir="ltr" oninput="updateAdminRatePreview()"><output id="adminRatePreview" dir="ltr"></output><p>ئەمە نموونەی ئەم ڕێگایەیە؛ حمولەی جزدانەکانی تر ناگۆڕێت.</p></section>
+    <div class="fee-toggle-note" id="rateValueHint"></div>
+    <section class="rate-flex-tier" aria-labelledby="rateFeeTierTitle">
+      <div class="rate-flex-tier-head"><div><b id="rateFeeTierTitle">لێبڕین بەپێی بڕ</b><p>پلە زیاد بکە؛ هەر سنوورێک تا ئەو بڕەیە، پلەی دواوەش بۆ هەموو بڕی زیاترە.</p></div><i class="fas fa-layer-group" aria-hidden="true"></i></div>
+      <div id="rateFeeTiers" class="rate-fee-tier-list"></div>
+      <div class="rate-flex-tier-actions"><button type="button" class="rate-tier-add" onclick="addRateFeeTier()"><i class="fas fa-plus"></i> زیادکردنی پلە</button><button type="button" class="rate-tier-clear" onclick="clearRateFeeTiers()">بەکارهێنانی نرخی سادە</button></div>
+      <div class="rate-flex-tier-foot">لێبڕین بە ٪ دیاری دەکرێت. ئەم ڕێکخستنە تەنها بۆ ئەم ڕێگایەیە و خۆکارانە لە کڕینەوەدا هەژمار دەکرێت.</div>
+    </section>
+    <section class="rate-example"><label class="modal-lbl" for="adminRateExample">نموونەی بڕی ناردن</label><input class="minp" type="number" id="adminRateExample" value="100000" min="1" dir="ltr" oninput="updateAdminRatePreview()"><output id="adminRatePreview" dir="ltr"></output><p>ئەمە نموونەی ئەم ڕێگایەیە؛ حمولەی جزدانەکانی تر ناگۆڕێت.</p></section>
     <div class="mswitch-row">
       <span>چالاکە (بەکاردەهێنرێت لە ئەپدا)</span>
       <label class="mswitch"><input type="checkbox" id="rateActive" checked><span class="track"></span></label>
@@ -1257,13 +1264,13 @@
   </div>
   <script src="assets/js/exchange-payout-rounding.js?v=1"></script>
   <script src="assets/js/exchange-live.js?v=1"></script>
-<script src="assets/js/admin.js?v=31"></script>
+<script src="assets/js/admin.js?v=33"></script>
 <script src="assets/js/admin-contracts.js?v=2"></script>
   <script src="assets/js/exchange-staff.js?v=8"></script>
   <script src="assets/js/exchange-balance-admin.js?v=8"></script>
   <script src="assets/js/exchange-balance-manual.js?v=1"></script>
   <script src="assets/js/exchange-refund-report.js?v=2"></script>
   <script src="assets/js/exchange-insights.js?v=7"></script>
-  <script src="assets/js/exchange-profit.js?v=5"></script><script src="assets/js/exchange-admin-workspace.js?v=3"></script><script src="assets/js/track.js?v=3"></script>
+  <script src="assets/js/exchange-profit.js?v=5"></script><script src="assets/js/exchange-admin-workspace.js?v=4"></script><script src="assets/js/track.js?v=3"></script>
 </body>
 </html>

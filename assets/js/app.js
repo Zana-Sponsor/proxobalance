@@ -1416,12 +1416,14 @@ async function sendErrorLog(payload){
   });
   if(!res.ok) throw new Error('ERROR_LOG_HTTP_'+res.status);
 }
+function safeAppTelemetryPath(){return summaryTokenFromPath()?'/summarytransaction/:secure_token':location.pathname;}
 async function reportAppError(error, details={}){
   const rawMessage=String(error?.message||error||'Unknown client error').replace(/[\r\n\t]+/g,' ').slice(0,2000);
   const operation=String(details.operation||'client_runtime').slice(0,100);
   const stage=String(details.stage||'unknown').slice(0,200);
   const code=String(error?.code||rawMessage).slice(0,120);
-  const clientKey=[operation,stage,code,location.pathname].join('|');
+  const telemetryPath=safeAppTelemetryPath();
+  const clientKey=[operation,stage,code,telemetryPath].join('|');
   const last=_recentClientErrors.get(clientKey)||0;
   if(Date.now()-last<60000) return;
   _recentClientErrors.set(clientKey,Date.now());
@@ -1433,7 +1435,7 @@ async function reportAppError(error, details={}){
     code,
     status:Number(error?.status)||null,
     message:rawMessage,
-    path:location.pathname,
+    path:telemetryPath,
     metadata:{
       stage,
       online:navigator.onLine,
@@ -1487,6 +1489,24 @@ async function startApp(user){
       primaryText:'باشە',
       onPrimary: async ()=>{ try{ await sb.auth.signOut(); }catch(_){} try{ location.replace(BASE_PATH); }catch(_){ location.reload(); } }
     });
+    return;
+  }
+  const pendingSummaryPath=sessionStorage.getItem('proxo_summary_return_path');
+  if(pendingSummaryPath&&summaryTokenFromPath(pendingSummaryPath)){
+    sessionStorage.removeItem('proxo_summary_return_path');
+    try{history.replaceState({},'',pendingSummaryPath);}catch(_){location.replace(pendingSummaryPath);return;}
+  }
+  const summaryToken=summaryTokenFromPath();
+  if(summaryToken){
+    document.getElementById('authWrap').style.display='none';
+    document.getElementById('mainApp').style.display='none';
+    document.body.classList.remove('has-nav');
+    document.body.classList.add('transaction-summary-active');
+    const summaryPage=document.getElementById('transactionSummaryPage');
+    if(summaryPage)summaryPage.hidden=false;
+    document.title='پوختەی مامەڵە — Proxo';
+    await loadMyRewards();
+    await loadTransactionSummary(summaryToken);
     return;
   }
   document.getElementById('authWrap').style.display='none';
@@ -1569,13 +1589,15 @@ const FALLBACK_RATES = {
 // no silent swap to another wallet. The old hardcoded table is used only when the
 // database itself is unreachable, so a network blip can't close the whole site.
 let RATES_STRICT=false;
-// An enabled amount tier of an ex_rates row, or null. Disabled tiers leave the route's stored rate exactly as it is.
+// Flexible brackets take priority; legacy two-tier settings are converted without changing their meaning.
 function rateTierFromRow(r){
+  const brackets=Array.isArray(r?.fee_brackets)&&r.fee_brackets.length?r.fee_brackets:r?.fee_tiers;
+  if(Array.isArray(brackets)&&brackets.length>=2)return {tiers:brackets.map(t=>({max_iqd:t.max_iqd===null?null:Number(t.max_iqd),fee_percent:Number(t.fee_percent)}))};
   if(!r||!r.fee_tier_enabled||r.fee_tier_low_percent==null||r.fee_tier_high_percent==null||!(Number(r.fee_tier_limit_iqd)>0))return null;
-  return {limit:Number(r.fee_tier_limit_iqd),low:Number(r.fee_tier_low_percent),high:Number(r.fee_tier_high_percent)};
+  return {tiers:[{max_iqd:Number(r.fee_tier_limit_iqd),fee_percent:Number(r.fee_tier_low_percent)},{max_iqd:null,fee_percent:Number(r.fee_tier_high_percent)}]};
 }
 function tierHintText(t){
-  return 'تا '+formatNum(t.limit)+' IQD: '+fmtPct(t.low)+'% · لە سەروو: '+fmtPct(t.high)+'%';
+  return (t?.tiers||[]).map((tier,index)=>index===(t.tiers.length-1)?'زیاتر: '+fmtPct(tier.fee_percent)+'%':'تا '+formatNum(tier.max_iqd)+' IQD: '+fmtPct(tier.fee_percent)+'%').join(' · ');
 }
 async function loadRates(){
   RATES={}; RATES_STRICT=false;
@@ -2211,8 +2233,11 @@ let _historyChannel=null;
 async function loadHistory(){
   const {data}=await sb.from('ex_orders').select('*').eq('user_id',curUser.id).order('created_at',{ascending:false});
   const {data:feedbackRows}=await sb.from('ex_order_feedback').select('order_id,rating,comment,created_at').eq('user_id',curUser.id);
+  let hiddenRows=[];
+  try{const result=await sb.from('ex_order_user_hides').select('order_id').eq('user_id',curUser.id);if(!result.error)hiddenRows=result.data||[];}catch(_){/* hiding is optional until the migration is available */}
+  const hiddenIds=new Set(hiddenRows.map(row=>String(row.order_id)));
   const feedbackByOrder=new Map((feedbackRows||[]).map(row=>[String(row.order_id),row]));
-  renderHistory((data||[]).map(order=>({...order,feedback:feedbackByOrder.get(String(order.id))||null})));
+  renderHistory((data||[]).map(order=>({...order,user_hidden:hiddenIds.has(String(order.id)),feedback:feedbackByOrder.get(String(order.id))||null})));
   if(_historyChannel){ try{ sb.removeChannel(_historyChannel); }catch(_){} }
   _historyChannel=sb.channel('ex_orders_'+curUser.id)
     .on('postgres_changes',{event:'*',schema:'public',table:'ex_orders',filter:'user_id=eq.'+curUser.id}, ()=>{ loadHistory(); })
@@ -2224,6 +2249,7 @@ async function loadHistory(){
 // ══════════════════════════════════════════════════════════════
 let _orders = [];
 let _txStatus = 'all', _txTime = 'all', _txQuery = '';
+let _showHiddenOrders = false;
 
 // Every order carries a 12-character public ID: "P" + 11 chars, made by the
 // database itself (ex_gen_order_code). order_number is the old numeric ID and
@@ -2308,15 +2334,15 @@ function orderCardHTML(o){
   const needsAction=!o.balance_refunded_at && o.status==='پێویستی بە ڕاستکردنەوەیە';
   const refunded=!!o.balance_refunded_at;
   const payout=typeof ProxoPayoutRounding==='object'?ProxoPayoutRounding.forOrder(o):null;
-  const rounded=!refunded&&payout&&(payout.planned||payout.has_settlement);
   const received=payout?payout.display_amount:o.total;
   const sentAmt=txAmount(o.amount,o.from_method);
   const gotAmt=txAmount(refunded?o.amount:received,refunded?'AccountBalance':o.to_method);
-  const gotLbl=refunded?'گەڕاوە بۆ باڵانس':'وەرگیراو';
+  const gotLbl=refunded?'گەڕاوە بۆ باڵانس':payout?.planned?'دوای پەسەندکردن بۆ باڵانست':'وەرگیراو';
   const line=(k,v)=>'<div class="rc-line"><span class="rc-k">'+k+'</span><i class="rc-dots" aria-hidden="true"></i><b class="rc-v" dir="ltr">'+escHtml(v)+'</b></div>';
+  const orderId=escHtml(String(o.id));
   return '<article class="tx-card tx-receipt'+(needsAction?' needs-action':'')+(st.key==='done'?' is-complete':'')+'" tabindex="0" role="button"'
     + ' onclick="openTxDetail(\''+escHtml(String(o.id))+'\')"'
-    + ' onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openTxDetail(\''+escHtml(String(o.id))+'\');}">'
+    + ' onkeydown="if(event.target===this&&(event.key===\'Enter\'||event.key===\' \')){event.preventDefault();openTxDetail(\''+escHtml(String(o.id))+'\');}">'
     + '<div class="rc-top">'
       + '<div class="rc-head">'
         + '<span class="rc-id"><small>پسووڵە</small><span class="tx-code" dir="ltr">'+escHtml(code)+'</span></span>'
@@ -2332,7 +2358,26 @@ function orderCardHTML(o){
       + '</div>'
       + (needsAction ? '<div class="tx-card-action">پێویستی بە ڕاستکردنەوەی تۆ هەیە</div>' : '')
     + '</div>'
+    + '<div class="tx-card-actions"><button type="button" class="tx-card-hide'+(o.user_hidden?' is-restore':'')+'" onclick="'+(o.user_hidden?'restoreMyOrder':'hideMyOrder')+'(event,\''+orderId+'\')">'
+      + '<span class="icn icon--pb--'+(o.user_hidden?'history':'trash')+'" aria-hidden="true"></span><span>'+(o.user_hidden?'گەڕاندنەوە بۆ مێژوو':'شاردنەوە لە مێژوو')+'</span></button></div>'
     + '</article>';
+}
+
+async function hideMyOrder(event,orderId){
+  event?.stopPropagation();
+  if(!curUser?.id||!orderId)return;
+  const {error}=await sb.from('ex_order_user_hides').insert({user_id:curUser.id,order_id:orderId});
+  if(error&&error.code!=='23505'){showToast('نەتوانرا مامەڵەکە لە مێژووی تۆ بشاردرێتەوە','error');return;}
+  const order=_orders.find(row=>String(row.id)===String(orderId));if(order)order.user_hidden=true;
+  renderHistory(_orders);showToast('مامەڵەکە تەنها لە مێژووی تۆ شاردراوەتەوە؛ لە داتابەیسدا هێشتا پارێزراوە','success');
+}
+async function restoreMyOrder(event,orderId){
+  event?.stopPropagation();
+  if(!curUser?.id||!orderId)return;
+  const {error}=await sb.from('ex_order_user_hides').delete().eq('user_id',curUser.id).eq('order_id',orderId);
+  if(error){showToast('نەتوانرا مامەڵەکە بگەڕێندرێتەوە','error');return;}
+  const order=_orders.find(row=>String(row.id)===String(orderId));if(order)order.user_hidden=false;
+  renderHistory(_orders);showToast('مامەڵەکە گەڕێندرایەوە بۆ مێژوو','success');
 }
 
 // ── transaction details ────────────────────────────────────────
@@ -2438,9 +2483,13 @@ async function submitOrderFeedback(orderId){
     const {data,error}=await sb.from('ex_order_feedback').insert({order_id:order.id,user_id:curUser.id,rating:_feedbackDraftRating,comment}).select('order_id,rating,comment,created_at').single();
     if(error)throw error;
     order.feedback=data;order.feedbackRewardGranted=true;_feedbackDraftRating=0;renderHomeFeedbackPrompt();await loadMyRewards();
-    if(fromSheet){ closeFeedbackSheet(); }
+    if(summaryTokenFromPath()){
+      renderTransactionSummary(order);
+      showToast('سوپاس! هەڵسەنگاندنەکەت تۆمار کرا.','success');
+    }
+    else if(fromSheet){ closeFeedbackSheet(); }
     else { closeTxDetail(); navigate('home',true); }
-    showToast('سوپاس! داشکاندنی '+FEEDBACK_REWARD.percent+'% تا '+fbEn(FEEDBACK_REWARD.maxIqd)+' دینار بۆ مامەڵەی داهاتووت زیادکرا.','success');
+    if(!summaryTokenFromPath())showToast('سوپاس! داشکاندنی '+FEEDBACK_REWARD.percent+'% تا '+fbEn(FEEDBACK_REWARD.maxIqd)+' دینار بۆ مامەڵەی داهاتووت زیادکرا.','success');
   }catch(error){
     if(errorEl)errorEl.textContent=error.code==='23505'?'هەڵسەنگاندنی ئەم داواکارییە پێشتر تۆمار کراوە.':'نەتوانرا هەڵسەنگاندنەکەت تۆمار بکرێت؛ تکایە دووبارە هەوڵ بدەرەوە.';
     if(button){button.disabled=false;button.innerHTML='<span class="fb-submit-ico" aria-hidden="true">'+FB_STAR+'</span> ناردنی هەڵسەنگاندن';}
@@ -2795,7 +2844,7 @@ function renderHistory(rows){
 }
 
 function pendingHomeFeedbackOrder(){
-  return _orders.find(order=>order && order.status==='پەسەندکرا' && !order.feedback) || null;
+  return _orders.find(order=>order && !order.user_hidden && order.status==='پەسەندکرا' && !order.feedback) || null;
 }
 function feedbackReadKey(orderId){ return 'proxo_feedback_read:'+String(orderId); }
 function isFeedbackRead(orderId){
@@ -2832,7 +2881,7 @@ function maybePromptHomeFeedback(){
   setTimeout(()=>{
     _homeFeedbackPromptQueued=false;
     if(!curUser||_route!=='home'||_txSheetId||_feedbackSheetId)return;
-    const stillPending=_orders.find(row=>String(row.id)===orderId && row.status==='پەسەندکرا' && !row.feedback);
+    const stillPending=_orders.find(row=>String(row.id)===orderId && !row.user_hidden && row.status==='پەسەندکرا' && !row.feedback);
     if(!stillPending||isFeedbackRead(orderId))return;
     markFeedbackRead(orderId);
     _homeFeedbackPromptShownThisSession=true;
@@ -2842,7 +2891,7 @@ function maybePromptHomeFeedback(){
 function renderHomePreview(){
   const el=document.getElementById('historyPreview');
   if(!el) return;
-  const rows=_orders.slice(0,3);
+  const rows=_orders.filter(order=>!order.user_hidden).slice(0,3);
   el.innerHTML = rows.length ? rows.map(orderCardHTML).join('')
     : '<div class="empty-state">هێشتا هیچ مامەڵەیەکت نییە</div>';
 }
@@ -2850,7 +2899,7 @@ function renderHomePreview(){
 function updateNavBadge(){
   const dot=document.getElementById('bnTxDot');
   if(!dot) return;
-  const pending=_orders.filter(o=>!o.balance_refunded_at && ['چاوەڕوانە','پێویستی بە ڕاستکردنەوەیە','ڕاستکراوەتەوە'].includes(o.status)).length;
+  const pending=_orders.filter(o=>!o.user_hidden&&!o.balance_refunded_at && ['چاوەڕوانە','پێویستی بە ڕاستکردنەوەیە','ڕاستکراوەتەوە'].includes(o.status)).length;
   if(pending>0){ dot.style.display='flex'; dot.textContent=String(pending); }
   else dot.style.display='none';
 }
@@ -2890,6 +2939,7 @@ function txTimeOk(o){
   return t >= Date.now() - days*86400000;
 }
 function txMatches(o){
+  if(o.user_hidden&&!_showHiddenOrders)return false;
   if(_txStatus!=='all' && txStateOf(o).key!==_txStatus) return false;
   if(!txTimeOk(o)) return false;
   if(!_txQuery) return true;
@@ -2909,11 +2959,17 @@ function txMatches(o){
 
 function renderTxPage(){
   if(!document.getElementById('txList')) return;
+  const hiddenCount=_orders.filter(order=>order.user_hidden).length;
+  if(!hiddenCount)_showHiddenOrders=false;
+  let hiddenToggle=document.getElementById('txHiddenToggle');
+  if(hiddenCount&&!hiddenToggle){hiddenToggle=document.createElement('button');hiddenToggle.type='button';hiddenToggle.id='txHiddenToggle';hiddenToggle.className='tx-hidden-toggle';document.getElementById('txList').parentNode.insertBefore(hiddenToggle,document.getElementById('txList'));}
+  if(hiddenToggle){hiddenToggle.hidden=hiddenCount===0;hiddenToggle.innerHTML='<span class="icn icon--pb--'+(_showHiddenOrders?'trash':'history')+'" aria-hidden="true"></span><span>'+(_showHiddenOrders?'شاردنەوەی مامەڵە شاردراوەکان':'بینینی مامەڵە شاردراوەکان ('+formatNum(hiddenCount)+')')+'</span>';hiddenToggle.onclick=()=>{_showHiddenOrders=!_showHiddenOrders;renderTxPage();};}
+  const visibleOrders=_orders.filter(order=>_showHiddenOrders||!order.user_hidden);
   const counts={done:0,pending:0,action:0,rejected:0};
-  for(const order of _orders)counts[txStateOf(order).key]++;
+  for(const order of visibleOrders)counts[txStateOf(order).key]++;
   // a count of zero is noise on a filter nobody can use
   const count=(id,n)=>{ const el=document.getElementById(id); if(el) el.textContent = n>0 ? String(n) : ''; };
-  count('fcAll', _orders.length);
+  count('fcAll', visibleOrders.length);
   count('fcWait', counts.pending);
   count('fcCorrection', counts.action);
   count('fcOk', counts.done);
@@ -2925,9 +2981,10 @@ function renderTxPage(){
 function renderTxList(){
   const el=document.getElementById('txList'); if(!el) return;
   const list=_orders.filter(txMatches);
+  const visibleCount=_orders.filter(order=>_showHiddenOrders||!order.user_hidden).length;
   const cnt=document.getElementById('txResultCount');
   const narrowed = !!_txQuery || _txStatus!=='all' || _txTime!=='all';
-  if(cnt) cnt.textContent = (narrowed && _orders.length) ? (list.length+' لە '+_orders.length+' مامەڵە') : '';
+  if(cnt) cnt.textContent = (narrowed && visibleCount) ? (list.length+' لە '+visibleCount+' مامەڵە') : '';
   if(!list.length){
     el.innerHTML = '<div class="empty-state">'
       + (_txQuery ? 'هیچ مامەڵەیەک بەم ئایدییە نەدۆزرایەوە' : 'هیچ مامەڵەیەک نییە بەم فلتەرە')
@@ -4941,12 +4998,13 @@ function startProofPolling(){
 // ══════════════════════════════════════════════════════════════
 async function reportEvent(event, detail, meta){
   try{
+    const telemetryPath=safeAppTelemetryPath();
     const headers={ 'Content-Type':'application/json' };
     const { data:{ session } } = await sb.auth.getSession();
     if(session) headers['Authorization']='Bearer '+session.access_token;
     await fetch('/api/track', {
       method:'POST', headers,
-      body: JSON.stringify({ event, detail:detail||null, path:location.pathname, meta:meta||null }),
+      body: JSON.stringify({ event, detail:detail||null, path:telemetryPath, meta:meta||null }),
       keepalive:true
     });
   }catch(_){ /* never let telemetry break the app */ }
@@ -4964,6 +5022,7 @@ function honeypotTripped(){
 // ══════════════════════════════════════════════════════════════
 document.addEventListener('keydown', (e)=>{
   if(e.key!=='Escape') return;
+  const summaryInfo=document.getElementById('summaryInfoBackdrop'); if(summaryInfo && !summaryInfo.hidden){ closeSummaryInfo(); return; }
   if(document.getElementById('txSheet') && !document.getElementById('txSheet').hidden){ closeTxDetail(); return; }
   const notifP=document.getElementById('notifPanel'); if(notifP && notifP.classList.contains('open')){ closeNotifPanel(); return; }
   const picker=document.getElementById('pickerSheet'); if(picker.classList.contains('open')){ closePicker(); return; }
@@ -5028,11 +5087,101 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   }
   if(session?.user){ await startApp(session.user); }
   else {
+    const summaryPath=summaryTokenFromPath();
+    if(summaryPath)sessionStorage.setItem('proxo_summary_return_path',location.pathname);
     let route=authRouteFromLocation()||'login';
     if((route==='login/otp'||route==='signup/otp')&&!_otpPendingData) route=route.split('/')[0];
     if(route==='forgetpassword/otp'&&!_fpEmail) route='forgetpassword';
     if(route==='newpassword'&&!_fpVerified) route='forgetpassword';
     setAuthRoute(route,false,true);
+    if(summaryPath)setTimeout(()=>showAmsg('بۆ بینینی وردەکاری ئەم مامەڵەیە، تکایە بچۆ ژوورەوە.','info'),80);
   }
   dismissAppSplash();
 });
+
+
+// Full-page transaction summary, authorized by the signed-in owner and existing secure_token.
+function summaryTokenFromPath(path){
+  const match=String(path===undefined?location.pathname:path).match(/^\/summarytransaction\/([^/]+)\/?$/);
+  if(!match)return null;
+  try{return decodeURIComponent(match[1]);}catch(_){return null;}
+}
+function summaryBack(){location.assign(curUser?.id?'/transactions':BASE_PATH);}
+function summaryDetailRow(label,value,opts){
+  if(value===null||value===undefined||value==='')return '';
+  const o=opts||{};
+  return '<div class="ts-row"><span class="ts-label">'+escHtml(label)+(o.info?'<button class="ts-info" type="button" aria-label="زانیاریی زیاتر" onclick="openSummaryInfo()">ⓘ</button>':'')+'</span>'+
+    '<span class="ts-value'+(o.valueClass?' '+o.valueClass:'')+'"'+(o.ltr?' dir="ltr"':'')+'>'+(o.html?value:escHtml(String(value)))+'</span></div>';
+}
+function summaryStateClass(order){
+  if(order.balance_refunded_at||order.status==='پەسەندکرا')return '';
+  if(order.status==='ڕەتکرا')return ' is-error';
+  return ' is-warn';
+}
+function summaryStatusIcon(success){
+  return success?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4.2 4.2L19 6.5"/></svg>':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v6m0 4h.01"/><circle cx="12" cy="12" r="9"/></svg>';
+}
+async function loadTransactionSummary(token){
+  const content=document.getElementById('transactionSummaryContent');
+  if(!content)return;
+  content.innerHTML='<div class="ts-loading" role="status">وردەکاری مامەڵە بار دەکرێت…</div>';
+  try{
+    const {data:{session}}=await sb.auth.getSession();
+    if(!session?.access_token)throw Object.assign(new Error('unauthorized'),{status:401});
+    const response=await fetch('/api/transaction-summary',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},body:JSON.stringify({secure_token:token}),cache:'no-store',credentials:'same-origin'});
+    const payload=await response.json().catch(()=>({}));
+    if(!response.ok)throw Object.assign(new Error(payload.error||'Transaction not found'),{status:response.status});
+    const order=payload.order;
+    if(!order||String(order.user_id)!==String(curUser?.id))throw Object.assign(new Error('Transaction not found'),{status:404});
+    _orders=[order];_txSheetId=String(order.id);renderTransactionSummary(order);
+  }catch(error){
+    const missing=error?.status===404,signedOut=error?.status===401;
+    content.innerHTML='<header class="ts-header"><h1>پوختەی مامەڵە</h1><button class="ts-close" type="button" aria-label="گەڕانەوە" onclick="summaryBack()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"/></svg></button></header><section class="ts-error" role="alert"><b>'+(missing?'مامەڵە نەدۆزرایەوە':signedOut?'تکایە بچۆ ژوورەوە':'بارکردنی وردەکارییەکان سەرکەوتوو نەبوو')+'</b><p>'+(missing?'ئەم بەستەرە هەڵەیە، بەسەرچووە، یان ئەم مامەڵەیە بۆ ئەم هەژمارە نییە.':signedOut?'بۆ بینینی وردەکاری مامەڵەکە بچۆ ژوورەوە.':'پەیوەندییەکەت بپشکنە و دووبارە هەوڵ بدەرەوە.')+'</p>'+(signedOut?'<button type="button" onclick="summaryGoLogin()">چوونەژوورەوە</button>':'<button type="button" data-summary-token="'+escHtml(String(token))+'" onclick="loadTransactionSummary(this.dataset.summaryToken)">دووبارە هەوڵدانەوە</button>')+'</section>';
+  }
+}
+function renderTransactionSummary(order){
+  const content=document.getElementById('transactionSummaryContent');if(!content)return;
+  const success=order.status==='پەسەندکرا'||!!order.balance_refunded_at;
+  const payout=typeof ProxoPayoutRounding==='object'?ProxoPayoutRounding.forOrder(order):null;
+  const balanceOrUsdt=['AccountBalance','USDT'].includes(order.to_method);
+  const received=order.balance_refunded_at?0:(payout?.settled?payout.payout_iqd:(success&&balanceOrUsdt?Number(order.total):null));
+  const returned=order.balance_refunded_at?(Number(order.refund_case_amount_iqd??order.amount)||0):(payout?.settled?payout.remainder_iqd:0);
+  const fee=order.from_method!=='USDT'&&order.to_method!=='USDT'?Math.max(0,Math.floor(Number(order.fee??(Number(order.amount)-Number(order.total)))||0)):0;
+  const discount=Math.max(0,Math.floor(Number(order.reward_discount_iqd)||0));
+  const statusDate=order.status_updated_at||order.decided_at||order.updated_at||order.created_at;
+  const feedback=renderOrderFeedback(order);
+  let html='<header class="ts-header"><h1>پوختەی مامەڵە</h1><button class="ts-close" type="button" aria-label="گەڕانەوە" onclick="summaryBack()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"/></svg></button></header>'+
+    '<div class="ts-meta"><span class="ts-code" dir="ltr"><b>'+escHtml(orderCodeOf(order))+'</b></span><span class="ts-state'+summaryStateClass(order)+'">'+escHtml(txLabelOf(order))+'</span></div>'+
+    '<section class="ts-amounts" aria-label="بڕی مامەڵەکان"><div class="ts-amount is-received"><small>بڕی وەرگیراو</small><b dir="ltr">'+txAmount(received,order.to_method)+'</b></div><div class="ts-amount"><small>بڕی نادراو</small><b dir="ltr">'+txAmount(order.amount,order.from_method)+'</b></div></section>'+
+    '<section class="ts-details" aria-label="وردەکاری مامەڵە">'+
+      summaryDetailRow('جۆری گواستنەوە','<span class="ts-route" dir="ltr">'+txRouteInner(order.from_method,order.to_method)+'</span>',{html:true})+
+      summaryDetailRow('کرێی خزمەتگوزاری',formatNum(fee)+' IQD',{ltr:true})+
+      summaryDetailRow('بڕی داشکاندن',formatNum(discount)+' IQD',{ltr:true,valueClass:discount?'is-discount':''})+
+      summaryDetailRow('بڕی باڵانسی گەڕاوە',txAmount(returned,'IQD'),{ltr:true,info:true})+
+      summaryDetailRow('کۆی گشتی بەڵێبڕینەوە',txAmount(order.total,order.to_method),{ltr:true})+
+      summaryDetailRow('بڕی نێردراو بۆ وەرگر',txAmount(received,order.to_method),{ltr:true})+
+      (order.phone?summaryDetailRow('ژمارەی وەرگر',order.phone,{ltr:true}):'')+
+      summaryDetailRow('بەرواری ناردن',txWhenHTML(order.created_at,true),{html:true})+
+      summaryDetailRow('بەرواری نوێکردنەوەی دۆخ',txWhenHTML(statusDate,true),{html:true})+
+    '</section>'+
+    (order.feedback&&order.status==='پەسەندکرا'?'':'<section class="ts-status" role="status"><span class="ts-status-icon">'+summaryStatusIcon(success)+'</span><div class="ts-status-text"><b>'+escHtml(txLabelOf(order))+'</b><small>'+escHtml(success?'داواکارییەکەت بە سەرکەوتوویی تەواو بوو.':order.status==='ڕەتکرا'?'داواکارییەکەت ڕەتکراوەتەوە.':'دۆخی داواکارییەکەت نوێ دەکرێتەوە.')+'</small></div></section>');
+  if(order.extra_info||order.admin_note)html+='<section class="ts-extra"><h2>زانیاریی زیاتر</h2>'+(order.extra_info?'<p>'+escHtml(order.extra_info)+'</p>':'')+(order.admin_note?'<p>'+escHtml(order.admin_note)+'</p>':'')+'</section>';
+  if(feedback)html+='<div class="ts-feedback" id="summaryFeedback">'+feedback+'</div>';
+  html+='<button type="button" class="ts-receipt" onclick="downloadTransactionReceipt(\''+escHtml(String(order.id))+'\')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 18v3h14v-3"/></svg><span>داگرتنی پسووڵە</span></button>';
+  content.innerHTML=html;
+}
+function summaryGoLogin(){
+  const path=location.pathname;if(summaryTokenFromPath(path))sessionStorage.setItem('proxo_summary_return_path',path);
+  setAuthRoute('login',false,true);document.body.classList.remove('transaction-summary-active');
+  const page=document.getElementById('transactionSummaryPage');if(page)page.hidden=true;
+  document.getElementById('authWrap').style.display='block';
+}
+function openSummaryInfo(){
+  const backdrop=document.getElementById('summaryInfoBackdrop');if(!backdrop)return;
+  backdrop.hidden=false;requestAnimationFrame(()=>backdrop.classList.add('is-open'));document.body.style.overflow='hidden';
+}
+function closeSummaryInfo(){
+  const backdrop=document.getElementById('summaryInfoBackdrop');if(!backdrop)return;
+  backdrop.classList.remove('is-open');document.body.style.overflow='';
+  setTimeout(()=>{if(!backdrop.classList.contains('is-open'))backdrop.hidden=true;},240);
+}

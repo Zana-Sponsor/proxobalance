@@ -65,6 +65,10 @@
       "destination": "/form.html"
     },
     {
+      "source": "/summarytransaction/:token",
+      "destination": "/index.html"
+    },
+    {
       "source": "/((?!api/|assets/)[^.]*)",
       "destination": "/index.html"
     }
@@ -75,6 +79,23 @@
     }
   },
   "headers": [
+    {
+      "source": "/summarytransaction/:token",
+      "headers": [
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
     {
       "source": "/(.*)",
       "headers": [

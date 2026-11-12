@@ -16,32 +16,45 @@ jobs:
           root='https://www.proxobalance.app'
           for attempt in $(seq 1 24); do
             if curl -fLsS --max-time 15 "$root/" -o current-index.html &&
-               grep -q 'app.js?v=70' current-index.html &&
-               grep -q 'proxo-ui-v2.css?v=12' current-index.html &&
+               grep -q 'app.js?v=73' current-index.html &&
+               grep -q 'proxo-ui-v2.css?v=13' current-index.html &&
                grep -q 'proxo-dark.css?v=6' current-index.html &&
                grep -q 'id="pageBalance" data-route="balance"' current-index.html &&
                grep -q 'id="savedRecipientsShortcut"' current-index.html &&
                grep -q 'width:min(42vw,180px)' current-index.html &&
                grep -q 'animation:spIn 1.15s' current-index.html &&
-               curl -fLsS --max-time 15 "$root/assets/js/app.js?v=70" -o current-app.js &&
+               curl -fLsS --max-time 15 "$root/assets/js/app.js?v=73" -o current-app.js &&
                grep -q 'accountBalanceSourceOption' current-app.js &&
                grep -q 'dismissAppSplash' current-app.js &&
                grep -q 'ProxoRewardPricing.effectiveRate' current-app.js &&
                grep -q 'fee_tier_enabled' current-app.js &&
+               grep -q 'ex_order_user_hides' current-app.js &&
+               grep -q 'hideMyOrder' current-app.js &&
+               grep -q 'summaryTokenFromPath' current-app.js &&
+               grep -q 'renderTransactionSummary' current-app.js &&
+               grep -q 'secure_token' current-app.js &&
+               grep -q 'track.js?v=4' current-index.html &&
+               curl -fLsS --max-time 15 "$root/assets/js/track.js?v=4" -o current-track.js &&
+               grep -q '/summarytransaction/:secure_token' current-track.js &&
+               curl -fLsS --max-time 15 "$root/summarytransaction/smoke-token" -o current-summary.html &&
+               grep -q 'id="transactionSummaryPage"' current-summary.html &&
+               test "$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 "$root/api/transaction-summary")" = '405' &&
                grep -q 'pendingHomeFeedbackOrder' current-app.js &&
                curl -fLsS --max-time 15 "$root/assets/css/proxo-dark.css?v=6" -o current-dark.css &&
                grep -q 'data-theme="dark"' current-dark.css &&
-               curl -fLsS --max-time 15 "$root/assets/css/proxo-ui-v2.css?v=12" -o current-shell.css &&
+               curl -fLsS --max-time 15 "$root/assets/css/proxo-ui-v2.css?v=13" -o current-shell.css &&
                grep -q 'pxn-pill' current-shell.css &&
                grep -q 'bh-item' current-shell.css &&
                curl -fLsS --max-time 15 "$root/assets/css/exchange-balance.css?v=6" -o current-balance-css.css &&
                curl -fLsS --max-time 15 "$root/assets/js/exchange-balance.js?v=7" -o current-balance.js &&
                grep -q 'profileBalanceAvailable' current-balance.js &&
                curl -fLsS --max-time 15 "$root/exchange-admin" -o current-admin.html &&
-               grep -q 'admin.js?v=31' current-admin.html &&
-               grep -q 'admin.css?v=10' current-admin.html &&
-               curl -fLsS --max-time 15 "$root/assets/css/admin.css?v=10" -o current-admin.css &&
+               grep -q 'admin.js?v=33' current-admin.html &&
+               grep -q 'admin.css?v=11' current-admin.html &&
+               curl -fLsS --max-time 15 "$root/assets/css/admin.css?v=11" -o current-admin.css &&
                grep -q 'pair-tier' current-admin.css &&
+               grep -q 'order-edit-details' current-admin.css &&
+               grep -q 'rate-fee-tier-row' current-admin.css &&
                grep -q 'exchange-insights.js?v=7' current-admin.html &&
                curl -fLsS --max-time 15 "$root/assets/js/exchange-insights.js?v=7" -o current-insights.js &&
                grep -q 'pairTierText' current-insights.js &&
@@ -51,12 +64,14 @@ jobs:
                grep -q 'id="pairTierBulkLimit"' current-admin.html &&
                curl -fLsS --max-time 15 "$root/assets/js/exchange-balance-manual.js?v=1" -o current-manual.js &&
                grep -q 'balance_manual_adjust' current-manual.js &&
-               curl -fLsS --max-time 15 "$root/assets/js/admin.js?v=31" -o current-admin.js &&
+               curl -fLsS --max-time 15 "$root/assets/js/admin.js?v=33" -o current-admin.js &&
                grep -q 'fee_tier_enabled' current-admin.js &&
+               grep -q 'saveOrderEdit' current-admin.js &&
+               grep -q 'deleteOrderPermanently' current-admin.js &&
                grep -q 'applyPairTierBulk' current-admin.js &&
-               curl -fLsS --max-time 15 "$root/assets/js/exchange-admin-workspace.js?v=3" -o current-workspace.js &&
+               curl -fLsS --max-time 15 "$root/assets/js/exchange-admin-workspace.js?v=4" -o current-workspace.js &&
                grep -q 'pairTierOf' current-workspace.js &&
-               curl -fLsS --max-time 15 "$root/assets/js/exchange-reward-pricing.js?v=4" -o current-pricing.js &&
+               curl -fLsS --max-time 15 "$root/assets/js/exchange-reward-pricing.js?v=6" -o current-pricing.js &&
                grep -q 'tierPercent' current-pricing.js; then
               exit 0
             fi
@@ -89,9 +104,12 @@ jobs:
             echo 'FAIL: completed transactions summary is still published.'
             exit 1
           fi
-          grep -q 'app.js?v=70' index.html
+          grep -q 'app.js?v=73' index.html
+          grep -q 'transaction-summary.css?v=1' index.html
+          grep -q 'id="transactionSummaryPage"' index.html
+          grep -q 'summarytransaction/:token' vercel.json
           grep -q 'id="usernameSheet"' index.html
-          grep -q 'proxo-ui-v2.css?v=12' index.html
+          grep -q 'proxo-ui-v2.css?v=13' index.html
           grep -q 'proxo-dark.css?v=6' index.html
           curl -fLsS --max-time 25 "$root/assets/css/proxo-dark.css?v=6" -o proxo-dark.css
           grep -q 'data-theme="dark"' proxo-dark.css
@@ -101,31 +119,36 @@ jobs:
           grep -q 'proxo-ui-v2.js?v=4' index.html
           grep -q 'proxo-toast.js?v=1' index.html
           grep -q 'id="savedRecipientsShortcut"' index.html
-          curl -fLsS --max-time 25 "$root/assets/css/proxo-ui-v2.css?v=12" -o proxo-ui-v2.css
+          curl -fLsS --max-time 25 "$root/assets/css/proxo-ui-v2.css?v=13" -o proxo-ui-v2.css
           grep -q '#usernameSheet .sheet-body' proxo-ui-v2.css
           grep -q 'px-ptr-pill' proxo-ui-v2.css
           grep -q 'bh-item' proxo-ui-v2.css
           grep -q 'pxt-stack' proxo-ui-v2.css
           grep -q 'field-error.show' proxo-ui-v2.css
           grep -q 'notif-reason' proxo-ui-v2.css
-          curl -fLsS --max-time 25 "$root/assets/js/exchange-reward-pricing.js?v=4" -o exchange-reward-pricing.js
+          grep -q 'tx-card-hide' proxo-ui-v2.css
+          curl -fLsS --max-time 25 "$root/assets/js/exchange-reward-pricing.js?v=6" -o exchange-reward-pricing.js
           grep -q 'tierPercent' exchange-reward-pricing.js
           curl -fLsS --max-time 25 "$root/assets/js/proxo-toast.js?v=1" -o proxo-toast.js
           grep -q 'window.showToast = showToast' proxo-toast.js
           curl -fLsS --max-time 25 "$root/assets/js/proxo-ui-v2.js?v=4" -o proxo-ui-v2.js
           grep -q 'function place()' proxo-ui-v2.js
-          curl -fLsS --max-time 25 "$root/assets/js/app.js?v=70" -o app-v70.js
-          grep -q 'function notifRich' app-v70.js
-          grep -q 'escHtml(notifClean(s))' app-v70.js
-          grep -q 'ProxoRewardPricing.effectiveRate' app-v70.js
-          grep -q 'fee_tier_enabled' app-v70.js
-          grep -q 'balanceHistory' app-v70.js
+          curl -fLsS --max-time 25 "$root/assets/js/app.js?v=73" -o app-v73.js
+          grep -q 'function notifRich' app-v73.js
+          grep -q 'escHtml(notifClean(s))' app-v73.js
+          grep -q 'ProxoRewardPricing.effectiveRate' app-v73.js
+          grep -q 'fee_tier_enabled' app-v73.js
+          grep -q 'fee_brackets' app-v73.js
+          grep -q 'ex_order_user_hides' app-v73.js
+          grep -q 'balanceHistory' app-v73.js
+          grep -q 'renderTransactionSummary' app-v73.js
+          grep -q 'summaryTokenFromPath' app-v73.js
           grep -q 'data-theme="dark"' proxo-dark.css
           grep -q 'id="feedbackSheet"' index.html
           curl -fLsS --max-time 25 "$root/assets/css/proxo-dark.css?v=6" -o proxo-dark.css
           grep -q 'data-theme="dark"' proxo-dark.css
           grep -q 'proxo-ui-v2.js?v=4' index.html
-          curl -fLsS --max-time 25 "$root/assets/css/proxo-ui-v2.css?v=12" -o proxo-ui-v2.css
+          curl -fLsS --max-time 25 "$root/assets/css/proxo-ui-v2.css?v=13" -o proxo-ui-v2.css
           grep -q 'pxn-pill' proxo-ui-v2.css
           curl -fLsS --max-time 25 "$root/assets/js/proxo-ui-v2.js?v=4" -o proxo-ui-v2.js
           grep -q 'pxn-pill' proxo-ui-v2.js
@@ -156,7 +179,7 @@ jobs:
           grep -q 'id="savedRecipientsShortcut"' index.html
           grep -q 'exchange-customer-features.js?v=3' index.html
           grep -q '/assets/js/exchange-balance.js' index.html
-          grep -q '/assets/js/exchange-reward-pricing.js?v=4' index.html
+          grep -q 'exchange-reward-pricing.js?v=6' index.html
           curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/exchange-admin" -o exchange-admin.html
           grep -q 'href="exchange-admin-balance.html"' exchange-admin.html
           curl -fLsS --max-time 25 "$root/exchange-admin-balance.html" -o exchange-admin-balance.html
@@ -187,10 +210,12 @@ jobs:
           grep -q 'id="balanceRefundReportBtn"' exchange-admin.html
           grep -q 'id="balanceRefundReportFrom"' exchange-admin.html
           grep -q 'id="balanceRefundReportTo"' exchange-admin.html
-          grep -q 'admin.js?v=31' exchange-admin.html
-          grep -q 'admin.css?v=10' exchange-admin.html
-          curl -fLsS --max-time 25 "$root/assets/css/admin.css?v=10" -o admin.css
+          grep -q 'admin.js?v=33' exchange-admin.html
+          grep -q 'admin.css?v=11' exchange-admin.html
+          curl -fLsS --max-time 25 "$root/assets/css/admin.css?v=11" -o admin.css
           grep -q 'pair-tier' admin.css
+          grep -q 'order-edit-details' admin.css
+          grep -q 'rate-fee-tier-row' admin.css
           grep -q 'exchange-payout-rounding.js?v=1' exchange-admin.html
           grep -q 'exchange-insights.js?v=7' exchange-admin.html
           curl -fLsS --max-time 25 "$root/assets/js/exchange-insights.js?v=7" -o insights.js
@@ -199,20 +224,24 @@ jobs:
           grep -q 'id="profitAdminSummary"' exchange-admin.html
           grep -q 'id="profitAdmin"' exchange-admin.html
           grep -q 'id="pairTierBulkLimit"' exchange-admin.html
-          grep -q 'exchange-admin-workspace.js?v=3' exchange-admin.html
+          grep -q 'exchange-admin-workspace.js?v=4' exchange-admin.html
           grep -q 'id="exAdmin"' exchange-admin.html
           curl -fLsS --max-time 25 "$root/assets/js/exchange-profit.js?v=5" -o profit.js
           grep -q 'handling_admin_name' profit.js
-          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/admin.js?v=31" -o admin.js
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/admin.js?v=33" -o admin.js
           grep -q 'accountBalanceCell' admin.js
           grep -q 'accountBalanceDetails' admin.js
           grep -q "'account_balances'" admin.js
           grep -q 'fee_tier_enabled' admin.js
+          grep -q 'fee_brackets:fee_tiers' admin.js
+          grep -q 'saveOrderEdit' admin.js
+          grep -q 'set_order_status' admin.js
+          grep -q 'deleteOrderPermanently' admin.js
           grep -q 'applyPairTierBulk' admin.js
           curl -fLsS --max-time 25 "$root/assets/js/exchange-balance-manual.js?v=1" -o exchange-balance-manual.js
           grep -q 'balance_manual_adjust' exchange-balance-manual.js
           grep -q 'request_key:pending.key' exchange-balance-manual.js
-          curl -fLsS --max-time 25 "$root/assets/js/exchange-admin-workspace.js?v=3" -o exchange-admin-workspace.js
+          curl -fLsS --max-time 25 "$root/assets/js/exchange-admin-workspace.js?v=4" -o exchange-admin-workspace.js
           grep -q 'pairTierOf' exchange-admin-workspace.js
           curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-balance.js?v=7" -o exchange-balance.js
           grep -q 'requestBalancePayout' exchange-balance.js
@@ -238,7 +267,7 @@ jobs:
           fi
           grep -q 'startBalancePayout' exchange-balance-admin.js
           grep -q 'abortProcessingPayout' exchange-balance-admin.js
-          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-reward-pricing.js?v=4" -o exchange-reward-pricing.js
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/exchange-reward-pricing.js?v=6" -o exchange-reward-pricing.js
           grep -q 'ProxoRewardPricing' exchange-reward-pricing.js
           grep -q 'routeScope' exchange-reward-pricing.js
           curl -fLsS --max-time 25 "$root/assets/js/exchange-customer-features.js?v=3" -o customer-features.js

@@ -115,9 +115,10 @@ html body #appSplash.is-hidden .app-splash-content{transform:scale(1.04)!importa
 <link rel="stylesheet" href="/assets/css/proxo-app-shell.css?v=1">
 <link rel="stylesheet" href="/assets/css/proxo-balance-polish.css?v=1">
 <link rel="stylesheet" href="/assets/css/proxo-complete-theme.css?v=1">
-<link rel="stylesheet" href="/assets/css/proxo-ui-v2.css?v=12">
+<link rel="stylesheet" href="/assets/css/proxo-ui-v2.css?v=13">
 <link rel="stylesheet" href="/assets/css/proxo-dark.css?v=6">
 <link rel="stylesheet" href="/assets/css/proxo-design-system.css?v=3">
+<link rel="stylesheet" href="/assets/css/transaction-summary.css?v=1">
 </head>
 
 <body>
@@ -1629,18 +1630,30 @@ html body #appSplash.is-hidden .app-splash-content{transform:scale(1.04)!importa
 
 </div>
 
+<main id="transactionSummaryPage" class="transaction-summary-page" dir="rtl" lang="ku" hidden aria-live="polite">
+  <div class="ts-card" id="transactionSummaryContent">
+    <div class="ts-loading">پوختەی مامەڵە بار دەکرێت…</div>
+  </div>
+</main>
+<div id="summaryInfoBackdrop" class="ts-info-backdrop" hidden onclick="if(event.target===this)closeSummaryInfo()" role="presentation">
+  <section class="ts-info-sheet" role="dialog" aria-modal="true" aria-labelledby="summaryInfoTitle" dir="rtl">
+    <div class="ts-info-grip" aria-hidden="true"></div>
+    <div class="ts-info-head"><h2 id="summaryInfoTitle">بڕی باڵانسی گەڕاوە</h2><button class="ts-info-close" type="button" aria-label="داخستن" onclick="closeSummaryInfo()">×</button></div>
+    <p>ئەم بڕە بەشێوەیەکی خۆکار گەڕاوەتەوە بۆ باڵانسی ھەژمارەکەت، ئێمە بڕی ناتەواو نانێرین، بەهۆی سیاسەتە نوێیەکانی بانکەکانی وەک FIB و Qi Card، بڕی ناتەواو دەبێتە هۆی گومان لێکردنی بانکەکان بۆ ئاڵوگۆڕکردنی دراوە ئەلیکترۆنییەکانی وەک USDT، بۆیە ئەو بڕە دەگەڕێنینەوە بۆ باڵانسی هەژمارەکەت، بە شێوەیەکی خۆکار دوای پەسەندکردنی داواکارییەکەت.</p>
+  </section>
+</div>
 
 <script src="/assets/js/index-svg-icons.js?v=2"></script>
-<script src="/assets/js/exchange-reward-pricing.js?v=4"></script>
+<script src="/assets/js/exchange-reward-pricing.js?v=6"></script>
 <script src="/assets/js/exchange-payout-rounding.js?v=1"></script>
 <script src="/assets/js/exchange-live.js?v=1"></script>
 <script src="/assets/js/proxo-toast.js?v=1"></script>
-<script src="/assets/js/app.js?v=70"></script>
+<script src="/assets/js/app.js?v=73"></script>
 <script src="/assets/js/proxo-ui-v2.js?v=4"></script>
 <script src="/assets/js/exchange-customer-features.js?v=3"></script>
 <script src="/assets/js/exchange-balance.js?v=7"></script>
 <script src="/assets/js/exchange-ux.js?v=1"></script>
 <script src="/assets/js/receipt-download.js?v=5"></script>
-<script src="/assets/js/track.js?v=3"></script>
+<script src="/assets/js/track.js?v=4"></script>
 </body>
 </html>

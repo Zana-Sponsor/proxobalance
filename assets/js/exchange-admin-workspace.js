@@ -21,11 +21,15 @@ function updateAdminRatePreview(){
  const value=Number(document.getElementById('rateValue').value),type=document.getElementById('rateType').value;
  const amount=Number(document.getElementById('adminRateExample').value);
  if(!Number.isFinite(value)||value<0||!Number.isFinite(amount)||amount<=0){el.textContent='بەهای دروست بنووسە';return;}
- // A saved amount tier decides the percentage for this example amount.
+ // Flexible editor brackets decide the percentage for this example amount.
  const saved=allRates.find(r=>String(r.id)===String(document.getElementById('rateId')?.value||''));
- const tier=saved&&typeof pairTierOf==='function'?pairTierOf(saved):null;
+ const candidateTiers=typeof readRateFeeTiers==='function'?readRateFeeTiers(true):[];
+ const editingTiers=typeof validateRateFeeTiers==='function'&&validateRateFeeTiers(candidateTiers,document.getElementById('rateFrom')?.value,document.getElementById('rateTo')?.value,type,value)?candidateTiers:[];
+ const legacy=saved&&typeof pairTierOf==='function'?pairTierOf(saved):null;
  let eff=value;
- if(tier&&type===saved.rate_type){const pct=amount<=tier.limit?tier.low:tier.high;eff=type==='fee_percent'?pct:type==='multiplier'?Number((1-pct/100).toFixed(10)):value;}
+ const brackets=editingTiers.length?editingTiers:(legacy?[{max_iqd:legacy.limit,fee_percent:legacy.low},{max_iqd:null,fee_percent:legacy.high}]:[]);
+ const match=brackets.find(t=>t.max_iqd===null||amount<=Number(t.max_iqd));
+ if(match&&(type==='fee_percent'||type==='multiplier')){const pct=Number(match.fee_percent);eff=type==='fee_percent'?pct:Number((1-pct/100).toFixed(10));}
  const receive=type==='fee_percent'?amount*(1-eff/100):type==='fee_fixed'?amount-eff:amount*eff;
  el.textContent=methodLabel(document.getElementById('rateFrom').value)+' → '+methodLabel(document.getElementById('rateTo').value)+' : '+formatNum(amount)+' → '+formatNum(receive);
 }

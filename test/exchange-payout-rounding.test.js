@@ -74,7 +74,7 @@ test('later proof attachment is available only for positive automatic-only settl
 function elements(){
   const rows=new Map();
   return id=>{if(!rows.has(id))rows.set(id,{value:'',textContent:'',innerText:'',innerHTML:'',outerHTML:'',files:[],hidden:false,
-    disabled:false,style:{},dataset:{},attributes:{},classList:{add(){},remove(){}},
+    disabled:false,style:{},dataset:{},attributes:{},classList:{add(){},remove(){},toggle(){}},
     setAttribute(key,value){this.attributes[key]=value;}});return rows.get(id);};
 }
 const number=value=>Number(value).toLocaleString('en-US');
@@ -113,11 +113,12 @@ test('fractional IQD principal is rejected while the USDT source display preserv
   element('from').value='USDT';c.RATES['USDT>FIB']={type:'multiplier',value:1500};c.amount='1.1';c.calc();
   assert.equal(element('bdSent').textContent,'1.1 $');
 });
-test('customer order cards show saved payout and posted credit without rounding legacy records',()=>{
+test('customer order cards show saved payout without counting returned balance as recipient payout',()=>{
   const c=vm.createContext({formatNum:number,escHtml:escape,methodLabel:String,kycFmtDate:String,ICON:{arrowLeftLong:''}});
   vm.runInContext(helper+'\n'+app.slice(app.indexOf('function orderCodeOf('),app.indexOf('// ── transaction details')),c);
   const card=c.orderCardHTML(savedOrder());
-  assert.match(card,/10,000 IQD/);assert.match(card,/500 IQD/);assert.match(card,/گەڕاوەتەوە بۆ باڵانست/);
+  assert.match(card,/10,000 IQD/);assert.match(card,/11,000 IQD/);
+  assert.doesNotMatch(card,/گەڕاوە بۆ باڵانس/);
   const pendingCard=c.orderCardHTML(base);assert.match(pendingCard,/دوای پەسەندکردن بۆ باڵانست/);
   assert.doesNotMatch(pendingCard,/گەڕاوەتەوە بۆ باڵانست/);
   const legacy=c.orderCardHTML({...base,status:approved});assert.match(legacy,/10,500 IQD/);

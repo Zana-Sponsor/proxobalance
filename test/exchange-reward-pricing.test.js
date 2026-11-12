@@ -44,7 +44,7 @@ test('the real customer calculation shows 50k covered, 10k excess and a 200 IQD 
   const app=readFileSync(new URL('../assets/js/app.js',import.meta.url),'utf8');
   const elements=new Map();
   const element=id=>{
-    if(!elements.has(id))elements.set(id,{value:'',innerText:'',textContent:'',hidden:false,classList:{add(){},remove(){}}});
+    if(!elements.has(id))elements.set(id,{value:'',innerText:'',textContent:'',hidden:false,classList:{add(){},remove(){},toggle(){}}});
     return elements.get(id);
   };
   element('from').value='FastPay';element('receiveVia').value='FIB';

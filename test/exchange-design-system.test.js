@@ -8,7 +8,8 @@ const shellCss=read('assets/css/proxo-ui-v2.css');
 
 test('Customer design contract is loaded after every legacy stylesheet',()=>{
   const sheets=[...html.matchAll(/<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"/g)].map(m=>m[1]);
-  assert.equal(sheets.at(-1),'/assets/css/proxo-design-system.css?v=3');
+  assert.equal(sheets.at(-2),'/assets/css/proxo-design-system.css?v=3');
+  assert.equal(sheets.at(-1),'/assets/css/transaction-summary.css?v=1');
   assert(!read('exchange-admin.html').includes('proxo-design-system.css'));
 });
 
@@ -59,26 +60,27 @@ test('Design layer leaves hidden/route mechanics untouched and provides accessib
 
 test('Production smoke waits for the changed customer version and verifies its design contract',()=>{
   const workflow=read('.github/workflows/exchange-production-smoke.yml');
-  assert(workflow.includes('app.js?v=70'));
-  assert(workflow.includes('admin.js?v=31'));
-  assert(workflow.includes('exchange-admin-workspace.js?v=3'));
+  assert(workflow.includes('app.js?v=73'));
+  assert(workflow.includes('admin.js?v=33'));
+  assert(workflow.includes('exchange-admin-workspace.js?v=4'));
   assert(workflow.includes('exchange-insights.js?v=7'));
-  assert(workflow.includes('exchange-reward-pricing.js?v=4'));
-  assert(workflow.includes("grep -q 'ProxoRewardPricing.effectiveRate' app-v70.js"));
+  assert(workflow.includes('exchange-reward-pricing.js?v=6'));
+  assert(workflow.includes("grep -q 'ProxoRewardPricing.effectiveRate' app-v73.js"));
   assert(!workflow.includes('effectiveCustomerRate'));
   assert(workflow.includes('proxo-design-system.css?v=3'));
   assert(workflow.includes("grep -q 'width:min(42vw,180px)' current-index.html"));
   assert(workflow.includes("grep -q 'animation:spIn 1.15s' current-index.html"));
   assert(workflow.includes("grep -q 'clamp(24px, 7vw, 30px)' proxo-design-system.css"));
-  assert(html.includes('/assets/js/app.js?v=70'));
-  assert(html.includes('exchange-reward-pricing.js?v=4'));
-  assert(html.includes('proxo-ui-v2.css?v=12'));
+  assert(html.includes('/assets/js/app.js?v=73'));
+  assert(html.includes('exchange-reward-pricing.js?v=6'));
+  assert(html.includes('proxo-ui-v2.css?v=13'));
+  assert(html.includes('/assets/css/transaction-summary.css?v=1'));
   assert(html.includes('proxo-dark.css?v=6'));
   assert(html.includes('exchange-balance.css?v=6'));
-  assert(html.includes('/assets/css/proxo-ui-v2.css?v=12'));
+  assert(html.includes('/assets/css/proxo-ui-v2.css?v=13'));
   assert(html.includes('/assets/js/proxo-ui-v2.js?v=4'));
   assert(html.includes('/assets/js/proxo-toast.js?v=1'));
-  assert(html.indexOf('proxo-toast.js?v=1') < html.indexOf('app.js?v=70'));
+  assert(html.indexOf('proxo-toast.js?v=1') < html.indexOf('app.js?v=73'));
   assert(shellCss.includes('.pxt-stack'));
   assert(shellCss.includes('.pxn-pill'));
   assert(shellCss.includes('.field-error.show'));
@@ -119,8 +121,8 @@ test('Production smoke waits for the changed customer version and verifies its d
 test('Tiered fees are opt-in per directed wallet route and preserve existing commissions',()=>{
   const admin=read('exchange-admin.html');
   const adminJs=read('assets/js/admin.js');
-  assert(read('exchange-admin.html').includes('admin.js?v=31'));
-  assert(read('exchange-admin.html').includes('admin.css?v=10'));
+  assert(read('exchange-admin.html').includes('admin.js?v=33'));
+  assert(read('exchange-admin.html').includes('admin.css?v=11'));
   assert(read('assets/css/admin.css').includes('.pair-tier'));
   assert(read('assets/js/exchange-admin-workspace.js').includes('pairTierOf'));
   const api=read('api/orders.js');

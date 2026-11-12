@@ -1204,6 +1204,34 @@ function renderOrdersCards(list){
     </div>`).join('')}</div>`;
 }
 
+function orderEditAllowed(order){
+  return !!order&&!order.balance_refunded_at&&!['پەسەندکرا','ڕەتکرا','پێویستی بە ڕاستکردنەوەیە'].includes(order.status)&&
+    !order.payout_settlement_id&&!order.balance_refund_case_id&&Number(order.shortfall_refunded_iqd||0)===0;
+}
+function adminOrderEditMarkup(order){
+  const id=esc(String(order.id)),editable=orderEditAllowed(order),statusEditable=editable&&['چاوەڕوانە','ڕاستکراوەتەوە'].includes(order.status);
+  const statusOptions=[['چاوەڕوانە','چاوەڕوانە'],['ڕاستکراوەتەوە','ڕاستکراوەتەوە']];
+  if(!statusOptions.some(([value])=>value===order.status))statusOptions.unshift([order.status,order.status]);
+  const field=(label,idName,value,attrs='')=>`<label class="order-edit-field"><span>${label}</span><input id="${idName}" class="minp" value="${esc(value||'')}" ${attrs} ${editable?'':'disabled'}></label>`;
+  const deleteLocked=order.status==='پەسەندکرا'||order.from_method==='AccountBalance'||order.balance_debit_journal_id||order.balance_request_key||order.balance_refund_case_id||order.payout_settlement_id||order.reward_id;
+  return `<details class="order-edit-details"><summary><i class="fas fa-pen-to-square"></i> دەستکاری وردەکاری و دۆخی مامەڵە</summary>
+    <div class="order-edit-content">
+      <div class="order-edit-note">بڕ، ئاراستە و بڕی وەرگرتن بەهۆی تۆمارە داراییەکانەوە لێرە ناگۆڕدرێن. بۆ کۆتایی هێنان بە پەسەندکردن یان ڕەتکردنەوە، دووگمەکانی ڕێڕەوی ئاسایی بەکاربهێنە.</div>
+      <div class="order-edit-grid">
+        ${field('ژمارەی وەرگر','oePhone',order.phone,'inputmode="numeric" maxlength="32" dir="ltr"')}
+        ${field('ناوی نێرەر','oeSenderName',order.sender_name,'maxlength="200"')}
+        ${field('ژمارەی نێرەر','oeSenderPhone',order.sender_phone,'inputmode="numeric" maxlength="32" dir="ltr"')}
+        ${field('ژمارەی مامەڵەی نێرەر','oeReference',order.transaction_reference,'maxlength="120" dir="ltr"')}
+        <label class="order-edit-field order-edit-wide"><span>زانیاریی زیاتر</span><textarea id="oeExtraInfo" class="minp mta" maxlength="2000" ${editable?'':'disabled'}>${esc(order.extra_info||'')}</textarea></label>
+        <label class="order-edit-field"><span>دۆخی مامەڵە</span><select id="oeStatus" class="msel" ${statusEditable?'':'disabled'}>${statusOptions.map(([value,label])=>`<option value="${esc(value)}" ${order.status===value?'selected':''}>${esc(label)}</option>`).join('')}</select></label>
+      </div>
+      <label class="order-notify-toggle"><input type="checkbox" id="oeNotifyUser" checked><span><b>ئاگادارکردنەوەی بەکارهێنەر</b><small>ئەگەر دۆخ بگۆڕێت، ئاگاداری لە ئەپی بەکارهێنەر دروست دەکرێت.</small></span></label>
+      <button type="button" class="act-btn dark order-edit-save" onclick="saveOrderEdit('${id}')" ${editable?'':'disabled'}><i class="fas fa-floppy-disk"></i> پاشەکەوتکردنی گۆڕانکاری</button>
+      <div class="order-delete-zone"><div><b>سڕینەوەی هەمیشەیی</b><small>تەنها ئەگەر هیچ تۆماری دارایی یان مێژووی پەیوەندیدار نەبێت؛ سڕینەوەی خاوەن مێژوو لەلایەن سێرڤەرەوە ڕەت دەکرێتەوە.</small></div>
+        <button type="button" class="act-btn rd" onclick="deleteOrderPermanently('${id}')" ${deleteLocked?'disabled':''}><i class="fas fa-trash"></i> سڕینەوە</button></div>
+    </div></details>`;
+}
+
 function showOrderDetail(id){
   const order = allOrders.find(x=>String(x.id)===String(id));
   if(!order){ showToast('نەدۆزرایەوە','rd'); return; }
@@ -1243,6 +1271,7 @@ function showOrderDetail(id){
       </label>`):''}
     </div>`:''}
     ${order.status===STATUS_APPROVED?`<section class="admin-order-feedback" id="adminOrderFeedback"><h4>هەڵسەنگاندنی کڕیار</h4><p>هەڵسەنگاندن بار دەکرێت...</p></section>`:''}
+    ${adminOrderEditMarkup(order)}
     <label class="modal-lbl">تێبینی ئەدمین</label>
     <textarea class="minp mta" id="odNote">${esc(order.admin_note||'')}</textarea>
     <div class="act-grp" style="margin-top:12px">
@@ -1589,6 +1618,52 @@ async function saveOrderNote(id){
   catch(error){showToast('هەڵە: '+error.message,'rd');return;}
   showToast('تێبینی پاشەکەوتکرا','gr');
   refreshOrdersEverywhere();
+}
+async function saveOrderEdit(id){
+  const order=allOrders.find(row=>String(row.id)===String(id));
+  if(!order||!orderEditAllowed(order)){showToast('ئەم مامەڵەیە بۆ دەستکاریی وردەکاری لە دۆخی پارێزراودایە','rd');return;}
+  const value=fieldId=>(document.getElementById(fieldId)?.value||'').trim();
+  const changes={};
+  const fields=[['phone','oePhone'],['sender_name','oeSenderName'],['sender_phone','oeSenderPhone'],['transaction_reference','oeReference'],['extra_info','oeExtraInfo']];
+  for(const [key,fieldId] of fields){const next=value(fieldId),prior=String(order[key]||'').trim();if(next!==prior)changes[key]=next;}
+  const nextStatus=document.getElementById('oeStatus')?.value;
+  const statusChanged=!!nextStatus&&nextStatus!==order.status;
+  const note=value('odNote');if(note!==String(order.admin_note||'').trim())changes.admin_note=note;
+  if(!Object.keys(changes).length&&!statusChanged){showToast('هیچ گۆڕانکارییەک نەکراوە','');return;}
+  const section=document.querySelector('.order-edit-details'),button=section?.querySelector('.order-edit-save');
+  if(button)button.disabled=true;
+  let detailsSaved=false;
+  try{
+    let updated=order;
+    if(Object.keys(changes).length){
+      updated=await adminApiRequest('update_order',{order_id:order.id,changes});
+      if(!updated||String(updated.id)!==String(order.id))throw new Error('وەڵامی سێرڤەر پشتڕاست نەکرایەوە');
+      detailsSaved=true;
+      const index=allOrders.findIndex(row=>String(row.id)===String(order.id));if(index>=0)allOrders[index]={...allOrders[index],...updated};
+    }
+    if(statusChanged){
+      updated=await adminApiRequest('set_order_status',{order_id:order.id,status:nextStatus,reason:note||null,clear_reason:!note,notify_user:!!document.getElementById('oeNotifyUser')?.checked});
+      if(!updated||String(updated.id)!==String(order.id))throw new Error('وەڵامی گۆڕینی دۆخ پشتڕاست نەکرایەوە');
+      const index=allOrders.findIndex(row=>String(row.id)===String(order.id));if(index>=0)allOrders[index]={...allOrders[index],...updated};
+    }
+    const message=statusChanged?(updated.notification_sent?'دۆخ گۆڕدرا و ئاگاداری بۆ بەکارهێنەر نێردرا':'گۆڕانکاری پاشەکەوتکرا؛ ئاگاداری نەنێردرا'):'وردەکارییەکان پاشەکەوتکران';
+    showToast(message,'gr');showOrderDetail(order.id);refreshOrdersEverywhere();
+  }catch(error){if(detailsSaved)refreshOrdersEverywhere();showToast(detailsSaved?'وردەکارییەکان پاشەکەوت بوون، بەڵام گۆڕینی دۆخ سەرکەوتوو نەبوو: '+error.message:'هەڵە: '+error.message,'rd');}
+  finally{if(button)button.disabled=false;}
+}
+function deleteOrderPermanently(id){
+  const order=allOrders.find(row=>String(row.id)===String(id));if(!order){showToast('مامەڵەکە نەدۆزرایەوە','rd');return;}
+  confirm2('سڕینەوەی هەمیشەیی','ئەم کارە پاشەکەوتی مامەڵەکە لە داتابەیس دەسڕێتەوە. تۆمارە دارایی و مێژووی پەیوەندیدار پارێزراون و ڕێگە بە سڕینەوەیان نادرێت. بۆ پشتڕاستکردنەوە دووبارە کۆدی مامەڵەکە بنووسە.','fas fa-trash','var(--rd)',async()=>{
+    const typed=prompt('کۆدی ئەم مامەڵەیە بنووسە بۆ سڕینەوەی هەمیشەیی:\n'+orderCodeOf(order),'');
+    if(typed===null)return;
+    if(typed.trim()!==orderCodeOf(order)){showToast('کۆدی مامەڵەکە یەک ناگرێتەوە؛ هیچ شتێک نەسڕایەوە','rd');return;}
+    try{
+      const result=await adminApiRequest('delete_order_permanently',{order_id:order.id,confirm_order_code:typed.trim()});
+      if(!result?.deleted||String(result.id)!==String(order.id))throw new Error('وەڵامی سڕینەوە پشتڕاست نەکرایەوە');
+      allOrders=allOrders.filter(row=>String(row.id)!==String(order.id));closeMo('moOrderDetail');
+      showToast('مامەڵەکە بە هەمیشەیی سڕایەوە و کردارەکە تۆمار کرا','gr');refreshOrdersEverywhere();
+    }catch(error){showToast('نەتوانرا بسڕدرێتەوە: '+error.message,'rd');}
+  });
 }
 function refreshOrdersEverywhere(){
   loadDashboardStats();
@@ -2168,6 +2243,60 @@ function buildToMethodKeys(){
   return [...set];
 }
 function rateTypeLabel(t){ return t==='fee_percent' ? 'حمولە %' : t==='fee_fixed' ? 'حمولەی جێگیر' : 'مەزراپ'; }
+function rateFeeTiersForRow(rate){
+  const brackets=Array.isArray(rate?.fee_brackets)&&rate.fee_brackets.length?rate.fee_brackets:rate?.fee_tiers;
+  if(Array.isArray(brackets)&&brackets.length)return brackets.map(t=>({max_iqd:t.max_iqd===null?null:Number(t.max_iqd),fee_percent:Number(t.fee_percent)}));
+  if(rate?.fee_tier_enabled&&rate.fee_tier_low_percent!=null&&rate.fee_tier_high_percent!=null)
+    return [{max_iqd:Number(rate.fee_tier_limit_iqd),fee_percent:Number(rate.fee_tier_low_percent)},{max_iqd:null,fee_percent:Number(rate.fee_tier_high_percent)}];
+  return [];
+}
+function rateFeeTierSummary(rate){
+  const tiers=rateFeeTiersForRow(rate);
+  return tiers.map((tier,index)=>index===tiers.length-1?'زیاتر: '+fmtPct(tier.fee_percent)+'%':'≤ '+formatNum(tier.max_iqd)+' IQD: '+fmtPct(tier.fee_percent)+'%').join(' · ');
+}
+function readRateFeeTiers(allowIncomplete=false){
+  const rows=[...(document.querySelectorAll('#rateFeeTiers .rate-fee-tier-row'))];
+  if(!rows.length)return [];
+  return rows.map((row,index)=>{
+    const feeInput=row.querySelector('[data-fee-percent]'),maxInput=row.querySelector('[data-max-iqd]');
+    const rawFee=(feeInput?.value||'').trim(),rawMax=(maxInput?.value||'').trim();
+    return {max_iqd:index===rows.length-1?null:(rawMax===''?null:Number(rawMax)),fee_percent:rawFee===''?null:Number(rawFee)};
+  });
+}
+function renderRateFeeTiers(tiers=[]){
+  const wrap=document.getElementById('rateFeeTiers');if(!wrap)return;
+  wrap.innerHTML=tiers.map((tier,index)=>`<div class="rate-fee-tier-row" data-tier-index="${index}">
+    <div class="rate-fee-tier-range"><label>${index===tiers.length-1?'بڕی زیاتر لە پلەی پێشوو':'تا ئەم بڕە (IQD)'}</label>
+      ${index===tiers.length-1?'<div class="rate-fee-open">هەموو بڕی زیاتر</div>':`<input class="minp" data-max-iqd type="number" min="1" max="1000000000" step="1" dir="ltr" value="${esc(tier.max_iqd??'')}" placeholder="بۆ نموونە 100000" oninput="updateAdminRatePreview()">`}</div>
+    <div class="rate-fee-tier-percent"><label>لێبڕین ٪</label><input class="minp" data-fee-percent type="number" min="0" max="100" step="0.01" dir="ltr" value="${esc(tier.fee_percent??'')}" placeholder="٪" oninput="updateAdminRatePreview()"></div>
+    ${tiers.length>2?`<button type="button" class="rate-fee-remove" aria-label="سڕینەوەی پلە" onclick="removeRateFeeTier(${index})"><i class="fas fa-xmark"></i></button>`:''}
+  </div>`).join('');
+}
+function addRateFeeTier(){
+  const current=readRateFeeTiers(true);
+  if(current.length>=12){showToast('زۆرترین ژمارەی پلە ١٢ ـە','rd');return;}
+  const next=current.length?current:[{max_iqd:'',fee_percent:''},{max_iqd:null,fee_percent:''}];
+  if(current.length)next.splice(Math.max(0,next.length-1),0,{max_iqd:'',fee_percent:''});
+  renderRateFeeTiers(next);updateAdminRatePreview();
+}
+function removeRateFeeTier(index){const current=readRateFeeTiers(true);if(current.length<=2)return;current.splice(index,1);renderRateFeeTiers(current);updateAdminRatePreview();}
+function clearRateFeeTiers(){renderRateFeeTiers([]);updateAdminRatePreview();}
+function setRateFeeTiers(rate){renderRateFeeTiers(rateFeeTiersForRow(rate));}
+function validateRateFeeTiers(tiers,from,to,type,value){
+  if(!tiers.length)return true;
+  if(tiers.length<2||tiers.length>12||from==='USDT'||from==='AccountBalance'||to==='USDT'||from===to||
+     !(type==='fee_percent'||(type==='multiplier'&&value>=0&&value<=1)))return false;
+  let previous=0;
+  return tiers.every((tier,index)=>{
+    if(tier.fee_percent===null||tier.fee_percent===undefined)return false;
+    const pct=Number(tier.fee_percent);
+    if(!Number.isFinite(pct)||pct<0||pct>100)return false;
+    if(index===tiers.length-1)return tier.max_iqd===null;
+    const max=Number(tier.max_iqd);
+    if(!Number.isSafeInteger(max)||max<1||max>1000000000||max<=previous)return false;
+    previous=max;return true;
+  });
+}
 function renderRates(){
   if(!allRates.length){ document.getElementById('ratesTableWrap').innerHTML='<div class="empty"><i class="fas fa-percent"></i><p>هیچ ڕێگایەک زیاد نەکراوە</p></div>'; return; }
   document.getElementById('ratesTableWrap').innerHTML = `<table><thead><tr><th>لە</th><th>بۆ</th><th>جۆر</th><th>بەها</th><th>چالاک</th><th>کردار</th></tr></thead><tbody>
@@ -2177,7 +2306,7 @@ function renderRates(){
       <td style="font-size:12px">${rateTypeLabel(r.rate_type)}</td>
       <td style="font-family:'Inter';font-weight:800;direction:ltr;text-align:right">${r.rate_type==='multiplier' && Number(r.rate_value)<1
         ? `×${esc(r.rate_value)} <span style="font-family:'R';font-size:10.5px;font-weight:700;color:var(--mt2)">(${esc(fmtPairValue(r.rate_type,r.rate_value))})</span>`
-        : esc(fmtPairValue(r.rate_type,r.rate_value))}${pairTierOf(r)?`<div class="rate-tier-line"><i class="fas fa-layer-group"></i> ${esc(pairTierText(pairTierOf(r)))}</div>`:''}</td>
+        : esc(fmtPairValue(r.rate_type,r.rate_value))}${rateFeeTiersForRow(r).length?`<div class="rate-tier-line"><i class="fas fa-layer-group"></i> ${esc(rateFeeTierSummary(r))}</div>`:''}</td>
       <td><label class="mswitch"><input type="checkbox" ${r.is_active?'checked':''} onchange="toggleRateActive('${r.id}',this.checked)"><span class="track"></span></label></td>
       <td><div class="act-grp">
         <div class="act-btn dark" onclick='openRateModal(${safeAttr(r)})'><i class="fas fa-pen"></i></div>
@@ -2222,6 +2351,7 @@ async function openRateModal(rate){
     document.getElementById('rateValue').value='';
     document.getElementById('rateActive').checked=true;
   }
+  setRateFeeTiers(rate||null);
   updateRateValueHint();updateAdminRatePreview();
   openMo('moRate');
 }
@@ -2239,12 +2369,12 @@ async function saveRate(){
  const rate_type=document.getElementById('rateType').value;
  const rate_value=Number(document.getElementById('rateValue').value),is_active=document.getElementById('rateActive').checked;
  if(from===to||!document.getElementById('rateValue').value.trim()||!Number.isFinite(rate_value)||rate_value<0){showToast('ڕێگا و بەهای دروست هەڵبژێرە','rd');return;}
+ const fee_tiers=readRateFeeTiers();
+ if(!validateRateFeeTiers(fee_tiers,from,to,rate_type,rate_value)){showToast('پلەکان پشکنە: سنووری بڕکان بەرەو زیادبوون بێت و پلەی کۆتایی بێ‌سنوور بێت','rd');return;}
  const btn=document.getElementById('rateSaveBtn');if(btn.disabled)return;btn.disabled=true;
  try{
-  const row={from_method:from,to_method:to,rate_type,rate_value,is_active};
-  // A tier only works with a % fee or a multiplier up to 1; switch it off instead of failing the save.
-  const prevRate=id?allRates.find(r=>String(r.id)===String(id)):null;
-  if(prevRate&&prevRate.fee_tier_enabled&&!(rate_type==='fee_percent'||(rate_type==='multiplier'&&rate_value<=1)))row.fee_tier_enabled=false;
+  const row={from_method:from,to_method:to,rate_type,rate_value,is_active,fee_brackets:fee_tiers,
+    fee_tier_enabled:false,fee_tier_low_percent:null,fee_tier_high_percent:null};
   const query=id?sb.from('ex_rates').update(row).eq('id',id):sb.from('ex_rates').insert(row);
   const {data,error}=await query.select('*').single();if(error)throw error;
   if(!data?.id)throw new Error('پاشەکەوتکردن پشتڕاست نەکرایەوە');
