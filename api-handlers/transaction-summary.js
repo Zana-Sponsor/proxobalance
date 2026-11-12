@@ -3,7 +3,7 @@ import { json, readJson, serviceFetch, withSecurity } from './_lib/security.js';
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const ORDER_FIELDS = [
   'id', 'user_id', 'order_code', 'from_method', 'to_method', 'amount', 'total', 'fee',
-  'reward_discount_iqd', 'payout_settlement_id', 'payout_iqd', 'payout_rounding_iqd',
+  'reward_discount_iqd', 'reward_original_fee_iqd', 'payout_settlement_id', 'payout_iqd', 'payout_rounding_iqd',
   'shortfall_refunded_iqd', 'balance_refund_case_id', 'balance_refunded_at',
   'status', 'phone', 'extra_info', 'admin_note', 'receipt_url', 'payout_receipt_url',
   'created_at', 'updated_at', 'decided_at'

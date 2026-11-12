@@ -14,8 +14,9 @@ body.transaction-summary-active #transactionSummaryPage { display: block !import
   padding: max(18px, env(safe-area-inset-top)) 18px max(24px, env(safe-area-inset-bottom));
   border-radius: 0 0 26px 26px; background: #fff; box-shadow: 0 8px 28px rgba(28, 43, 66, .08);
 }
-.ts-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; margin-bottom: 20px; }
-.ts-header h1 { margin: 0; color: #172334; font-size: 18px; line-height: 1.5; font-weight: 600; }
+.ts-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; margin-bottom: 20px; direction: ltr; }
+.ts-header h1 { flex: 1; margin: 0; color: #172334; font-size: 18px; line-height: 1.5; font-weight: 600; direction: rtl; text-align: right; }
+.ts-header-spacer { width: 48px; flex: 0 0 48px; }
 .ts-close {
   width: 48px; height: 48px; flex: 0 0 48px; display: grid; place-items: center; border: 0; border-radius: 15px;
   background: #f0f3fb; color: #546173; cursor: pointer; -webkit-tap-highlight-color: transparent;
@@ -49,7 +50,11 @@ body.transaction-summary-active #transactionSummaryPage { display: block !import
   background: #eef3fa; color: #63758f; font: 600 12px/1 Arial,sans-serif; cursor: pointer;
 }
 .ts-status { margin: 0 0 14px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; border-radius: 18px; background: #effaf4; }
+.ts-status.is-warn { background: #fff8e8; }
+.ts-status.is-error { background: #fff1f1; }
 .ts-status-icon { width: 44px; height: 44px; flex: 0 0 44px; display: grid; place-items: center; border-radius: 14px; background: #e4f6ec; color: #229b5a; }
+.ts-status.is-warn .ts-status-icon { background: #fff0c7; color: #9a6400; }
+.ts-status.is-error .ts-status-icon { background: #ffe0e0; color: #b42318; }
 .ts-status-icon svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 .ts-status-text { min-width: 0; }
 .ts-status-text b { display: block; color: #172334; font-size: 14px; font-weight: 600; line-height: 1.7; }
@@ -60,9 +65,12 @@ body.transaction-summary-active #transactionSummaryPage { display: block !import
 .ts-extra p + p { margin-top: 8px; }
 .ts-feedback { margin-bottom: 14px; }
 .ts-feedback .fb { margin: 0 !important; }
+.ts-payout-receipt { margin: 0 0 14px; padding: 12px; border: 1px solid #edf0f4; border-radius: 18px; background: #fff; color: #4f5e72; font-size: 13px; }
+.ts-payout-receipt img { display: block; max-width: 100%; max-height: 360px; margin: 9px auto 0; border-radius: 12px; object-fit: contain; cursor: zoom-in; }
 .ts-receipt { width: 100%; min-height: 58px; padding: 0 16px; display: flex; align-items: center; justify-content: center; gap: 9px; border: 0; border-radius: 18px; background: #f0f2fb; color: #273246; font: inherit; font-size: 15px; font-weight: 500; cursor: pointer; }
 .ts-receipt svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .ts-loading,.ts-error { width: min(100%, 620px); min-height: 45vh; margin: 0 auto; padding: 24px; display: grid; align-content: center; justify-items: center; gap: 12px; color: #536176; text-align: center; }
+.ts-loading[hidden],.ts-error[hidden] { display: none !important; }
 .ts-error b { color: #172334; font-size: 16px; }
 .ts-error p { margin: 0; font-size: 14px; line-height: 1.8; }
 .ts-error button { min-height: 44px; padding: 0 18px; border: 0; border-radius: 14px; background: #eef2f8; color: #263246; font: inherit; cursor: pointer; }

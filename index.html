@@ -118,6 +118,7 @@ html body #appSplash.is-hidden .app-splash-content{transform:scale(1.04)!importa
 <link rel="stylesheet" href="/assets/css/proxo-ui-v2.css?v=13">
 <link rel="stylesheet" href="/assets/css/proxo-dark.css?v=6">
 <link rel="stylesheet" href="/assets/css/proxo-design-system.css?v=3">
+<link rel="stylesheet" href="/assets/css/transaction-summary.css?v=1">
 </head>
 
 <body>
@@ -1629,13 +1630,69 @@ html body #appSplash.is-hidden .app-splash-content{transform:scale(1.04)!importa
 
 </div>
 
+<main id="transactionSummaryPage" dir="rtl" lang="ku" hidden aria-labelledby="transactionSummaryTitle">
+  <div class="transaction-summary-page">
+    <section class="ts-card">
+      <header class="ts-header">
+        <button class="ts-close" type="button" onclick="closeTransactionSummary()" aria-label="داخستن" title="داخستن">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/><path d="M8 12h12"/></svg>
+        </button>
+        <h1 id="transactionSummaryTitle">پوختەی مامەڵە</h1>
+        <span class="ts-header-spacer" aria-hidden="true"></span>
+      </header>
+      <div id="summaryLoading" class="ts-loading" role="status" aria-live="polite">
+        <span class="icn icn-spin icon--solar icon--solar--refresh-linear" aria-hidden="true"></span>
+        <span>زانیاری مامەڵەکە بار دەکرێت...</span>
+      </div>
+      <section id="summaryError" class="ts-error" role="alert" hidden>
+        <b id="summaryErrorTitle">نەتوانرا مامەڵەکە پیشان بدرێت</b>
+        <p id="summaryErrorMessage"></p>
+        <button id="summaryErrorAction" type="button" hidden></button>
+      </section>
+      <div id="summaryContent" hidden>
+        <div class="ts-amounts" aria-label="بڕی پارە">
+          <div class="ts-amount is-received"><small>بڕی وەرگیراو</small><b id="summaryReceivedAmount" dir="ltr">—</b></div>
+          <div class="ts-amount"><small>بڕی نادراو</small><b id="summarySourceAmount" dir="ltr">—</b></div>
+        </div>
+        <section id="summaryDetails" class="ts-details" aria-label="وردەکاری مامەڵە"></section>
+        <section id="summaryStatus" class="ts-status" role="status" aria-live="polite">
+          <span id="summaryStatusIcon" class="ts-status-icon" aria-hidden="true"></span>
+          <span class="ts-status-text"><b id="summaryStatusTitle"></b><small id="summaryStatusMessage"></small></span>
+        </section>
+        <section id="summaryAdditional" class="ts-extra" hidden>
+          <h2>زانیاری زیاتر</h2>
+          <div id="summaryAdditionalContent"></div>
+        </section>
+        <div id="summaryFeedback" class="ts-feedback"></div>
+        <div id="summaryPayoutReceipt" class="ts-payout-receipt" hidden></div>
+        <button id="summaryReceiptButton" class="ts-receipt" type="button" onclick="downloadSummaryReceipt()" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 18v3h14v-3"/></svg>
+          <span>داگرتنی پسووڵە</span>
+        </button>
+      </div>
+    </section>
+  </div>
+</main>
+
+<div id="summaryInfoBackdrop" class="ts-info-backdrop" hidden onclick="if(event.target===this)closeSummaryInfo()">
+  <section class="ts-info-sheet" role="dialog" aria-modal="true" aria-labelledby="summaryInfoTitle" onclick="event.stopPropagation()">
+    <div class="ts-info-grip" aria-hidden="true"></div>
+    <div class="ts-info-head"><h2 id="summaryInfoTitle">بڕی گەڕاوە بۆ باڵانس</h2>
+      <button class="ts-info-close" type="button" onclick="closeSummaryInfo()" aria-label="داخستن">×</button>
+    </div>
+    <p>ئەم بڕە بەشێوەیەکی خۆکار گەڕاوەتەوە بۆ باڵانسی هەژمارەکەت. ئەم بڕە پێشتر لە کۆی مامەڵەکەدا هەژمارکراوە و نابێت دووبارە لە کۆی گشتی زیاد بکرێت. تەنها بڕی دیاریکراو بۆ وەرگر نێردراوە.</p>
+  </section>
+</div>
+
+<script src="/assets/js/transaction-summary-route.js?v=1"></script>
 
 <script src="/assets/js/index-svg-icons.js?v=2"></script>
 <script src="/assets/js/exchange-reward-pricing.js?v=5"></script>
 <script src="/assets/js/exchange-payout-rounding.js?v=1"></script>
+<script src="/assets/js/transaction-summary-financials.js?v=1"></script>
 <script src="/assets/js/exchange-live.js?v=1"></script>
 <script src="/assets/js/proxo-toast.js?v=1"></script>
-<script src="/assets/js/app.js?v=70"></script>
+<script src="/assets/js/app.js?v=71"></script>
 <script src="/assets/js/proxo-ui-v2.js?v=4"></script>
 <script src="/assets/js/exchange-customer-features.js?v=3"></script>
 <script src="/assets/js/exchange-balance.js?v=7"></script>
