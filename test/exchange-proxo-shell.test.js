@@ -42,12 +42,14 @@ test('Home only reminds about approved unrated orders',()=>{
   assert.equal(context.pendingHomeFeedbackOrder().id,'pending-rating');
 });
 
-test('Home reward reminder renders its 50% reward copy safely',()=>{
+test('Home feedback reminder invites a rating without promising a reward',()=>{
   const {context,element}=reminderContext([{...approved,order_code:'<script>unsafe</script>'}]);
   context.renderHomeFeedbackPrompt();
   assert.equal(element.hidden,false);
   assert(!element.innerHTML.includes('<script>'));
-  assert(element.innerHTML.includes('50%'));
+  assert(element.innerHTML.includes('هەڵسەنگاندنەکەت بنێرە'));
+  assert(!element.innerHTML.includes('50%'));
+  assert(!element.innerHTML.includes('داشکان'));
   assert(!element.innerHTML.includes('<script>'));
 });
 

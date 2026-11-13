@@ -1619,43 +1619,13 @@ async function loadMyRewards(){
   if(!owner)MY_REWARDS=[];
   calc();
 }
-let _welcomeRewardExpiryTimer=null;
-let _welcomeRewardCountdownTimer=null;
-function formatRewardCountdown(validUntil){
-  const left=Math.max(0,Date.parse(validUntil)-Date.now());
-  const days=Math.floor(left/86400000), hours=Math.floor((left%86400000)/3600000), minutes=Math.floor((left%3600000)/60000);
-  return days>0 ? `${days} ڕۆژ و ${hours} کاتژمێر ماوە` : `${hours} کاتژمێر و ${minutes} خولەک ماوە`;
-}
-function renderWelcomeReward(){
-  clearTimeout(_welcomeRewardExpiryTimer);_welcomeRewardExpiryTimer=null;
-  clearInterval(_welcomeRewardCountdownTimer);_welcomeRewardCountdownTimer=null;
-  const box=document.getElementById('welcomeReward');
-  if(!box)return;
-  const reward=curUser && MY_REWARDS.find(r=>r.campaign_key==='welcome_signup_v1' && r.active &&
-    Number(r.used_count)<Number(r.max_uses) && Date.parse(r.valid_until)>Date.now());
-  box.hidden=!reward;
-  const expiry=document.getElementById('welcomeRewardExpiry');
-  if(expiry)expiry.textContent=reward?'کارایە تا '+kycFmtDate(reward.valid_until,true)+' · '+formatRewardCountdown(reward.valid_until):'';
-  if(reward){
-    const owner=curUser.id;
-    _welcomeRewardCountdownTimer=setInterval(()=>{
-      if(curUser?.id!==owner){clearInterval(_welcomeRewardCountdownTimer);return;}
-      const current=document.getElementById('welcomeRewardExpiry');
-      if(current)current.textContent='کارایە تا '+kycFmtDate(reward.valid_until,true)+' · '+formatRewardCountdown(reward.valid_until);
-    },60000);
-    _welcomeRewardExpiryTimer=setTimeout(()=>{if(curUser?.id===owner)calc();},
-      Math.min(2147483647,Math.max(100,Date.parse(reward.valid_until)-Date.now()+50)));
-  }
-}
 function availableFeeReward(from,to,fee){
   if(!curUser || from==='USDT' || to==='USDT' || fee<=0)return null;
   const now=Date.now();
   const scope=ProxoRewardPricing.routeScope(from,to);
   return MY_REWARDS.filter(r=>(r.reward_scope||'wallets')===scope && r.active && (r.max_uses==null || Number(r.used_count)<Number(r.max_uses))
       && (!r.valid_until || Date.parse(r.valid_until)>now))
-    .sort((a,b)=>(String(a.campaign_key||'').startsWith('order_feedback_v1:')?0:1)-
-      (String(b.campaign_key||'').startsWith('order_feedback_v1:')?0:1) ||
-      (a.valid_until?Date.parse(a.valid_until):Infinity)-
+    .sort((a,b)=>(a.valid_until?Date.parse(a.valid_until):Infinity)-
       (b.valid_until?Date.parse(b.valid_until):Infinity) ||
       (a.kind==='free_transactions'?0:1)-(b.kind==='free_transactions'?0:1) ||
       Date.parse(a.created_at)-Date.parse(b.created_at) || String(a.id).localeCompare(String(b.id)))[0]||null;
@@ -1809,7 +1779,6 @@ function updateSubmitState(from,to){
     : 'ناردنی داواکاری';
 }
 function calc(){
-  if(typeof renderWelcomeReward==='function')renderWelcomeReward();
   const val=getAmtRaw();
   const amt=parseFloat(val)||0;
   const from=document.getElementById('from').value;
@@ -2422,15 +2391,8 @@ let _txSheetId=null;
 let _feedbackDraftRating=0;
 let _homeFeedbackPromptShownThisSession=false;
 let _homeFeedbackPromptQueued=false;
-function hasOrderFeedbackReward(order){
-  return !!order.feedbackRewardGranted || MY_REWARDS.some(reward=>reward.campaign_key==='order_feedback_v1:'+String(order.id));
-}
-const FEEDBACK_REWARD={ percent:50, maxIqd:10000 };            // 50% off the next fee, up to 10,000 IQD
 const FEEDBACK_LABELS=['زۆر خراپ','خراپ','مام ناوەند','باش','زۆر باش'];
 const FB_STAR='<svg class="fb-star-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3.2l2.6 5.4 5.9.8-4.3 4.1 1.1 5.9L12 16.6 6.7 19.4l1.1-5.9L3.5 9.4l5.9-.8L12 3.2z"/></svg>';
-const FB_GIFT='<svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="8.5" width="17" height="4" rx="1"/><path d="M5 12.5V20h14v-7.5"/><path d="M12 8.5V20"/><path d="M12 8.5c-1.6 0-4.5-.3-4.5-2.4 0-1.3 1-2.1 2.2-2.1 1.9 0 2.3 2.8 2.3 4.5zM12 8.5c1.6 0 4.5-.3 4.5-2.4 0-1.3-1-2.1-2.2-2.1-1.9 0-2.3 2.8-2.3 4.5z"/></svg>';
-const FB_CHECK='<svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5"/></svg>';
-function fbEn(n){ return Number(n).toLocaleString('en-US'); }
 
 function feedbackOrderSnapshot(order){
   const payout=typeof ProxoPayoutRounding==='object'?ProxoPayoutRounding.forOrder(order):null;
@@ -2441,16 +2403,6 @@ function feedbackOrderSnapshot(order){
     '<div class="fb-route" dir="ltr">'+txRouteInner(order.from_method,order.to_method)+'</div>'+
     '<div class="fb-lines">'+line('ناردراو',txAmount(order.amount,order.from_method))+line('وەرگیراو',txAmount(received,order.to_method))+'</div>'+
     '<div class="fb-date">'+txWhenHTML(order.decided_at||order.created_at,true)+'</div></div>';
-}
-/* The reward as two equal cells: what you get · the most it can be. */
-function feedbackRewardCard(order,earned){
-  return '<div class="fb-reward'+(earned?' is-earned':'')+'" role="status">'+
-    '<div class="fb-reward-head"><span class="fb-reward-ico" aria-hidden="true">'+(earned?FB_CHECK:FB_GIFT)+'</span>'+
-    '<div><b>'+(earned?'پاداشتەکەت ئامادەیە':'پاداشی هەڵسەنگاندن')+'</b><small>بۆ مامەڵەی داهاتووت</small></div></div>'+
-    '<div class="fb-reward-grid">'+
-      '<div class="fb-reward-cell"><small>داشکاندن لە کرێ</small><b dir="ltr">'+FEEDBACK_REWARD.percent+'%</b></div>'+
-      '<div class="fb-reward-cell"><small>زۆرترین داشکاندن</small><b dir="ltr">'+fbEn(FEEDBACK_REWARD.maxIqd)+' IQD</b></div>'+
-    '</div></div>';
 }
 // Feedback = stars + an optional comment. Nothing else.
 function fbFlatHTML(order,cfg){
@@ -2560,10 +2512,9 @@ async function submitSummaryFeedback(){
   try{
     const {data,error:insertError}=await sb.from('ex_order_feedback').insert({order_id:order.id,user_id:curUser.id,rating:_summaryFeedbackDraftRating,comment}).select('order_id,rating,comment,created_at').single();
     if(insertError)throw insertError;
-    order.feedback=data;order.feedbackRewardGranted=true;_summaryFeedbackDraftRating=0;
-    await loadMyRewards();
+    order.feedback=data;_summaryFeedbackDraftRating=0;
     renderSummaryFeedback(order);
-    showToast('سوپاس! داشکاندنی '+FEEDBACK_REWARD.percent+'% تا '+fbEn(FEEDBACK_REWARD.maxIqd)+' دینار بۆ مامەڵەی داهاتووت زیادکرا.','success');
+    showToast('سوپاس بۆ هەڵسەنگاندنەکەت.','success');
   }catch(err){
     if(error)error.textContent=err.code==='23505'?'هەڵسەنگاندنی ئەم داواکارییە پێشتر تۆمار کراوە.':'نەتوانرا هەڵسەنگاندنەکەت تۆمار بکرێت؛ تکایە دووبارە هەوڵ بدەرەوە.';
     if(button){button.disabled=false;button.textContent='ناردنی هەڵسەنگاندن';}
@@ -2721,11 +2672,11 @@ async function submitOrderFeedback(orderId){
   try{
     const {data,error}=await sb.from('ex_order_feedback').insert({order_id:order.id,user_id:curUser.id,rating:_feedbackDraftRating,comment}).select('order_id,rating,comment,created_at').single();
     if(error)throw error;
-    order.feedback=data;order.feedbackRewardGranted=true;_feedbackDraftRating=0;renderHomeFeedbackPrompt();await loadMyRewards();
+    order.feedback=data;_feedbackDraftRating=0;renderHomeFeedbackPrompt();
     if(fromSheet){ closeFeedbackSheet(); }
     else if(_route==='summary'){ renderTxScreen(); }
     else { navigate('home',true); }
-    showToast('سوپاس! داشکاندنی '+FEEDBACK_REWARD.percent+'% تا '+fbEn(FEEDBACK_REWARD.maxIqd)+' دینار بۆ مامەڵەی داهاتووت زیادکرا.','success');
+    showToast('سوپاس بۆ هەڵسەنگاندنەکەت.','success');
   }catch(error){
     if(errorEl)errorEl.textContent=error.code==='23505'?'هەڵسەنگاندنی ئەم داواکارییە پێشتر تۆمار کراوە.':'نەتوانرا هەڵسەنگاندنەکەت تۆمار بکرێت؛ تکایە دووبارە هەوڵ بدەرەوە.';
     if(button){button.disabled=false;button.textContent='ناردنی هەڵسەنگاندن';}
@@ -3157,7 +3108,7 @@ function renderHomeFeedbackPrompt(){
   if(!order||isFeedbackRead(order.id)){el.hidden=true;el.innerHTML='';return;}
   el.hidden=false;
   el.innerHTML='<span class="home-feedback-icon" aria-hidden="true"><span class="icn icon--solar icon--solar--star-linear"></span></span>'+
-    '<span class="home-feedback-copy"><b>مامەڵەکەت چۆن بوو؟</b><span>هەڵسەنگاندنەکەت بنێرە و '+FEEDBACK_REWARD.percent+'% داشکان بۆ مامەڵەی داهاتوو وەربگرە.</span></span>'+
+    '<span class="home-feedback-copy"><b>مامەڵەکەت چۆن بوو؟</b><span>هەڵسەنگاندنەکەت بنێرە و یارمەتیمان بدە خزمەتگوزارییەکە باشتر بکەین.</span></span>'+
     '<button type="button" class="home-feedback-action" onclick="openHomePendingFeedback()">هەڵسەنگاندن</button>';
 }
 function openHomePendingFeedback(){
@@ -5380,7 +5331,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   sb.auth.onAuthStateChange((_event,nextSession)=>{
     activeSession=nextSession||null;
     if(_event==='SIGNED_OUT'){
-      ++_rewardLoadId;MY_REWARDS=[];renderWelcomeReward();
+      ++_rewardLoadId;MY_REWARDS=[];
       if(typeof resetMyBalance==='function')resetMyBalance();
       if(typeof resetCustomerConveniences==='function')resetCustomerConveniences();
     }

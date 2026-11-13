@@ -65,7 +65,7 @@ test('Design layer leaves hidden/route mechanics untouched and provides accessib
 
 test('Production smoke waits for the changed customer version and verifies its design contract',()=>{
   const workflow=read('.github/workflows/exchange-production-smoke.yml');
-  assert(workflow.includes('app.js?v=80'));
+  assert(workflow.includes('app.js?v=81'));
   assert(workflow.includes('transaction-summary.css?v=5'));
   assert(workflow.includes('id="pageSummary" data-route="summary"'));
   assert(workflow.includes('id="txScreenBody"'));
@@ -73,13 +73,13 @@ test('Production smoke waits for the changed customer version and verifies its d
   assert(workflow.includes("grep -q 'width:min(42vw,180px)' current-index.html"));
   assert(workflow.includes("grep -q 'animation:spIn 1.15s' current-index.html"));
   assert(workflow.includes("grep -q 'clamp(24px, 7vw, 30px)' proxo-design-system.css"));
-  assert(html.includes('/assets/js/app.js?v=80'));
+  assert(html.includes('/assets/js/app.js?v=81'));
   assert(html.includes('/assets/css/proxo-ui-v2.css?v=14'));
   assert(html.includes('/assets/css/transaction-summary.css?v=5'));
   assert(html.includes('/assets/css/whatsapp-notify.css?v=1'));
   assert(html.includes('/assets/js/proxo-ui-v2.js?v=4'));
   assert(html.includes('/assets/js/proxo-toast.js?v=1'));
-  assert(html.indexOf('proxo-toast.js?v=1') < html.indexOf('app.js?v=80'));
+  assert(html.indexOf('proxo-toast.js?v=1') < html.indexOf('app.js?v=81'));
   assert(shellCss.includes('.pxt-stack'));
   assert(shellCss.includes('.pxn-pill'));
   assert(shellCss.includes('.field-error.show'));
