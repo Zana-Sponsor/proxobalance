@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import vm from 'node:vm';
 import summaryApi from '../api-handlers/transaction-summary.js';
 
 await import('../assets/js/transaction-summary-financials.js');
@@ -125,6 +126,20 @@ test('summary preserves secure full-page RTL elements, status, feedback, info, a
   assert.match(css, /\.ts-info-backdrop/);
   assert.match(css, /@media \(max-width: 380px\)/);
   assert.match(css, /direction: rtl/);
+});
+
+test('approved transaction details open the secure summary route; action statuses keep the legacy modal', () => {
+  const urlBody = functionBody(app, 'transactionSummaryUrlForOrder');
+  const openerBody = functionBody(app, 'openTxDetail');
+  const token = '11111111-1111-4111-8111-111111111111';
+  const context = vm.createContext({ encodeURIComponent, location: { assign(url) { this.assigned = url; } } });
+  vm.runInContext(urlBody + '\n' + openerBody, context);
+  context._orders = [{ id: 'order-1', status: 'پەسەندکرا', secure_token: token }];
+  context.openTxDetail('order-1');
+  assert.equal(context.location.assigned, '/summarytransaction/' + token);
+  assert.equal(context.transactionSummaryUrlForOrder({ status: 'چاوەڕوانە', secure_token: token }), '');
+  assert.equal(context.transactionSummaryUrlForOrder({ status: 'ڕەتکرا', secure_token: token }), '');
+  assert.equal(context.transactionSummaryUrlForOrder({ status: 'پەسەندکرا', secure_token: 'invalid' }), '');
 });
 
 test('direct route is rewritten securely and its token is redacted from analytics and error logs', () => {

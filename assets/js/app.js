@@ -2654,9 +2654,17 @@ function txRow(label, value, opts){
   return '<div class="tx-drow"><span class="tx-dlbl">'+escHtml(label)+'</span>'
     + '<span class="tx-dval'+(o.cls?' '+o.cls:'')+'"'+(o.ltr?' dir="ltr"':'')+'>'+(o.html?value:escHtml(String(value)))+'</span></div>';
 }
+function transactionSummaryUrlForOrder(order){
+  if(order?.status!=='پەسەندکرا') return '';
+  const token=typeof order.secure_token==='string'?order.secure_token.trim():'';
+  if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(token)) return '';
+  return '/summarytransaction/'+encodeURIComponent(token);
+}
 function openTxDetail(id){
   const o=_orders.find(row=>String(row.id)===String(id));
   if(!o) return;
+  const summaryUrl=transactionSummaryUrlForOrder(o);
+  if(summaryUrl){ location.assign(summaryUrl); return; }
   const nextTxSheetId=String(id);
   if(_txSheetId!==nextTxSheetId)_feedbackDraftRating=0;
   _txSheetId=nextTxSheetId;
