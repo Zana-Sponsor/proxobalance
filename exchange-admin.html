@@ -780,6 +780,13 @@
     <input type="hidden" id="apOrderId">
     <div id="apReview" class="payout-approval-review"></div>
     <p id="apActionNote" class="payout-rounding-note"></p>
+    <div id="apRefundWrap" style="margin-top:12px;padding:12px;border:1px solid rgba(217,119,6,.25);border-radius:14px;background:rgba(217,119,6,.06)">
+      <label class="modal-lbl">بڕی ڕیفاوند بۆ باڵانسی کڕیار (IQD)</label>
+      <input class="minp" id="apRefundAmount" type="number" min="0" max="1000000000" step="1000" inputmode="numeric" placeholder="0">
+      <div class="fee-toggle-note" style="margin-top:5px">بۆ نموونە: ئەگەر ١١,٠٠٠ داواکراوە و تەنها ١٠,٠٠٠ دەنێریت، لێرە ١,٠٠٠ بنووسە.</div>
+      <label class="modal-lbl" style="margin-top:9px">هۆکاری ڕیفاوند</label>
+      <textarea class="minp mta" id="apRefundNote" maxlength="300" placeholder="بۆ نموونە: لە هەژماری FIB تەنها ١٠,٠٠٠ دینار بەردەست بوو"></textarea>
+    </div>
     <div id="apReceiptWrap" class="payout-approval-receipt">
       <div id="apReceiptPreview" style="width:58px;height:58px;border-radius:16px;background:var(--bg);border:1.5px dashed var(--b2);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;color:var(--mt);font-size:20px"><i class="fas fa-receipt"></i></div>
       <div style="flex:1;min-width:0">
@@ -1253,7 +1260,7 @@
   </div>
   <script src="assets/js/exchange-payout-rounding.js?v=1"></script>
   <script src="assets/js/exchange-live.js?v=1"></script>
-<script src="assets/js/admin.js?v=31"></script>
+<script src="assets/js/admin.js?v=32"></script>
 <script src="assets/js/admin-contracts.js?v=2"></script>
   <script src="assets/js/exchange-staff.js?v=8"></script>
   <script src="assets/js/exchange-balance-admin.js?v=8"></script>
