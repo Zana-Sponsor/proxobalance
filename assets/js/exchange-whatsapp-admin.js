@@ -19,6 +19,19 @@
     const s = STATUS[status] || ['pending', status || '—'];
     return '<span class="badge ' + s[0] + '">' + e(s[1]) + '</span>';
   }
+  const KIND = { order_approved: 'پەسەندکردن', order_rejected: 'ڕەتکردنەوە' };
+  function kindBadge(k){
+    const tone = k === 'order_rejected' ? 'rejected' : 'approved';
+    return '<span class="badge ' + tone + '" style="opacity:.85">' + e(KIND[k] || k || '—') + '</span>';
+  }
+  function templateLine(list){
+    if(!Array.isArray(list) || !list.length) return '';
+    return list.map(t => {
+      const metaStatus = String(t.status || t.meta_status || '').toUpperCase();
+      const state = t.active ? 'چالاکە' : (metaStatus === 'REJECTED' ? 'Meta ڕەتی کردەوە' : 'چاوەڕێی پەسەندکردنی Meta');
+      return 'قاڵبی ' + (KIND[t.kind] || t.kind) + ': ' + state;
+    }).join(' · ');
+  }
   function displayPhone(p){ return /^\+964\d{10}$/.test(p || '') ? '0' + p.slice(4) : (p || '—'); }
   // Wevlix errors arrive as JSON text; show the readable part
   function errorText(raw){
@@ -38,7 +51,7 @@
     set('waStSubs', d.subscribers); set('waStToday', d.sent_today); set('waStTotal', d.sent_total);
     set('waStPending', d.pending); set('waStFailed', d.failed);
     const last = document.getElementById('waStLast');
-    if(last) last.textContent = d.last_sent_at ? 'دوایین ناردن: ' + dt(d.last_sent_at) : '';
+    if(last) last.textContent = [d.last_sent_at ? 'دوایین ناردن: ' + dt(d.last_sent_at) : '', templateLine(d.templates)].filter(Boolean).join(' — ');
     const sb2 = document.getElementById('sbWaFailed');
     if(sb2){ const f = Number(d.failed || 0); sb2.textContent = f; sb2.style.display = f ? '' : 'none'; }
   }
@@ -59,11 +72,12 @@
       return;
     }
     const canRetry = typeof staffCan !== 'function' || staffCan('approve_orders');
-    wrap.innerHTML = '<table><thead><tr><th>کات</th><th>ئۆردەر</th><th>کڕیار</th><th>ژمارەی واتسئاپ</th><th>دۆخ</th><th>هەوڵ</th><th>نێردرا لە</th><th>تێبینی</th><th>کردار</th></tr></thead><tbody>'
+    wrap.innerHTML = '<table><thead><tr><th>کات</th><th>جۆر</th><th>ئۆردەر</th><th>کڕیار</th><th>ژمارەی واتسئاپ</th><th>دۆخ</th><th>هەوڵ</th><th>نێردرا لە</th><th>تێبینی</th><th>کردار</th></tr></thead><tbody>'
       + rows.map(r => {
           const err = errorText(r.last_error);
           return '<tr>'
             + '<td style="font-size:12px;white-space:nowrap">' + e(dt(r.created_at)) + '</td>'
+            + '<td>' + kindBadge(r.kind) + '</td>'
             + '<td style="direction:ltr;font-family:monospace;font-weight:700">' + e(r.order_code || '—') + '</td>'
             + '<td style="font-size:13px">' + (r.customer_name ? e(r.customer_name) : '—') + (r.username ? '<div style="font-size:11px;opacity:.7;direction:ltr">@' + e(r.username) + '</div>' : '') + '</td>'
             + '<td style="direction:ltr;font-size:13px;white-space:nowrap">' + e(displayPhone(r.phone)) + '</td>'
@@ -118,7 +132,7 @@
 
   // register the page with the admin router
   if(typeof pageConfig === 'object' && pageConfig){
-    pageConfig.whatsapp = { title: 'نامەکانی واتسئاپ', sub: 'دۆخ و لۆگی ناردنی ئاگاداری پەسەندکردنی داواکاری بۆ واتسئاپی کڕیار', load: () => window.loadWhatsappAdmin() };
+    pageConfig.whatsapp = { title: 'نامەکانی واتسئاپ', sub: 'دۆخ و لۆگی ناردنی ئاگاداری پەسەندکردن و ڕەتکردنەوەی داواکاری بۆ واتسئاپی کڕیار', load: () => window.loadWhatsappAdmin() };
   }
   // failed-count badge in the sidebar once the panel is up
   window.addEventListener('load', () => { setTimeout(() => { if(typeof sb !== 'undefined' && sb) loadStats().catch(() => {}); }, 2500); });

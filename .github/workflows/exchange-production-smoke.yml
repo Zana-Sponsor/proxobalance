@@ -51,8 +51,8 @@ jobs:
                curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-admin-balance.js?v=1' -o current-balance-admin.js &&
                grep -q 'ex_admin_adjust_balance' current-balance-admin.js &&
                grep -q 'assets/js/admin.js?v=32' current-admin.html &&
-               grep -q 'assets/js/exchange-whatsapp-admin.js?v=1' current-admin.html &&
-               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-whatsapp-admin.js?v=1' -o current-whatsapp-admin.js &&
+               grep -q 'assets/js/exchange-whatsapp-admin.js?v=2' current-admin.html &&
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-whatsapp-admin.js?v=2' -o current-whatsapp-admin.js &&
                grep -q 'ex_admin_whatsapp_log' current-whatsapp-admin.js &&
                grep -q 'exchange-feedback.css?v=3' current-admin.html &&
                grep -q 'app-ui-polish.css?v=2' current-admin.html &&
