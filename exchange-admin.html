@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="assets/css/admin.css?v=12">
 <link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/exchange-insights.css?v=2">
-<link rel="stylesheet" href="assets/css/exchange-features.css?v=3">
+<link rel="stylesheet" href="assets/css/exchange-features.css?v=4">
 <link rel="stylesheet" href="assets/css/exchange-panel-theme.css?v=4">
 <link rel="stylesheet" href="assets/css/exchange-readable.css?v=3">
 <link rel="stylesheet" href="assets/css/exchange-typography.css?v=1">
@@ -80,6 +80,7 @@
     <div class="sb-item" onclick="goPage('contracts')"><i class="fas fa-file-signature" style="color:#1685fa"></i> گرێبەست</div>
     <div class="sb-section">پەیوەندی</div>
     <div class="sb-item" onclick="goPage('notifications')"><i class="fas fa-bell" style="color:#7c3aed"></i> ئاگادارییەکان</div>
+    <div class="sb-item" onclick="goPage('whatsapp')"><i class="fas fa-whatsapp" style="color:#16a34a"></i> نامەکانی واتسئاپ <span class="sb-badge rd" id="sbWaFailed" style="display:none">0</span></div>
     <div class="sb-item" onclick="goPage('cases')"><i class="fas fa-headset" style="color:#2563eb"></i> کەیسەکانی کڕیار <span class="sb-badge rd" id="sbCaseCount" style="display:none">0</span></div>
     <div class="sb-item" onclick="goPage('announcement')"><i class="fas fa-bullhorn" style="color:#0891b2"></i> بانەری ئاگاداری</div>
     <div class="sb-section">ئاسایش</div>
@@ -643,6 +644,37 @@
     </div>
 
     <!-- ══ OTP CODES ══ -->
+    <!-- ══ WHATSAPP ORDER NOTIFICATIONS (ex_whatsapp_messages, sent by n8n via Wevlix) ══ -->
+    <div class="pg" id="pgWhatsapp">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-ico dark"><i class="fas fa-user-check"></i></div><div class="stat-info"><div class="stat-val" id="waStSubs">—</div><div class="stat-lbl">کڕیاری چالاککردوو</div></div></div>
+        <div class="stat-card"><div class="stat-ico gr"><i class="fas fa-paper-plane"></i></div><div class="stat-info"><div class="stat-val" id="waStToday">—</div><div class="stat-lbl">نێردراوی ئەمڕۆ</div></div></div>
+        <div class="stat-card"><div class="stat-ico gr"><i class="fas fa-check-double"></i></div><div class="stat-info"><div class="stat-val" id="waStTotal">—</div><div class="stat-lbl">کۆی نێردراو</div></div></div>
+        <div class="stat-card"><div class="stat-ico yw"><i class="fas fa-clock"></i></div><div class="stat-info"><div class="stat-val" id="waStPending">—</div><div class="stat-lbl">لە نۆبەدا</div></div></div>
+        <div class="stat-card"><div class="stat-ico rd"><i class="fas fa-triangle-exclamation"></i></div><div class="stat-info"><div class="stat-val" id="waStFailed">—</div><div class="stat-lbl">سەرنەکەوتوو</div></div></div>
+      </div>
+      <div class="sec-hdr">
+        <h3>لۆگی نامەکانی واتسئاپ</h3>
+        <div class="act-btn dark" onclick="loadWhatsappAdmin()"><i class="fas fa-arrows-rotate"></i> نوێکردنەوە</div>
+      </div>
+      <div class="fee-toggle-note" style="margin-bottom:14px">
+        <i class="fas fa-whatsapp" style="margin-left:4px"></i>
+        کاتێک داواکارییەک پەسەند دەکرێت، نامەی «داواکارییەکەت پەسەند کرا» تەنها بۆ ئەو کڕیارانە دەنێردرێت کە ئاگاداری واتسئاپیان چالاک کردووە. n8n هەر خولەکێک نامە چاوەڕوانەکان دەنێرێت و ئەگەر سەرنەکەوت تا ٥ جار هەوڵ دەداتەوە. <span id="waStLast"></span>
+      </div>
+      <div class="tbl-wrap">
+        <div class="tbl-filter">
+          <input class="tbl-search" id="waAdminSearch" placeholder="گەڕان بە کۆدی ئۆردەر، ناو یان ژمارە..." oninput="waAdminSearchInput()">
+          <div class="chip on" data-waf="all" onclick="filterWhatsappAdmin(this)">هەموو</div>
+          <div class="chip" data-waf="sent" onclick="filterWhatsappAdmin(this)">نێردراو</div>
+          <div class="chip" data-waf="pending" onclick="filterWhatsappAdmin(this)">لە نۆبەدا</div>
+          <div class="chip" data-waf="failed" onclick="filterWhatsappAdmin(this)">سەرنەکەوتوو</div>
+        </div>
+        <div class="tbl-scroll" id="waAdminTable">
+          <div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
+        </div>
+      </div>
+    </div>
+
     <div class="pg" id="pgOtp">
       <div class="sec-hdr">
         <h3>کۆدەکانی OTP</h3>
@@ -1241,7 +1273,7 @@
 
 <div id="toast"></div>
 
-  <script src="assets/js/svg-icons.js"></script>
+  <script src="assets/js/svg-icons.js?v=2"></script>
   <div class="overlay" id="moStaffPermissions">
     <div class="modal" style="max-width:520px">
       <div class="modal-hdr"><h3>دەسەڵاتەکانی کارمەند</h3><button type="button" class="modal-close" onclick="closeMo('moStaffPermissions')" aria-label="داخستن">×</button></div>
@@ -1262,12 +1294,13 @@
   <script src="assets/js/exchange-live.js?v=1"></script>
 <script src="assets/js/admin.js?v=32"></script>
 <script src="assets/js/admin-contracts.js?v=2"></script>
-  <script src="assets/js/exchange-staff.js?v=8"></script>
+  <script src="assets/js/exchange-staff.js?v=9"></script>
   <script src="assets/js/exchange-balance-admin.js?v=8"></script>
   <script src="assets/js/exchange-balance-manual.js?v=1"></script>
   <script src="assets/js/exchange-order-manual.js?v=2"></script>
   <script src="assets/js/exchange-refund-report.js?v=2"></script>
   <script src="assets/js/exchange-insights.js?v=7"></script>
-  <script src="assets/js/exchange-profit.js?v=5"></script><script src="assets/js/exchange-admin-workspace.js?v=2"></script><script src="assets/js/track.js?v=3"></script>
+  <script src="assets/js/exchange-profit.js?v=5"></script><script src="assets/js/exchange-whatsapp-admin.js?v=1"></script>
+<script src="assets/js/exchange-admin-workspace.js?v=2"></script><script src="assets/js/track.js?v=3"></script>
 </body>
 </html>

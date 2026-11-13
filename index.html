@@ -118,7 +118,7 @@ html body #appSplash.is-hidden .app-splash-content{transform:scale(1.04)!importa
 <link rel="stylesheet" href="/assets/css/proxo-ui-v2.css?v=14">
 <link rel="stylesheet" href="/assets/css/proxo-dark.css?v=6">
 <link rel="stylesheet" href="/assets/css/proxo-design-system.css?v=3">
-<link rel="stylesheet" href="/assets/css/transaction-summary.css?v=4">
+<link rel="stylesheet" href="/assets/css/transaction-summary.css?v=5">
 <link rel="stylesheet" href="/assets/css/whatsapp-notify.css?v=1">
 </head>
 
@@ -1151,18 +1151,16 @@ html body #appSplash.is-hidden .app-splash-content{transform:scale(1.04)!importa
     </section>
   </section>
 
-  <!-- ══════════════ TRANSACTION DETAILS ══════════════ -->
-  <div class="tx-sheet-backdrop" id="txSheetBackdrop" onclick="closeTxDetail()" hidden></div>
-  <div class="tx-sheet" id="txSheet" role="dialog" aria-modal="true" aria-labelledby="txSheetTitle" hidden>
-    <div class="tx-sheet-grip" aria-hidden="true"></div>
-    <div class="tx-sheet-head">
-      <h3 id="txSheetTitle">وردەکاری مامەڵە</h3>
-      <button type="button" class="tx-sheet-close" onclick="closeTxDetail()" aria-label="داخستن">
-        <span class="icn icn-sm icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>
-      </button>
+  <!-- ══════════════ PAGE: TRANSACTION SUMMARY (route "/summarytransaction/<secure_token>") ══════════════
+       One shared in-app screen: opened from the transaction list, the home preview and WhatsApp links. -->
+  <section class="page" id="pageSummary" data-route="summary" aria-labelledby="txScreenTitle">
+    <div class="pfx-bar ts-bar">
+      <button type="button" class="pfx-bar-btn" onclick="closeTxDetail()" aria-label="گەڕانەوە"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"/></svg></button>
+      <h2 id="txScreenTitle">پوختەی مامەڵە</h2>
+      <span aria-hidden="true"></span>
     </div>
-    <div class="tx-sheet-body" id="txSheetBody"></div>
-  </div>
+    <div class="tx-screen-body" id="txScreenBody" aria-live="polite"></div>
+  </section>
 
   <!-- ══════════════ PAGE: CHANGE LOG (route "/changes") ══════════════ -->
   <section class="page" id="pageChanges" data-route="changes">
@@ -1669,39 +1667,7 @@ html body #appSplash.is-hidden .app-splash-content{transform:scale(1.04)!importa
 
 </div>
 
-<main id="transactionSummaryPage" dir="rtl" lang="ku" hidden aria-labelledby="transactionSummaryTitle">
-  <div class="transaction-summary-page">
-    <header class="ts-header">
-      <button class="ts-close" type="button" onclick="closeTransactionSummary()" aria-label="گەڕانەوە" title="گەڕانەوە">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
-      </button>
-      <h1 id="transactionSummaryTitle">پوختەی مامەڵە</h1>
-      <span class="ts-header-spacer" aria-hidden="true"></span>
-    </header>
-    <div class="ts-body">
-      <div id="summaryLoading" class="ts-loading" role="status" aria-live="polite">
-        <span class="ts-spinner" aria-hidden="true"></span>
-        <span>زانیارییەکانی مامەڵە بار دەکرێن...</span>
-      </div>
-      <section id="summaryError" class="ts-error" role="alert" hidden>
-        <b id="summaryErrorTitle">نەتوانرا مامەڵەکە پیشان بدرێت</b>
-        <p id="summaryErrorMessage"></p>
-        <button id="summaryErrorAction" type="button" hidden></button>
-      </section>
-      <div id="summaryContent" class="tf-flow" hidden>
-        <div id="summaryHero"></div>
-        <div id="summaryDetails"></div>
-        <div id="summaryAdditional" hidden></div>
-        <div id="summaryFeedback"></div>
-        <section id="summaryPayoutReceipt" class="tf-sec tf-media" hidden></section>
-        <button id="summaryReceiptButton" class="tf-ghost" type="button" onclick="downloadSummaryReceipt()" hidden>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 18v3h14v-3"/></svg>
-          <span>داگرتنی پسووڵە</span>
-        </button>
-      </div>
-    </div>
-  </div>
-</main>
+<!-- The transaction summary is an in-app screen now (#pageSummary). -->
 
 <div id="summaryInfoBackdrop" class="ts-info-backdrop" hidden onclick="if(event.target===this)closeSummaryInfo()">
   <section class="ts-info-sheet" role="dialog" aria-modal="true" aria-labelledby="summaryInfoTitle" onclick="event.stopPropagation()">
@@ -1713,7 +1679,6 @@ html body #appSplash.is-hidden .app-splash-content{transform:scale(1.04)!importa
   </section>
 </div>
 
-<script src="/assets/js/transaction-summary-route.js?v=1"></script>
 
 <script src="/assets/js/index-svg-icons.js?v=2"></script>
 <script src="/assets/js/exchange-reward-pricing.js?v=5"></script>
@@ -1721,7 +1686,7 @@ html body #appSplash.is-hidden .app-splash-content{transform:scale(1.04)!importa
 <script src="/assets/js/transaction-summary-financials.js?v=1"></script>
 <script src="/assets/js/exchange-live.js?v=1"></script>
 <script src="/assets/js/proxo-toast.js?v=1"></script>
-<script src="/assets/js/app.js?v=79"></script>
+<script src="/assets/js/app.js?v=80"></script>
 <script src="/assets/js/whatsapp-notify.js?v=1"></script>
 <script src="/assets/js/proxo-ui-v2.js?v=4"></script>
 <script src="/assets/js/exchange-customer-features.js?v=3"></script>

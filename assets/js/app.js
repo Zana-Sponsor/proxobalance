@@ -1501,6 +1501,12 @@ async function startApp(user){
     if(_ph && !_ph.value) _ph.value=curProfile.phone;
   }
   if(authRouteFromLocation()){ try{history.replaceState({},'',BASE_PATH);}catch(_){} }
+  // a transaction link opened before signing in
+  try{
+    const pending=sessionStorage.getItem('px_pending_summary');
+    if(pending){ sessionStorage.removeItem('px_pending_summary'); if(TX_TOKEN_RE.test(pending)) history.replaceState({route:'summary'},'',BASE_PATH+'summarytransaction/'+encodeURIComponent(pending)); }
+  }catch(_){}
+  if(isTransactionSummaryRoute()){ _txScreenPushed=false; _txReturnRoute='transactions'; }
   navigate(routeFromLocation(), false);
   refreshFormHints();
   startProofPolling();
@@ -2717,7 +2723,8 @@ async function submitOrderFeedback(orderId){
     if(error)throw error;
     order.feedback=data;order.feedbackRewardGranted=true;_feedbackDraftRating=0;renderHomeFeedbackPrompt();await loadMyRewards();
     if(fromSheet){ closeFeedbackSheet(); }
-    else { closeTxDetail(); navigate('home',true); }
+    else if(_route==='summary'){ renderTxScreen(); }
+    else { navigate('home',true); }
     showToast('سوپاس! داشکاندنی '+FEEDBACK_REWARD.percent+'% تا '+fbEn(FEEDBACK_REWARD.maxIqd)+' دینار بۆ مامەڵەی داهاتووت زیادکرا.','success');
   }catch(error){
     if(errorEl)errorEl.textContent=error.code==='23505'?'هەڵسەنگاندنی ئەم داواکارییە پێشتر تۆمار کراوە.':'نەتوانرا هەڵسەنگاندنەکەت تۆمار بکرێت؛ تکایە دووبارە هەوڵ بدەرەوە.';
@@ -2736,15 +2743,81 @@ function transactionSummaryUrlForOrder(order){
   if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(token)) return '';
   return '/summarytransaction/'+encodeURIComponent(token);
 }
+// ── Transaction summary: ONE shared in-app screen (route "summary") ──
+// /summarytransaction/<secure_token> opens inside the app shell, both from the
+// transaction list and from links (WhatsApp, notifications). No bottom sheet.
+const TX_TOKEN_RE=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+let _txScreenToken='', _txScreenPushed=false, _txReturnRoute='transactions', _txScreenLoadId=0, _txScreenMissing='';
 function openTxDetail(id){
   const o=_orders.find(row=>String(row.id)===String(id));
   if(!o) return;
-  // Keep in-app transaction details inside the same history sheet and app shell.
-  // The secure summary URL remains available for shared/direct links, but tapping
-  // an order from the history page must not navigate to a visually separate page.
-  const nextTxSheetId=String(id);
-  if(_txSheetId!==nextTxSheetId)_feedbackDraftRating=0;
-  _txSheetId=nextTxSheetId;
+  const nextId=String(id);
+  if(_txSheetId!==nextId)_feedbackDraftRating=0;
+  _txSheetId=nextId;
+  const token=typeof o.secure_token==='string'?o.secure_token.trim():'';
+  _txScreenToken=TX_TOKEN_RE.test(token)?token:'';
+  if(_route==='summary'){
+    if(_txScreenToken && summaryTokenFromPath()!==_txScreenToken){ try{history.replaceState({route:'summary'},'',urlFor('summary'));}catch(_){} }
+    renderTxScreen();
+    return;
+  }
+  _txReturnRoute=_route||'transactions';
+  _txScreenPushed=!!_txScreenToken;
+  navigate('summary', true);
+}
+function resetTxScreenState(){ _txSheetId=null; _txScreenPushed=false; _txScreenLoadId++; }
+function txScreenMessage(title,text,actionLabel,action){
+  return '<div class="ts-error"><b>'+escHtml(title)+'</b><p>'+escHtml(text)+'</p>'
+    +(actionLabel?'<button type="button" onclick="'+action+'">'+escHtml(actionLabel)+'</button>':'')+'</div>';
+}
+function renderTxScreen(){
+  const body=document.getElementById('txScreenBody');
+  if(!body) return;
+  const pathToken=summaryTokenFromPath();
+  if(pathToken) _txScreenToken=pathToken;
+  let o=null;
+  if(_txScreenToken) o=_orders.find(r=>String(r.secure_token||'')===_txScreenToken);
+  if(!o && _txSheetId && !pathToken) o=_orders.find(r=>String(r.id)===String(_txSheetId));
+  if(o){
+    if(_txSheetId!==String(o.id))_feedbackDraftRating=0;
+    _txSheetId=String(o.id);
+    body.innerHTML=txDetailHTML(o);
+    document.title='پوختەی مامەڵە '+orderCodeOf(o)+' — Proxo';
+    return;
+  }
+  if(!_txScreenToken || !TX_TOKEN_RE.test(_txScreenToken)){
+    _txSheetId=null;
+    body.innerHTML=txScreenMessage('نەتوانرا مامەڵەکە پیشان بدرێت','لینکی مامەڵەکە دروست نییە یان تەواو نییە.','گەڕانەوە بۆ مامەڵەکان',"navigate('transactions')");
+    return;
+  }
+  if(_txScreenMissing===_txScreenToken){
+    _txSheetId=null;
+    body.innerHTML=txScreenMessage('مامەڵەکە نەدۆزرایەوە','ئەم مامەڵەیە سەر بە ئەم هەژمارە نییە. دڵنیابە بە هەمان هەژمار چوویتە ژوورەوە.','گەڕانەوە بۆ مامەڵەکان',"navigate('transactions')");
+    return;
+  }
+  body.innerHTML='<div class="ts-loading"><span class="ts-spinner"></span><span>زانیارییەکانی مامەڵە بار دەکرێن...</span></div>';
+  fetchTxScreenOrder(_txScreenToken);
+}
+async function fetchTxScreenOrder(token){
+  const loadId=++_txScreenLoadId;
+  try{
+    const session=await getOrderSession();
+    const response=await fetch('/api/transaction-summary',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},body:JSON.stringify({secure_token:token})});
+    let payload={};try{payload=await response.json();}catch(_){}
+    if(loadId!==_txScreenLoadId||_route!=='summary'||_txScreenToken!==token) return;
+    if(_orders.some(r=>String(r.secure_token||'')===token)){ renderTxScreen(); return; }
+    if(response.status===404||response.status===400){ _txScreenMissing=token; renderTxScreen(); return; }
+    if(!response.ok||!payload.order) throw new Error('SUMMARY_LOAD_FAILED');
+    const order=payload.order; order.secure_token=token;
+    if(!_orders.some(r=>String(r.id)===String(order.id))) _orders.push(order);
+    renderTxScreen();
+  }catch(_){
+    if(loadId!==_txScreenLoadId||_route!=='summary') return;
+    const body=document.getElementById('txScreenBody');
+    if(body) body.innerHTML=txScreenMessage('نەتوانرا مامەڵەکە پیشان بدرێت','کێشەیەک لە پەیوەندی ڕوویدا. تکایە دووبارە هەوڵ بدەرەوە.','دووبارە هەوڵدانەوە','renderTxScreen()');
+  }
+}
+function txDetailHTML(o){
   const st=txStateOf(o);
   const code=orderCodeOf(o);
   const rate=Number(o.amount)>0 ? (Number(o.total)/Number(o.amount)) : 0;
@@ -2805,22 +2878,13 @@ function openTxDetail(id){
   html+='<button type="button" class="tf-ghost" onclick="downloadTransactionReceipt(\''+escHtml(String(o.id))+'\')">'
     + '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3v12m-4-4 4 4 4-4M5 18v3h14v-3"/></svg>'
     + '<span>داگرتنی پسووڵە</span></button></div>';
-  document.getElementById('txSheetBody').innerHTML=html;
-  document.getElementById('txSheetBackdrop').hidden=false;
-  const sheet=document.getElementById('txSheet');
-  sheet.hidden=false;
-  requestAnimationFrame(()=>sheet.classList.add('open'));
-  document.body.style.overflow='hidden';
+  return html;
 }
+// Back from the summary screen: return to wherever the customer came from.
 function closeTxDetail(){
-  const sheet=document.getElementById('txSheet');
-  const back=document.getElementById('txSheetBackdrop');
-  if(!sheet || sheet.hidden) return;
-  sheet.classList.remove('open');
-  back.hidden=true;
-  _txSheetId=null;
-  document.body.style.overflow='';
-  setTimeout(()=>{ if(!sheet.classList.contains('open')) sheet.hidden=true; }, 200);
+  if(_route!=='summary'){ _txSheetId=null; return; }
+  if(_txScreenPushed){ _txScreenPushed=false; try{ history.back(); return; }catch(_){} }
+  navigate(_txReturnRoute&&_txReturnRoute!=='summary'?_txReturnRoute:'transactions', true);
 }
 let _rejectedOrderRetryBusy=false;
 function confirmRejectedOrderRetry(orderId){
@@ -3068,8 +3132,7 @@ function methodLabel(key){
 function renderHistory(rows){
   _orders = rows || [];
   // an open detail sheet follows realtime status changes
-  if(_txSheetId && !_orders.some(o=>String(o.id)===_txSheetId)) closeTxDetail();
-  else if(_txSheetId) openTxDetail(_txSheetId);
+  if(_route==='summary') renderTxScreen();
   renderHomePreview();
   renderHomeFeedbackPrompt();
   maybePromptHomeFeedback();
@@ -3260,7 +3323,7 @@ Object.assign(ICON, {
 //   'hash' → www.domain.com/#/profile. Works on ANY static host with no
 //            server config at all. Switch to this if you cannot add rewrites.
 const ROUTE_MODE = 'path';
-const ROUTES = { home:'pageHome', transactions:'pageTx', changes:'pageChanges', rules:'pageRules', profile:'pageProfile', support:'pageSupport', verify:'pageVerify', balance:'pageBalance' };
+const ROUTES = { home:'pageHome', transactions:'pageTx', changes:'pageChanges', rules:'pageRules', profile:'pageProfile', support:'pageSupport', verify:'pageVerify', balance:'pageBalance', summary:'pageSummary' };
 const ROUTE_TITLES = {
   home:'Proxo — ئاڵوگۆڕی دراو',
   transactions:'مامەڵەکان — Proxo',
@@ -3269,7 +3332,8 @@ const ROUTE_TITLES = {
   profile:'پڕۆفایل — Proxo',
   support:'پشتگیری — Proxo',
   verify:'پشتڕاستکردنەوەی ناسنامە — Proxo',
-  balance:'مێژووی مامەڵەکان — Proxo'
+  balance:'مێژووی مامەڵەکان — Proxo',
+  summary:'پوختەی مامەڵە — Proxo'
 };
 // Everything before the route segment, so the app works at the domain root
 // (/profile) and inside a sub-folder (/exchange/profile) with no edits.
@@ -3277,7 +3341,8 @@ const BASE_PATH = (function(){
   let p = location.pathname.replace(/[^\/]*\.html?$/i, '');
   const parts = p.split('/').filter(Boolean);
   const lastTwo=parts.slice(-2).join('/');
-  if(parts.length>1 && AUTH_ROUTE_SET.has(lastTwo)) parts.splice(-2);
+  if(parts.length>1 && parts[parts.length-2]==='summarytransaction') parts.splice(-2);
+  else if(parts.length>1 && AUTH_ROUTE_SET.has(lastTwo)) parts.splice(-2);
   else if(parts.length && (ROUTES[parts[parts.length-1]]||AUTH_ROUTE_SET.has(parts[parts.length-1]))) parts.pop();
   return '/' + (parts.length ? parts.join('/') + '/' : '');
 })();
@@ -3288,12 +3353,14 @@ function routeFromLocation(){
     const r=location.hash.slice(2).split(/[?&]/)[0];
     if(ROUTES[r]) return r;
   }
+  if(isTransactionSummaryRoute()) return 'summary';
   const seg=location.pathname.replace(/\/+$/,'').split('/').pop();
-  return ROUTES[seg] ? seg : 'home';
+  return (ROUTES[seg] && seg!=='summary') ? seg : 'home';
 }
 function urlFor(route){
   if(route==='home') return BASE_PATH;
   if(route==='balance') return BASE_PATH+'#/balance';          // sub-screen of the profile: needs no server rewrite
+  if(route==='summary') return _txScreenToken ? BASE_PATH+'summarytransaction/'+encodeURIComponent(_txScreenToken) : location.pathname;
   return ROUTE_MODE==='hash' ? BASE_PATH+'#/'+route : BASE_PATH+route;
 }
 function navigate(route, push){
@@ -3302,18 +3369,21 @@ function navigate(route, push){
   const _prevRoute=_route;
   _route=route;
   // leaving a section: whatever was typed, picked or filtered there starts fresh next time
-  if(_prevRoute && _prevRoute!==route){ try{ resetSection(_prevRoute); }catch(_){} }
+  // opening/closing a transaction keeps the list's search and filters as they were
+  if(_prevRoute && _prevRoute!==route && route!=='summary' && _prevRoute!=='summary'){ try{ resetSection(_prevRoute); }catch(_){} }
+  if(route!=='summary' && typeof resetTxScreenState==='function') resetTxScreenState();
   Object.keys(ROUTES).forEach(r=>{
     const el=document.getElementById(ROUTES[r]);
     if(el) el.classList.toggle('active', r===route);
   });
   // /changes lives under the profile tab
-  const navRoute = (route==='changes' || route==='support' || route==='verify' || route==='balance') ? 'profile' : route;
+  const navRoute = (route==='changes' || route==='support' || route==='verify' || route==='balance') ? 'profile' : route==='summary' ? 'transactions' : route;
   document.querySelectorAll('.bn-item, .hdr-nav-link, .pxn-item, .pxh-link').forEach(b=>b.classList.toggle('on', b.dataset.route===navRoute));
   if(push && location.pathname+location.hash!==urlFor(route)){ try{ history.pushState({route:route}, '', urlFor(route)); }catch(_){} }
   document.title = ROUTE_TITLES[route] || 'Proxo';
   closeNotifPanel();
-  window.scrollTo({ top:0, behavior:'smooth' });
+  window.scrollTo({ top:0, behavior: route==='summary' ? 'auto' : 'smooth' });
+  if(route==='summary') renderTxScreen();
   if(route==='transactions') renderTxPage();
   if(route==='home'){
     renderHomeFeedbackPrompt();
@@ -3349,7 +3419,6 @@ function resetTxFilters(){
   ['txStatusFilters','txTimeFilters'].forEach(id=>{
     document.querySelectorAll('#'+id+' .filter-chip').forEach(c=>c.classList.toggle('on', /'all'/.test(c.getAttribute('onclick')||'')));
   });
-  try{ if(_txSheetId) closeTxDetail(); }catch(_){}
 }
 function resetProfileForms(){
   try{ closeUsernameSheet(); }catch(_){}
@@ -5256,7 +5325,7 @@ function honeypotTripped(){
 document.addEventListener('keydown', (e)=>{
   if(e.key!=='Escape') return;
   const summaryInfo=document.getElementById('summaryInfoBackdrop');if(summaryInfo&&!summaryInfo.hidden){closeSummaryInfo();return;}
-  if(document.getElementById('txSheet') && !document.getElementById('txSheet').hidden){ closeTxDetail(); return; }
+  if(_route==='summary' && curUser){ const anyOpen=document.querySelector('.sheet-overlay.open'); if(!anyOpen){ closeTxDetail(); return; } }
   const notifP=document.getElementById('notifPanel'); if(notifP && notifP.classList.contains('open')){ closeNotifPanel(); return; }
   const picker=document.getElementById('pickerSheet'); if(picker.classList.contains('open')){ closePicker(); return; }
   const usernameS=document.getElementById('usernameSheet'); if(usernameS && usernameS.classList.contains('open')){ closeUsernameSheet(); return; }
@@ -5304,8 +5373,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   refreshTrigger('from');
   refreshTrigger('receiveVia');
   if(!window.supabase){
-    if(isTransactionSummaryRoute())showTransactionSummaryError('هەڵەی بارکردنی سیستەم. تکایە پەڕەکە نوێ بکەرەوە.','دووبارە هەوڵدانەوە',()=>location.reload());
-    else showAmsg('هەڵەی بارکردنی سیستەم، پەڕەکە نوێ بکەرەوە','err');
+    showAmsg('هەڵەی بارکردنی سیستەم، پەڕەکە نوێ بکەرەوە','err');
     dismissAppSplash();return;
   }
   sb=window.supabase.createClient(SB_URL,SB_KEY,{ auth:{ persistSession:true, autoRefreshToken:true, storageKey:'zex_sb_session' } });
@@ -5315,7 +5383,6 @@ document.addEventListener('DOMContentLoaded', async ()=>{
       ++_rewardLoadId;MY_REWARDS=[];renderWelcomeReward();
       if(typeof resetMyBalance==='function')resetMyBalance();
       if(typeof resetCustomerConveniences==='function')resetCustomerConveniences();
-      if(isTransactionSummaryRoute()){_summaryOrder=null;_orders=[];showTransactionSummaryError('چوونەژوورەوەکەت کۆتایی هاتووە. تکایە بچۆ ژوورەوە و لینکەکە دووبارە بکەرەوە.','چوونە ژوورەوە',closeTransactionSummary);}
     }
   });
   let session=null;
@@ -5328,10 +5395,13 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     showAmsg(kuErr(error?.message)||'کێشەی تۆڕ، پەڕەکە نوێ بکەرەوە','err');
   }
   if(session?.user){
-    if(isTransactionSummaryRoute()){curUser=session.user;await loadTransactionSummaryPage(session);}
-    else await startApp(session.user);
+    await startApp(session.user);
   }else if(isTransactionSummaryRoute()){
-    showTransactionSummaryError('بۆ بینینی وردەکاری مامەڵەکە سەرەتا بچۆ ژوورەوە، پاشان لینکەکە دووبارە بکەرەوە.','چوونە ژوورەوە',closeTransactionSummary);
+    // remember the transaction, sign in, then open it inside the app
+    const pending=summaryTokenFromPath();
+    try{ if(TX_TOKEN_RE.test(pending)) sessionStorage.setItem('px_pending_summary',pending); }catch(_){}
+    setAuthRoute('login',false,true);
+    try{ showAmsg('بۆ بینینی پوختەی مامەڵەکە سەرەتا بچۆ ژوورەوە.','ok'); }catch(_){}
   }else{
     let route=authRouteFromLocation()||'login';
     if((route==='login/otp'||route==='signup/otp')&&!_otpPendingData) route=route.split('/')[0];

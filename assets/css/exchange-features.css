@@ -18,3 +18,10 @@
 .staff-directory-row>div>small{display:block;margin:4px 0 0;font-size:12px}
 .staff-directory-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .staff-directory-actions .act-btn{justify-content:center;text-align:center;white-space:normal;font-weight:400}
+
+/* WhatsApp notifications page */
+#pgWhatsapp .stats-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(min-width:700px){#pgWhatsapp .stats-row{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:1180px){#pgWhatsapp .stats-row{grid-template-columns:repeat(5,minmax(0,1fr))}}
+#waAdminTable td.wa-err{min-width:240px;max-width:360px;font-size:12px;line-height:1.7;white-space:normal;word-break:break-word}
+#waAdminTable td{vertical-align:middle}

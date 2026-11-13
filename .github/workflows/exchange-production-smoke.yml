@@ -15,8 +15,11 @@ jobs:
           set -euo pipefail
           for attempt in $(seq 1 24); do
             if curl -fLsS --max-time 15 'https://www.proxobalance.app/' -o current-index.html &&
-               grep -q 'app.js?v=70' current-index.html &&
-               grep -q 'proxo-ui-v2.css?v=13' current-index.html &&
+               grep -q 'app.js?v=80' current-index.html &&
+               grep -q 'transaction-summary.css?v=5' current-index.html &&
+               grep -q 'id="pageSummary" data-route="summary"' current-index.html &&
+               grep -q 'id="txScreenBody"' current-index.html &&
+               grep -q 'proxo-ui-v2.css?v=14' current-index.html &&
                grep -q 'proxo-dark.css?v=6' current-index.html &&
                grep -q 'id="usernameSheet"' current-index.html &&
                grep -q 'id="feedbackSheet"' current-index.html &&
@@ -25,7 +28,7 @@ jobs:
                grep -q 'id="savedRecipientsShortcut"' current-index.html &&
                grep -q 'id="pageBalance" data-route="balance"' current-index.html &&
                grep -q 'id="bxAmount"' current-index.html &&
-               grep -q 'proxo-ui-v2.css?v=13' current-index.html &&
+               grep -q 'proxo-ui-v2.css?v=14' current-index.html &&
                grep -q 'proxo-dark.css?v=6' current-index.html &&
                grep -q 'id="usernameSheet"' current-index.html &&
                grep -q 'id="feedbackSheet"' current-index.html &&
@@ -47,7 +50,10 @@ jobs:
                grep -q 'assets/js/exchange-admin-balance.js?v=1' current-balance-admin.html &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-admin-balance.js?v=1' -o current-balance-admin.js &&
                grep -q 'ex_admin_adjust_balance' current-balance-admin.js &&
-               grep -q 'assets/js/admin.js?v=31' current-admin.html &&
+               grep -q 'assets/js/admin.js?v=32' current-admin.html &&
+               grep -q 'assets/js/exchange-whatsapp-admin.js?v=1' current-admin.html &&
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-whatsapp-admin.js?v=1' -o current-whatsapp-admin.js &&
+               grep -q 'ex_admin_whatsapp_log' current-whatsapp-admin.js &&
                grep -q 'exchange-feedback.css?v=3' current-admin.html &&
                grep -q 'app-ui-polish.css?v=2' current-admin.html &&
                grep -q 'exchange-payout-rounding.js?v=1' current-admin.html &&
@@ -63,7 +69,7 @@ jobs:
                grep -q 'exchange-profit.js?v=5' current-admin.html &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-profit.js?v=5' -o current-profit.js &&
                grep -q 'ex_admin_deduction_stats_filtered' current-profit.js &&
-               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/app.js?v=70' -o current-app.js &&
+               curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/app.js?v=80' -o current-app.js &&
                grep -q 'accountBalanceSourceOption' current-app.js &&
                grep -q 'dismissAppSplash' current-app.js &&
                grep -q 'مامەڵەکەت چۆن بوو؟' current-app.js &&
@@ -103,9 +109,12 @@ jobs:
             echo 'FAIL: completed transactions summary is still published.'
             exit 1
           fi
-          grep -q 'app.js?v=70' index.html
+          grep -q 'app.js?v=80' index.html
+          grep -q 'transaction-summary.css?v=5' index.html
+          grep -q 'id="pageSummary" data-route="summary"' index.html
+          grep -q 'id="txScreenBody"' index.html
           grep -q 'id="usernameSheet"' index.html
-          grep -q 'proxo-ui-v2.css?v=13' index.html
+          grep -q 'proxo-ui-v2.css?v=14' index.html
           grep -q 'proxo-dark.css?v=6' index.html
           curl -fLsS --max-time 25 "$root/assets/css/proxo-dark.css?v=6" -o proxo-dark.css
           grep -q 'data-theme="dark"' proxo-dark.css
@@ -115,7 +124,7 @@ jobs:
           grep -q 'proxo-ui-v2.js?v=4' index.html
           grep -q 'proxo-toast.js?v=1' index.html
           grep -q 'id="savedRecipientsShortcut"' index.html
-          curl -fLsS --max-time 25 "$root/assets/css/proxo-ui-v2.css?v=13" -o proxo-ui-v2.css
+          curl -fLsS --max-time 25 "$root/assets/css/proxo-ui-v2.css?v=14" -o proxo-ui-v2.css
           grep -q '#usernameSheet .sheet-body' proxo-ui-v2.css
           grep -q 'px-ptr-pill' proxo-ui-v2.css
           grep -q 'bh-item' proxo-ui-v2.css
@@ -126,10 +135,22 @@ jobs:
           grep -q 'window.showToast = showToast' proxo-toast.js
           curl -fLsS --max-time 25 "$root/assets/js/proxo-ui-v2.js?v=4" -o proxo-ui-v2.js
           grep -q 'function place()' proxo-ui-v2.js
-          curl -fLsS --max-time 25 "$root/assets/js/app.js?v=70" -o app-v62.js
-          grep -q 'function notifRich' app-v62.js
-          grep -q 'escHtml(notifClean(s))' app-v62.js
-          grep -q 'proxo-ui-v2.css?v=13' index.html
+          curl -fLsS --max-time 25 "$root/assets/js/app.js?v=80" -o app-v80.js
+          grep -q 'function notifRich' app-v80.js
+          grep -q 'escHtml(notifClean(s))' app-v80.js
+          grep -q "navigate('summary', true)" app-v80.js
+          curl -fLsS --max-time 25 "$root/summarytransaction/00000000-0000-4000-8000-000000000000" -o summary-route.html
+          grep -q 'id="pageSummary" data-route="summary"' summary-route.html
+          grep -q 'id="txScreenBody"' summary-route.html
+          grep -q 'id="summaryInfoBackdrop"' summary-route.html
+          if grep -q 'id="transactionSummaryPage"' summary-route.html; then
+            echo 'FAIL: the summary is still published as a separate app.'
+            exit 1
+          fi
+          curl -fLsS --max-time 25 "$root/assets/css/transaction-summary.css?v=5" -o transaction-summary.css
+          grep -Fq '#pageSummary' transaction-summary.css
+          grep -Fq '.tf-row.is-total' transaction-summary.css
+          grep -q 'proxo-ui-v2.css?v=14' index.html
           grep -q 'proxo-dark.css?v=6' index.html
           curl -fLsS --max-time 25 "$root/assets/css/proxo-dark.css?v=6" -o proxo-dark.css
           grep -q 'data-theme="dark"' proxo-dark.css
@@ -137,7 +158,7 @@ jobs:
           curl -fLsS --max-time 25 "$root/assets/css/proxo-dark.css?v=6" -o proxo-dark.css
           grep -q 'data-theme="dark"' proxo-dark.css
           grep -q 'proxo-ui-v2.js?v=4' index.html
-          curl -fLsS --max-time 25 "$root/assets/css/proxo-ui-v2.css?v=13" -o proxo-ui-v2.css
+          curl -fLsS --max-time 25 "$root/assets/css/proxo-ui-v2.css?v=14" -o proxo-ui-v2.css
           grep -q 'pxn-pill' proxo-ui-v2.css
           curl -fLsS --max-time 25 "$root/assets/js/proxo-ui-v2.js?v=4" -o proxo-ui-v2.js
           grep -q 'pxn-pill' proxo-ui-v2.js
@@ -196,7 +217,7 @@ jobs:
           grep -q 'id="balanceRefundReportBtn"' exchange-admin.html
           grep -q 'id="balanceRefundReportFrom"' exchange-admin.html
           grep -q 'id="balanceRefundReportTo"' exchange-admin.html
-          grep -q 'admin.js?v=31' exchange-admin.html
+          grep -q 'admin.js?v=32' exchange-admin.html
           grep -q 'exchange-payout-rounding.js?v=1' exchange-admin.html
           grep -q 'exchange-insights.js?v=7' exchange-admin.html
           grep -q 'exchange-profit.js?v=5' exchange-admin.html
@@ -205,7 +226,7 @@ jobs:
           grep -q 'id="exAdmin"' exchange-admin.html
           curl -fLsS --max-time 25 "$root/assets/js/exchange-profit.js?v=5" -o profit.js
           grep -q 'handling_admin_name' profit.js
-          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/admin.js?v=31" -o admin.js
+          curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/assets/js/admin.js?v=32" -o admin.js
           grep -q 'accountBalanceCell' admin.js
           grep -q 'accountBalanceDetails' admin.js
           grep -q "'account_balances'" admin.js

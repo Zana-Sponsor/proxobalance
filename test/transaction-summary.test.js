@@ -12,7 +12,6 @@ const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const css = readFileSync(new URL('../assets/css/transaction-summary.css', import.meta.url), 'utf8');
 const vercel = JSON.parse(readFileSync(new URL('../vercel.json', import.meta.url), 'utf8'));
 const track = readFileSync(new URL('../assets/js/track.js', import.meta.url), 'utf8');
-const routeScript = readFileSync(new URL('../assets/js/transaction-summary-route.js', import.meta.url), 'utf8');
 
 test('summary endpoint is a POST-only server function', async () => {
   const headers = {};
@@ -48,29 +47,46 @@ test('summary route requires an authenticated owner and only selects the existin
   assert.doesNotMatch(api, /gen_random_uuid|randomUUID|set\s+secure_token\s*=/i);
 });
 
-test('summary detail card has exactly the eight approved rows in the requested order and no phone row', () => {
-  const render = functionBody(app, 'renderTransactionSummary');
-  const labels = [
-    'جۆری گواستنەوە',
-    'کرێی خزمەتگوزاری',
-    'بڕی داشکاندن',
-    'بڕی باڵانسی گەڕاوە',
-    'کۆی گشتی بەڵێبڕینەوە',
-    'بڕی نێردراو بۆ وەرگر',
-    'بەرواری ناردن',
-    'بەرواری نوێکردنەوەی دۆخ'
-  ];
-  const positions = labels.map(label => render.indexOf(`summaryDetailRow('${label}'`));
-  assert.ok(positions.every(position => position >= 0));
+test('the summary is one in-app screen, not a separate page or a bottom sheet', () => {
+  assert.match(html, /<section class="page" id="pageSummary" data-route="summary"/);
+  assert.match(html, /id="txScreenBody"/);
+  assert.doesNotMatch(html, /id="transactionSummaryPage"/);
+  assert.doesNotMatch(html, /id="txSheet"/);
+  assert.doesNotMatch(html, /transaction-summary-route\.js/);
+  assert.match(html, /id="summaryInfoBackdrop"/);
+  assert.match(html, /src="\/assets\/js\/transaction-summary-financials\.js\?v=1"/);
+  assert.doesNotMatch(css, /transaction-summary-active/);
+  assert.match(css, /#pageSummary/);
+  assert.match(app, /summary:'pageSummary'/);
+  assert.match(functionBody(app, 'routeFromLocation'), /if\(isTransactionSummaryRoute\(\)\) return 'summary';/);
+  assert.match(functionBody(app, 'urlFor'), /'summarytransaction\/'\+encodeURIComponent\(_txScreenToken\)/);
+  assert.match(app, /parts\[parts\.length-2\]==='summarytransaction'/);
+  const opener = functionBody(app, 'openTxDetail');
+  assert.match(opener, /navigate\('summary', true\)/);
+  assert.doesNotMatch(opener, /getElementById\('txSheet/);
+  assert.doesNotMatch(opener, /location\.assign/);
+});
+
+test('signed-out visitors log in first and then land on the same transaction', () => {
+  assert.match(app, /sessionStorage\.setItem\('px_pending_summary',pending\)/);
+  assert.match(app, /sessionStorage\.getItem\('px_pending_summary'\)/);
+  assert.match(app, /sessionStorage\.removeItem\('px_pending_summary'\)/);
+});
+
+test('summary details keep amount, split and transaction sections in order', () => {
+  const body = functionBody(app, 'txDetailHTML');
+  const rows = ['بڕی نێردراو', 'کرێی خزمەتگوزاری', 'بڕی داشکاندن', 'کۆی گشتی دوای کرێ'];
+  const positions = rows.map(label => body.indexOf(`tfRow('${label}'`));
+  assert.ok(positions.every(position => position >= 0), 'all amount rows exist');
   assert.deepEqual(positions, [...positions].sort((a, b) => a - b));
-  assert.doesNotMatch(render, /summaryDetailRow\(['"](?:ژمارەی وەرگر|ژمارەی مۆبایل)/);
-  assert.match(render, /financial\.total/);
-  assert.match(render, /financial\.recipientAmount/);
-  assert.match(render, /financial\.returnedAmount/);
-  assert.match(render, /txWhenHTML\(order\.created_at,true\)/);
-  assert.match(render, /order\.status_updated_at\|\|order\.decided_at\|\|order\.updated_at/);
-  assert.match(html, /<small>بڕی وەرگیراو<\/small>/);
-  assert.match(html, /<small>بڕی نادراو<\/small>/);
+  const sections = ["tfSection('وردەکاری بڕ'", "tfSection('دابەشکردنی بڕ'", "tfSection('زانیاری مامەڵە'"].map(s => body.indexOf(s));
+  assert.ok(sections.every(position => position >= 0), 'all sections exist');
+  assert.deepEqual(sections, [...sections].sort((a, b) => a - b));
+  const split = functionBody(app, 'tfSplitRows');
+  assert.match(split, /بڕی نێردراو بۆ وەرگر/);
+  assert.match(split, /بڕی گەڕاوە بۆ باڵانس/);
+  assert.match(body, /renderOrderFeedback\(o\)/);
+  assert.match(body, /downloadTransactionReceipt/);
 });
 
 test('screenshot transaction total subtracts gross fee and applies discount exactly once', () => {
@@ -90,7 +106,6 @@ test('screenshot transaction total subtracts gross fee and applies discount exac
   assert.equal(result.recipientAmount, 11000);
   assert.equal(result.returnedAmount, 385);
   assert.equal(result.recipientAmount + result.returnedAmount, result.total);
-  assert.notEqual(result.total + result.returnedAmount, result.total);
 });
 
 test('AccountBalance example keeps source debit distinct from the recipient-side total', () => {
@@ -109,35 +124,12 @@ test('AccountBalance example keeps source debit distinct from the recipient-side
   assert.equal(result.formulaMatchesTotal, true);
 });
 
-test('summary preserves secure full-page RTL elements, status, feedback, info, and receipt download', () => {
-  assert.match(html, /id="transactionSummaryPage"[^>]*dir="rtl"[^>]*lang="ku"/);
-  assert.match(html, /<h1 id="transactionSummaryTitle">پوختەی مامەڵە<\/h1>/);
-  assert.match(html, /id="summaryInfoBackdrop"/);
-  assert.match(html, /ئەم بڕە بەشێوەیەکی خۆکار گەڕاوەتەوە/);
-  assert.match(html, /id="summaryStatus"/);
-  assert.match(html, /id="summaryFeedback"/);
-  assert.match(html, /summaryReceiptButton/);
-  assert.match(html, /src="\/assets\/js\/transaction-summary-financials\.js\?v=1"/);
-  assert.match(html, /src="\/assets\/js\/transaction-summary-route\.js\?v=1"/);
-  assert.match(app, /function renderSummaryFeedback\(order\)/);
-  assert.match(app, /renderSummaryStatus\(order\)/);
-  assert.match(app, /function downloadSummaryReceipt\(\)[\s\S]+downloadTransactionReceipt/);
-  assert.match(css, /\.ts-amount\.is-received/);
-  assert.match(css, /\.ts-info-backdrop/);
-  assert.match(css, /@media \(max-width: 380px\)/);
-  assert.match(css, /direction: rtl/);
-});
-
-test('approved transaction details stay inside the history sheet while secure direct links remain available', () => {
+test('secure summary URLs are built only from valid tokens', () => {
   const urlBody = functionBody(app, 'transactionSummaryUrlForOrder');
-  const openerBody = functionBody(app, 'openTxDetail');
   const token = '11111111-1111-4111-8111-111111111111';
-  assert.doesNotMatch(openerBody, /location\.assign\(summaryUrl\)/);
   const context = vm.createContext({ encodeURIComponent });
   vm.runInContext(urlBody, context);
   assert.equal(context.transactionSummaryUrlForOrder({ status: 'پەسەندکرا', secure_token: token }), '/summarytransaction/' + token);
-  assert.equal(context.transactionSummaryUrlForOrder({ status: 'چاوەڕوانە', secure_token: token }), '');
-  assert.equal(context.transactionSummaryUrlForOrder({ status: 'ڕەتکرا', secure_token: token }), '');
   assert.equal(context.transactionSummaryUrlForOrder({ status: 'پەسەندکرا', secure_token: 'invalid' }), '');
 });
 
@@ -152,6 +144,4 @@ test('direct route is rewritten securely and its token is redacted from analytic
   assert.match(app, /function safeAppTelemetryPath\(\)\{return summaryTokenFromPath\(\)\?'/);
   assert.match(app, /path:safeAppTelemetryPath\(\)/);
   assert.match(app, /\[operation,stage,code,safeAppTelemetryPath\(\)\]/);
-  assert.match(routeScript, /transaction-summary-active/);
-  assert.doesNotMatch(html, /<script>\s*\(function\(\)\{\s*if\(\^\\\/summarytransaction/);
 });

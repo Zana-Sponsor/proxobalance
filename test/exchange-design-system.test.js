@@ -6,9 +6,15 @@ const html=read('index.html');
 const css=read('assets/css/proxo-design-system.css');
 const shellCss=read('assets/css/proxo-ui-v2.css');
 
-test('Customer design contract is loaded after every legacy stylesheet',()=>{
+test('Shared design contract precedes the summary and WhatsApp route stylesheets',()=>{
   const sheets=[...html.matchAll(/<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"/g)].map(m=>m[1]);
-  assert.equal(sheets.at(-1),'/assets/css/proxo-design-system.css?v=3');
+  const designIndex=sheets.indexOf('/assets/css/proxo-design-system.css?v=3');
+  const summaryIndex=sheets.indexOf('/assets/css/transaction-summary.css?v=5');
+  const whatsappIndex=sheets.indexOf('/assets/css/whatsapp-notify.css?v=1');
+  assert.ok(designIndex>=0);
+  assert.ok(summaryIndex>designIndex);
+  assert.ok(whatsappIndex>summaryIndex);
+  assert.equal(sheets.at(-1),'/assets/css/whatsapp-notify.css?v=1');
   assert(!read('exchange-admin.html').includes('proxo-design-system.css'));
 });
 
@@ -59,16 +65,21 @@ test('Design layer leaves hidden/route mechanics untouched and provides accessib
 
 test('Production smoke waits for the changed customer version and verifies its design contract',()=>{
   const workflow=read('.github/workflows/exchange-production-smoke.yml');
-  assert(workflow.includes('app.js?v=70'));
+  assert(workflow.includes('app.js?v=80'));
+  assert(workflow.includes('transaction-summary.css?v=5'));
+  assert(workflow.includes('id="pageSummary" data-route="summary"'));
+  assert(workflow.includes('id="txScreenBody"'));
   assert(workflow.includes('proxo-design-system.css?v=3'));
   assert(workflow.includes("grep -q 'width:min(42vw,180px)' current-index.html"));
   assert(workflow.includes("grep -q 'animation:spIn 1.15s' current-index.html"));
   assert(workflow.includes("grep -q 'clamp(24px, 7vw, 30px)' proxo-design-system.css"));
-  assert(html.includes('/assets/js/app.js?v=70'));
-  assert(html.includes('/assets/css/proxo-ui-v2.css?v=13'));
+  assert(html.includes('/assets/js/app.js?v=80'));
+  assert(html.includes('/assets/css/proxo-ui-v2.css?v=14'));
+  assert(html.includes('/assets/css/transaction-summary.css?v=5'));
+  assert(html.includes('/assets/css/whatsapp-notify.css?v=1'));
   assert(html.includes('/assets/js/proxo-ui-v2.js?v=4'));
   assert(html.includes('/assets/js/proxo-toast.js?v=1'));
-  assert(html.indexOf('proxo-toast.js?v=1') < html.indexOf('app.js?v=70'));
+  assert(html.indexOf('proxo-toast.js?v=1') < html.indexOf('app.js?v=80'));
   assert(shellCss.includes('.pxt-stack'));
   assert(shellCss.includes('.pxn-pill'));
   assert(shellCss.includes('.field-error.show'));

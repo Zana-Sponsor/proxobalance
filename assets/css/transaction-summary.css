@@ -43,12 +43,7 @@ html[data-theme="dark"] {
 }
 
 /* ── standalone summary page shell ─────────────────────────────── */
-body.transaction-summary-active { margin: 0; background: var(--tf-bg); }
-body.transaction-summary-active #appSplash,
-body.transaction-summary-active #authWrap,
-body.transaction-summary-active #mainApp { display: none !important; }
-body.transaction-summary-active #transactionSummaryPage { display: block !important; width: 100%; max-width: none; margin: 0; }
-#transactionSummaryPage[hidden] { display: none !important; }
+/* /summarytransaction/<token> opens inside the app shell (#pageSummary); nothing is hidden. */
 .transaction-summary-page {
   box-sizing: border-box; min-height: 100dvh; background: var(--tf-bg); color: var(--tf-ink);
   font-family: Rabar, Arial, sans-serif; direction: rtl;
@@ -293,3 +288,10 @@ html body :is(#txList, #historyPreview):has(> .tx-item) { display: flex !importa
   .ts-info-sheet, html body .tx-item, html body .tf-flow .tf-fb .tf-star { transition: none; }
   .ts-spinner { animation-duration: 1.6s; }
 }
+
+/* ── in-app summary screen (#pageSummary, /summarytransaction/<token>) ── */
+body #mainApp #pageSummary .tx-screen-body { box-sizing: border-box; width: 100%; max-width: 560px; margin: 0 auto; padding: 4px 0 32px; }
+body #mainApp #pageSummary .tx-screen-body > .tf-flow { padding: 0; }
+body #mainApp #pageSummary .ts-loading,
+body #mainApp #pageSummary .ts-error { min-height: 50vh; }
+body #mainApp #pageSummary .ts-error button { min-height: 44px; padding: 0 20px; border: 1px solid var(--tf-line); border-radius: 12px; background: var(--tf-surface); color: var(--tf-ink); font: inherit; font-size: 14px; cursor: pointer; }
