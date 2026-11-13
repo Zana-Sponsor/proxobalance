@@ -1330,6 +1330,7 @@ async function loadOrderCorrectionHistory(orderId){
 }
 
 let _apFile=null,_apBusy=false,_apDraft=null,_apPending=null,_apNeedsReview=false,_apRecoveryError='';
+const APPROVAL_REFUND_MAX=1000000000, APPROVAL_REFUND_UNIT=1000;
 const _payoutReceiptUploads=new Map();
 function approvalStorageKey(orderId,owner=adminUser?.id){
   if(!owner||!orderId)throw Error('تکایە بە هەژماری ئادمین بچۆ ژوورەوە.');
@@ -1345,8 +1346,10 @@ function approvalRestore(orderId){
     !plan.valid||!order.user_id||typeof order.updated_at!=='string'||!Number.isFinite(Date.parse(order.updated_at))||
     !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(payload.request_key)||
     payload.expected_updated_at!==order.updated_at||payload.expected_total!==plan.expected_iqd||
-    payload.confirmed_payout_iqd!==plan.payout_iqd||payload.confirmed_received!==true||
-    payload.confirmed_paid!==plan.requires_payout||
+    !Number.isSafeInteger(Number(payload.approval_refund_iqd||0))||Number(payload.approval_refund_iqd||0)<0||
+    Number(payload.approval_refund_iqd||0)>APPROVAL_REFUND_MAX||Number(payload.approval_refund_iqd||0)%APPROVAL_REFUND_UNIT!==0||
+    !(payload.approval_refund_note===null||typeof payload.approval_refund_note==='string')||
+    payload.confirmed_received!==true||!(payload.confirmed_paid===true||payload.confirmed_paid===false)||
     !(payload.payout_receipt_url===null||typeof payload.payout_receipt_url==='string')||
     !(payload.admin_note===null||typeof payload.admin_note==='string'))throw Error('INVALID_PENDING_APPROVAL');
   return {admin_id:saved.admin_id,order:approvalCloneOrder(order),payload:Object.freeze({...payload})};
@@ -1417,6 +1420,8 @@ function approveOrder(id){
   document.getElementById('apReceiptFile').value = '';
   document.getElementById('apReceiptPreview').innerHTML = '<i class="fas fa-receipt"></i>';
   document.getElementById('apReceiptNote').textContent = 'پسووڵەی ناردن ئارەزوومەندانەیە';
+  document.getElementById('apRefundAmount').value = '';
+  document.getElementById('apRefundNote').value = '';
   try{
     if(typeof ProxoPayoutRounding!=='object')throw Error('پەڕەکە نوێ بکەرەوە؛ حسابی بڕی ناردن بار نەکراوە.');
     _apPending=approvalRestore(id);
@@ -1427,6 +1432,8 @@ function approveOrder(id){
     if(plan.applies&&(!plan.valid||typeof frozen.updated_at!=='string'||!Number.isFinite(Date.parse(frozen.updated_at))))throw Error('زانیاری بڕ یان بەرواری مامەڵە تەواو نییە؛ لیستەکە نوێ بکەرەوە.');
     if(plan.applies&&!plan.requires_payout&&frozen.payout_receipt_url)throw Error('بڕی ناردن سفرە بەڵام پسووڵەی ناردن هەیە؛ مامەڵەکە پێویستی بە پشکنین هەیە.');
     _apDraft={order:frozen,plan,admin_id:adminUser.id,uploadedReceipt:_apPending?.payload.payout_receipt_url||null};
+    document.getElementById('apRefundAmount').value=String(_apPending?.payload.approval_refund_iqd||'');
+    document.getElementById('apRefundNote').value=_apPending?.payload.approval_refund_note||'';
     if(_apPending?.payload.payout_receipt_url){
       document.getElementById('apReceiptPreview').innerHTML='<img src="'+esc(_apPending.payload.payout_receipt_url)+'" alt="پسووڵەی هەمان پەسەندکردن">';
       document.getElementById('apReceiptNote').textContent='پسووڵەی هەمان داواکاری هەڵگیراوە';
@@ -1472,11 +1479,18 @@ async function confirmApproveOrder(){
         payout_receipt_url=await uploadReceiptFile(_apFile,order.user_id,'payout');
         draft.uploadedReceipt=payout_receipt_url;
       }
-      payload={order_id:order.id,payout_receipt_url,admin_note:order.admin_note||null};
+      const refund=Number(document.getElementById('apRefundAmount').value||0);
+      const refundNote=document.getElementById('apRefundNote').value.trim();
+      if(!Number.isSafeInteger(refund)||refund<0||refund>APPROVAL_REFUND_MAX||refund%APPROVAL_REFUND_UNIT!==0)throw Error('بڕی ڕیفاوند دەبێت بە هەزارەها بێت.');
+      if(refund>0&&!refundNote)throw Error('تکایە هۆکاری ڕیفاوند بنووسە.');
+      if(refund===0&&refundNote)throw Error('هۆکار تەنها لەگەڵ بڕی ڕیفاوند بنووسە.');
+      if(refundNote.length>300)throw Error('هۆکاری ڕیفاوند زۆر درێژە.');
+      payload={order_id:order.id,payout_receipt_url,admin_note:order.admin_note||null,approval_refund_iqd:refund,approval_refund_note:refundNote||null};
       if(p.applies){
         if(!globalThis.crypto?.randomUUID)throw Error('پەڕەکە لە پەیوەندی پارێزراو بکەرەوە و دووبارە هەوڵبدەوە.');
+        if(refund>p.payout_iqd)throw Error('بڕی ڕیفاوند لە بڕی شیاوی ناردن زیاترە.');
         payload={...payload,request_key:crypto.randomUUID(),expected_updated_at:order.updated_at,
-          expected_total:p.expected_iqd,confirmed_payout_iqd:p.payout_iqd,confirmed_received:true,confirmed_paid:p.requires_payout};
+          expected_total:p.expected_iqd,confirmed_payout_iqd:p.payout_iqd-refund,confirmed_received:true,confirmed_paid:p.payout_iqd-refund>0};
         _apPending={admin_id:draft.admin_id,order,payload:Object.freeze(payload)};
       }
     }
@@ -1484,14 +1498,27 @@ async function confirmApproveOrder(){
     if(p.applies){
       try{approvalPersist(_apPending);}catch{throw Error('نەتوانرا داواکاری بە پارێزراوی هەڵبگیرێت؛ هیچ پەسەندکردنێک نەنێردرا. ڕێگە بە هەڵگرتنی داتای ماڵپەڕ بدە و دووبارە هەوڵبدەوە.');}
     }
-    const saved=await adminApiRequest('approve_order',payload);
-    const settled=p.applies?ProxoPayoutRounding.forOrder(saved):null;
-    if(saved?.id!==order.id||saved.status!==STATUS_APPROVED||
-      (p.applies&&(!settled.settled||settled.expected_iqd!==p.expected_iqd||settled.payout_iqd!==p.payout_iqd)))throw Error('وەڵامی پەسەندکردن تەواو نەگەیشت؛ هەمان داواکاری دووبارە بپشکنە.');
+    let saved,refundAmount=Number(payload.approval_refund_iqd||0);
+    if(refundAmount>0){
+      const {data:{user}}=await sb.auth.getUser();if(!user)throw Error('تکایە دووبارە بچۆ ژوورەوە');
+      const {data:result,error}=await sb.functions.invoke('admin-approve-order-refund',{body:{
+        p_order_id:order.id,p_admin_id:user.id,p_request_key:payload.request_key,
+        p_expected_updated_at:payload.expected_updated_at,p_expected_total:payload.expected_total,
+        p_confirmed_payout_iqd:payload.confirmed_payout_iqd,p_confirmed_received:true,
+        p_confirmed_paid:payload.confirmed_paid,p_payout_receipt_url:payload.payout_receipt_url,
+        p_admin_note:payload.admin_note,p_approval_refund_iqd:refundAmount,p_approval_refund_note:payload.approval_refund_note
+      }});if(error)throw error;saved=result?.order;
+      if(!saved||saved.id!==order.id||saved.status!==STATUS_APPROVED||Number(saved.payout_iqd)!==p.payout_iqd-refundAmount||Number(saved.shortfall_refunded_iqd)!==p.remainder_iqd+refundAmount)throw Error('وەڵامی ڕیفاوند تەواو نەگەیشت؛ هەمان داواکاری دووبارە بپشکنە.');
+    }else{
+      saved=await adminApiRequest('approve_order',payload);
+      const settled=p.applies?ProxoPayoutRounding.forOrder(saved):null;
+      if(saved?.id!==order.id||saved.status!==STATUS_APPROVED||
+        (p.applies&&(!settled.settled||settled.expected_iqd!==p.expected_iqd||settled.payout_iqd!==p.payout_iqd)))throw Error('وەڵامی پەسەندکردن تەواو نەگەیشت؛ هەمان داواکاری دووبارە بپشکنە.');
+    }
     if(_apPending){try{approvalForget();}catch{/* A saved retry can only replay this confirmed settlement. */}}
     const index=allOrders.findIndex(o=>o.id===saved.id);if(index>=0)allOrders[index]={...allOrders[index],...saved};
     closeMo('moApproveOrder'); closeMo('moOrderDetail');
-    showToast('ئۆردەرەکە پەسەندکرا'+(p.applies&&p.remainder_iqd>0?'؛ '+formatNum(p.remainder_iqd)+' دینار گەڕایەوە بۆ باڵانسی کڕیار.':''),'gr');
+    showToast('ئۆردەرەکە پەسەندکرا'+(Number(payload.approval_refund_iqd||0)>0?'؛ '+formatNum(Number(payload.approval_refund_iqd))+' دینار ڕیفاوند کرا بۆ باڵانسی کڕیار.':(p.applies&&p.remainder_iqd>0?'؛ '+formatNum(p.remainder_iqd)+' دینار گەڕایەوە بۆ باڵانسی کڕیار.':'')),'gr');
     _apDraft=null;_apPending=null;_apFile=null;
     refreshOrdersEverywhere();
   }catch(e){
