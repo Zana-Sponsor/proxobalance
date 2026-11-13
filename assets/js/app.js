@@ -2663,8 +2663,9 @@ function transactionSummaryUrlForOrder(order){
 function openTxDetail(id){
   const o=_orders.find(row=>String(row.id)===String(id));
   if(!o) return;
-  const summaryUrl=transactionSummaryUrlForOrder(o);
-  if(summaryUrl){ location.assign(summaryUrl); return; }
+  // Keep in-app transaction details inside the same history sheet and app shell.
+  // The secure summary URL remains available for shared/direct links, but tapping
+  // an order from the history page must not navigate to a visually separate page.
   const nextTxSheetId=String(id);
   if(_txSheetId!==nextTxSheetId)_feedbackDraftRating=0;
   _txSheetId=nextTxSheetId;
