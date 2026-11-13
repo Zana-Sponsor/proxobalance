@@ -128,15 +128,14 @@ test('summary preserves secure full-page RTL elements, status, feedback, info, a
   assert.match(css, /direction: rtl/);
 });
 
-test('approved transaction details open the secure summary route; action statuses keep the legacy modal', () => {
+test('approved transaction details stay inside the history sheet while secure direct links remain available', () => {
   const urlBody = functionBody(app, 'transactionSummaryUrlForOrder');
   const openerBody = functionBody(app, 'openTxDetail');
   const token = '11111111-1111-4111-8111-111111111111';
-  const context = vm.createContext({ encodeURIComponent, location: { assign(url) { this.assigned = url; } } });
-  vm.runInContext(urlBody + '\n' + openerBody, context);
-  context._orders = [{ id: 'order-1', status: 'پەسەندکرا', secure_token: token }];
-  context.openTxDetail('order-1');
-  assert.equal(context.location.assigned, '/summarytransaction/' + token);
+  assert.doesNotMatch(openerBody, /location\.assign\(summaryUrl\)/);
+  const context = vm.createContext({ encodeURIComponent });
+  vm.runInContext(urlBody, context);
+  assert.equal(context.transactionSummaryUrlForOrder({ status: 'پەسەندکرا', secure_token: token }), '/summarytransaction/' + token);
   assert.equal(context.transactionSummaryUrlForOrder({ status: 'چاوەڕوانە', secure_token: token }), '');
   assert.equal(context.transactionSummaryUrlForOrder({ status: 'ڕەتکرا', secure_token: token }), '');
   assert.equal(context.transactionSummaryUrlForOrder({ status: 'پەسەندکرا', secure_token: 'invalid' }), '');
