@@ -59,8 +59,8 @@ jobs:
                grep -q 'exchange-payout-rounding.js?v=1' current-admin.html &&
                grep -q 'exchange-balance-admin.js?v=8' current-admin.html &&
                grep -q 'exchange-refund-report.js?v=2' current-admin.html &&
-               grep -q 'exchange-staff.js?v=8' current-admin.html &&
-               grep -q 'exchange-balance.css?v=5' current-admin.html &&
+               grep -q 'exchange-staff.js?v=9' current-admin.html &&
+               grep -q 'exchange-balance.css?v=6' current-admin.html &&
                grep -q 'id="balanceRefundReportBtn"' current-admin.html &&
                ! grep -q 'id="balanceShortfallReference"' current-admin.html &&
                grep -q 'assets/js/exchange-insights.js?v=7' current-admin.html &&
@@ -210,8 +210,8 @@ jobs:
           grep -q 'ڕەتکردنەوە و گەڕاندنەوە بۆ باڵانس' exchange-admin.html
           grep -q 'exchange-balance-admin.js?v=8' exchange-admin.html
           grep -q 'exchange-refund-report.js?v=2' exchange-admin.html
-          grep -q 'exchange-staff.js?v=8' exchange-admin.html
-          grep -q 'exchange-balance.css?v=5' exchange-admin.html
+          grep -q 'exchange-staff.js?v=9' exchange-admin.html
+          grep -q 'exchange-balance.css?v=6' exchange-admin.html
           grep -q 'exchange-feedback.css?v=3' exchange-admin.html
           grep -q 'app-ui-polish.css?v=2' exchange-admin.html
           grep -q 'id="balanceRefundReportBtn"' exchange-admin.html
@@ -261,7 +261,7 @@ jobs:
           grep -q 'observeWalletBadges' customer-features.js
           grep -q 'saveRecipient' customer-features.js
           grep -q 'ex_refresh_reward_alerts' customer-features.js
-          curl -fLsS --max-time 25 "$root/assets/js/exchange-staff.js?v=8" -o staff.js
+          curl -fLsS --max-time 25 "$root/assets/js/exchange-staff.js?v=9" -o staff.js
           grep -q "exportBalanceRefundPdf:'refunds'" staff.js
           grep -q 'staffPageAllowed' staff.js
           grep -q 'staffDirectoryAction' staff.js
