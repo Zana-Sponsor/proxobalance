@@ -3164,3 +3164,53 @@ html[data-theme="dark"] .xc-tier-hint { color: rgba(255,255,255,.66); }
 html:not([data-theme="dark"]) body #mainApp #pageProfile .pfx-card.pfx-balance .bx-title { color: #1f2d44 !important; }
 html:not([data-theme="dark"]) body #mainApp #pageProfile .pfx-card.pfx-balance .bx-ico { background: #eaf6ff !important; }
 html:not([data-theme="dark"]) body #mainApp #pageProfile .pfx-card.pfx-balance .bx-amount strong { color: #1f2d44 !important; }
+
+/* Full-screen in-app transaction details: same domain, shell and visual language as history. */
+body #mainApp #txSheet.tx-sheet {
+  inset: 0 !important;
+  top: 0 !important;
+  bottom: auto !important;
+  width: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  height: 100dvh !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  transform: translateY(100%) !important;
+  opacity: 1 !important;
+  padding: max(10px, env(safe-area-inset-top, 0px)) 0 max(10px, env(safe-area-inset-bottom, 0px)) !important;
+}
+body #mainApp #txSheet.tx-sheet.open { transform: translateY(0) !important; }
+body #mainApp #txSheet .tx-sheet-grip { flex: 0 0 auto; }
+body #mainApp #txSheet .tx-sheet-head {
+  width: min(100%, 720px) !important;
+  box-sizing: border-box !important;
+  flex: 0 0 auto !important;
+  margin: 0 auto !important;
+  padding: 8px 18px 14px !important;
+}
+body #mainApp #txSheet .tx-sheet-body {
+  width: min(100%, 720px) !important;
+  box-sizing: border-box !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  margin: 0 auto !important;
+  padding: 4px 18px 28px !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+}
+body #mainApp #txSheet .tx-dgroup,
+body #mainApp #txSheet .tx-dnote,
+body #mainApp #txSheet .tx-dreceipt,
+body #mainApp #txSheet .tx-receipt-actions,
+body #mainApp #txSheet .admin-order-feedback { width: 100% !important; }
+@media (min-width: 700px) {
+  body #mainApp #txSheet.tx-sheet { padding-top: 24px !important; }
+  body #mainApp #txSheet .tx-sheet-head,
+  body #mainApp #txSheet .tx-sheet-body { width: min(100%, 760px) !important; }
+  body #mainApp #txSheet .tx-sheet-body { padding-inline: 24px !important; }
+}
