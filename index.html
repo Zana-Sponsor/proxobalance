@@ -118,7 +118,8 @@ html body #appSplash.is-hidden .app-splash-content{transform:scale(1.04)!importa
 <link rel="stylesheet" href="/assets/css/proxo-ui-v2.css?v=14">
 <link rel="stylesheet" href="/assets/css/proxo-dark.css?v=6">
 <link rel="stylesheet" href="/assets/css/proxo-design-system.css?v=3">
-<link rel="stylesheet" href="/assets/css/transaction-summary.css?v=1">
+<link rel="stylesheet" href="/assets/css/transaction-summary.css?v=4">
+<link rel="stylesheet" href="/assets/css/whatsapp-notify.css?v=1">
 </head>
 
 <body>
@@ -294,6 +295,33 @@ html body #appSplash.is-hidden .app-splash-content{transform:scale(1.04)!importa
       </button>
     </div>
     <div class="sheet-body" id="feedbackSheetBody"></div>
+  </div>
+</div>
+
+<div id="whatsappSheet" class="sheet-overlay" role="dialog" aria-modal="true" aria-labelledby="whatsappSheetTitle" aria-hidden="true" onclick="if(event.target===this) closeWhatsappSheet()">
+  <div class="sheet un-sheet wa-sheet">
+    <div class="sheet-grabber"></div>
+    <div class="sheet-head">
+      <h3 id="whatsappSheetTitle">ئاگاداری لە ڕێگەی واتسئاپ</h3>
+      <button type="button" class="sheet-close" onclick="closeWhatsappSheet()" aria-label="داخستن">
+        <span class="icn icn-sm icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="sheet-body">
+      <form class="un-body wa-body" id="whatsappForm" onsubmit="submitWhatsappSheet(event)" novalidate>
+        <div class="wa-intro">
+          <span class="wa-intro-ico" aria-hidden="true"><svg class="pxi" viewBox="0 0 24 24" focusable="false"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M9.5 9.5c.3 1.6 1.5 3.4 3.3 4.4l1-.9 1.7.6v1.2c0 .5-.4.9-.9.9-3.4-.2-6.1-2.9-6.3-6.3 0-.5.4-.9.9-.9h1.2l.6 1.7Z"/></svg></span>
+          <p>ژمارەکەت زیاد بکە بۆ ئەوەی ئاگادارییەکان لە ڕێگەی واتسئاپەوە پێت بگات.</p>
+        </div>
+        <label class="un-label" for="waPhone">ژمارەی واتسئاپ</label>
+        <div class="un-field wa-field" id="waField">
+          <input id="waPhone" type="tel" dir="ltr" maxlength="18" autocomplete="tel" inputmode="tel" placeholder="07xxxxxxxxx" oninput="whatsappClearError()">
+        </div>
+        <p class="wa-hint">تەنها کاتێک داواکارییەکەت پەسەند دەکرێت نامەت بۆ دەنێرین. هەر کاتێک بتەوێت دەتوانیت لە پڕۆفایلەوە ناچالاکی بکەیت.</p>
+        <div class="un-error" id="waError" role="alert"></div>
+        <button type="submit" class="un-submit" id="waSubmit">چالاککردنی ئاگاداری</button>
+      </form>
+    </div>
   </div>
 </div>
 
@@ -1319,6 +1347,17 @@ html body #appSplash.is-hidden .app-splash-content{transform:scale(1.04)!importa
       <button type="button" class="pfx-save" id="pfSaveBtn" onclick="saveProfile()"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5"/></svg>پاشەکەوتکردن</button>
     </section>
 
+    <div class="pfx-menu wa-menu">
+      <div class="pfx-item wa-item" id="waRow">
+        <span class="pfx-item-ico wa-ico"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M9.5 9.5c.3 1.6 1.5 3.4 3.3 4.4l1-.9 1.7.6v1.2c0 .5-.4.9-.9.9-3.4-.2-6.1-2.9-6.3-6.3 0-.5.4-.9.9-.9h1.2l.6 1.7Z"/></svg></span>
+        <button type="button" class="pfx-item-txt wa-txt" onclick="openWhatsappSheet()" aria-describedby="waSub">
+          <b>ئاگاداری لە ڕێگەی واتسئاپ</b>
+          <small id="waSub">کاتێک داواکارییەکەت پەسەند دەکرێت</small>
+        </button>
+        <button type="button" class="wa-switch" id="waSwitch" role="switch" aria-checked="false" aria-label="ئاگاداری لە ڕێگەی واتسئاپ" onclick="toggleWhatsappNotify()"><span aria-hidden="true"></span></button>
+      </div>
+    </div>
+
     <div class="pfx-menu">
       <button type="button" class="pfx-item" onclick="openVerifyPage()">
         <span class="pfx-item-ico"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M16 10h2"/><path d="M16 14h2"/><path d="M6.17 15a3 3 0 0 1 5.66 0"/><circle cx="9" cy="11" r="2"/><rect x="2" y="5" width="20" height="14" rx="2"/></svg></span>
@@ -1632,55 +1671,45 @@ html body #appSplash.is-hidden .app-splash-content{transform:scale(1.04)!importa
 
 <main id="transactionSummaryPage" dir="rtl" lang="ku" hidden aria-labelledby="transactionSummaryTitle">
   <div class="transaction-summary-page">
-    <section class="ts-card">
-      <header class="ts-header">
-        <button class="ts-close" type="button" onclick="closeTransactionSummary()" aria-label="داخستن" title="داخستن">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/><path d="M8 12h12"/></svg>
-        </button>
-        <h1 id="transactionSummaryTitle">پوختەی مامەڵە</h1>
-        <span class="ts-header-spacer" aria-hidden="true"></span>
-      </header>
+    <header class="ts-header">
+      <button class="ts-close" type="button" onclick="closeTransactionSummary()" aria-label="گەڕانەوە" title="گەڕانەوە">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+      </button>
+      <h1 id="transactionSummaryTitle">پوختەی مامەڵە</h1>
+      <span class="ts-header-spacer" aria-hidden="true"></span>
+    </header>
+    <div class="ts-body">
       <div id="summaryLoading" class="ts-loading" role="status" aria-live="polite">
-        <span class="icn icn-spin icon--solar icon--solar--refresh-linear" aria-hidden="true"></span>
-        <span>زانیاری مامەڵەکە بار دەکرێت...</span>
+        <span class="ts-spinner" aria-hidden="true"></span>
+        <span>زانیارییەکانی مامەڵە بار دەکرێن...</span>
       </div>
       <section id="summaryError" class="ts-error" role="alert" hidden>
         <b id="summaryErrorTitle">نەتوانرا مامەڵەکە پیشان بدرێت</b>
         <p id="summaryErrorMessage"></p>
         <button id="summaryErrorAction" type="button" hidden></button>
       </section>
-      <div id="summaryContent" hidden>
-        <div class="ts-amounts" aria-label="بڕی پارە">
-          <div class="ts-amount is-received"><small>بڕی وەرگیراو</small><b id="summaryReceivedAmount" dir="ltr">—</b></div>
-          <div class="ts-amount"><small>بڕی نادراو</small><b id="summarySourceAmount" dir="ltr">—</b></div>
-        </div>
-        <section id="summaryDetails" class="ts-details" aria-label="وردەکاری مامەڵە"></section>
-        <section id="summaryStatus" class="ts-status" role="status" aria-live="polite">
-          <span id="summaryStatusIcon" class="ts-status-icon" aria-hidden="true"></span>
-          <span class="ts-status-text"><b id="summaryStatusTitle"></b><small id="summaryStatusMessage"></small></span>
-        </section>
-        <section id="summaryAdditional" class="ts-extra" hidden>
-          <h2>زانیاری زیاتر</h2>
-          <div id="summaryAdditionalContent"></div>
-        </section>
-        <div id="summaryFeedback" class="ts-feedback"></div>
-        <div id="summaryPayoutReceipt" class="ts-payout-receipt" hidden></div>
-        <button id="summaryReceiptButton" class="ts-receipt" type="button" onclick="downloadSummaryReceipt()" hidden>
+      <div id="summaryContent" class="tf-flow" hidden>
+        <div id="summaryHero"></div>
+        <div id="summaryDetails"></div>
+        <div id="summaryAdditional" hidden></div>
+        <div id="summaryFeedback"></div>
+        <section id="summaryPayoutReceipt" class="tf-sec tf-media" hidden></section>
+        <button id="summaryReceiptButton" class="tf-ghost" type="button" onclick="downloadSummaryReceipt()" hidden>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 18v3h14v-3"/></svg>
           <span>داگرتنی پسووڵە</span>
         </button>
       </div>
-    </section>
+    </div>
   </div>
 </main>
 
 <div id="summaryInfoBackdrop" class="ts-info-backdrop" hidden onclick="if(event.target===this)closeSummaryInfo()">
   <section class="ts-info-sheet" role="dialog" aria-modal="true" aria-labelledby="summaryInfoTitle" onclick="event.stopPropagation()">
     <div class="ts-info-grip" aria-hidden="true"></div>
-    <div class="ts-info-head"><h2 id="summaryInfoTitle">بڕی گەڕاوە بۆ باڵانس</h2>
+    <div class="ts-info-head"><h2 id="summaryInfoTitle">گەڕاوە بۆ باڵانس</h2>
       <button class="ts-info-close" type="button" onclick="closeSummaryInfo()" aria-label="داخستن">×</button>
     </div>
-    <p>ئەم بڕە بەشێوەیەکی خۆکار گەڕاوەتەوە بۆ باڵانسی هەژمارەکەت. ئەم بڕە پێشتر لە کۆی مامەڵەکەدا هەژمارکراوە و نابێت دووبارە لە کۆی گشتی زیاد بکرێت. تەنها بڕی دیاریکراو بۆ وەرگر نێردراوە.</p>
+    <p>ئەم بڕە بە شێوەیەکی خۆکار بۆ باڵانسی هەژمارەکەت گەڕێندراوەتەوە. بەشێکە لە کۆی گشتیی مامەڵەکە و جارێکی تر زیاد ناکرێت؛ تەنها بڕی دیاریکراو بۆ وەرگر نێردراوە.</p>
   </section>
 </div>
 
@@ -1692,7 +1721,8 @@ html body #appSplash.is-hidden .app-splash-content{transform:scale(1.04)!importa
 <script src="/assets/js/transaction-summary-financials.js?v=1"></script>
 <script src="/assets/js/exchange-live.js?v=1"></script>
 <script src="/assets/js/proxo-toast.js?v=1"></script>
-<script src="/assets/js/app.js?v=73"></script>
+<script src="/assets/js/app.js?v=79"></script>
+<script src="/assets/js/whatsapp-notify.js?v=1"></script>
 <script src="/assets/js/proxo-ui-v2.js?v=4"></script>
 <script src="/assets/js/exchange-customer-features.js?v=3"></script>
 <script src="/assets/js/exchange-balance.js?v=7"></script>

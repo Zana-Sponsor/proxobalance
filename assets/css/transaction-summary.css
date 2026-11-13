@@ -1,101 +1,295 @@
-/* Transaction summary: same visual language and order-detail proportions as the supplied screenshot. */
-body.transaction-summary-active { margin: 0; background: #f6f7fb; }
+/* ═════════════════════════════════════════════════════════════════
+   Transactions — one flat visual language (no cards, no receipts)
+   Used by: the transaction list (.tx-item), the in-app details sheet
+   (#txSheet .tf-flow), the feedback sheet and the summary page
+   (/summarytransaction/…).
+
+   Scale   spacing 4 · 8 · 12 · 16 · 24 · 32
+           type    12 (meta) · 13 (labels) · 14 (values, titles) · 28 (hero)
+           rows / buttons 48px · icons 40 (list) / 56 (hero) · radius 12 / 16
+   Selectors carry #mainApp where older id-scoped rules would otherwise win.
+   ═════════════════════════════════════════════════════════════════ */
+:root {
+  --tf-bg: #fafafa;
+  --tf-surface: #fff;
+  --tf-ink: #1f2d44;
+  --tf-text: #3a4962;
+  --tf-muted: #64748b;
+  --tf-line: #e8ecf3;
+  --tf-line-strong: #d6dde8;
+  --tf-accent: #0265ff;
+  --tf-ok: #15803d;      --tf-ok-soft: #e7f6ed;
+  --tf-bad: #c0392b;     --tf-bad-soft: #fdeeee;
+  --tf-warn: #a15c00;    --tf-warn-soft: #fff4e0;
+  --tf-wait: #64748b;    --tf-wait-soft: #eef2f7;
+  --tf-info: #0265ff;    --tf-info-soft: #eaf3ff;
+  --tf-star: #f5a700;    --tf-star-off: #cfd7e3;
+}
+html[data-theme="dark"] {
+  --tf-bg: #0b1220;
+  --tf-surface: #131c2e;
+  --tf-ink: #e8edf6;
+  --tf-text: #c4cee0;
+  --tf-muted: #a3b1c7;
+  --tf-line: #25324a;
+  --tf-line-strong: #33415c;
+  --tf-accent: #5b9dff;
+  --tf-ok: #4ade80;      --tf-ok-soft: #10301f;
+  --tf-bad: #ff8a80;     --tf-bad-soft: #3a1816;
+  --tf-warn: #f7b955;    --tf-warn-soft: #33270d;
+  --tf-wait: #a3b1c7;    --tf-wait-soft: #1c2840;
+  --tf-info: #6aa5ff;    --tf-info-soft: #16294a;
+  --tf-star: #f7b955;    --tf-star-off: #3a4a66;
+}
+
+/* ── standalone summary page shell ─────────────────────────────── */
+body.transaction-summary-active { margin: 0; background: var(--tf-bg); }
 body.transaction-summary-active #appSplash,
 body.transaction-summary-active #authWrap,
 body.transaction-summary-active #mainApp { display: none !important; }
 body.transaction-summary-active #transactionSummaryPage { display: block !important; width: 100%; max-width: none; margin: 0; }
 #transactionSummaryPage[hidden] { display: none !important; }
 .transaction-summary-page {
-  box-sizing: border-box; min-height: 100dvh; padding: 0 14px 24px; color: #172334;
-  background: #f6f7fb; font-family: Rabar, Arial, sans-serif; direction: rtl;
+  box-sizing: border-box; min-height: 100dvh; background: var(--tf-bg); color: var(--tf-ink);
+  font-family: Rabar, Arial, sans-serif; direction: rtl;
 }
-.ts-card {
-  box-sizing: border-box; width: min(100%, 660px); min-height: 100dvh; margin: 0 auto;
-  padding: max(18px, env(safe-area-inset-top)) 18px max(24px, env(safe-area-inset-bottom));
-  border-radius: 0 0 26px 26px; background: #fff; box-shadow: 0 8px 28px rgba(28, 43, 66, .08);
+.ts-header {
+  position: sticky; top: 0; z-index: 5; box-sizing: border-box;
+  display: flex; align-items: center; gap: 12px;
+  width: min(100%, 560px); min-height: 64px; margin: 0 auto;
+  padding: max(12px, env(safe-area-inset-top)) 16px 12px; background: var(--tf-bg);
 }
-.ts-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; margin-bottom: 20px; direction: ltr; }
-.ts-header h1 { flex: 1; margin: 0; color: #172334; font-size: 18px; line-height: 1.5; font-weight: 600; direction: rtl; text-align: right; }
-.ts-header-spacer { width: 48px; flex: 0 0 48px; }
+.ts-header h1 { flex: 1; margin: 0; color: var(--tf-ink); font-size: 18px; font-weight: 700; line-height: 28px; text-align: center; }
+.ts-header-spacer { width: 40px; flex: 0 0 40px; }
 .ts-close {
-  width: 48px; height: 48px; flex: 0 0 48px; display: grid; place-items: center; border: 0; border-radius: 15px;
-  background: #f0f3fb; color: #546173; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  width: 40px; height: 40px; flex: 0 0 40px; display: grid; place-items: center; padding: 0;
+  border: 1px solid var(--tf-line); border-radius: 12px; background: var(--tf-surface); color: var(--tf-ink);
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
 }
-.ts-close svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; }
-.ts-meta { min-height: 40px; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; direction: ltr; }
-.ts-code { max-width: 65%; padding: 9px 12px; display: inline-flex; align-items: center; gap: 8px; overflow: hidden; border-radius: 999px; background: #f0f3fb; color: #263246; font-size: 12px; }
-.ts-code b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
-.ts-state { flex: 0 0 auto; padding: 7px 11px; border-radius: 999px; background: #eaf7ef; color: #22834b; font-size: 12px; font-weight: 500; direction: rtl; text-align: right; }
-.ts-state.is-warn { background: #fff5df; color: #9a6400; }
-.ts-state.is-error { background: #fff0f0; color: #b42318; }
-.ts-amounts { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; margin-bottom: 14px; direction: ltr; }
-.ts-amount {
-  box-sizing: border-box; min-width: 0; min-height: 92px; padding: 14px 16px; display: flex; flex-direction: column;
-  justify-content: space-between; border: 1px solid #edf0f4; border-radius: 20px; background: #fff; color: #172334;
+.ts-close svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ts-body { box-sizing: border-box; width: min(100%, 560px); margin: 0 auto; padding: 0 16px max(32px, env(safe-area-inset-bottom)); }
+.ts-loading, .ts-error { min-height: 50vh; display: grid; align-content: center; justify-items: center; gap: 12px; color: var(--tf-muted); font-size: 14px; text-align: center; }
+.ts-loading[hidden], .ts-error[hidden] { display: none !important; }
+.ts-spinner { width: 24px; height: 24px; border: 2.5px solid var(--tf-line); border-top-color: var(--tf-accent); border-radius: 50%; animation: tfSpin .8s linear infinite; }
+@keyframes tfSpin { to { transform: rotate(360deg); } }
+.ts-error b { color: var(--tf-ink); font-size: 16px; font-weight: 600; }
+.ts-error p { margin: 0; font-size: 14px; line-height: 1.9; }
+.ts-error button { min-height: 44px; padding: 0 20px; border: 1px solid var(--tf-line); border-radius: 12px; background: var(--tf-surface); color: var(--tf-ink); font: inherit; font-size: 14px; cursor: pointer; }
+#summaryContent[hidden], #summaryAdditional[hidden], #summaryPayoutReceipt[hidden], #summaryReceiptButton[hidden] { display: none !important; }
+
+/* ── shared flow ───────────────────────────────────────────────── */
+html body .tf-flow { display: block; color: var(--tf-ink); font-family: Rabar, Arial, sans-serif; text-align: start; }
+html body .tf-flow * { box-sizing: border-box; }
+
+/* hero: one icon, one label, one number, one status — centred, nothing boxed */
+html body .tf-flow .tf-hero {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 8px 0 24px; text-align: center;
 }
-.ts-amount.is-received { border-color: #d8efff; background: #e0f3ff; color: #0757a7; }
-.ts-amount small { align-self: flex-end; color: #657184; font-size: 12px; line-height: 1.5; direction: rtl; }
-.ts-amount b { max-width: 100%; align-self: flex-start; overflow-wrap: anywhere; color: inherit; font-size: 18px; font-weight: 600; line-height: 1.35; font-variant-numeric: tabular-nums; unicode-bidi: isolate; }
-.ts-details { overflow: hidden; margin-bottom: 14px; border: 1px solid #edf0f4; border-radius: 22px; background: #fff; box-shadow: 0 3px 12px rgba(29, 44, 67, .04); }
-.ts-row { min-height: 58px; padding: 11px 16px; display: flex; align-items: center; justify-content: space-between; gap: 14px; direction: rtl; }
-.ts-row + .ts-row { border-top: 1px solid #edf0f4; }
-.ts-label { min-width: 0; display: inline-flex; align-items: center; gap: 6px; color: #606c7d; font-size: 13px; line-height: 1.7; }
-.ts-value { min-width: 0; max-width: 60%; color: #172334; font-size: 13.5px; line-height: 1.7; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; text-align: left; }
-.ts-value[dir="ltr"] { direction: ltr; unicode-bidi: isolate; }
-.ts-value.is-discount { color: #21844f; }
-.ts-route { display: inline-flex; align-items: center; gap: 8px; white-space: normal; }
-.ts-route svg { width: 16px; height: 16px; flex: 0 0 auto; stroke: currentColor; }
-.ts-info {
-  width: 17px; height: 17px; padding: 0; display: inline-grid; place-items: center; border: 0; border-radius: 50%;
-  background: #eef3fa; color: #63758f; font: 600 12px/1 Arial,sans-serif; cursor: pointer;
+html body .tf-flow .tf-hero-ico { width: 56px; height: 56px; margin-bottom: 12px; display: grid; place-items: center; border-radius: 50%; }
+html body .tf-flow .tf-hero-ico svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+html body .tf-flow .tf-hero.is-ok   .tf-hero-ico { background: var(--tf-ok-soft);   color: var(--tf-ok); }
+html body .tf-flow .tf-hero.is-bad  .tf-hero-ico { background: var(--tf-bad-soft);  color: var(--tf-bad); }
+html body .tf-flow .tf-hero.is-warn .tf-hero-ico { background: var(--tf-warn-soft); color: var(--tf-warn); }
+html body .tf-flow .tf-hero.is-wait .tf-hero-ico { background: var(--tf-wait-soft); color: var(--tf-wait); }
+html body .tf-flow .tf-hero.is-info .tf-hero-ico { background: var(--tf-info-soft); color: var(--tf-info); }
+html body .tf-flow .tf-hero-label { color: var(--tf-muted); font-size: 13px; line-height: 20px; }
+html body .tf-flow .tf-hero-amount {
+  max-width: 100%; margin-bottom: 8px; color: var(--tf-ink); font-size: 28px; font-weight: 700; line-height: 36px;
+  font-variant-numeric: tabular-nums; unicode-bidi: isolate; overflow-wrap: anywhere;
 }
-.ts-status { margin: 0 0 14px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; border-radius: 18px; background: #effaf4; }
-.ts-status.is-warn { background: #fff8e8; }
-.ts-status.is-error { background: #fff1f1; }
-.ts-status-icon { width: 44px; height: 44px; flex: 0 0 44px; display: grid; place-items: center; border-radius: 14px; background: #e4f6ec; color: #229b5a; }
-.ts-status.is-warn .ts-status-icon { background: #fff0c7; color: #9a6400; }
-.ts-status.is-error .ts-status-icon { background: #ffe0e0; color: #b42318; }
-.ts-status-icon svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-.ts-status-text { min-width: 0; }
-.ts-status-text b { display: block; color: #172334; font-size: 14px; font-weight: 600; line-height: 1.7; }
-.ts-status-text small { display: block; color: #617082; font-size: 12px; line-height: 1.7; }
-.ts-extra { margin-bottom: 14px; padding: 14px 16px; border: 1px solid #edf0f4; border-radius: 18px; background: #fff; }
-.ts-extra h2 { margin: 0 0 8px; color: #172334; font-size: 14px; font-weight: 600; }
-.ts-extra p { margin: 0; color: #606c7d; font-size: 13px; line-height: 1.9; overflow-wrap: anywhere; white-space: pre-wrap; }
-.ts-extra p + p { margin-top: 8px; }
-.ts-feedback { margin-bottom: 14px; }
-.ts-feedback .fb { margin: 0 !important; }
-.ts-payout-receipt { margin: 0 0 14px; padding: 12px; border: 1px solid #edf0f4; border-radius: 18px; background: #fff; color: #4f5e72; font-size: 13px; }
-.ts-payout-receipt img { display: block; max-width: 100%; max-height: 360px; margin: 9px auto 0; border-radius: 12px; object-fit: contain; cursor: zoom-in; }
-.ts-receipt { width: 100%; min-height: 58px; padding: 0 16px; display: flex; align-items: center; justify-content: center; gap: 9px; border: 0; border-radius: 18px; background: #f0f2fb; color: #273246; font: inherit; font-size: 15px; font-weight: 500; cursor: pointer; }
-.ts-receipt svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.ts-loading,.ts-error { width: min(100%, 620px); min-height: 45vh; margin: 0 auto; padding: 24px; display: grid; align-content: center; justify-items: center; gap: 12px; color: #536176; text-align: center; }
-.ts-loading[hidden],.ts-error[hidden] { display: none !important; }
-.ts-error b { color: #172334; font-size: 16px; }
-.ts-error p { margin: 0; font-size: 14px; line-height: 1.8; }
-.ts-error button { min-height: 44px; padding: 0 18px; border: 0; border-radius: 14px; background: #eef2f8; color: #263246; font: inherit; cursor: pointer; }
+
+/* status pill */
+html body .tf-status {
+  direction: rtl; display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px;
+  border-radius: 999px; font-size: 12px; font-weight: 500; line-height: 1; white-space: nowrap;
+}
+html body .tf-status i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+html body .tf-status.is-ok   { background: var(--tf-ok-soft);   color: var(--tf-ok); }
+html body .tf-status.is-bad  { background: var(--tf-bad-soft);  color: var(--tf-bad); }
+html body .tf-status.is-warn { background: var(--tf-warn-soft); color: var(--tf-warn); }
+html body .tf-status.is-wait { background: var(--tf-wait-soft); color: var(--tf-wait); }
+html body .tf-status.is-info { background: var(--tf-info-soft); color: var(--tf-info); }
+
+/* sections: a quiet title, then rows on the page with hairlines */
+html body .tf-flow .tf-sec, html body .tf-flow .tf-note { margin: 8px 0 0; padding: 24px 0 0; border: 0; border-top: 1px solid var(--tf-line); background: none; box-shadow: none; }
+html body .tf-flow .tf-hero + .tf-sec { margin-top: 0; }
+html body .tf-flow .tf-hero + .tf-sec { border-top: 1px solid var(--tf-line); }
+/* Type hierarchy — three clearly different levels:
+   1  section heading  15px · 700 · ink, with an accent marker
+   2  row label        13px · 400 · muted
+   3  row value        14px · 500 · ink                                    */
+html body :is(#mainApp, #transactionSummaryPage, #feedbackSheet) .tf-flow .tf-sec-title {
+  display: flex; align-items: center; gap: 8px;
+  margin: 0 0 8px; color: var(--tf-ink) !important; font-size: 15px !important; font-weight: 700 !important; line-height: 24px;
+}
+html body .tf-flow .tf-sec-title::before {
+  content: ""; width: 3px; height: 14px; flex: 0 0 3px; border-radius: 2px; background: var(--tf-accent);
+}
+html body .tf-flow .tf-note.is-bad > .tf-sec-title::before { background: var(--tf-bad); }
+html body .tf-flow .tf-note.is-warn > .tf-sec-title::before { background: var(--tf-warn); }
+html body .tf-flow .tf-rows { display: block; }
+html body .tf-flow .tf-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  min-height: 48px; padding: 12px 0; border-bottom: 1px solid var(--tf-line);
+}
+html body .tf-flow .tf-row:last-child { border-bottom: 0; }
+html body .tf-flow .tf-row.is-total { border-top: 1px solid var(--tf-line-strong); margin-top: -1px; }
+html body .tf-flow .tf-row.is-total .tf-k { color: var(--tf-text); font-weight: 500; }
+html body .tf-flow .tf-row.is-total .tf-v { font-weight: 700; }
+html body .tf-flow .tf-k { flex: 0 1 auto; min-width: 0; display: inline-flex; align-items: center; gap: 6px; color: var(--tf-muted); font-size: 13px; font-weight: 400; line-height: 20px; }
+html body .tf-flow .tf-v {
+  flex: 0 1 auto; min-width: 0; max-width: 62%; color: var(--tf-ink); font-size: 14px; font-weight: 500; line-height: 22px;
+  text-align: left; font-variant-numeric: tabular-nums; overflow-wrap: anywhere;
+}
+html body .tf-flow .tf-v[dir="ltr"] { unicode-bidi: isolate; }
+html body .tf-flow .tf-v .tx-date { white-space: nowrap; }
+html body .tf-flow .tf-v.is-good { color: var(--tf-ok); }
+html body .tf-flow .tf-v.is-strong { font-weight: 600; }
+html body .tf-flow .tf-info {
+  width: 18px; height: 18px; padding: 0; display: inline-grid; place-items: center; border: 1px solid var(--tf-line-strong); border-radius: 50%;
+  background: transparent; color: var(--tf-muted); font: 600 11px/1 Arial, sans-serif; cursor: pointer;
+}
+html body .tf-flow .tf-route { display: inline-flex; align-items: center; gap: 6px; }
+html body .tf-flow .tf-route .tx-route-arrow,
+html body .tx-item .tx-route-arrow { display: inline-grid; place-items: center; color: var(--tf-muted); }
+html body .tf-flow .tf-route svg,
+html body .tx-item .tx-route-arrow svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+html body .tf-flow .tf-copy {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 28px; padding: 0; margin: 0;
+  border: 0; background: none; color: var(--tf-ink); font: inherit; font-size: 14px; font-weight: 500; letter-spacing: .3px;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+html body .tf-flow .tf-copy svg { width: 16px; height: 16px; flex: 0 0 auto; fill: none; stroke: var(--tf-muted); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+html body .tf-flow .tf-copy.is-copied { color: var(--tf-ok); }
+
+/* notes */
+html body .tf-flow .tf-note p { margin: 0; color: var(--tf-text); font-size: 14px; line-height: 1.9; white-space: pre-line; overflow-wrap: anywhere; }
+html body :is(#mainApp, #transactionSummaryPage) .tf-flow .tf-note.is-bad > .tf-sec-title { color: var(--tf-bad) !important; }
+html body :is(#mainApp, #transactionSummaryPage) .tf-flow .tf-note.is-warn > .tf-sec-title { color: var(--tf-warn) !important; }
+html body .tf-flow .tf-note .tf-btn { margin-top: 16px; }
+
+/* feedback: five evenly spaced stars across the width, a comment, one button */
+html body :is(#mainApp, #transactionSummaryPage, #feedbackSheet) .tf-flow .tf-fb .fb-stars.tf-stars {
+  display: flex !important; flex-direction: row !important; direction: rtl !important; justify-content: space-between !important;
+  grid-template-columns: none !important; gap: 0 !important; width: 100%; max-width: 320px; margin: 12px auto 16px !important;
+  padding: 0 !important; border: 0 !important; background: none !important;
+}
+html body :is(#mainApp, #transactionSummaryPage, #feedbackSheet) .tf-flow .tf-fb .tf-stars .fb-star.tf-star {
+  flex: 0 0 auto !important; width: 48px !important; height: 48px !important; min-width: 0 !important; padding: 0 !important; margin: 0 !important;
+  display: grid !important; place-items: center !important; border: 0 !important; border-radius: 12px !important;
+  background: transparent !important; box-shadow: none !important; color: var(--tf-star-off) !important;
+  cursor: pointer; -webkit-tap-highlight-color: transparent; transform: none; transition: transform .12s ease;
+}
+html body .tf-flow .tf-fb .tf-stars .fb-star.tf-star:active { transform: scale(.9); }
+html body :is(#mainApp, #transactionSummaryPage, #feedbackSheet) .tf-flow .tf-fb .tf-stars .fb-star.tf-star .fb-star-svg {
+  width: 34px !important; height: 34px !important; fill: none !important; stroke: currentColor !important; stroke-width: 1.5; stroke-linejoin: round;
+}
+html body :is(#mainApp, #transactionSummaryPage, #feedbackSheet) .tf-flow .tf-fb .tf-stars .fb-star.tf-star.selected { color: var(--tf-star) !important; background: transparent !important; }
+html body :is(#mainApp, #transactionSummaryPage, #feedbackSheet) .tf-flow .tf-fb .tf-stars .fb-star.tf-star.selected .fb-star-svg { fill: var(--tf-star) !important; stroke: var(--tf-star) !important; }
+/* after sending: smaller stars, start-aligned, then the comment */
+html body :is(#mainApp, #transactionSummaryPage, #feedbackSheet) .tf-flow .tf-fb .tf-stars.is-readonly { justify-content: flex-start !important; gap: 4px !important; max-width: none; margin: 8px 0 4px !important; }
+html body :is(#mainApp, #transactionSummaryPage, #feedbackSheet) .tf-flow .tf-fb .tf-stars.is-readonly .fb-star.tf-star { width: 28px !important; height: 28px !important; cursor: default; }
+html body :is(#mainApp, #transactionSummaryPage, #feedbackSheet) .tf-flow .tf-fb .tf-stars.is-readonly .fb-star.tf-star .fb-star-svg { width: 22px !important; height: 22px !important; }
+html body .tf-flow .tf-fb-comment { margin: 8px 0 0; color: var(--tf-text); font-size: 14px; line-height: 1.9; overflow-wrap: anywhere; }
+html body :is(#mainApp, #transactionSummaryPage, #feedbackSheet) .tf-flow .tf-input {
+  display: block; width: 100%; min-height: 96px !important; margin: 0; padding: 12px 16px !important; resize: none !important;
+  border: 1px solid var(--tf-line-strong) !important; border-radius: 12px !important; background: var(--tf-surface) !important; color: var(--tf-ink) !important;
+  font: inherit; font-size: 14px !important; line-height: 1.8; box-shadow: none;
+}
+html body .tf-flow .tf-input::placeholder { color: var(--tf-muted); opacity: 1; }
+html body .tf-flow .tf-input:focus { outline: 0; border-color: var(--tf-accent) !important; box-shadow: 0 0 0 3px rgba(2, 101, 255, .12); }
+html body .tf-flow .tf-err:not(:empty) { margin-top: 8px; color: var(--tf-bad); font-size: 13px; line-height: 1.8; text-align: center; }
+
+/* buttons: one height, one radius */
+html body .tf-flow .tf-btn {
+  display: flex; align-items: center; justify-content: center; width: 100%; min-height: 48px; margin: 12px 0 0; padding: 0 16px;
+  border: 0; border-radius: 12px; background: var(--tf-accent); color: #fff; font: inherit; font-size: 14px; font-weight: 500;
+  cursor: pointer; box-shadow: none;
+}
+html[data-theme="dark"] body .tf-flow .tf-btn { background: #2563eb; }
+html body .tf-flow .tf-btn:disabled { opacity: .6; cursor: default; }
+html body .tf-flow .tf-ghost {
+  display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 48px; margin: 32px 0 0; padding: 0 16px;
+  border: 1px solid var(--tf-line-strong); border-radius: 12px; background: transparent; color: var(--tf-ink);
+  font: inherit; font-size: 14px; font-weight: 500; cursor: pointer;
+}
+html body .tf-flow .tf-ghost svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* delivery receipt image */
+html body .tf-flow .tf-media img { display: block; max-width: 100%; max-height: 360px; margin: 8px auto 0; border-radius: 12px; object-fit: contain; cursor: zoom-in; }
+
+/* sheets: the flow is the content, no extra frame */
+html body #txSheet #txSheetBody > .tf-flow { padding: 0 0 8px; }
+html body #feedbackSheet .tf-flow .tf-fb { padding-top: 8px; border-top: 0; }
+html[data-theme="dark"] body #feedbackSheet .sheet-head h3 { color: var(--tf-ink) !important; }
+html[data-theme="dark"] body #feedbackSheet .sheet-head { border-color: var(--tf-line) !important; }
+
+/* ── transaction list item ─────────────────────────────────────────
+   [icon]  route ............... amount
+           date ................ status
+   Both columns share the same two line-heights so they sit level.   */
+html body .tx-item {
+  box-sizing: border-box; position: relative;
+  display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; grid-template-areas: "ico main end" "hint hint hint";
+  align-items: center; column-gap: 12px;
+  width: 100%; min-height: 72px; margin: 0 !important; padding: 14px 16px;
+  border: 1px solid var(--tf-line); border-radius: 16px; background: var(--tf-surface); color: var(--tf-ink);
+  cursor: pointer; text-align: start; -webkit-tap-highlight-color: transparent; transition: transform .12s ease;
+}
+html body .tx-item:active { transform: scale(.99); }
+html body .tx-item:focus-visible { outline: 2px solid var(--tf-accent); outline-offset: 2px; }
+html body .tx-item-ico { grid-area: ico; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; }
+html body .tx-item-ico svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+html body .tx-item.is-ok   .tx-item-ico { background: var(--tf-ok-soft);   color: var(--tf-ok); }
+html body .tx-item.is-bad  .tx-item-ico { background: var(--tf-bad-soft);  color: var(--tf-bad); }
+html body .tx-item.is-warn .tx-item-ico { background: var(--tf-warn-soft); color: var(--tf-warn); }
+html body .tx-item.is-wait .tx-item-ico { background: var(--tf-wait-soft); color: var(--tf-wait); }
+html body .tx-item.is-info .tx-item-ico { background: var(--tf-info-soft); color: var(--tf-info); }
+html body .tx-item-main, html body .tx-item-end { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+html body .tx-item-main { grid-area: main; align-items: flex-start; overflow: hidden; }
+html body .tx-item-end { grid-area: end; align-items: flex-end; text-align: left; }
+html body .tx-item-route, html body .tx-item-amount { height: 22px; line-height: 22px !important; font-size: 14px !important; white-space: nowrap; color: var(--tf-ink) !important; }
+html body .tx-item-route { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; overflow: hidden; font-weight: 500 !important; }
+html body .tx-item-route .tx-route-end { overflow: hidden; text-overflow: ellipsis; }
+html body .tx-item-amount { font-weight: 600 !important; font-variant-numeric: tabular-nums; unicode-bidi: isolate; }
+html body .tx-item-when, html body .tx-item-status { height: 20px; line-height: 20px; font-size: 12px; white-space: nowrap; }
+html body .tx-item-when { max-width: 100%; overflow: hidden; text-overflow: ellipsis; color: var(--tf-muted); }
+html body .tx-item.is-ok   .tx-item-status { color: var(--tf-ok); }
+html body .tx-item.is-bad  .tx-item-status { color: var(--tf-bad); }
+html body .tx-item.is-warn .tx-item-status { color: var(--tf-warn); }
+html body .tx-item.is-wait .tx-item-status { color: var(--tf-wait); }
+html body .tx-item.is-info .tx-item-status { color: var(--tf-info); }
+html body .tx-item-hint {
+  grid-area: hint; margin-top: 12px; padding: 8px 12px; border-radius: 10px; background: var(--tf-warn-soft);
+  color: var(--tf-warn); font-size: 12px; line-height: 20px;
+}
+/* list containers: one even rhythm between items */
+html body :is(#txList, #historyPreview):has(> .tx-item) { display: flex !important; flex-direction: column !important; gap: 8px !important; }
+
+/* ── responsive ────────────────────────────────────────────────── */
+@media (max-width: 359px) {
+  .ts-body, .ts-header { padding-inline: 12px; }
+  html body .tf-flow .tf-row { gap: 12px; }
+  html body .tf-flow .tf-k { font-size: 12.5px; }
+  html body .tf-flow .tf-v { font-size: 13px; max-width: 64%; }
+  html body .tf-flow .tf-hero-amount { font-size: 24px; line-height: 32px; }
+  html body .tx-item { grid-template-columns: 36px minmax(0, 1fr) auto; column-gap: 10px; padding: 12px; }
+  html body .tx-item-ico { width: 36px; height: 36px; }
+  html body .tx-item-route, html body .tx-item-amount { font-size: 13px !important; }
+}
+
+/* info sheet (amount returned to the balance) */
 .ts-info-backdrop { position: fixed; z-index: 10000; inset: 0; display: grid; align-items: end; background: rgba(16, 25, 40, .42); }
 .ts-info-backdrop[hidden] { display: none !important; }
-.ts-info-sheet { width: min(100%, 660px); max-height: min(78dvh, 620px); margin: 0 auto; padding: 10px 20px max(22px, env(safe-area-inset-bottom)); overflow-y: auto; border-radius: 24px 24px 0 0; background: #fff; color: #172334; transform: translateY(100%); transition: transform .24s ease; }
+.ts-info-sheet { box-sizing: border-box; width: min(100%, 560px); max-height: min(78dvh, 620px); margin: 0 auto; padding: 12px 20px max(24px, env(safe-area-inset-bottom)); overflow-y: auto; border-radius: 20px 20px 0 0; background: var(--tf-surface); color: var(--tf-ink); font-family: Rabar, Arial, sans-serif; transform: translateY(100%); transition: transform .24s ease; }
 .ts-info-backdrop.is-open .ts-info-sheet { transform: translateY(0); }
-.ts-info-grip { width: 38px; height: 4px; margin: 0 auto 14px; border-radius: 99px; background: #d4dce8; }
-.ts-info-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.ts-info-grip { width: 36px; height: 4px; margin: 0 auto 16px; border-radius: 99px; background: var(--tf-line-strong); }
+.ts-info-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
 .ts-info-head h2 { margin: 0; font-size: 16px; font-weight: 600; }
-.ts-info-close { width: 36px; height: 36px; border: 0; border-radius: 12px; background: #f0f3fb; color: #536176; font-size: 20px; cursor: pointer; }
-.ts-info-sheet p { margin: 0; color: #4f5e72; font-size: 14px; line-height: 2; white-space: pre-line; }
-@media (min-width: 700px) {
-  .transaction-summary-page { padding-top: 24px; padding-bottom: 24px; }
-  .ts-card { min-height: calc(100dvh - 48px); border-radius: 26px; }
-}
-@media (max-width: 380px) {
-  .transaction-summary-page { padding-inline: 8px; }
-  .ts-card { padding-inline: 13px; }
-  .ts-amount { min-height: 86px; padding: 12px; }
-  .ts-amount b { font-size: 16px; }
-  .ts-row { padding-inline: 12px; gap: 8px; }
-  .ts-label { font-size: 12px; }
-  .ts-value { font-size: 12px; }
-}
+.ts-info-close { width: 36px; height: 36px; border: 1px solid var(--tf-line); border-radius: 12px; background: transparent; color: var(--tf-muted); font-size: 20px; cursor: pointer; }
+.ts-info-sheet p { margin: 0; color: var(--tf-text); font-size: 14px; line-height: 2; }
 @media (prefers-reduced-motion: reduce) {
-  .ts-info-sheet { transition: none; }
+  .ts-info-sheet, html body .tx-item, html body .tf-flow .tf-fb .tf-star { transition: none; }
+  .ts-spinner { animation-duration: 1.6s; }
 }

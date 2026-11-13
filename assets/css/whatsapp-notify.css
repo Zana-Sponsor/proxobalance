@@ -1,0 +1,47 @@
+/* WhatsApp notification opt-in — profile row, switch and bottom sheet */
+:root { --wa-green: #16a34a; --wa-green-soft: #e8f7ee; --wa-track: #d6dde8; }
+html[data-theme="dark"] { --wa-green: #22c55e; --wa-green-soft: #10301f; --wa-track: #33415c; }
+
+/* row: icon · text (opens the sheet) · switch */
+body #mainApp .wa-item { cursor: default; }
+body #mainApp .wa-item:active { background: transparent !important; }
+body #mainApp .wa-ico { background: var(--wa-green-soft) !important; color: var(--wa-green) !important; }
+body #mainApp .wa-txt {
+  padding: 0; margin: 0; border: 0; background: none; color: inherit; font: inherit; text-align: start; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+body #mainApp .wa-txt small span[dir="ltr"] { unicode-bidi: isolate; font-variant-numeric: tabular-nums; }
+body #mainApp .wa-item.is-on .wa-txt small { color: var(--wa-green); }
+
+/* switch (kept left-to-right like the system switches) */
+.wa-switch {
+  position: relative; flex: 0 0 auto; width: 48px; height: 28px; padding: 0; margin: 0;
+  border: 0; border-radius: 999px; background: var(--wa-track); cursor: pointer; direction: ltr;
+  transition: background-color .18s ease; -webkit-tap-highlight-color: transparent;
+}
+.wa-switch span {
+  position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%;
+  background: #fff; box-shadow: 0 1px 3px rgba(16, 25, 40, .25); transition: transform .18s ease;
+}
+.wa-switch.is-on { background: var(--wa-green); }
+.wa-switch.is-on span { transform: translateX(20px); }
+.wa-switch.is-busy { opacity: .6; cursor: progress; }
+.wa-switch:focus-visible { outline: 2px solid var(--wa-green); outline-offset: 2px; }
+
+/* sheet */
+body .wa-intro { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; background: var(--wa-green-soft); }
+body .wa-intro-ico { width: 40px; height: 40px; flex: 0 0 40px; display: grid; place-items: center; border-radius: 50%; background: var(--wa-green); color: #fff; }
+body .wa-intro-ico .pxi { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+body .wa-intro p { margin: 0; color: var(--tf-ink, #1f2d44); font-size: 14px; font-weight: 500; line-height: 1.8; }
+body .wa-field input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: transparent; color: inherit; font-family: Rabar, Arial, sans-serif; font-size: 16px; font-weight: 500; letter-spacing: .3px; }
+body .wa-field.is-error { border-color: #e5484d !important; }
+body .wa-hint { margin: 0; color: var(--tf-muted, #64748b); font-size: 12.5px; line-height: 1.8; }
+html[data-theme="dark"] body .wa-intro p { color: #e8edf6; }
+
+@media (prefers-reduced-motion: reduce) { .wa-switch, .wa-switch span { transition: none; } }
+
+/* sheet type + dark title (the sheet sits outside #mainApp) */
+body #whatsappSheet .wa-sheet, body #whatsappSheet .wa-sheet :is(p, label, input, button, h3) { font-family: Rabar, Arial, sans-serif; }
+body #whatsappSheet .sheet-head h3 { color: #1f2d44 !important; font-size: 16px; font-weight: 600; }
+html[data-theme="dark"] body #whatsappSheet .sheet-head h3 { color: #e8edf6 !important; }
+html[data-theme="dark"] body #whatsappSheet .sheet-head { border-color: #25324a !important; }

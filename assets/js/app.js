@@ -2309,36 +2309,105 @@ function txWhenHTML(iso, withTime){ return '<bdi class="tx-date" dir="rtl">'+esc
 // read in the order they are sent. The arrow points the way the money goes.
 const TX_ARROW='<span class="tx-route-arrow" aria-hidden="true"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>';
 function txRouteInner(from,to){ return '<span class="tx-route-end">'+escHtml(methodLabel(from))+'</span>'+TX_ARROW+'<span class="tx-route-end">'+escHtml(methodLabel(to))+'</span>'; }
-function orderCardHTML(o){
+// Flat building blocks shared by the transaction list, the details sheet and the
+// standalone summary page (/summarytransaction/…). One visual language, no receipts.
+const TF_ICONS={
+  ok:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>',
+  bad:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 7l10 10M17 7 7 17"/></svg>',
+  wait:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>',
+  warn:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 7v6.5"/><path d="M12 17h.01"/></svg>',
+  info:'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>'
+};
+const TF_COPY='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>';
+function tfToneOf(o){
+  if(o?.balance_refunded_at||o?.balance_refund_case_id) return 'info';
+  const k=txStateOf(o).key;
+  return k==='done'?'ok':k==='rejected'?'bad':k==='action'?'warn':'wait';
+}
+function tfStatusHTML(o){
+  return '<span class="tf-status is-'+tfToneOf(o)+'"><i aria-hidden="true"></i>'+escHtml(txLabelOf(o))+'</span>';
+}
+function tfHeroHTML(o,opts){
+  const tone=tfToneOf(o);
+  return '<section class="tf-hero is-'+tone+'">'
+    + '<span class="tf-hero-ico" aria-hidden="true">'+TF_ICONS[tone]+'</span>'
+    + '<small class="tf-hero-label">'+escHtml(opts.label)+'</small>'
+    + '<strong class="tf-hero-amount" dir="ltr">'+escHtml(opts.amount)+'</strong>'
+    + tfStatusHTML(o)
+    + '</section>';
+}
+// «ژمارەی مامەڵە» row value: the code with a copy button.
+function tfCodeHTML(o){
   const code=orderCodeOf(o);
-  const st=txStateOf(o);
-  const needsAction=!o.balance_refunded_at && o.status==='پێویستی بە ڕاستکردنەوەیە';
+  return '<button type="button" class="tf-copy" onclick="copyOrderCode(\''+escHtml(code)+'\', event)" aria-label="کۆپیکردنی ژمارەی مامەڵە">'
+    + '<span dir="ltr">'+escHtml(code)+'</span>'+TF_COPY+'</button>';
+}
+function tfRouteHTML(o,to){ return '<span class="tf-route" dir="ltr">'+txRouteInner(o.from_method,to||o.to_method)+'</span>'; }
+// How the total after the fee is split: whole thousands go to the recipient, the rest
+// (under 1,000 IQD) goes back to the customer's account balance.
+//   settled order  → the saved settlement (payout_iqd / payout_rounding_iqd)
+//   pending order  → the planned split, shown as «will be …»
+//   older order    → the total went to the recipient as it was
+function tfSplitOf(o){
+  const n=v=>{const x=Number(v);return Number.isFinite(x)&&x>=0?x:0;};
+  const p=typeof ProxoPayoutRounding==='object'?ProxoPayoutRounding.forOrder(o):null;
+  if(o?.balance_refunded_at||o?.balance_refund_case_id) return {recipient:0,returned:n(o.refund_case_amount_iqd??o.amount),pending:false,refunded:true};
+  if(p&&p.has_settlement&&p.settled) return {recipient:n(p.payout_iqd),returned:n(p.remainder_iqd),pending:false};
+  if(p&&p.planned&&p.valid) return {recipient:n(p.payout_iqd),returned:n(p.remainder_iqd),pending:true};
+  if(o?.status==='پەسەندکرا') return {recipient:n(o.total),returned:n(o.shortfall_refunded_iqd)||n(o.payout_rounding_iqd),pending:false};
+  return {recipient:0,returned:0,pending:o?.status!=='ڕەتکرا',rejected:o?.status==='ڕەتکرا'};
+}
+function tfSplitRows(o,split){
+  const to=o.to_method;
+  if(split.refunded) return '';
+  if(split.rejected) return tfRow('بڕی نێردراو بۆ وەرگر',txAmount(0,to),{ltr:true})+tfRow('بڕی گەڕاوە بۆ باڵانس',txAmount(0,'IQD'),{ltr:true,info:true});
+  return tfRow(split.pending?'بڕی دەنێردرێت بۆ وەرگر':'بڕی نێردراو بۆ وەرگر',txAmount(split.recipient,to),{ltr:true,cls:'is-strong'})
+    + tfRow(split.pending?'بڕی دەگەڕێتەوە بۆ باڵانس':'بڕی گەڕاوە بۆ باڵانس',txAmount(split.returned,'IQD'),{ltr:true,info:true,cls:split.returned>0?'is-good':''});
+}
+function tfRow(label,value,opts){
+  if(value===null||value===undefined||value==='') return '';
+  const o=opts||{};
+  return '<div class="tf-row'+(o.row?' '+o.row:'')+'"><span class="tf-k">'+escHtml(label)
+    + (o.info?'<button class="tf-info" type="button" onclick="openSummaryInfo()" aria-label="زانیاری لەسەر ئەم بڕە">i</button>':'')+'</span>'
+    + '<span class="tf-v'+(o.cls?' '+o.cls:'')+'"'+(o.ltr?' dir="ltr"':'')+'>'+(o.html?value:escHtml(String(value)))+'</span></div>';
+}
+function tfSection(title,inner){
+  return inner ? '<section class="tf-sec"><h3 class="tf-sec-title">'+escHtml(title)+'</h3><div class="tf-rows">'+inner+'</div></section>' : '';
+}
+function tfNote(title,text,tone,extra){
+  return '<section class="tf-note'+(tone?' is-'+tone:'')+'"><h3 class="tf-sec-title">'+escHtml(title)+'</h3>'
+    + (text?'<p>'+escHtml(text)+'</p>':'')+(extra||'')+'</section>';
+}
+
+// Short status words for the narrow list column; the full wording stays in the details.
+function txShortLabelOf(o){
+  if(o?.balance_refunded_at) return 'گەڕێندرایەوە';
+  if(o?.status==='پێویستی بە ڕاستکردنەوەیە') return 'ڕاستکردنەوە';
+  return txLabelOf(o);
+}
+// One transaction in a list: status icon · route and date · amount and status.
+function orderCardHTML(o){
+  const tone=tfToneOf(o);
   const refunded=!!o.balance_refunded_at;
+  const needsAction=!refunded && o.status==='پێویستی بە ڕاستکردنەوەیە';
   const payout=typeof ProxoPayoutRounding==='object'?ProxoPayoutRounding.forOrder(o):null;
-  const rounded=!refunded&&payout&&(payout.planned||payout.has_settlement);
   const received=payout?payout.display_amount:o.total;
-  const sentAmt=txAmount(o.amount,o.from_method);
-  const gotAmt=txAmount(refunded?o.amount:received,refunded?'AccountBalance':o.to_method);
-  const gotLbl=refunded?'گەڕاوە بۆ باڵانس':'وەرگیراو';
-  const line=(k,v)=>'<div class="rc-line"><span class="rc-k">'+k+'</span><i class="rc-dots" aria-hidden="true"></i><b class="rc-v" dir="ltr">'+escHtml(v)+'</b></div>';
-  return '<article class="tx-card tx-receipt'+(needsAction?' needs-action':'')+(st.key==='done'?' is-complete':'')+'" tabindex="0" role="button"'
-    + ' onclick="openTxDetail(\''+escHtml(String(o.id))+'\')"'
-    + ' onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openTxDetail(\''+escHtml(String(o.id))+'\');}">'
-    + '<div class="rc-top">'
-      + '<div class="rc-head">'
-        + '<span class="rc-id"><small>پسووڵە</small><span class="tx-code" dir="ltr">'+escHtml(code)+'</span></span>'
-        + '<span class="status-badge '+st.cls+'">'+escHtml(txLabelOf(o))+'</span>'
-      + '</div>'
-      + '<div class="tx-route" dir="ltr">'+txRouteInner(o.from_method,refunded?'AccountBalance':o.to_method)+'</div>'
-      + '<div class="rc-lines">'+line('ناردراو',sentAmt)+line(gotLbl,gotAmt)+'</div>'
-    + '</div>'
-    + '<div class="rc-bot">'
-      + '<div class="rc-foot">'
-        + '<span class="tx-when">'+txWhenHTML(o.created_at,true)+'</span>'
-        + '<span class="tx-detail-link">وردەکاری <svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg></span>'
-      + '</div>'
-      + (needsAction ? '<div class="tx-card-action">پێویستی بە ڕاستکردنەوەی تۆ هەیە</div>' : '')
-    + '</div>'
+  const amount=refunded?txAmount(o.amount,'AccountBalance'):txAmount(received,o.to_method);
+  const id=escHtml(String(o.id));
+  return '<article class="tx-item is-'+tone+'" tabindex="0" role="button"'
+    + ' aria-label="'+escHtml(methodLabel(o.from_method)+' بۆ '+methodLabel(refunded?'AccountBalance':o.to_method)+'، '+amount+'، '+txLabelOf(o))+'"'
+    + ' onclick="openTxDetail(\''+id+'\')"'
+    + ' onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openTxDetail(\''+id+'\');}">'
+    + '<span class="tx-item-ico" aria-hidden="true">'+TF_ICONS[tone]+'</span>'
+    + '<span class="tx-item-main">'
+      + '<span class="tx-item-route" dir="ltr">'+txRouteInner(o.from_method,refunded?'AccountBalance':o.to_method)+'</span>'
+      + '<span class="tx-item-when">'+txWhenHTML(o.created_at,true)+'</span>'
+    + '</span>'
+    + '<span class="tx-item-end">'
+      + '<strong class="tx-item-amount" dir="ltr">'+escHtml(amount)+'</strong>'
+      + '<span class="tx-item-status">'+escHtml(txShortLabelOf(o))+'</span>'
+    + '</span>'
+    + (needsAction?'<span class="tx-item-hint">پێویستە زانیارییەکانی ئەم مامەڵەیە ڕاست بکەیتەوە</span>':'')
     + '</article>';
 }
 
@@ -2377,32 +2446,35 @@ function feedbackRewardCard(order,earned){
       '<div class="fb-reward-cell"><small>زۆرترین داشکاندن</small><b dir="ltr">'+fbEn(FEEDBACK_REWARD.maxIqd)+' IQD</b></div>'+
     '</div></div>';
 }
-function renderOrderFeedback(order,opts){
-  if(order.status!=='پەسەندکرا') return '';
-  opts=opts||{};
-  const feedback=order.feedback;
-  const rewardEarned=hasOrderFeedbackReward(order);
-  if(feedback){
-    const r=Number(feedback.rating)||0;
-    return '<section class="fb is-submitted"><div class="fb-head"><span class="fb-head-ico" aria-hidden="true">'+FB_CHECK+'</span><div><h3>هەڵسەنگاندنی تۆ</h3><p>نێردرا، سوپاس</p></div></div>'+
-      feedbackRewardCard(order,rewardEarned)+
-      '<div class="fb-stars is-readonly" aria-label="'+r+' لە 5 ئەستێرە">'+
-        Array.from({length:5},(_,i)=>'<span class="fb-star'+(i<r?' selected':'')+'" aria-hidden="true">'+FB_STAR+'</span>').join('')+'</div>'+
-      '<div class="fb-rating-label is-set">'+escHtml(FEEDBACK_LABELS[r-1]||'')+'</div>'+
-      (feedback.comment?'<div class="fb-comment"><small>تێبینیی تۆ</small><p>'+escHtml(feedback.comment)+'</p></div>':'')+
-      '</section>';
+// Feedback = stars + an optional comment. Nothing else.
+function fbFlatHTML(order,cfg){
+  if(!order||order.status!=='پەسەندکرا') return '';
+  const f=order.feedback;
+  const head=cfg.title?'<h3 class="tf-sec-title">'+(f?'هەڵسەنگاندنی تۆ':'هەڵسەنگاندنی مامەڵە')+'</h3>':'';
+  if(f){
+    const r=Math.max(0,Math.min(5,Number(f.rating)||0));
+    return '<section class="tf-sec tf-fb is-done">'+head
+      + '<div class="fb-stars tf-stars is-readonly" role="img" aria-label="'+r+' لە ٥ ئەستێرە">'
+      + Array.from({length:5},(_,i)=>'<span class="fb-star tf-star'+(i<r?' selected':'')+'" aria-hidden="true">'+FB_STAR+'</span>').join('')+'</div>'
+      + (f.comment?'<p class="tf-fb-comment">'+escHtml(f.comment)+'</p>':'')
+      + '</section>';
   }
-  return '<section class="fb">'+
-    (opts.sheet?'':'<div class="fb-head"><span class="fb-head-ico" aria-hidden="true">'+FB_STAR+'</span><div><h3>هەڵسەنگاندن</h3><p>چەند ئەستێرەی دەدەیت؟</p></div></div>')+
-    feedbackRewardCard(order,false)+
-    '<div class="fb-block"><div class="fb-label"><b>'+(opts.sheet?'چەند ئەستێرەی دەدەیت؟':'ئەستێرە هەڵبژێرە')+'</b></div>'+
-    '<div class="fb-stars feedback-star-picker" role="radiogroup" aria-label="هەڵبژاردنی ئەستێرە">'+Array.from({length:5},(_,i)=>'<button type="button" class="fb-star feedback-star" data-rating="'+(i+1)+'" aria-label="'+(i+1)+' ئەستێرە" aria-checked="false" role="radio" onclick="selectOrderFeedbackRating('+(i+1)+')">'+FB_STAR+'</button>').join('')+'</div>'+
-    '<div class="fb-rating-label" id="fbRatingLabel" aria-live="polite">ئەستێرەیەک هەڵبژێرە</div></div>'+
-    '<div class="fb-block"><div class="fb-label"><b>تێبینی</b><small>ئارەزوومەندانە</small></div>'+
-    '<textarea id="orderFeedbackComment" class="fb-text" maxlength="1000" rows="3" placeholder="چۆن بوو؟ هەر شتێک بنووسە..." aria-label="تێبینی" oninput="document.getElementById(\'fbCount\').textContent=this.value.length+\' / 1000\'"></textarea>'+
-    '<div class="fb-count" id="fbCount" dir="ltr">0 / 1000</div></div>'+
-    '<button type="button" class="btn btn-primary btn-block fb-submit" id="orderFeedbackSubmit" onclick="submitOrderFeedback(\''+escHtml(String(order.id))+'\')"><span class="fb-submit-ico" aria-hidden="true">'+FB_STAR+'</span> ناردنی هەڵسەنگاندن</button>'+
-    '<div class="fb-error" id="orderFeedbackError" role="alert"></div></section>';
+  return '<section class="tf-sec tf-fb">'+head
+    + '<div class="fb-stars tf-stars feedback-star-picker" role="radiogroup" aria-label="هەڵبژاردنی ژمارەی ئەستێرە">'
+    + Array.from({length:5},(_,i)=>'<button type="button" class="fb-star feedback-star tf-star" data-rating="'+(i+1)+'" role="radio" aria-checked="false" aria-label="'+(i+1)+' ئەستێرە" onclick="'+cfg.onSelect+'('+(i+1)+')">'+FB_STAR+'</button>').join('')+'</div>'
+    + '<textarea id="'+cfg.ids.comment+'" class="tf-input" maxlength="1000" rows="3" placeholder="تێبینییەکەت بنووسە (ئارەزوومەندانە)" aria-label="تێبینی"></textarea>'
+    + '<button type="button" class="tf-btn" id="'+cfg.ids.submit+'" onclick="'+cfg.onSubmit+'">ناردنی هەڵسەنگاندن</button>'
+    + '<div class="fb-error tf-err" id="'+cfg.ids.error+'" role="alert"></div>'
+    + '</section>';
+}
+function renderOrderFeedback(order,opts){
+  opts=opts||{};
+  return fbFlatHTML(order,{
+    title:!opts.sheet,
+    ids:{comment:'orderFeedbackComment',submit:'orderFeedbackSubmit',error:'orderFeedbackError'},
+    onSelect:'selectOrderFeedbackRating',
+    onSubmit:'submitOrderFeedback(\''+escHtml(String(order.id))+'\')'
+  });
 }
 let _summaryOrder=null;
 let _summaryFeedbackDraftRating=0;
@@ -2440,33 +2512,24 @@ function renderSummaryStatus(order){
   document.getElementById('summaryStatusMessage').textContent=state.message;
 }
 function renderSummaryAdditional(order){
-  const box=document.getElementById('summaryAdditional'),content=document.getElementById('summaryAdditionalContent');
-  if(!box||!content)return;
-  const rows=[];
-  if(order.order_code)rows.push('<p><b>ژمارەی مامەڵە</b><span dir="ltr">'+escHtml(order.order_code)+'</span></p>');
-  if(order.extra_info)rows.push('<p><b>زانیاری داواکاری</b><span>'+escHtml(order.extra_info)+'</span></p>');
-  if(order.admin_note)rows.push('<p><b>'+(order.status==='ڕەتکرا'?'هۆکاری ڕەتکردنەوە':'تێبینی ئادمین')+'</b><span>'+escHtml(order.admin_note)+'</span></p>');
-  content.innerHTML=rows.join('');
-  box.hidden=!rows.length;
+  const box=document.getElementById('summaryAdditional');
+  if(!box)return;
+  const notes=[];
+  if(order.admin_note) notes.push(tfNote(order.status==='ڕەتکرا'?'هۆکاری ڕەتکردنەوە':'تێبینی بەڕێوەبەر',order.admin_note,order.status==='ڕەتکرا'?'bad':''));
+  if(order.status==='پێویستی بە ڕاستکردنەوەیە'&&order.correction_note) notes.push(tfNote('پێویستی بە ڕاستکردنەوە هەیە',order.correction_note,'warn'));
+  if(order.extra_info) notes.push(tfNote('زانیاری زیاتر',order.extra_info));
+  box.innerHTML=notes.join('');
+  box.hidden=!notes.length;
 }
 function renderSummaryFeedback(order){
   const box=document.getElementById('summaryFeedback');
   if(!box)return;
-  if(order.status!=='پەسەندکرا'){box.innerHTML='';return;}
-  if(order.feedback){
-    const rating=Math.max(0,Math.min(5,Number(order.feedback.rating)||0));
-    box.innerHTML='<section class="fb is-submitted"><div class="fb-head"><span class="fb-head-ico" aria-hidden="true">'+FB_CHECK+'</span><div><h3>هەڵسەنگاندنی تۆ</h3><p>نێردرا، سوپاس</p></div></div>'+feedbackRewardCard(order,!!order.feedbackRewardGranted||hasOrderFeedbackReward(order))+
-      '<div class="fb-stars is-readonly" aria-label="'+rating+' لە 5 ئەستێرە">'+Array.from({length:5},(_,i)=>'<span class="fb-star'+(i<rating?' selected':'')+'" aria-hidden="true">'+FB_STAR+'</span>').join('')+'</div>'+
-      '<div class="fb-rating-label is-set">'+escHtml(FEEDBACK_LABELS[rating-1]||'')+'</div>'+
-      (order.feedback.comment?'<div class="fb-comment"><small>تێبینیی تۆ</small><p>'+escHtml(order.feedback.comment)+'</p></div>':'')+'</section>';
-    return;
-  }
-  box.innerHTML='<section class="fb"><div class="fb-head"><span class="fb-head-ico" aria-hidden="true">'+FB_STAR+'</span><div><h3>هەڵسەنگاندن</h3><p>چەند ئەستێرەی دەدەیت؟</p></div></div>'+feedbackRewardCard(order,false)+
-    '<div class="fb-block"><div class="fb-label"><b>ئەستێرە هەڵبژێرە</b></div><div class="fb-stars feedback-star-picker" role="radiogroup" aria-label="هەڵبژاردنی ئەستێرە">'+
-    Array.from({length:5},(_,i)=>'<button type="button" class="fb-star feedback-star" data-rating="'+(i+1)+'" aria-label="'+(i+1)+' ئەستێرە" aria-checked="false" role="radio" onclick="selectSummaryFeedbackRating('+(i+1)+')">'+FB_STAR+'</button>').join('')+
-    '</div><div class="fb-rating-label" id="summaryFbRatingLabel" aria-live="polite">ئەستێرەیەک هەڵبژێرە</div></div>'+
-    '<div class="fb-block"><div class="fb-label"><b>تێبینی</b><small>ئارەزوومەندانە</small></div><textarea id="summaryFeedbackComment" class="fb-text" maxlength="1000" rows="3" placeholder="چۆن بوو؟ هەر شتێک بنووسە..." aria-label="تێبینی" oninput="document.getElementById(\'summaryFbCount\').textContent=this.value.length+\' / 1000\'"></textarea><div class="fb-count" id="summaryFbCount" dir="ltr">0 / 1000</div></div>'+
-    '<button type="button" class="btn btn-primary btn-block fb-submit" id="summaryFeedbackSubmit" onclick="submitSummaryFeedback()"><span class="fb-submit-ico" aria-hidden="true">'+FB_STAR+'</span> ناردنی هەڵسەنگاندن</button><div class="fb-error" id="summaryFeedbackError" role="alert"></div></section>';
+  box.innerHTML=fbFlatHTML(order,{
+    title:true,
+    ids:{comment:'summaryFeedbackComment',submit:'summaryFeedbackSubmit',error:'summaryFeedbackError'},
+    onSelect:'selectSummaryFeedbackRating',
+    onSubmit:'submitSummaryFeedback()'
+  });
   _summaryFeedbackDraftRating=0;
 }
 function selectSummaryFeedbackRating(rating){
@@ -2483,10 +2546,10 @@ function selectSummaryFeedbackRating(rating){
 async function submitSummaryFeedback(){
   const order=_summaryOrder,error=document.getElementById('summaryFeedbackError'),button=document.getElementById('summaryFeedbackSubmit');
   if(!order||order.status!=='پەسەندکرا'||order.feedback)return;
-  if(!_summaryFeedbackDraftRating){if(error)error.textContent='تکایە ژمارەی ئەستێرە هەڵبژێرە.';return;}
+  if(!_summaryFeedbackDraftRating){if(error)error.textContent='تکایە ژمارەی ئەستێرە دیاری بکە.';return;}
   if(!curUser?.id){if(error)error.textContent='بۆ ناردنی هەڵسەنگاندن بچۆ ژوورەوە.';return;}
   const comment=(document.getElementById('summaryFeedbackComment')?.value||'').trim();
-  if(comment.length>1000){if(error)error.textContent='نووسین نابێت لە ١٠٠٠ پیت زیاتر بێت.';return;}
+  if(comment.length>1000){if(error)error.textContent='تێبینی نابێت لە ١٠٠٠ پیت زیاتر بێت.';return;}
   if(button){button.disabled=true;button.textContent='دەنێردرێت...';}
   try{
     const {data,error:insertError}=await sb.from('ex_order_feedback').insert({order_id:order.id,user_id:curUser.id,rating:_summaryFeedbackDraftRating,comment}).select('order_id,rating,comment,created_at').single();
@@ -2497,7 +2560,7 @@ async function submitSummaryFeedback(){
     showToast('سوپاس! داشکاندنی '+FEEDBACK_REWARD.percent+'% تا '+fbEn(FEEDBACK_REWARD.maxIqd)+' دینار بۆ مامەڵەی داهاتووت زیادکرا.','success');
   }catch(err){
     if(error)error.textContent=err.code==='23505'?'هەڵسەنگاندنی ئەم داواکارییە پێشتر تۆمار کراوە.':'نەتوانرا هەڵسەنگاندنەکەت تۆمار بکرێت؛ تکایە دووبارە هەوڵ بدەرەوە.';
-    if(button){button.disabled=false;button.innerHTML='<span class="fb-submit-ico" aria-hidden="true">'+FB_STAR+'</span> ناردنی هەڵسەنگاندن';}
+    if(button){button.disabled=false;button.textContent='ناردنی هەڵسەنگاندن';}
   }
 }
 function renderTransactionSummary(order){
@@ -2507,19 +2570,32 @@ function renderTransactionSummary(order){
   const financial=typeof ProxoTransactionSummaryFinancials==='object'
     ?ProxoTransactionSummaryFinancials.breakdown(order,payout)
     :{sourceAmount:Number(order.amount),total:Number(order.total),feeBeforeDiscount:Number(order.reward_original_fee_iqd??((Number(order.fee)||0)+(Number(order.reward_discount_iqd)||0))),discount:Number(order.reward_discount_iqd)||0,recipientAmount:payout?.settled?Number(payout.payout_iqd):(order.status==='پەسەندکرا'?Number(order.total)||0:0),returnedAmount:payout?.settled?Number(payout.remainder_iqd):(Number(order.payout_rounding_iqd)||Number(order.shortfall_refunded_iqd)||0),sameIqd:order.from_method!=='USDT'&&order.to_method!=='USDT'};
-  const details=[
-    summaryDetailRow('جۆری گواستنەوە','<span class="ts-route" dir="ltr">'+txRouteInner(order.from_method,order.to_method)+'</span>',{html:true}),
-    summaryDetailRow('کرێی خزمەتگوزاری',financial.sameIqd&&financial.feeBeforeDiscount!==null?txAmount(financial.feeBeforeDiscount,'IQD'):'—',{ltr:true}),
-    summaryDetailRow('بڕی داشکاندن',financial.sameIqd?txAmount(financial.discount,'IQD'):'—',{ltr:true,cls:'is-discount'}),
-    summaryDetailRow('بڕی باڵانسی گەڕاوە',txAmount(financial.returnedAmount,'IQD'),{ltr:true,info:true}),
-    summaryDetailRow('کۆی گشتی بەڵێبڕینەوە',txAmount(financial.total,order.to_method),{ltr:true}),
-    summaryDetailRow('بڕی نێردراو بۆ وەرگر',txAmount(financial.recipientAmount,order.to_method),{ltr:true}),
-    summaryDetailRow('بەرواری ناردن',txWhenHTML(order.created_at,true),{html:true}),
-    summaryDetailRow('بەرواری نوێکردنەوەی دۆخ',txWhenHTML(order.status_updated_at||order.decided_at||order.updated_at||order.created_at,true),{html:true})
-  ];
-  document.getElementById('summaryReceivedAmount').textContent=txAmount(financial.recipientAmount,order.to_method);
-  document.getElementById('summarySourceAmount').textContent=txAmount(financial.sourceAmount,order.from_method);
-  document.getElementById('summaryDetails').innerHTML=details.join('');
+  const split=tfSplitOf(order);
+  if(!split.refunded&&!split.pending&&!split.rejected&&order.status==='پەسەندکرا'){
+    // a settled order: trust the server breakdown when it carries more detail
+    if(Number(financial.recipientAmount)>=0&&financial.recipientAmount!==null) split.recipient=Number(financial.recipientAmount);
+    if(Number(financial.returnedAmount)>0) split.returned=Number(financial.returnedAmount);
+  }
+  const discount=Number(financial.discount)||0;
+  const hero=split.refunded
+    ? {label:'بڕی گەڕاوە بۆ باڵانس',amount:txAmount(split.returned,'IQD'),to:'AccountBalance'}
+    : split.rejected
+      ? {label:'بڕی داواکراو',amount:txAmount(financial.total,order.to_method)}
+      : {label:split.pending?'بڕی دەنێردرێت بۆ وەرگر':'بڕی گەیشتوو بە وەرگر',amount:txAmount(split.recipient,order.to_method)};
+  const rows=
+      tfRow('بڕی نێردراو',txAmount(financial.sourceAmount,order.from_method),{ltr:true})
+    + tfRow('کرێی خزمەتگوزاری',financial.sameIqd&&financial.feeBeforeDiscount!==null?txAmount(financial.feeBeforeDiscount,'IQD'):'—',{ltr:true})
+    + tfRow('بڕی داشکاندن',financial.sameIqd?txAmount(discount,'IQD'):'—',{ltr:true,cls:discount>0?'is-good':''})
+    + tfRow('کۆی گشتی دوای کرێ',txAmount(financial.total,order.to_method),{ltr:true,row:'is-total'});
+  const splitRows=tfSplitRows(order,split);
+  const info=
+      tfRow('ژمارەی مامەڵە',tfCodeHTML(order),{html:true})
+    + tfRow('ڕێگای گواستنەوە',tfRouteHTML(order,split.refunded?'AccountBalance':order.to_method),{html:true})
+    + tfRow('بەرواری ناردن',txWhenHTML(order.created_at,true),{html:true})
+    + tfRow('بەرواری نوێکردنەوەی دۆخ',txWhenHTML(order.status_updated_at||order.decided_at||order.updated_at||order.created_at,true),{html:true})
+    + (order.balance_refunded_at?tfRow('بەرواری گەڕاندنەوە',txWhenHTML(order.balance_refunded_at,true),{html:true}):'');
+  document.getElementById('summaryHero').innerHTML=tfHeroHTML(order,hero);
+  document.getElementById('summaryDetails').innerHTML=tfSection('وردەکاری بڕ',rows)+tfSection('دابەشکردنی بڕ',splitRows)+tfSection('زانیاری مامەڵە',info);
   renderSummaryStatus(order);
   renderSummaryAdditional(order);
   renderSummaryFeedback(order);
@@ -2530,7 +2606,7 @@ function renderTransactionSummary(order){
       try{
         const url=new URL(order.payout_receipt_url,location.origin);
         if(url.protocol==='https:'||url.origin===location.origin){
-          const title=document.createElement('b');title.textContent='پسووڵەی گەیاندن';
+          const title=document.createElement('h3');title.className='tf-sec-title';title.textContent='پسووڵەی گەیاندن';
           const image=document.createElement('img');image.src=url.href;image.alt='پسووڵەی گەیاندن';image.loading='lazy';
           image.addEventListener('click',()=>{if(typeof openReceiptFull==='function')openReceiptFull(url.href);});
           receipt.append(title,image);receipt.hidden=false;
@@ -2608,7 +2684,7 @@ function openFeedbackSheet(orderId){
   if(!order||order.status!=='پەسەندکرا'||order.feedback||!sheet||!body) return;
   _feedbackSheetId=String(order.id);
   _feedbackDraftRating=0;
-  body.innerHTML=feedbackOrderSnapshot(order)+renderOrderFeedback(order,{sheet:true});
+  body.innerHTML='<div class="tf-flow">'+renderOrderFeedback(order,{sheet:true})+'</div>';
   body.scrollTop=0;
   openSheet(sheet);
 }
@@ -2631,10 +2707,10 @@ async function submitOrderFeedback(orderId){
   const errorEl=document.getElementById('orderFeedbackError'),button=document.getElementById('orderFeedbackSubmit');
   const fromSheet=String(order?.id)===String(_feedbackSheetId);
   if(!order||(String(order.id)!==String(_txSheetId)&&!fromSheet)||order.status!=='پەسەندکرا'||order.feedback)return;
-  if(!_feedbackDraftRating){if(errorEl)errorEl.textContent='تکایە ژمارەی ئەستێرە هەڵبژێرە.';return;}
+  if(!_feedbackDraftRating){if(errorEl)errorEl.textContent='تکایە ژمارەی ئەستێرە دیاری بکە.';return;}
   if(!curUser?.id){if(errorEl)errorEl.textContent='بۆ ناردنی هەڵسەنگاندن بچۆ ژوورەوە.';return;}
   const comment=(document.getElementById('orderFeedbackComment')?.value||'').trim();
-  if(comment.length>1000){if(errorEl)errorEl.textContent='نووسین نابێت لە ١٠٠٠ پیت زیاتر بێت.';return;}
+  if(comment.length>1000){if(errorEl)errorEl.textContent='تێبینی نابێت لە ١٠٠٠ پیت زیاتر بێت.';return;}
   if(button){button.disabled=true;button.textContent='دەنێردرێت...';}
   try{
     const {data,error}=await sb.from('ex_order_feedback').insert({order_id:order.id,user_id:curUser.id,rating:_feedbackDraftRating,comment}).select('order_id,rating,comment,created_at').single();
@@ -2645,7 +2721,7 @@ async function submitOrderFeedback(orderId){
     showToast('سوپاس! داشکاندنی '+FEEDBACK_REWARD.percent+'% تا '+fbEn(FEEDBACK_REWARD.maxIqd)+' دینار بۆ مامەڵەی داهاتووت زیادکرا.','success');
   }catch(error){
     if(errorEl)errorEl.textContent=error.code==='23505'?'هەڵسەنگاندنی ئەم داواکارییە پێشتر تۆمار کراوە.':'نەتوانرا هەڵسەنگاندنەکەت تۆمار بکرێت؛ تکایە دووبارە هەوڵ بدەرەوە.';
-    if(button){button.disabled=false;button.innerHTML='<span class="fb-submit-ico" aria-hidden="true">'+FB_STAR+'</span> ناردنی هەڵسەنگاندن';}
+    if(button){button.disabled=false;button.textContent='ناردنی هەڵسەنگاندن';}
   }
 }
 function txRow(label, value, opts){
@@ -2678,61 +2754,57 @@ function openTxDetail(id){
   const payout=typeof ProxoPayoutRounding==='object'?ProxoPayoutRounding.forOrder(o):null;
   const rounded=!o.balance_refunded_at&&payout&&(payout.planned||payout.has_settlement);
   const received=payout?payout.display_amount:o.total;
-  let html='<div class="tx-dhead">'
-    + '<span class="status-badge '+st.cls+'">'+escHtml(txLabelOf(o))+'</span>'
-    + '<button type="button" class="tx-dcode" onclick="copyOrderCode(\''+escHtml(code)+'\', event)" title="کۆپیکردنی ئایدی">'
-      + '<span dir="ltr">'+escHtml(code)+'</span>'+ICON.copy+'</button>'
-    + '</div>'
-    + '<div class="tx-damounts">'
-      + '<div><small>ناردراو</small><b dir="ltr">'+txAmount(o.amount,o.from_method)+'</b></div>'
-      + '<div><small>'+(o.balance_refunded_at?'گەڕاوە بۆ باڵانس':'وەرگیراو')+'</small><b class="recv" dir="ltr">'+txAmount(o.balance_refunded_at?o.amount:received,o.balance_refunded_at?'AccountBalance':o.to_method)+'</b></div>'
-    + '</div>'
-    + '<div class="tx-dgroup">'
-    // same direction as the list card: from → to, left to right
-    + txRow('ئاڕاستە', '<span class="tx-droute" dir="ltr">'+txRouteInner(o.from_method,o.to_method)+'</span>', {html:true})
+  const refundedSheet=!!o.balance_refunded_at;
+  const split=tfSplitOf(o);
+  const hero=refundedSheet
+    ? {label:'بڕی گەڕاوە بۆ باڵانس',amount:txAmount(o.amount,'AccountBalance'),to:'AccountBalance'}
+    : split.rejected
+      ? {label:'بڕی داواکراو',amount:txAmount(o.total,o.to_method)}
+      : {label:split.pending?'بڕی دەنێردرێت بۆ وەرگر':'بڕی گەیشتوو بە وەرگر',amount:txAmount(split.recipient,o.to_method)};
+  const iqdRoute=!isUsdt && o.to_method!=='USDT';
+  const rows=
+      tfRow('بڕی نێردراو',txAmount(o.amount,o.from_method),{ltr:true})
     // A rate only means something across currencies; IQD → IQD is a fee.
-    + (isUsdt && rate ? txRow('نرخی ئاڵوگۆڕ', '1 $ = '+formatNum(Math.round(rate))+' IQD', {ltr:true}) : '')
-    + (!o.balance_refunded_at && !isUsdt && o.to_method!=='USDT' ? txRow('کرێی خزمەتگوزاری', formatNum(fee)+' IQD', {ltr:true}) : '')
-    + (!o.balance_refunded_at && discountIqd>0 ? txRow('سوودی داشکاندن','<span class="tx-save" dir="ltr">'+formatNum(discountIqd)+' IQD</span>',{html:true}) : '')
-    + (rounded?txRow('بڕی سەرەکی دوای لێبڕین',txAmount(o.total,o.to_method),{ltr:true}):'')
-    + (rounded?txRow('بڕی باڵانسی نەنێردراو',txAmount(payout.remainder_iqd,'IQD'),{ltr:true}):'')
-    + (rounded&&payout.valid&&payout.payout_iqd===0?txRow('ناردنی دەرەکی','هیچ ناردنێک بۆ وەرگر ئەنجام نادرێت'):'')
-    + txRow('ژمارەی وەرگر', o.phone, {ltr:true})
-    + (o.sender_phone ? txRow('ژمارەی نێرەر', o.sender_phone, {ltr:true}) : '')
-    + txRow('بەرواری ناردن', txWhenHTML(o.created_at,true), {html:true})
-    + (o.balance_refunded_at ? txRow('ڕیفاوند بۆ باڵانس',txWhenHTML(o.balance_refunded_at,true),{html:true}) : '')
-    + ((o.status==='پەسەندکرا'||o.status==='ڕەتکرا') && o.decided_at ? txRow('بەرواری بڕیار', txWhenHTML(o.decided_at,true), {html:true}) : '')
-    + (o.extra_info ? txRow('زانیاری زیاتر', o.extra_info) : '')
-    + '</div>';
+    + (isUsdt && rate ? tfRow('نرخی ئاڵوگۆڕ','1 $ = '+formatNum(Math.round(rate))+' IQD',{ltr:true}) : '')
+    + (!refundedSheet && iqdRoute ? tfRow('کرێی خزمەتگوزاری',formatNum(fee)+' IQD',{ltr:true}) : '')
+    + (!refundedSheet && iqdRoute ? tfRow('بڕی داشکاندن',formatNum(discountIqd)+' IQD',{ltr:true,cls:discountIqd>0?'is-good':''}) : '')
+    + (!refundedSheet ? tfRow('کۆی گشتی دوای کرێ',txAmount(o.total,o.to_method),{ltr:true,row:'is-total'}) : '');
+  const splitRows=tfSplitRows(o,split)
+    + (!refundedSheet&&payout&&payout.valid&&(payout.planned||payout.has_settlement)&&payout.payout_iqd===0?tfRow('ناردنی دەرەکی','هیچ بڕێک بۆ وەرگر نانێردرێت'):'');
+  const info=
+      tfRow('ژمارەی مامەڵە',tfCodeHTML(o),{html:true})
+    + tfRow('ڕێگای گواستنەوە',tfRouteHTML(o,refundedSheet?'AccountBalance':o.to_method),{html:true})
+    + tfRow('ژمارەی وەرگر',o.phone,{ltr:true})
+    + (o.sender_phone ? tfRow('ژمارەی نێرەر',o.sender_phone,{ltr:true}) : '')
+    + tfRow('بەرواری ناردن',txWhenHTML(o.created_at,true),{html:true})
+    + ((o.status==='پەسەندکرا'||o.status==='ڕەتکرا') && o.decided_at ? tfRow('بەرواری بڕیار',txWhenHTML(o.decided_at,true),{html:true}) : '')
+    + (refundedSheet ? tfRow('بەرواری گەڕاندنەوە',txWhenHTML(o.balance_refunded_at,true),{html:true}) : '');
+  let html='<div class="tf-flow">'+tfHeroHTML(o,hero)+tfSection('وردەکاری بڕ',rows)+tfSection('دابەشکردنی بڕ',splitRows)+tfSection('زانیاری مامەڵە',info);
   if(o.admin_note){
-    html+='<div class="tx-dnote'+(o.status==='ڕەتکرا'?' is-reason':'')+'"><b>'+(o.status==='ڕەتکرا'?'هۆکاری ڕەتکردنەوە':'تێبینی ئادمین')+'</b><p>'+escHtml(o.admin_note)+'</p></div>';
+    html+=tfNote(o.status==='ڕەتکرا'?'هۆکاری ڕەتکردنەوە':'تێبینی بەڕێوەبەر',o.admin_note,o.status==='ڕەتکرا'?'bad':'');
   }
+  if(o.extra_info) html+=tfNote('زانیاری زیاتر',o.extra_info);
   if(o.status==='ڕەتکرا'){
-    html+='<div class="tx-dnote warn"><b>داواکارییەکە ڕەتکراوەتەوە</b>'
-      +'<p>دەتوانیت داواکارییەکی نوێ بە هەمان زانیاری و پسووڵە بنێریتەوە. ئەگەر هۆکاری ڕەتکردنەوە پەیوەندی بە پسووڵەوە هەیە، پێشتر پسووڵەی دروست لە فۆڕمی داواکاریی نوێ باربکە.</p>'
-      +'<button type="button" class="btn btn-primary btn-block" onclick="confirmRejectedOrderRetry(\''+escHtml(String(o.id))+'\')">دووبارە ناردنەوەی داواکاری</button></div>';
+    html+=tfNote('دووبارە ناردنەوە','دەتوانیت هەمان داواکاری بە هەمان زانیاری و پسووڵە دووبارە بنێریتەوە. ئەگەر هۆکاری ڕەتکردنەوە پەیوەندی بە پسووڵەکەوە هەبێت، سەرەتا پسووڵەیەکی دروست ئامادە بکە.','',
+      '<button type="button" class="tf-btn" onclick="confirmRejectedOrderRetry(\''+escHtml(String(o.id))+'\')">دووبارە ناردنەوەی داواکاری</button>');
   }
   if(o.correction_request && !o.balance_refunded_at){
-    html+='<div class="tx-dnote warn"><b>داواکاری ڕاستکردنەوە</b><p>'+escHtml(o.correction_request)+'</p>'
-      + (o.status==='پێویستی بە ڕاستکردنەوەیە'
-          ? '<button type="button" class="btn btn-primary btn-block" onclick="closeTxDetail(); openOrderCorrection(\''+escHtml(String(o.id))+'\')">ڕاستکردنەوەی مامەڵە</button>'
-          : '')
-      + '</div>';
+    html+=tfNote('داواکاریی ڕاستکردنەوە',o.correction_request,'warn',
+      o.status==='پێویستی بە ڕاستکردنەوەیە'
+        ? '<button type="button" class="tf-btn" onclick="closeTxDetail(); openOrderCorrection(\''+escHtml(String(o.id))+'\')">ڕاستکردنەوەی مامەڵە</button>'
+        : '');
   }
-  if(o.correction_response){
-    html+='<div class="tx-dnote"><b>وەڵامی تۆ</b><p>'+escHtml(o.correction_response)+'</p></div>';
-  }
+  if(o.correction_response) html+=tfNote('وەڵامی تۆ',o.correction_response);
   html+=renderOrderFeedback(o);
   if(o.payout_receipt_url){
-    html+='<div class="tx-dreceipt"><b>پسووڵەی گەیاندن</b>'
+    html+='<section class="tf-sec tf-media"><h3 class="tf-sec-title">پسووڵەی گەیاندن</h3>'
       + '<img src="'+escHtml(o.payout_receipt_url)+'" alt="پسووڵەی گەیاندن" loading="lazy" onclick="openReceiptFull(\''+escHtml(o.payout_receipt_url)+'\')">'
-      + '</div>';
+      + '</section>';
   }
   // A signed-in customer can download their own saved transaction as a Kurdish PDF.
-  html+='<div class="tx-receipt-actions"><button type="button" class="btn btn-ghost" onclick="downloadTransactionReceipt(\''+
-    escHtml(String(o.id))+'\')">'+
-    '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m-4-4 4 4 4-4M5 18v3h14v-3"/></svg>'+
-    '<span>داگرتنی پسووڵە</span></button></div>';
+  html+='<button type="button" class="tf-ghost" onclick="downloadTransactionReceipt(\''+escHtml(String(o.id))+'\')">'
+    + '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3v12m-4-4 4 4 4-4M5 18v3h14v-3"/></svg>'
+    + '<span>داگرتنی پسووڵە</span></button></div>';
   document.getElementById('txSheetBody').innerHTML=html;
   document.getElementById('txSheetBackdrop').hidden=false;
   const sheet=document.getElementById('txSheet');
@@ -3249,7 +3321,7 @@ function navigate(route, push){
     if(curUser && typeof loadMyBalance==='function')loadMyBalance();
   }
   if(route==='changes')      loadChangeLog();
-  if(route==='profile')    { fillProfileForm(); loadKycStatus(true); if(curUser && typeof loadMyBalance==='function')loadMyBalance(); pxBalanceLoad(); }
+  if(route==='profile')    { fillProfileForm(); loadKycStatus(true); if(typeof loadWhatsappSettings==='function')loadWhatsappSettings(); if(curUser && typeof loadMyBalance==='function')loadMyBalance(); pxBalanceLoad(); }
   if(route==='balance')    pxBalHistLoad(true);
   if(route==='verify')     { renderVerifyPage(); loadKycStatus(true); }
   if(route==='support')      loadSupportCases();
@@ -3314,7 +3386,7 @@ async function refreshSection(route, opts){
     const jobs=[];
     if(route==='home')              jobs.push(loadHistory(), loadRates(), loadWallets(), loadMyRewards(), legacy());
     else if(route==='transactions') jobs.push(loadHistory());
-    else if(route==='profile')      jobs.push(loadKycStatus(true), pxBalanceLoad(true), legacy());
+    else if(route==='profile')      jobs.push(loadKycStatus(true), pxBalanceLoad(true), legacy(), (typeof loadWhatsappSettings==='function'?loadWhatsappSettings():null));
     else if(route==='balance')      jobs.push(pxBalHistLoad(true), pxBalanceLoad(true));
     else if(route==='changes')      jobs.push(loadChangeLog(true));
     else if(route==='support')      jobs.push(loadSupportCases());
