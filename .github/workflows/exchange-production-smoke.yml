@@ -16,6 +16,7 @@ jobs:
           for attempt in $(seq 1 24); do
             if curl -fLsS --max-time 15 'https://www.proxobalance.app/' -o current-index.html &&
                grep -q 'app.js?v=81' current-index.html &&
+               ! grep -q 'id="welcomeReward"' current-index.html &&
                grep -q 'transaction-summary.css?v=5' current-index.html &&
                grep -q 'id="pageSummary" data-route="summary"' current-index.html &&
                grep -q 'id="txScreenBody"' current-index.html &&
@@ -73,6 +74,8 @@ jobs:
                grep -q 'accountBalanceSourceOption' current-app.js &&
                grep -q 'dismissAppSplash' current-app.js &&
                grep -q 'مامەڵەکەت چۆن بوو؟' current-app.js &&
+               grep -q 'یارمەتیمان بدە خزمەتگوزارییەکە باشتر بکەین' current-app.js &&
+               ! grep -q 'FEEDBACK_REWARD\|feedbackRewardGranted\|welcome_signup_v1\|order_feedback_v1:' current-app.js &&
                grep -q 'pendingHomeFeedbackOrder' current-app.js &&
                grep -q 'ex_change_username' current-app.js &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/assets/js/exchange-balance.js?v=7' -o current-balance.js &&
@@ -104,7 +107,10 @@ jobs:
           grep -q 'exchange-feedback.css?v=3' index.html
           grep -q 'id="balanceSendSection"' index.html
           grep -q 'id="rewardBanner"' index.html
-          grep -q 'id="welcomeReward"' index.html
+          if grep -q 'id="welcomeReward"' index.html; then
+            echo 'FAIL: new-account welcome reward UI is still published.'
+            exit 1
+          fi
           if grep -q 'id="txSummary"' index.html; then
             echo 'FAIL: completed transactions summary is still published.'
             exit 1
@@ -138,6 +144,11 @@ jobs:
           curl -fLsS --max-time 25 "$root/assets/js/app.js?v=81" -o app-v81.js
           grep -q 'function notifRich' app-v81.js
           grep -q 'escHtml(notifClean(s))' app-v81.js
+          grep -q 'يارمەتیمان بدە خزمەتگوزارییەکە باشتر بکەین' app-v81.js
+          if grep -Eq 'FEEDBACK_REWARD|feedbackRewardGranted|welcome_signup_v1|order_feedback_v1:' app-v81.js; then
+            echo 'FAIL: a review/signup reward is still referenced by the customer bundle.'
+            exit 1
+          fi
           grep -q "navigate('summary', true)" app-v81.js
           curl -fLsS --max-time 25 "$root/summarytransaction/00000000-0000-4000-8000-000000000000" -o summary-route.html
           grep -q 'id="pageSummary" data-route="summary"' summary-route.html
