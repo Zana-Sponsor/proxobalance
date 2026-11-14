@@ -18,6 +18,7 @@ function sqlFunction(name){
 
 test('rating still submits and displays, but no longer promises or grants a reward',()=>{
   assert.match(app,/sb\.from\('ex_order_feedback'\)\.insert\(/);
+  assert.match(app,/home-feedback-copy/);
   assert.match(app,/ناردنی هەڵسەنگاندن/);
   assert.match(app,/سوپاس بۆ هەڵسەنگاندنەکەت/);
   assert.doesNotMatch(app,/FEEDBACK_REWARD|feedbackRewardGranted|feedbackRewardCard|order_feedback_v1:/);

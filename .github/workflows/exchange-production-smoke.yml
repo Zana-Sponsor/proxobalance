@@ -75,7 +75,7 @@ jobs:
                grep -q 'accountBalanceSourceOption' current-app.js &&
                grep -q 'dismissAppSplash' current-app.js &&
                grep -q 'مامەڵەکەت چۆن بوو؟' current-app.js &&
-               grep -q 'یارمەتیمان بدە خزمەتگوزارییەکە باشتر بکەین' current-app.js &&
+               grep -q 'home-feedback-copy' current-app.js &&
                ! grep -q 'FEEDBACK_REWARD\|feedbackRewardGranted\|welcome_signup_v1\|order_feedback_v1:' current-app.js &&
                grep -q 'pendingHomeFeedbackOrder' current-app.js &&
                grep -q 'ex_change_username' current-app.js &&
@@ -148,7 +148,7 @@ jobs:
           curl -fLsS --max-time 25 "$root/assets/js/app.js?v=82" -o app-v82.js
           grep -q 'function notifRich' app-v82.js
           grep -q 'escHtml(notifClean(s))' app-v82.js
-          grep -q 'يارمەتیمان بدە خزمەتگوزارییەکە باشتر بکەین' app-v82.js
+          grep -q 'home-feedback-copy' app-v82.js
           if grep -Eq 'FEEDBACK_REWARD|feedbackRewardGranted|welcome_signup_v1|order_feedback_v1:' app-v82.js; then
             echo 'FAIL: a review/signup reward is still referenced by the customer bundle.'
             exit 1
