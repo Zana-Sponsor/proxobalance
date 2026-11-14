@@ -12,15 +12,15 @@ const adminHtml=read('../exchange-admin.html');
 
 test('customer quote reads live fee_brackets with inclusive thresholds and open-ended final rate',()=>{
   const context=vm.createContext({});
-  vm.runInContext(read('../assets/js/exchange-reward-pricing.js'),context);
-  const pricing=context.ProxoRewardPricing;
+  vm.runInContext(read('../assets/js/exchange-pricing.js'),context);
+  const pricing=context.ProxoPricing;
   const rate={type:'fee_percent',value:4,fee_brackets:[
     {max_iqd:1000,fee_percent:3},{max_iqd:500000,fee_percent:2},{max_iqd:null,fee_percent:1}
   ]};
   for(const [amount,percent,total] of [[1000,3,970],[1001,2,980],[500000,2,490000],[500001,1,495000]]){
     const effective=pricing.effectiveRate(rate,amount);
     assert.equal(effective.value,percent);
-    assert.equal(pricing.quote(amount,effective,null).total,total);
+    assert.equal(pricing.quote(amount,effective).total,total);
   }
   const malformed={...rate,fee_brackets:[{max_iqd:1000,fee_percent:2},{max_iqd:null,fee_percent:101}]};
   assert.equal(pricing.tierPercent(malformed,1),null);

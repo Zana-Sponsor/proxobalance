@@ -242,15 +242,14 @@ export function assertStaffAction(profile,action){
   if(profile.role==='super_admin' || profile.staff_permissions==null)return;
   const permissions={
     ping:'view',account_balances:'view',balance_dashboard:'view',balance_lookup_order:'view',
-    list_order_correction_history:'view',list_rewards:'view',
+    list_order_correction_history:'view',
     approve_order:'approve_orders',reject_order:'approve_orders',request_order_correction:'approve_orders',
     save_order_note:'approve_orders',save_payout_receipt:'approve_orders',
     balance_credit_refund:'refunds',balance_credit_shortfall:'refunds',balance_refund_report:'refunds',
     balance_manual_find:'refunds',balance_manual_overview:'refunds',balance_manual_adjust:'refunds',
     order_set_status:'approve_orders',order_delete:'approve_orders',order_actions_list:'view',
     balance_cancel_payout:'refunds',balance_abort_processing:'refunds',
-    balance_claim_payout:'approve_orders',balance_mark_payout_paid:'approve_orders',
-    grant_reward:'manage_rewards',revoke_reward:'manage_rewards'
+    balance_claim_payout:'approve_orders',balance_mark_payout_paid:'approve_orders'
   };
   const required=permissions[action];
   if(!required || !profile.staff_permissions.includes(required))
@@ -869,89 +868,6 @@ const actions = {
       .order('correction_number', { ascending: false });
     if (error) throw { status: 500, code: 'db_error', message: error.message };
     return data || [];
-  },
-
-  // All reward writes are server-only, after requireAdmin() verifies the JWT
-  // and ex_profiles.is_admin. Never accept reward values from the customer UI.
-  async list_rewards({ limit = 100 }, _ctx) {
-    const count = Number.isInteger(Number(limit)) ? Math.min(200, Math.max(1, Number(limit))) : 100;
-    const db = getDb();
-    const { data, error } = await db.from('ex_user_rewards').select('*')
-      .order('created_at', { ascending: false }).limit(count);
-    if (error) throw error;
-    const ids = [...new Set((data || []).map(r => r.user_id))];
-    let profiles = [];
-    if (ids.length) {
-      const result = await db.from('ex_profiles').select('id,full_name,username,email').in('id', ids);
-      if (result.error) throw result.error;
-      profiles = result.data || [];
-    }
-    const names = new Map(profiles.map(p => [p.id, p]));
-    return (data || []).map(r => ({ ...r, profile: names.get(r.user_id) || null }));
-  },
-
-  async grant_reward({ user_id, kind, discount_percent, max_uses, max_amount_iqd, reward_scope = 'wallets', valid_until, note }, ctx) {
-    if (!/^[0-9a-f-]{36}$/i.test(String(user_id || '')))
-      throw { status: 400, code: 'bad_user', message: 'A valid user is required' };
-    if (!['free_transactions', 'fee_discount'].includes(kind))
-      throw { status: 400, code: 'bad_kind', message: 'Invalid reward type' };
-    if (!['wallets','korek','asiacell'].includes(reward_scope))
-      throw {status:400,code:'bad_scope',message:'Choose wallets, Korek or Asiacell'};
-    const percent = kind === 'free_transactions' ? 100 : Number(discount_percent);
-    if (!Number.isFinite(percent) || percent <= 0 || percent > 100)
-      throw { status: 400, code: 'bad_discount', message: 'Discount must be between 0 and 100%' };
-    const uses = max_uses == null || max_uses === '' ? null : Number(max_uses);
-    if ((uses === null && kind === 'free_transactions') ||
-        (uses !== null && (!Number.isInteger(uses) || uses < 1 || uses > 1000)))
-      throw { status: 400, code: 'bad_uses', message: 'Free transactions need a valid use limit (1–1000)' };
-    const cap = max_amount_iqd == null || max_amount_iqd === '' ? null : Number(max_amount_iqd);
-    if (cap !== null && (!Number.isSafeInteger(cap) || cap < 1 || cap > 1000000000))
-      throw { status: 400, code: 'bad_amount_cap', message: 'Reward amount cap must be 1–1,000,000,000 IQD' };
-    // Proxo reward offers are intentionally short-lived: every newly issued
-    // reward is valid for exactly seven days from issuance.
-    if (valid_until) {
-      const requestedExpiry = new Date(valid_until);
-      if (!Number.isFinite(requestedExpiry.getTime()) || requestedExpiry.getTime() <= Date.now())
-        throw { status: 400, code: 'bad_expiry', message: 'Expiration must be in the future' };
-    }
-    const expiry = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-    const db = getDb();
-    const { data: profile, error: profileError } = await db.from('ex_profiles')
-      .select('id,is_banned').eq('id', user_id).maybeSingle();
-    if (profileError) throw profileError;
-    if (!profile || profile.is_banned)
-      throw { status: 400, code: 'invalid_recipient', message: 'Recipient is missing or banned' };
-    const { data, error } = await db.from('ex_user_rewards').insert({
-      user_id, kind, discount_percent: percent, max_uses: uses, max_amount_iqd: cap, reward_scope,
-      valid_until: expiry ? expiry.toISOString() : null,
-      note: String(note || '').trim().slice(0, 200) || null,
-      created_by: ctx.user.id
-    }).select().single();
-    if (error) throw error;
-    await audit(ctx.user.id, 'grant_reward', user_id, data.id + ' ' + kind + ' ' + percent + '% / ' + (uses ?? 'unlimited') + ' cap_iqd:' + (cap ?? 'unlimited')+' scope:'+reward_scope);
-    // A failed notification must never undo an already committed reward.
-    try {
-      await db.from('ex_notifications').insert({
-        user_id, type: 'admin', title: 'پاداشتێکت پێدرا',
-        message: (kind === 'free_transactions'
-          ? 'ژمارەی ' + uses + ' مامەڵەی بێ لێبڕینت پێدرا.'
-          : 'داشکاندنی ' + percent + '% لە لێبڕینت پێدرا.') +
-          (cap !== null ? ' پاداشت تا بڕی ' + cap.toLocaleString('en-US') + ' دینار بۆ هەر مامەڵەیەکە؛ بڕی زیادە بە لێبڕینی ئاسایی هەژمار دەکرێت.' : '')+
-          ' تایبەت بە '+({wallets:'جزدانەکان',korek:'کۆڕەک',asiacell:'ئاسیاسێڵ'})[reward_scope]+'.'
-      });
-    } catch (_) { /* reward is already saved */ }
-    return data;
-  },
-
-  async revoke_reward({ id }, ctx) {
-    if (!/^[0-9a-f-]{36}$/i.test(String(id || '')))
-      throw { status: 400, code: 'bad_reward', message: 'Valid reward ID required' };
-    const { data, error } = await getDb().from('ex_user_rewards')
-      .update({ active: false, updated_at: new Date().toISOString() })
-      .eq('id', id).eq('active', true).select().maybeSingle();
-    if (error) throw error;
-    if (data) await audit(ctx.user.id, 'revoke_reward', data.user_id, data.id);
-    return { revoked: !!data };
   },
 
   async set_ban({ user_id, banned }, ctx) {

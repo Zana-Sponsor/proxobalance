@@ -1,0 +1,121 @@
+/* ═════════════════════════════════════════════════════════════════
+   Dark mode for the app inside (#mainApp) — one palette, same structure as light:
+   page = canvas, sections = cards with a hairline, text in three steps.
+   canvas #0b1220 · card #131c2e · field #0e1725 · line #25324a
+   ink #e8edf6 · text #c4cee0 · muted #a3b1c7 · accent #3b8cff / soft #10223d
+   Loaded last. Light mode is untouched (every rule starts with html[data-theme="dark"]).
+   ═════════════════════════════════════════════════════════════════ */
+html[data-theme="dark"] body:has(#mainApp) {
+  --proxo-accent: #3b8cff; --proxo-accent-hover: #5b9dff; --proxo-accent-soft: #10223d;
+  --proxo-canvas: #0b1220; --proxo-card: #131c2e; --proxo-ink: #e8edf6; --proxo-muted: #a3b1c7; --proxo-line: #25324a;
+  --dk-canvas: #0b1220; --dk-card: #131c2e; --dk-field: #0e1725; --dk-line: #25324a; --dk-line-2: #2b3a55;
+  --dk-ink: #e8edf6; --dk-text: #c4cee0; --dk-muted: #a3b1c7; --dk-accent: #3b8cff; --dk-accent-soft: #10223d;
+  --dk-warn: #f7b955; --dk-warn-soft: #33270d; --dk-ok: #4ade80; --dk-ok-soft: #10301f; --dk-bad: #ff8a80; --dk-bad-soft: #3a1816;
+  background: #0b1220 !important; color-scheme: dark;
+}
+html[data-theme="dark"] body:has(#mainApp) #mainApp,
+html[data-theme="dark"] body:has(#mainApp) #mainApp .page { background: var(--dk-canvas) !important; }
+
+/* `D` = html[data-theme="dark"] body #mainApp#mainApp (doubled id beats the older dark/light layers) */
+
+/* header: same colour as the page, like light mode */
+html[data-theme="dark"] body #mainApp#mainApp #siteHeader.pxh { background: var(--dk-canvas) !important; border-bottom: 1px solid transparent !important; box-shadow: none !important; }
+html[data-theme="dark"] body #mainApp#mainApp #siteHeader :is(button, a):not(.pxh-brand) { background: var(--dk-card) !important; border: 1px solid var(--dk-line) !important; color: var(--dk-ink) !important; box-shadow: none !important; }
+
+/* fields */
+html[data-theme="dark"] body #mainApp#mainApp :is(input.input, textarea.input, select.input, .input:not(div)) {
+  background-color: var(--dk-field) !important; border-color: var(--dk-line-2) !important; color: var(--dk-ink) !important; box-shadow: none !important;
+}
+html[data-theme="dark"] body #mainApp#mainApp :is(input, textarea)::placeholder { color: var(--dk-muted) !important; opacity: .75 !important; }
+html[data-theme="dark"] body #mainApp#mainApp :is(input.input, textarea.input, select.input):focus { border-color: var(--dk-accent) !important; box-shadow: 0 0 0 4px rgba(59,140,255,.14) !important; }
+html[data-theme="dark"] body #mainApp#mainApp label:not([class]) { color: var(--dk-muted) !important; }
+
+/* loading placeholders */
+html[data-theme="dark"] body #mainApp#mainApp .tx-skel { background: var(--dk-card) !important; border-color: var(--dk-line) !important; }
+html[data-theme="dark"] body #mainApp#mainApp .sk { background: #1b2740 !important; }
+
+/* back buttons on sub pages (balance, support, verify, changes) */
+html[data-theme="dark"] body #mainApp#mainApp .support-back { background: var(--dk-card) !important; border: 1px solid var(--dk-line) !important; color: var(--dk-ink) !important; box-shadow: none !important; }
+
+/* generic secondary buttons */
+html[data-theme="dark"] body #mainApp#mainApp .btn.btn-ghost { background: var(--dk-field) !important; border: 1px solid var(--dk-line) !important; color: var(--dk-text) !important; }
+
+/* profile: cover, avatar, verification badge */
+html[data-theme="dark"] body #mainApp#mainApp #pageProfile .pfx-cover { background: linear-gradient(180deg, var(--dk-accent-soft) 0%, rgba(16,34,61,0) 100%) !important; }
+html[data-theme="dark"] body #mainApp#mainApp #pageProfile .pfx-avatar { background: var(--dk-accent-soft) !important; color: var(--dk-accent) !important; border-color: var(--dk-card) !important; box-shadow: 0 0 0 4px var(--dk-card) !important; }
+html[data-theme="dark"] body #mainApp#mainApp .kyc-badge { background: var(--dk-field) !important; border: 1px solid var(--dk-line) !important; color: var(--dk-text) !important; box-shadow: none !important; }
+html[data-theme="dark"] body #mainApp#mainApp .kyc-badge-ico { background: var(--dk-card) !important; color: var(--dk-muted) !important; }
+html[data-theme="dark"] body #mainApp#mainApp #pageProfile .pfx-head :is(span, button):not(.pfx-avatar):not(.kyc-badge-ico) { background-color: transparent; }
+
+/* profile: balance card — a normal card (was a bright blue gradient) */
+html[data-theme="dark"] body #mainApp#mainApp #pageProfile .pfx-card.pfx-balance { background: var(--dk-card) !important; border: 1px solid var(--dk-line) !important; box-shadow: none !important; color: var(--dk-ink) !important; }
+html[data-theme="dark"] body #mainApp#mainApp #pageProfile .pfx-balance .bx-head { color: var(--dk-muted) !important; }
+html[data-theme="dark"] body #mainApp#mainApp #pageProfile .pfx-balance .bx-ico { background: var(--dk-accent-soft) !important; color: var(--dk-accent) !important; }
+html[data-theme="dark"] body #mainApp#mainApp #pageProfile .pfx-balance .bx-title,
+html[data-theme="dark"] body #mainApp#mainApp #pageProfile .pfx-balance .bx-amount strong { color: var(--dk-ink) !important; }
+html[data-theme="dark"] body #mainApp#mainApp #pageProfile .pfx-balance .bx-amount { background: var(--dk-field) !important; border-color: var(--dk-line) !important; }
+html[data-theme="dark"] body #mainApp#mainApp #pageProfile .pfx-balance .bx-btn { background: var(--dk-accent) !important; border-color: var(--dk-accent) !important; color: #fff !important; }
+html[data-theme="dark"] body #mainApp#mainApp #pageProfile .pfx-balance .bx-btn.bx-secondary { background: var(--dk-field) !important; border-color: var(--dk-line) !important; color: var(--dk-text) !important; }
+
+/* rules */
+html[data-theme="dark"] body #mainApp#mainApp .rule-item { background: var(--dk-card) !important; border: 1px solid var(--dk-line) !important; box-shadow: none !important; }
+html[data-theme="dark"] body #mainApp#mainApp .rule-num { background: var(--dk-accent-soft) !important; color: var(--dk-accent) !important; }
+html[data-theme="dark"] body #mainApp#mainApp .rule-note { background: var(--dk-warn-soft) !important; border-color: rgba(247,185,85,.25) !important; }
+html[data-theme="dark"] body #mainApp#mainApp .rule-note :is(span, b, p, strong) { color: var(--dk-warn) !important; }
+
+/* support form: see support-case.css */
+
+/* verification */
+html[data-theme="dark"] body #mainApp#mainApp .kyc-banner { background: var(--dk-field) !important; border: 1px solid var(--dk-line) !important; color: var(--dk-text) !important; }
+
+/* page titles sit on the page (no dark shadow band) */
+html[data-theme="dark"] body #mainApp#mainApp .page-head { background: transparent !important; box-shadow: none !important; }
+
+/* quick amounts on the exchange form */
+html[data-theme="dark"] body #mainApp#mainApp .quick-amount-btn { background: var(--dk-field) !important; border: 1px solid var(--dk-line) !important; color: var(--dk-ink) !important; box-shadow: none !important; }
+html[data-theme="dark"] body #mainApp#mainApp .quick-amount-btn:active { background: var(--dk-accent-soft) !important; border-color: var(--dk-accent) !important; }
+
+/* ── bottom sheets and pop-ups (they live outside #mainApp) ─────────── */
+html[data-theme="dark"] body:has(#mainApp) :is(.sheet-overlay, .modal-overlay) {
+  --dk-card: #131c2e; --dk-field: #0e1725; --dk-line: #25324a; --dk-line-2: #2b3a55;
+  --dk-ink: #e8edf6; --dk-text: #c4cee0; --dk-muted: #a3b1c7; --dk-accent: #3b8cff; --dk-accent-soft: #10223d;
+}
+html[data-theme="dark"] body:has(#mainApp) .sheet-overlay .sheet,
+html[data-theme="dark"] body:has(#mainApp) .modal-overlay .modal-card {
+  background: var(--dk-card) !important; color: var(--dk-ink) !important; border-color: var(--dk-line) !important;
+  box-shadow: 0 -10px 30px rgba(0,0,0,.35) !important;
+}
+html[data-theme="dark"] body:has(#mainApp) .sheet-overlay .sheet-head { border-color: var(--dk-line) !important; background: transparent !important; }
+html[data-theme="dark"] body:has(#mainApp) :is(.sheet-overlay .sheet, .modal-overlay .modal-card) :is(h2, h3, .sheet-head h3) { color: var(--dk-ink) !important; }
+html[data-theme="dark"] body:has(#mainApp) :is(.sheet-overlay .sheet, .modal-overlay .modal-card) :is(p, small, label) { color: var(--dk-muted) !important; }
+html[data-theme="dark"] body:has(#mainApp) .sheet-overlay .sheet-grabber { background: var(--dk-line-2) !important; }
+html[data-theme="dark"] body:has(#mainApp) .sheet-overlay .sheet-close { background: var(--dk-field) !important; border: 1px solid var(--dk-line) !important; color: var(--dk-text) !important; }
+html[data-theme="dark"] body:has(#mainApp) :is(.sheet-overlay .sheet, .modal-overlay .modal-card) :is(input.input, select.input, textarea.input, .input:not(div)) {
+  background-color: var(--dk-field) !important; border-color: var(--dk-line-2) !important; color: var(--dk-ink) !important; box-shadow: none !important;
+}
+html[data-theme="dark"] body:has(#mainApp) :is(.sheet-overlay .sheet, .modal-overlay .modal-card) :is(input, textarea)::placeholder { color: var(--dk-muted) !important; opacity: .75 !important; }
+html[data-theme="dark"] body:has(#mainApp) :is(.sheet-overlay .sheet, .modal-overlay .modal-card) .btn.btn-ghost { background: var(--dk-field) !important; border: 1px solid var(--dk-line) !important; color: var(--dk-text) !important; }
+html[data-theme="dark"] body:has(#mainApp) :is(.sheet-overlay .sheet, .modal-overlay .modal-card) .support-image-picker { background: var(--dk-field) !important; border-color: var(--dk-line-2) !important; }
+html[data-theme="dark"] body:has(#mainApp) :is(.sheet-overlay .sheet, .modal-overlay .modal-card) .support-image-picker-icon { background: var(--dk-card) !important; color: var(--dk-muted) !important; }
+/* list rows inside sheets (route picker, saved recipients, order confirmation) */
+html[data-theme="dark"] body:has(#mainApp) .sheet-overlay .sheet :is(.picker-item, .picker-row, .saved-recipient, .recipient-item, .confirm-row, .cf-row) {
+  background: var(--dk-field) !important; border-color: var(--dk-line) !important; color: var(--dk-ink) !important;
+}
+/* username field: the app font (was a serif fallback) */
+html[data-theme="dark"] body:has(#mainApp) #usernameSheet input, html body #usernameSheet .un-field input { font-family: Rabar, Arial, sans-serif !important; }
+
+/* rate changes page (/changes): current-rate cards, day labels and the change log (were white in dark) */
+html[data-theme="dark"] body #mainApp#mainApp :is(.rate-card, .chg-item) { background: var(--dk-card) !important; border: 1px solid var(--dk-line) !important; box-shadow: none !important; color: var(--dk-text) !important; }
+html[data-theme="dark"] body #mainApp#mainApp .rate-card :is(.rate-route, .rate-w) { color: var(--dk-ink) !important; }
+html[data-theme="dark"] body #mainApp#mainApp .rate-card .rate-arrow { color: var(--dk-muted) !important; }
+html[data-theme="dark"] body #mainApp#mainApp .rate-card .rate-eq { background: var(--dk-field) !important; border-color: var(--dk-line) !important; }
+html[data-theme="dark"] body #mainApp#mainApp .rate-card .rate-in { color: var(--dk-text) !important; }
+html[data-theme="dark"] body #mainApp#mainApp .rate-card .rate-eqico { color: var(--dk-muted) !important; }
+html[data-theme="dark"] body #mainApp#mainApp .rate-card .rate-out { color: var(--dk-ok) !important; }
+html[data-theme="dark"] body #mainApp#mainApp .rate-card .rate-fee { color: var(--dk-muted) !important; }
+html[data-theme="dark"] body #mainApp#mainApp #pageChanges .notif-day { background: var(--dk-card) !important; border: 1px solid var(--dk-line) !important; color: var(--dk-muted) !important; box-shadow: none !important; }
+html[data-theme="dark"] body #mainApp#mainApp .chg-item .chg-headline { color: var(--dk-ink) !important; }
+html[data-theme="dark"] body #mainApp#mainApp .chg-item :is(.chg-time, .chg-route, .chg-route b) { color: var(--dk-muted) !important; }
+html[data-theme="dark"] body #mainApp#mainApp .chg-item .chg-vals { background: var(--dk-field) !important; border-color: var(--dk-line) !important; }
+html[data-theme="dark"] body #mainApp#mainApp .chg-item .chg-old { color: var(--dk-muted) !important; }
+html[data-theme="dark"] body #mainApp#mainApp .chg-item :is(.chg-new, .chg-to) { color: var(--dk-ink) !important; }

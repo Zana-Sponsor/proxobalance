@@ -82,26 +82,22 @@ const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&
 function quoteContext(){
   const element=elements();element('from').value='FastPay';element('receiveVia').value='FIB';
   const c=vm.createContext({document:{getElementById:element},amount:'60000',curUser:{id:customerId},
-    MY_REWARDS:[{kind:'free_transactions',discount_percent:100,max_amount_iqd:50000,
-      id:'reward',active:true,max_uses:2,used_count:0,created_at:'2026-01-01T00:00:00Z'}],
     RATES:{'FastPay>FIB':{type:'fee_percent',value:2}},MIN_AMOUNT:10000,formatNum:number,fmtPct:String,
     refreshFormHints(){},updateSubmitState(){element('submitBtn').disabled=false;},updateHeaderRate(){},
     routeAllowed:()=>true,METHOD_META:{},getWalletInfo:()=>({locked:false})});
-  vm.runInContext(read('assets/js/exchange-reward-pricing.js')+'\n'+helper,c);
+  vm.runInContext(read('assets/js/exchange-pricing.js')+'\n'+helper,c);
   vm.runInContext('function getAmtRaw(){return amount;}',c);
-  vm.runInContext(app.slice(app.indexOf('function availableFeeReward('),app.indexOf('// Smallest amount'))+'\n'+
-    app.slice(app.indexOf('function calc(){'),app.indexOf('function _validateOrderFields()')),c);
+  vm.runInContext(app.slice(app.indexOf('function calc(){'),app.indexOf('function _validateOrderFields()')),c);
   return {c,element};
 }
-test('customer quote preserves reward and fee math while separately displaying payout and automatic credit',()=>{
+test('customer quote keeps fee math while separately displaying payout and automatic credit',()=>{
   const {c,element}=quoteContext();c.calc();
-  assert.equal(element('totalDisplay').innerText,'59,800 IQD');
-  assert.equal(element('payoutDisplay').textContent,'59,000 IQD');
+  assert.equal(element('totalDisplay').innerText,'58,800 IQD');
+  assert.equal(element('payoutDisplay').textContent,'58,000 IQD');
   assert.equal(element('roundingDisplay').textContent,'800 IQD');
-  assert.equal(element('bdFee').textContent,'200 IQD');
-  assert.match(element('rewardBanner').textContent,/50,000/);
+  assert.equal(element('bdFee').textContent,'1,200 IQD');
   assert.match(element('payoutRoundingNote').textContent,/دوای پەسەندکردن/);
-  c.amount='11000';c.MY_REWARDS=[];c.RATES['FastPay>FIB']={type:'fee_fixed',value:9400};c.calc();
+  c.amount='11000';c.RATES['FastPay>FIB']={type:'fee_fixed',value:9400};c.calc();
   assert.equal(element('payoutDisplay').textContent,'1,000 IQD');assert.equal(element('roundingDisplay').textContent,'600 IQD');
   c.RATES['FastPay>FIB'].value=10400;c.calc();
   assert.equal(element('payoutDisplay').textContent,'0 IQD');assert.equal(element('roundingDisplay').textContent,'600 IQD');

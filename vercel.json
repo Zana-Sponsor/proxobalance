@@ -9,6 +9,10 @@
       "destination": "/api/dispatch?__pb_api_route=admin"
     },
     {
+      "source": "/api/auth",
+      "destination": "/api/dispatch?__pb_api_route=auth"
+    },
+    {
       "source": "/api/balance",
       "destination": "/api/dispatch?__pb_api_route=balance"
     },

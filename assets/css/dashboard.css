@@ -1,0 +1,230 @@
+/* ═════════════════════════════════════════════════════════════════
+   Home dashboard (#pageDash, route "/") + the bottom bar icons. The
+   «داواکاری نوێ» card opens the exchange form (#pageHome, route "/exchange").
+   Light and dark. Loaded last; rules use a doubled #mainApp id.
+
+   Design: one overview card with a status ring (approved in the middle) and a
+   legend of the four states; the latest exchanges below. Blue is kept for
+   actions; status colours appear only on the ring and the legend dots.
+     type   12 · 13 · 15 · 20 · 30 (Rabar)      space  4 · 8 · 12 · 16 · 20
+     radius 12 (controls) · 20 (cards)
+   ═════════════════════════════════════════════════════════════════ */
+
+html body #mainApp#mainApp #pageDash {
+  --db-card: #fff; --db-soft: #f4f6fa; --db-line: #e8ecf2;
+  --db-ink: #0f172a; --db-text: #334155; --db-muted: #6b7a90;
+  --db-accent: #0265ff; --db-accent-soft: #eef4ff;
+  --db-ok: #16a34a; --db-wait: #94a3b8; --db-fix: #f59e0b; --db-bad: #ef4444;
+  --db-track: #eef1f6;
+  --db-shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 8px 24px -16px rgba(16, 24, 40, .18);
+  --db-font: Rabar, Arial, sans-serif;
+}
+html[data-theme="dark"] body #mainApp#mainApp #pageDash {
+  --db-card: #131c2e; --db-soft: #0f1828; --db-line: #25324a;
+  --db-ink: #e8edf6; --db-text: #c4cee0; --db-muted: #98a6bd;
+  --db-accent: #3b8cff; --db-accent-soft: #10223d;
+  --db-ok: #4ade80; --db-wait: #7d8ba3; --db-fix: #f7b955; --db-bad: #ff8a80;
+  --db-track: #1c2840;
+  --db-shadow: none;
+}
+
+html body #mainApp#mainApp #pageDash .db { display: flex; flex-direction: column; gap: 20px; font-family: var(--db-font); }
+html body #mainApp#mainApp #pageDash .db-top { margin-bottom: 20px; }
+
+/* greeting · name · avatar */
+html body #mainApp#mainApp #pageDash .db-hello { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 2px 0; }
+html body #mainApp#mainApp #pageDash .db-hello-txt { display: flex; flex-direction: column; gap: 0; min-width: 0; }
+html body #mainApp#mainApp #pageDash .db-hello small { color: var(--db-muted); font-size: 13px; font-weight: 400; line-height: 1.6; }
+html body #mainApp#mainApp #pageDash .db-hello h2 {
+  margin: 0; color: var(--db-ink); font-size: 20px; font-weight: 700; line-height: 1.45;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+html body #mainApp#mainApp #pageDash .db-avatar {
+  width: 44px !important; height: 44px !important; min-width: 44px !important; flex: 0 0 44px !important; display: grid !important; place-items: center !important;
+  padding: 0 !important; margin: 0 !important; overflow: hidden !important; box-shadow: none !important;
+  border: 0 !important; border-radius: 50% !important; background: var(--db-accent-soft) !important; color: var(--db-accent) !important;
+  font-family: var(--db-font) !important; font-size: 17px !important; font-weight: 700 !important; line-height: 1 !important; cursor: pointer;
+}
+html body #mainApp#mainApp #pageDash .db-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* overview card: legend (start) + status ring (end) */
+html body #mainApp#mainApp #pageDash .dbo {
+  padding: 18px 18px 14px; background: var(--db-card); border: 1px solid var(--db-line); border-radius: 20px; box-shadow: var(--db-shadow);
+}
+html body #mainApp#mainApp #pageDash .dbo-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 0 0 12px; }
+html body #mainApp#mainApp #pageDash .dbo-head h3 { margin: 0; color: var(--db-ink); font-size: 15px; font-weight: 600; line-height: 1.5; }
+html body #mainApp#mainApp #pageDash .dbo-total { color: var(--db-muted); font-size: 12px; font-weight: 400; line-height: 1.5; }
+html body #mainApp#mainApp #pageDash .dbo-body { display: flex; align-items: center; gap: 16px; }
+html body #mainApp#mainApp #pageDash .dbo-legend { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+html body #mainApp#mainApp #pageDash .dbo-row {
+  display: flex; align-items: center; gap: 10px; width: 100%; min-height: 40px; margin: 0; padding: 0 2px;
+  border: 0; border-bottom: 1px solid var(--db-line); background: none; border-radius: 0;
+  font-family: var(--db-font); text-align: start; cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+html body #mainApp#mainApp #pageDash .dbo-row:last-child { border-bottom: 0; }
+html body #mainApp#mainApp #pageDash .dbo-row:focus-visible { outline: 2px solid var(--db-accent); outline-offset: 2px; border-radius: 8px; }
+html body #mainApp#mainApp #pageDash .dbo-dot { width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%; background: var(--st); }
+html body #mainApp#mainApp #pageDash .dbo-lbl { flex: 1 1 auto; min-width: 0; color: var(--db-text); font-size: 13px; font-weight: 500; line-height: 1.5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html body #mainApp#mainApp #pageDash .dbo-num { flex: 0 0 auto; color: var(--db-ink); font-size: 15px; font-weight: 700; line-height: 1.5; font-variant-numeric: tabular-nums; }
+html body #mainApp#mainApp #pageDash .dbo-row.is-zero .dbo-num { color: var(--db-muted); font-weight: 500; }
+html body #mainApp#mainApp #pageDash :is(.dbo-row, .dbo-arc).is-ok   { --st: var(--db-ok); }
+html body #mainApp#mainApp #pageDash :is(.dbo-row, .dbo-arc).is-wait { --st: var(--db-wait); }
+html body #mainApp#mainApp #pageDash :is(.dbo-row, .dbo-arc).is-fix  { --st: var(--db-fix); }
+html body #mainApp#mainApp #pageDash :is(.dbo-row, .dbo-arc).is-bad  { --st: var(--db-bad); }
+
+html body #mainApp#mainApp #pageDash .dbo-ring {
+  position: relative; flex: 0 0 132px; width: 132px; height: 132px; margin: 0; padding: 0;
+  border: 0; background: none; border-radius: 50%; cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+html body #mainApp#mainApp #pageDash .dbo-ring:focus-visible { outline: 2px solid var(--db-accent); outline-offset: 3px; }
+html body #mainApp#mainApp #pageDash .dbo-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); display: block; }
+html body #mainApp#mainApp #pageDash .dbo-track { fill: none; stroke: var(--db-track); stroke-width: 11; }
+html body #mainApp#mainApp #pageDash .dbo-arc { fill: none; stroke: var(--st); stroke-width: 11; transition: stroke-dasharray .6s ease; }
+html body #mainApp#mainApp #pageDash .dbo-ring-in { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; pointer-events: none; }
+html body #mainApp#mainApp #pageDash .dbo-ring-in b { color: var(--db-ink); font-size: 30px; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; }
+html body #mainApp#mainApp #pageDash .dbo-ring-in small { color: var(--db-muted); font-size: 12px; font-weight: 500; line-height: 1.5; }
+
+/* latest exchanges */
+html body #mainApp#mainApp #pageDash .db-sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 0 2px -8px; }
+html body #mainApp#mainApp #pageDash .db-sec-head h3 { margin: 0; color: var(--db-ink); font-size: 15px; font-weight: 600; line-height: 1.5; }
+html body #mainApp#mainApp #pageDash .db-link {
+  padding: 4px 0; border: 0; background: none; color: var(--db-accent);
+  font-family: var(--db-font); font-size: 13px; font-weight: 500; line-height: 1.5; cursor: pointer;
+}
+html body #mainApp#mainApp #pageDash .db-recent { display: block; }
+
+/* latest exchanges: one card, rows separated by hairlines */
+html body #mainApp#mainApp #pageDash .dbr-list {
+  background: var(--db-card); border: 1px solid var(--db-line); border-radius: 20px; box-shadow: var(--db-shadow); overflow: hidden;
+}
+html body #mainApp#mainApp #pageDash .dbr {
+  position: relative; display: flex; align-items: center; gap: 12px; width: 100%; min-height: 68px; margin: 0; padding: 12px 16px;
+  border: 0; border-radius: 0; background: none; font-family: var(--db-font); text-align: start; cursor: pointer;
+  -webkit-tap-highlight-color: transparent; transition: background-color .15s ease;
+}
+html body #mainApp#mainApp #pageDash .dbr + .dbr::before {
+  content: ''; position: absolute; top: 0; inset-inline-start: 78px; inset-inline-end: 16px; height: 1px; background: var(--db-line);
+}
+html body #mainApp#mainApp #pageDash .dbr:active { background: var(--db-soft); }
+html body #mainApp#mainApp #pageDash .dbr:focus-visible { outline: 2px solid var(--db-accent); outline-offset: -2px; }
+/* wallet pair: from → to, left to right like the route text; 30px logos overlapping by 10px */
+html body #mainApp#mainApp #pageDash .dbr-pair { flex: 0 0 50px; width: 50px; height: 30px; display: flex; direction: ltr; }
+html body #mainApp#mainApp #pageDash .dbr-pair .method-icon {
+  position: relative; flex: 0 0 30px; width: 30px !important; height: 30px !important; min-width: 0 !important; margin: 0 !important;
+  display: grid !important; place-items: center !important; overflow: hidden !important; border-radius: 50% !important;
+  box-shadow: 0 0 0 2px var(--db-card) !important; color: #fff; font-size: 12px; font-weight: 700;
+}
+html body #mainApp#mainApp #pageDash .dbr-pair .method-icon + .method-icon { margin-left: -10px !important; }
+html body #mainApp#mainApp #pageDash .dbr-pair .method-icon img { width: 100% !important; height: 100% !important; object-fit: cover !important; border-radius: 50% !important; }
+html body #mainApp#mainApp #pageDash .dbr-pair .method-icon :is(svg, .icn) { width: 15px !important; height: 15px !important; }
+html body #mainApp#mainApp #pageDash .dbr-pair .dbr-fb { background: var(--db-soft) !important; color: var(--db-text) !important; border: 1px solid var(--db-line); }
+html body #mainApp#mainApp #pageDash .dbr-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+html body #mainApp#mainApp #pageDash .dbr-title {
+  display: inline-flex; align-items: center; gap: 4px; max-width: 100%; color: var(--db-ink); font-size: 14px; font-weight: 600; line-height: 1.5;
+  white-space: nowrap; overflow: hidden;
+}
+html body #mainApp#mainApp #pageDash .dbr-title .tx-route-end { color: inherit; font: inherit; overflow: hidden; text-overflow: ellipsis; }
+html body #mainApp#mainApp #pageDash .dbr-title svg { width: 13px; height: 13px; flex: 0 0 13px; color: var(--db-muted); }
+html body #mainApp#mainApp #pageDash .dbr-sub { color: var(--db-muted); font-size: 12px; font-weight: 400; line-height: 1.5; }
+html body #mainApp#mainApp #pageDash .dbr-end { flex: 0 0 auto; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+html body #mainApp#mainApp #pageDash .dbr-amt { color: var(--db-ink); font-size: 14px; font-weight: 700; line-height: 1.5; font-variant-numeric: tabular-nums; white-space: nowrap; }
+html body #mainApp#mainApp #pageDash .dbr-st { display: inline-flex; align-items: center; gap: 5px; color: var(--st, var(--db-muted)); font-size: 12px; font-weight: 500; line-height: 1.5; white-space: nowrap; }
+html body #mainApp#mainApp #pageDash .dbr-st i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+html body #mainApp#mainApp #pageDash .dbr.is-ok   { --st: var(--tf-ok, #15803d); }
+html body #mainApp#mainApp #pageDash .dbr.is-wait { --st: var(--db-muted); }
+html body #mainApp#mainApp #pageDash .dbr.is-warn { --st: var(--tf-warn, #a15c00); }
+html body #mainApp#mainApp #pageDash .dbr.is-bad  { --st: var(--tf-bad, #c0392b); }
+html body #mainApp#mainApp #pageDash .dbr.is-info { --st: var(--tf-info, #0265ff); }
+html body #mainApp#mainApp #pageDash .dbr.is-skel .method-icon { box-shadow: 0 0 0 2px var(--db-card) !important; }
+
+/* empty recent list */
+html body #mainApp#mainApp #pageDash .db-empty {
+  display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 24px 16px; text-align: center;
+  background: var(--db-card); border: 1px solid var(--db-line); border-radius: 20px;
+}
+html body #mainApp#mainApp #pageDash .db-empty-ico { width: 44px; height: 44px; display: grid; place-items: center; margin-bottom: 8px; border-radius: 14px; background: var(--db-accent-soft); color: var(--db-accent); }
+html body #mainApp#mainApp #pageDash .db-empty-ico .pxi { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+html body #mainApp#mainApp #pageDash .db-empty b { color: var(--db-ink); font-size: 15px; font-weight: 600; line-height: 1.5; }
+html body #mainApp#mainApp #pageDash .db-empty small { color: var(--db-muted); font-size: 13px; line-height: 1.6; }
+html body #mainApp#mainApp #pageDash .db-empty button {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; height: 40px; padding: 0 18px; border: 0; border-radius: 12px;
+  background: var(--db-accent); color: #fff; font-family: var(--db-font); font-size: 13px; font-weight: 600; cursor: pointer;
+}
+html body #mainApp#mainApp #pageDash .db-empty button .pxi { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+
+/* ═══ bottom bar: one icon family, equal slots. The line, capsule and their sliding are unchanged (proxo-ui-v2.css/.js). ═══ */
+html body #mainApp#mainApp #bottomNav .pxn-inner { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+html body #mainApp#mainApp #bottomNav .pxn-cap .pxn-ico.pxn-one {
+  display: block !important; position: relative; width: 24px !important; height: 24px !important;
+  fill: none !important; stroke: currentColor !important; stroke-width: 1.8 !important; stroke-linecap: round; stroke-linejoin: round;
+}
+html body #mainApp#mainApp #bottomNav .pxn-ico.pxn-one .f { fill: currentColor; fill-opacity: 0; transition: fill-opacity .2s ease; }
+html body #mainApp#mainApp #bottomNav .pxn-item.on .pxn-ico.pxn-one { stroke-width: 2 !important; }
+html body #mainApp#mainApp #bottomNav .pxn-item.on .pxn-ico.pxn-one .f { fill-opacity: .16; }
+/* «داواکاری نوێ»: the one primary action on the dashboard, under the greeting */
+html body #mainApp#mainApp #pageDash .db-new {
+  display: flex; align-items: center; gap: 12px; width: 100%; min-height: 64px; margin: 16px 0 0; padding: 12px 14px 12px 12px;
+  border: 0; border-radius: 16px; background: var(--db-accent); color: #fff; text-align: start; cursor: pointer;
+  font-family: var(--db-font); box-shadow: 0 10px 20px -14px rgba(2, 101, 255, .7);
+  -webkit-tap-highlight-color: transparent; transition: transform .12s ease, filter .15s ease;
+}
+html[data-theme="dark"] body #mainApp#mainApp #pageDash .db-new { box-shadow: none; }
+html body #mainApp#mainApp #pageDash .db-new:active { transform: scale(.985); filter: brightness(.94); }
+html body #mainApp#mainApp #pageDash .db-new:focus-visible { outline: 2px solid var(--db-accent); outline-offset: 3px; }
+html body #mainApp#mainApp #pageDash .db-new-ico {
+  flex: 0 0 40px; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; background: rgba(255, 255, 255, .18);
+}
+html body #mainApp#mainApp #pageDash .db-new-ico .pxi { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+html body #mainApp#mainApp #pageDash .db-new-txt { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+html body #mainApp#mainApp #pageDash .db-new-txt b { color: #fff; font-size: 15px; font-weight: 700; line-height: 1.5; }
+html body #mainApp#mainApp #pageDash .db-new-txt small { color: rgba(255, 255, 255, .82); font-size: 12px; font-weight: 400; line-height: 1.6; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+html body #mainApp#mainApp #pageDash .db-new-go { flex: 0 0 auto; display: grid; place-items: center; opacity: .85; }
+html body #mainApp#mainApp #pageDash .db-new-go .pxi { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* exchange page header (back to home) */
+html body #mainApp#mainApp #pageHome .ex-head { margin-bottom: 14px; }
+
+@media (max-width: 350px) {
+  html body #mainApp#mainApp #pageDash .dbo-ring { flex-basis: 112px; width: 112px; height: 112px; }
+  html body #mainApp#mainApp #pageDash .dbo-ring-in b { font-size: 26px; }
+  html body #mainApp#mainApp #pageDash .dbo { padding-inline: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html body #mainApp#mainApp #pageDash .dbo-arc { transition: none; }
+  html body #mainApp#mainApp #bottomNav .pxn-ico.pxn-one .f { transition: none; }
+  html body #mainApp#mainApp #pageDash .db-new { transition: none; }
+}
+
+/* ── announcements banner (moved here from the exchange page) — one design for light and dark ── */
+html body #mainApp#mainApp #pageDash #newsBanner[style*="grid"],
+html body #mainApp#mainApp #pageDash #newsBanner[style*="flex"] {
+  display: flex !important; align-items: center !important; gap: 12px !important; flex-wrap: wrap !important;
+  width: 100% !important; min-width: 0 !important; min-height: 66px !important; margin: 0 0 16px !important; padding: 12px 14px !important;
+  background: var(--db-card) !important; border: 1px solid var(--db-line) !important; border-inline-end: 3px solid var(--db-accent) !important;
+  border-radius: 16px !important; box-shadow: var(--db-shadow) !important; color: var(--db-ink) !important;
+  font-family: var(--db-font) !important; overflow: hidden !important; animation: none !important; cursor: pointer;
+}
+html body #mainApp#mainApp #pageDash #newsBanner .news-banner-icon {
+  display: grid !important; place-items: center !important; flex: 0 0 36px !important; width: 36px !important; height: 36px !important;
+  margin: 0 !important; border: 0 !important; border-radius: 12px !important; background: var(--db-accent-soft) !important; color: var(--db-accent) !important;
+}
+html body #mainApp#mainApp #pageDash #newsBanner .news-banner-icon :is(.icn, .pb-svg-icon, svg) { width: 18px !important; height: 18px !important; color: var(--db-accent) !important; display: block !important; }
+html body #mainApp#mainApp #pageDash #newsBanner .news-slide-viewport { display: flex !important; flex-direction: column !important; gap: 1px !important; flex: 1 1 0 !important; min-width: 0 !important; overflow: hidden !important; }
+html body #mainApp#mainApp #pageDash #newsBanner .news-banner-label { display: block !important; margin: 0 !important; padding: 0 !important; background: none !important; color: var(--db-accent) !important; font-size: 12px !important; font-weight: 600 !important; line-height: 1.5 !important; }
+html body #mainApp#mainApp #pageDash #newsBanner .news-slide-text {
+  display: block !important; min-width: 0 !important; color: var(--db-ink) !important; font-size: 14px !important; font-weight: 500 !important; line-height: 1.7 !important;
+  overflow-wrap: anywhere !important; opacity: 1; transform: translate3d(0, 0, 0); transition: transform .22s ease, opacity .22s ease;
+}
+html body #mainApp#mainApp #pageDash #newsBanner .news-slide-text.news-slide-out { opacity: 0; transform: translate3d(24px, 0, 0); }
+html body #mainApp#mainApp #pageDash #newsBanner .news-slide-text.news-slide-enter { opacity: 0; transform: translate3d(-24px, 0, 0); transition: none; }
+html body #mainApp#mainApp #pageDash #newsBanner .news-slide-controls:not([hidden]) { display: flex !important; align-items: center !important; gap: 8px !important; flex: 0 0 auto !important; margin: 0 !important; }
+html body #mainApp#mainApp #pageDash #newsBanner .news-slide-dots { display: flex !important; gap: 4px !important; }
+html body #mainApp#mainApp #pageDash #newsBanner .news-slide-nav { display: flex !important; align-items: center !important; gap: 4px !important; }
+html body #mainApp#mainApp #pageDash #newsBanner .news-slide-arrow {
+  width: 28px !important; height: 28px !important; display: grid !important; place-items: center !important; padding: 0 !important;
+  border: 1px solid var(--db-line) !important; border-radius: 9px !important; background: var(--db-soft) !important; color: var(--db-text) !important;
+}
+html body #mainApp#mainApp #pageDash #newsBanner .news-slide-arrow svg { width: 15px !important; height: 15px !important; }
+html body #mainApp#mainApp #pageDash #newsBanner .news-slide-counter:not([hidden]) { color: var(--db-muted) !important; font-size: 11px !important; background: none !important; border: 0 !important; min-width: 0 !important; padding: 0 2px !important; }
+html body #mainApp#mainApp #pageDash :is(#homeFeedbackPrompt:not([hidden]), #notifBar.show) { margin-bottom: 16px !important; }
+html body #mainApp#mainApp #pageDash .db-top { margin-bottom: 16px; }

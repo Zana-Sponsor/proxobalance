@@ -27,8 +27,7 @@
   function templateLine(list){
     if(!Array.isArray(list) || !list.length) return '';
     return list.map(t => {
-      const metaStatus = String(t.status || t.meta_status || '').toUpperCase();
-      const state = t.active ? 'چالاکە' : (metaStatus === 'REJECTED' ? 'Meta ڕەتی کردەوە' : 'چاوەڕێی پەسەندکردنی Meta');
+      const state = t.active ? 'چالاکە' : (String(t.status || '').toUpperCase() === 'REJECTED' ? 'Meta ڕەتی کردەوە' : 'چاوەڕێی پەسەندکردنی Meta');
       return 'قاڵبی ' + (KIND[t.kind] || t.kind) + ': ' + state;
     }).join(' · ');
   }

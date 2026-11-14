@@ -6,17 +6,11 @@ const html=read('index.html');
 const css=read('assets/css/proxo-design-system.css');
 const shellCss=read('assets/css/proxo-ui-v2.css');
 
-test('Shared design contract precedes the summary and WhatsApp route stylesheets',()=>{
+test('Customer design contract is loaded after every legacy stylesheet',()=>{
   const sheets=[...html.matchAll(/<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"/g)].map(m=>m[1]);
-  const designIndex=sheets.indexOf('/assets/css/proxo-design-system.css?v=3');
-  const summaryIndex=sheets.indexOf('/assets/css/transaction-summary.css?v=5');
-  const whatsappIndex=sheets.indexOf('/assets/css/whatsapp-notify.css?v=1');
-  const authIndex=sheets.indexOf('/assets/css/auth-balance.css?v=6');
-  assert.ok(designIndex>=0);
-  assert.ok(summaryIndex>designIndex);
-  assert.ok(whatsappIndex>summaryIndex);
-  assert.ok(authIndex>whatsappIndex);
-  assert.equal(sheets.at(-1),'/assets/css/auth-balance.css?v=6');
+  const legacyIndex=sheets.indexOf('/assets/css/proxo-dark.css?v=7');
+  const designIndex=sheets.indexOf('/assets/css/proxo-design-system.css?v=4');
+  assert(legacyIndex>=0 && designIndex>legacyIndex);
   assert(!read('exchange-admin.html').includes('proxo-design-system.css'));
 });
 
@@ -35,14 +29,6 @@ test('Profile balance and splash mark use restrained, consistent proportions',()
   assert(read('assets/js/app.js').includes('500-(performance.now()-appSplashStartedAt)'));
   assert(html.includes('transform:scale(1.03)'));
   assert(!html.includes('transform:scale(6)'));
-});
-
-test('Auth balance styles are cache-versioned and use the current full-bleed form layout',()=>{
-  const authCss=read('assets/css/auth-balance.css');
-  assert(html.includes('/assets/css/auth-balance.css?v=6'));
-  assert(authCss.includes('html body #authWrap#authWrap .auth-card'));
-  assert(authCss.includes(':placeholder-shown'));
-  assert(authCss.includes('html[data-theme="dark"] body #authWrap#authWrap'));
 });
 
 test('Auth remains full-bleed and password recovery gets the same email icon',()=>{
@@ -74,23 +60,15 @@ test('Design layer leaves hidden/route mechanics untouched and provides accessib
 
 test('Production smoke waits for the changed customer version and verifies its design contract',()=>{
   const workflow=read('.github/workflows/exchange-production-smoke.yml');
-  assert(workflow.includes('app.js?v=82'));
-  assert(workflow.includes('transaction-summary.css?v=5'));
-  assert(workflow.includes('id="pageSummary" data-route="summary"'));
-  assert(workflow.includes('id="txScreenBody"'));
-  assert(workflow.includes('proxo-design-system.css?v=3'));
-  assert(workflow.includes("grep -q 'width:min(42vw,180px)' current-index.html"));
-  assert(workflow.includes("grep -q 'auth-balance.css?v=6' current-index.html"));
-  assert(workflow.includes("grep -q 'animation:spIn .45s' current-index.html"));
-  assert(workflow.includes("grep -q 'clamp(24px, 7vw, 30px)' proxo-design-system.css"));
-  assert(html.includes('/assets/js/app.js?v=82'));
-  assert(html.includes('/assets/css/proxo-ui-v2.css?v=14'));
-  assert(html.includes('/assets/css/transaction-summary.css?v=5'));
-  assert(html.includes('/assets/css/whatsapp-notify.css?v=1'));
-  assert(html.includes('/assets/css/auth-balance.css?v=6'));
+  assert(workflow.includes('app.js?v=95'));
+  assert(workflow.includes('receipt-access.js?v=1'));
+  assert(workflow.includes('auth-phone.css?v=1'));
+  assert(workflow.includes('/assets/js/exchange-pricing.js?v=1'));
+  assert(html.includes('/assets/js/app.js?v=95'));
+  assert(html.includes('/assets/css/proxo-ui-v2.css?v=15'));
   assert(html.includes('/assets/js/proxo-ui-v2.js?v=4'));
   assert(html.includes('/assets/js/proxo-toast.js?v=1'));
-  assert(html.indexOf('proxo-toast.js?v=1') < html.indexOf('app.js?v=82'));
+  assert(html.indexOf('proxo-toast.js?v=1') < html.indexOf('app.js?v=95'));
   assert(shellCss.includes('.pxt-stack'));
   assert(shellCss.includes('.pxn-pill'));
   assert(shellCss.includes('.field-error.show'));
@@ -98,14 +76,14 @@ test('Production smoke waits for the changed customer version and verifies its d
   assert(read('assets/js/app.js').includes('escHtml(notifClean(s))'));
   assert(read('assets/js/app.js').includes('function notifRich(s)'));
   assert(html.includes('id="feedbackSheet"'));
+  assert(read('assets/js/app.js').includes('ex_order_feedback'));
   assert(html.includes('id="usernameSheet"'));
   assert(html.includes('id="pfUsernameEdit"'));
   assert(read('assets/js/app.js').includes('ex_change_username'));
-  assert(read('assets/js/app.js').includes('مامەڵەکەت چۆن بوو؟'));
   assert(html.includes('id="savedRecipientsShortcut"'));
   assert(shellCss.includes('.xc-step-head .xc-saved-recipients-btn'));
   assert(shellCss.includes('#usernameSheet .sheet-body'));
-  assert(html.includes('proxo-dark.css?v=6'));
+  assert(html.includes('proxo-dark.css?v=7'));
   assert(html.includes('id="savedRecipientsShortcut"'));
   assert(html.includes('بەبێ بەڵگەی ناردن داواکارییەکە ڕەت دەکرێتەوە.'));
   assert(html.includes('id="pageBalance" data-route="balance"'));

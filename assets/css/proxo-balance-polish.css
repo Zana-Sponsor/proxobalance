@@ -127,9 +127,7 @@
   border-color: #e3e7f0;
   box-shadow: none;
 }
-#mainApp .tx-sheet .feedback-reward-card {
-  border-radius: 10px;
-}
+
 #mainApp .tx-sheet .feedback-submit-btn {
   min-height: 48px;
   border-radius: 11px;

@@ -1,14 +1,6 @@
 /* Compact fee details and transaction receipts. Scoped to Exchange customers. */
-#welcomeReward[hidden],#bdDiscountRow[hidden],#rewardBanner[hidden],#feeDisplay[hidden]{display:none!important}
-[data-theme="light"] #pageHome .welcome-reward{
-  display:flex;align-items:flex-start;gap:12px;padding:15px 16px;margin:0 0 20px;
-  background:#f3f8ff;border:1px solid #dce9f9;border-radius:16px;color:#202b3a;
-}
-.welcome-reward-icon{display:grid;place-items:center;flex:0 0 38px;height:38px;border-radius:12px;background:#e1eeff;color:#1675d7}
-[data-theme="light"] #pageHome .welcome-reward h3{margin:0 0 4px;font-size:14px!important;font-weight:400!important;color:#1568ba!important}
-.welcome-reward p{margin:0;font-size:13px;line-height:1.9;overflow-wrap:anywhere}
-.welcome-reward b{font-weight:400;font-variant-numeric:tabular-nums;unicode-bidi:isolate;display:inline-block}
-.welcome-reward small{display:block;margin-top:4px;color:#67758a;font-size:12px;line-height:1.8}
+#feeDisplay[hidden]{display:none!important}
+
 [data-theme="light"] #pageHome #xcBreakdown{
   background:#fff!important;border:1px solid #e4eaf2!important;border-radius:18px!important;
   box-shadow:0 4px 18px rgba(25,47,78,.045)!important;padding:18px!important;
@@ -24,7 +16,7 @@
 [data-theme="light"] #pageHome #xcBreakdown #totalDisplay{font-size:17px!important;font-weight:400!important;color:#1568ba!important}
 [data-theme="light"] #pageHome #xcBreakdown .fee-saving .lbl,
 [data-theme="light"] #pageHome #xcBreakdown .fee-saving .v{color:#187754!important}
-[data-theme="light"] #pageHome #xcBreakdown .reward-detail{margin:12px 0 0!important;padding:10px 12px!important;border-radius:10px;background:#f4faf7!important;color:#567365!important;white-space:pre-line;font-size:12px!important;line-height:1.9}
+
 [data-theme="light"] #pageTx .tx-profit-panel{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important}
 [data-theme="light"] #pageTx .tx-profit-head{border:0!important;padding:0 0 18px!important}
 [data-theme="light"] #pageTx .tx-profit-title{font-size:14px!important;font-weight:400!important;color:#1568ba!important;margin:20px 0 10px!important}

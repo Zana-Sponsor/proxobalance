@@ -1,65 +1,28 @@
 name: Exchange Balance Checks
+
 on:
   pull_request:
     paths:
-      - 'ip-blocked.html'
-      - 'test/exchange-access.test.js'
-      - 'test/exchange-admin-workspace.browser.mjs'
-      - 'api/admin.js'
-      - 'api/balance.js'
-      - 'api/orders.js'
-      - 'api/notify-order.js'
-      - 'api/_lib/payout-rounding.js'
-      - 'api/_lib/security.js'
-      - 'test/orders-route.test.js'
-      - 'test/exchange-order-permissions.sql'
-      - 'test/exchange-reward-pricing.test.js'
-      - 'test/exchange-customer-polish.test.js'
-      - 'test/exchange-staff-management.test.js'
-      - 'test/exchange-customer-polish.browser.mjs'
-      - 'test/exchange-welcome-reward.sql'
-      - 'test/exchange-admin-rewards-refund.test.js'
-      - 'test/exchange-shortfall-api.test.js'
-      - 'test/exchange-shortfall-ui.test.js'
-      - 'test/exchange-refund-amounts.test.js'
-      - 'test/exchange-refund-report-api.test.js'
-      - 'test/exchange-refund-report-ui.test.js'
-      - 'test/exchange-refund-report.browser.mjs'
-      - 'test/exchange-shortfall.browser.mjs'
-      - 'test/exchange-shortfall.sql'
-      - 'test/exchange-shortfall-auto-reference.sql'
-      - 'test/exchange-rounded-payout-api.test.js'
-      - 'test/exchange-payout-rounding.test.js'
-      - 'test/exchange-rounded-payout.browser.mjs'
-      - 'test/exchange-rounded-payout.sql'
-      - 'supabase/migrations/**'
-      - 'test/exchange-account-balances-ui.test.js'
-      - 'test/exchange-send-balance.test.js'
-      - 'test/exchange-statistics-order-codes.test.js'
-      - 'test/exchange-report-names.test.js'
-      - 'test/exchange-report-names.sql'
-      - 'test/exchange-report-filter.sql'
-      - 'test/exchange-report-names.browser.mjs'
-      - 'test/exchange-send-balance.browser.mjs'
-      - 'test/exchange-scoped-rewards.sql'
-      - 'test/exchange-balance-source.sql'
-      - 'test/exchange-customer-staff-features.sql'
-      - 'test/exchange-live-saves.sql'
-      - 'test/exchange-live-saves.test.js'
-      - 'test/exchange-admin-refund-reward-cap.sql'
+      - 'api/**'
+      - 'api-handlers/**'
       - 'assets/js/**'
-      - 'assets/css/exchange-balance.css'
-      - 'assets/css/exchange-features.css'
-      - 'assets/css/exchange-customer-polish.css'
-      - 'supabase/functions/admin-create-user/**'
-      - 'supabase/functions/admin-set-password/**'
+      - 'assets/css/**'
       - 'index.html'
-      - 'exchange-admin.html'
-      - 'scripts/prepare-vercel.mjs'
-      - 'SUPABASE_EXCHANGE_*.sql'
+      - 'exchange-admin*.html'
+      - 'vercel.json'
+      - 'supabase/migrations/**'
+      - 'scripts/**'
+      - 'server.js'
+      - 'test/**'
       - '.github/workflows/exchange-balance-check.yml'
   push:
-    branches: [feat/exchange-refund-balance-20261005, feat/exchange-admin-refund-capped-rewards-20261005, fix/exchange-per-user-balances-20261005, fix/exchange-carrier-rewards-send-balance-20261005]
+    branches:
+      - feat/exchange-refund-balance-20261005
+      - feat/exchange-admin-refund-capped-rewards-20261005
+      - fix/exchange-per-user-balances-20261005
+      - fix/exchange-carrier-rewards-send-balance-20261005
+  workflow_dispatch:
+
 jobs:
   static-and-build:
     runs-on: ubuntu-latest
@@ -70,66 +33,43 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
       - name: Validate server and browser JavaScript
         run: |
           node --check server.js
-          node --check api/admin.js
-          node --check api/balance.js
-          node --check api/orders.js
-          node --check api/notify-order.js
-          node --check api/_lib/payout-rounding.js
-          node --check assets/js/admin.js
-          node --check assets/js/admin-contracts.js
-          node --check assets/js/app.js
-          node --check assets/js/exchange-balance.js
-          node --check assets/js/exchange-balance-admin.js
-          node --check assets/js/exchange-refund-report.js
-          node --check assets/js/exchange-payout-rounding.js
-          node --check assets/js/receipt-download.js
-          node --check test/exchange-refund-report.browser.mjs
-          node --check test/exchange-rounded-payout.browser.mjs
-          node --check test/exchange-shortfall.browser.mjs
-          node --check assets/js/exchange-reward-pricing.js
-          node --check assets/js/exchange-insights.js
-          node --check assets/js/exchange-profit.js
-          node --check assets/js/exchange-access.js
-          node --check assets/js/exchange-admin-workspace.js
-          node --check assets/js/exchange-live.js
-          node --check assets/js/exchange-staff.js
-          node --check assets/js/exchange-customer-features.js
+          node --check api/dispatch.js
+          find api-handlers assets/js -type f -name '*.js' -print0 | xargs -0 -n1 node --check
       - name: Build Vercel static output
-        run: node scripts/prepare-vercel.mjs
-      - name: Verify authenticated orders, admin refunds and capped fee rewards
-        run: node --test test/exchange-rounded-payout-api.test.js test/exchange-payout-rounding.test.js test/orders-route.test.js test/exchange-reward-pricing.test.js test/exchange-admin-rewards-refund.test.js test/exchange-shortfall-api.test.js test/exchange-shortfall-ui.test.js test/exchange-refund-amounts.test.js test/exchange-refund-report-api.test.js test/exchange-refund-report-ui.test.js test/exchange-account-balances-ui.test.js test/exchange-send-balance.test.js test/exchange-statistics-order-codes.test.js test/exchange-report-names.test.js test/exchange-live-saves.test.js test/exchange-access.test.js test/exchange-customer-polish.test.js test/exchange-staff-management.test.js
-      - name: Verify deployed asset and board paths
+        run: npm run build
+      - name: Run verified API, balance and UI regression tests
+        run: >-
+          node --test
+          test/api-dispatch.test.js
+          test/auth-api.test.js
+          test/account-deletion.test.js
+          test/security-hardening.test.js
+          test/reward-removal.test.js
+          test/transaction-summary.test.js
+          test/exchange-admin-refund.test.js
+          test/exchange-design-system.test.js
+          test/exchange-proxo-shell.test.js
+          test/exchange-pricing.test.js
+          test/exchange-account-balances-ui.test.js
+          test/exchange-access.test.js
+          test/exchange-staff-management.test.js
+          test/exchange-statistics-order-codes.test.js
+      - name: Verify built customer and admin balance assets
         run: |
-          node --input-type=module -e "
-            import { existsSync,readFileSync } from 'node:fs';
-            const check = (value,message) => { if(!value)throw new Error(message); };
-            for(const file of ['public/index.html','public/exchange-admin.html',
-              'public/assets/js/exchange-balance.js','public/assets/js/admin-contracts.js',
-              'public/assets/js/exchange-balance-admin.js',
-              'public/assets/js/exchange-refund-report.js',
-              'public/assets/js/exchange-payout-rounding.js',
-              'public/assets/js/exchange-reward-pricing.js',
-              'public/assets/css/exchange-balance.css','api/balance.js'])
-              check(existsSync(file),'Missing '+file);
-            check(readFileSync('public/index.html','utf8').includes('id=\"balanceSendSection\"'),
-              'Missing customer send balance');
-            check(readFileSync('public/exchange-admin.html','utf8').includes('id=\"pgBalance\"'),
-              'Missing admin balance board');
-            check(readFileSync('public/exchange-admin.html','utf8').includes('id=\"balanceShortfallAmount\"'),
-              'Missing approved-order shortfall form');
-            check(!readFileSync('public/exchange-admin.html','utf8').includes('id=\"balanceShortfallReference\"'),
-              'The shortfall form must not require a manual reference');
-            check(readFileSync('public/exchange-admin.html','utf8').includes('id=\"balanceRefundReportBtn\"'),
-              'Missing admin refund PDF download');
-            check(readFileSync('public/exchange-admin.html','utf8').includes('exchange-refund-report.js?v=2'),
-              'Missing current refund PDF bundle');
-            for(const path of ['public/index.html','public/exchange-admin.html'])
-              check(readFileSync(path,'utf8').includes('exchange-payout-rounding.js?v=1'),
-                'Missing IQD payout rounding helper in '+path);
-            check(readFileSync('public/exchange-admin.html','utf8').includes('id=\"pgContracts\"'),
-              'Missing admin contracts board');
-            console.log('PASS: Exchange customer/admin build and balance assets');
-          "
+          test -f public/index.html
+          test -f public/exchange-admin.html
+          test -f public/exchange-admin-balance.html
+          test -f public/assets/js/exchange-pricing.js
+          test -f public/assets/js/receipt-access.js
+          test -f public/assets/js/exchange-admin-balance.js
+          grep -q 'id="pageBalance" data-route="balance"' public/index.html
+          grep -q 'id="gate"' public/exchange-admin-balance.html
+          grep -q 'id="app"' public/exchange-admin-balance.html
+          grep -q 'exchange-admin-balance.html' public/exchange-admin.html
+          echo 'PASS: Vercel customer/admin balance output and assets exist.'

@@ -230,20 +230,7 @@ html[data-theme="dark"] body #mainApp #txSheet .feedback-submitted-badge {
   background: #163120 !important;
   color: #73e49d !important;
 }
-html[data-theme="dark"] body #mainApp #txSheet .feedback-reward-card {
-  background: #382906 !important;
-}
-html[data-theme="dark"] body #mainApp #txSheet .feedback-reward-card.is-earned {
-  background: #152f1e !important;
-}
-html[data-theme="dark"] body #mainApp #txSheet .feedback-reward-icon {
-  background: #523d0c !important;
-  color: #fbc574 !important;
-}
-html[data-theme="dark"] body #mainApp #txSheet .feedback-reward-card.is-earned .feedback-reward-icon {
-  background: #1e452b !important;
-  color: #73e49d !important;
-}
+
 html[data-theme="dark"] body #mainApp #txSheet .feedback-star-picker .feedback-star, html[data-theme="dark"] body #mainApp #txSheet .feedback-stars span {
   background: #121c29 !important;
   color: #8fa0b8 !important;
@@ -651,41 +638,7 @@ html[data-theme="dark"] body .fb-head h3 {
 html[data-theme="dark"] body .fb-head p {
   color: #acb5c3 !important;
 }
-html[data-theme="dark"] body .fb-reward {
-  border-color: #5e4b1b !important;
-  background: #352606 !important;
-}
-html[data-theme="dark"] body .fb-reward-ico {
-  background: #60460b !important;
-  color: #fbc574 !important;
-}
-html[data-theme="dark"] body .fb-reward-head b {
-  color: #bdc9e6 !important;
-}
-html[data-theme="dark"] body .fb-reward-head small {
-  color: #acb5c3 !important;
-}
-html[data-theme="dark"] body .fb-reward-cell {
-  border-color: #53441a !important;
-  background: #131c2e !important;
-}
-html[data-theme="dark"] body .fb-reward-cell small {
-  color: #acb5c3 !important;
-}
-html[data-theme="dark"] body .fb-reward-cell b {
-  color: #bdc9e6 !important;
-}
-html[data-theme="dark"] body .fb-reward.is-earned {
-  border-color: #244d34 !important;
-  background: #12291c !important;
-}
-html[data-theme="dark"] body .fb-reward.is-earned .fb-reward-ico {
-  background: #1b3f29 !important;
-  color: #84ebaa !important;
-}
-html[data-theme="dark"] body .fb-reward.is-earned .fb-reward-cell {
-  border-color: #234231 !important;
-}
+
 html[data-theme="dark"] body .fb-label b {
   color: #bdc9e6 !important;
 }
@@ -963,41 +916,7 @@ html[data-theme="dark"] body .fb-head h3 {
 html[data-theme="dark"] body .fb-head p {
   color: #acb5c3 !important;
 }
-html[data-theme="dark"] body .fb-reward {
-  border-color: #5e4b1b !important;
-  background: #352606 !important;
-}
-html[data-theme="dark"] body .fb-reward-ico {
-  background: #60460b !important;
-  color: #fbc574 !important;
-}
-html[data-theme="dark"] body .fb-reward-head b {
-  color: #bdc9e6 !important;
-}
-html[data-theme="dark"] body .fb-reward-head small {
-  color: #acb5c3 !important;
-}
-html[data-theme="dark"] body .fb-reward-cell {
-  border-color: #53441a !important;
-  background: #131c2e !important;
-}
-html[data-theme="dark"] body .fb-reward-cell small {
-  color: #acb5c3 !important;
-}
-html[data-theme="dark"] body .fb-reward-cell b {
-  color: #bdc9e6 !important;
-}
-html[data-theme="dark"] body .fb-reward.is-earned {
-  border-color: #244d34 !important;
-  background: #12291c !important;
-}
-html[data-theme="dark"] body .fb-reward.is-earned .fb-reward-ico {
-  background: #1b3f29 !important;
-  color: #84ebaa !important;
-}
-html[data-theme="dark"] body .fb-reward.is-earned .fb-reward-cell {
-  border-color: #234231 !important;
-}
+
 html[data-theme="dark"] body .fb-label b {
   color: #bdc9e6 !important;
 }

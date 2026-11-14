@@ -5,7 +5,7 @@ let _staffDirectoryRows=[];
 let _staffDirectoryLoad=0;
 const STAFF_PERMISSION_LABELS={
  view:'بینینی زانیاری و ڕاپۆرت',approve_orders:'پەسەندکردن و ڕەتکردنەوەی مامەڵە',
- refunds:'گەڕاندنەوەی پارە بۆ باڵانس',manage_fees:'جزدان، نیشانەکان و حمولە',manage_rewards:'پاداشت و داشکاندن'
+ refunds:'گەڕاندنەوەی پارە بۆ باڵانس',manage_fees:'جزدان، نیشانەکان و حمولە'
 };
 function staffCan(permission){
  return isSuperAdmin()||adminStaffPermissions==null||adminStaffPermissions.includes(permission);
@@ -15,7 +15,7 @@ function staffPageAllowed(page){
  if(['otp','activity','security','errors','audit'].includes(page))return isSuperAdmin();
  if(staffFullAdmin())return true;
  const permission={dashboard:'view',orders:'view',accounts:'view',statistics:'view',profit:'view',
-  balance:'view',contracts:'view',whatsapp:'view',wallets:'manage_fees',rates:'manage_fees',rewards:'manage_rewards'}[page];
+  balance:'view',contracts:'view',whatsapp:'view',wallets:'manage_fees',rates:'manage_fees'}[page];
  return !!permission&&staffCan(permission);
 }
 function applyStaffUI(){
@@ -30,7 +30,7 @@ function applyStaffUI(){
   openOrderRefund:'refunds',creditVerifiedRefund:'refunds',cancelBalancePayout:'refunds',
   openOrderShortfall:'refunds',creditOrderShortfall:'refunds',exportBalanceRefundPdf:'refunds',
   abortProcessingPayout:'refunds',claimBalancePayout:'approve_orders',reviewBalancePayout:'approve_orders',
-  startBalancePayout:'approve_orders',completeBalancePayout:'approve_orders',saveUserReward:'manage_rewards',revokeUserReward:'manage_rewards',
+  startBalancePayout:'approve_orders',completeBalancePayout:'approve_orders',
   openWalletModal:'manage_fees',openWalletBadge:'manage_fees',saveWallet:'manage_fees',deleteWallet:'manage_fees',
   openRateModal:'manage_fees',saveRate:'manage_fees',deleteRate:'manage_fees',
   toggleBan:'super',openSetPasswordModal:'super',openCreateUserModal:'super',saveOrderNote:'approve_orders',

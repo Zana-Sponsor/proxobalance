@@ -58,10 +58,6 @@ async function markWalletBadgeSeen(key,owner=curUser?.id){
  }catch(_){if(curUser?.id===owner)_walletBadgeSeen.delete(seenKey);}
  // Keep the badge visible during this visit; the next picker opening omits it.
 }
-async function refreshRewardAlerts(){
- if(!curUser||!sb)return;
- try{await sb.rpc('ex_refresh_reward_alerts');}catch(_){}
-}
 function openSavedRecipients(){
  if(!curUser)return;
  _recipientEditing=null;
@@ -170,7 +166,6 @@ function startCustomerLive(){
    _changesLoaded=false;if(_route==='changes')loadChangeLog(true);
   }},
   {key:'features',...owned('ex_customer_feature_changes'),read:loadCustomerConveniences},
-  {key:'rewards',...owned('ex_user_rewards'),read:loadMyRewards},
   {key:'balance',...owned('ex_customer_balances'),read:()=>typeof loadMyBalance==='function'?loadMyBalance():null},
   {key:'payouts',...owned('ex_payout_requests'),read:()=>typeof loadMyBalance==='function'?loadMyBalance():null}
  ]);

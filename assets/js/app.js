@@ -65,6 +65,8 @@ let FROM_OPTIONS = [];
 let RECEIVE_OPTIONS = [];
 // 'loading' until ex_wallets answers, then 'ready' or 'error'
 let WALLETS_STATE = 'loading';
+// skeleton bar helper (assets/js/skeletons.js) — empty string if that file is missing
+const _skb=(w,h,round)=>(window.PXS?window.PXS.bar(w,h,round):'');
 // Palette + helpers so any wallet added later in the admin panel (with no
 // hardcoded icon) still gets a distinct color and a sensible fallback icon.
 const WALLET_PALETTE = ['#7c3aed','#0ea5a4','#2563eb','#e11d48','#f59e0b','#26a17b','#0891b2','#db2777','#65a30d','#9333ea'];
@@ -132,9 +134,10 @@ function refreshTrigger(which){
   const m = METHOD_META[val];
   if(!m){
     const icon=document.getElementById(which+'TriggerIcon');
-    if(icon) icon.outerHTML='<span class="method-icon" id="'+which+'TriggerIcon"></span>';
+    const loading=WALLETS_STATE==='loading';
+    if(icon) icon.outerHTML='<span class="method-icon'+(loading?' is-skel-ico':'')+'" id="'+which+'TriggerIcon"></span>';
     const lbl=document.getElementById(which+'TriggerLabel');
-    if(lbl) lbl.textContent = WALLETS_STATE==='loading' ? 'بارکردن…' : 'هیچ واڵێتێک بەردەست نییە';
+    if(lbl){ if(loading) lbl.innerHTML=_skb(76,12); else lbl.textContent='هیچ واڵێتێک بەردەست نییە'; }
     return;
   }
   document.getElementById(which+'TriggerIcon').outerHTML = methodIconHTML(val, '', which+'TriggerIcon');
@@ -369,12 +372,19 @@ function dayLabel(iso){
   return d.toLocaleDateString('ku-IQ', {day:'numeric', month:'long'});
 }
 
+let _notifLoaded=false, _notifRetryTimer=null;
 async function loadNotifications(){
   try{
-    if(typeof refreshRewardAlerts==='function')await refreshRewardAlerts();
-    const {data}=await sb.from('ex_notifications').select('*').eq('user_id',curUser.id).order('created_at',{ascending:false}).limit(30);
-    _notifItems = data||[];
-  }catch(_){ _notifItems=[]; }
+    const {data,error}=await sb.from('ex_notifications').select('*').eq('user_id',curUser.id).order('created_at',{ascending:false}).limit(30);
+    if(error || !Array.isArray(data)) throw error||new Error('NOTIFICATIONS_LOAD_FAILED');
+    _notifItems = data;
+    _notifLoaded = true;
+  }catch(_){
+    // keep the skeleton (or the last list) and try again shortly
+    if(!_notifRetryTimer) _notifRetryTimer=setTimeout(()=>{ _notifRetryTimer=null; if(curUser) loadNotifications(); }, 8000);
+    renderNotifPanel();
+    return;
+  }
   renderNotifPanel();
   updateNotifBadge();
   const latestUnread = _notifItems.find(n=>!n.is_read);
@@ -419,6 +429,8 @@ function notifSplit(msg){
 function renderNotifPanel(){
   const body=document.getElementById('notifPanelBody');
   if(!body) return;
+  if(!_notifLoaded && !_notifItems.length){ body.innerHTML=window.PXS?PXS.notifItems(4):''; body.setAttribute('aria-busy','true'); return; }
+  body.removeAttribute('aria-busy');
   if(!_notifItems.length){
     body.innerHTML='<div class="notif-empty">'
       + '<span class="icn">'+ICON.bellOff+'</span>'
@@ -592,7 +604,6 @@ const db = firebase.database();
 const SB_URL=atob('aHR0cHM6Ly9weWN4dXVnb2Jsa3NsdndlYnh1dS5zdXBhYmFzZS5jbw==');
 const SB_KEY=atob('ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnBjM01pT2lKemRYQmhZbUZ6WlNJc0luSmxaaUk2SW5CNVkzaDFkV2R2WW14cmMyeDJkMlZpZUhWMUlpd2ljbTlzWlNJNkltRnViMjRpTENKcFlYUWlPakUzT0RZeU1UazNPVGtzSW1WNGNDSTZNakV3TVRjNU5UYzVPWDAuVlJSd3hubnVMc19XT1J1VlVPM29YM0NMeHJQdGdHX3Vld0lKYUdyem5fcw==');
 let sb, curUser=null, curProfile=null, activeSession=null, RATES={};
-let MY_REWARDS=[];
 const N8N_WEBHOOK = 'https://email.proxopages.com/webhook/otp_exchange';
 
 let _newsItems = []; // [{text, action}]
@@ -960,87 +971,125 @@ function restoreAuthButton(buttonId){
   if(buttonId==='signupSubmitBtn') btn.innerHTML='<span>دروستکردنی هەژمار</span> '+ICON.arrowLeft;
   else btn.innerHTML='<span id="authBtnTxt">چوونەژوورەوە</span> '+ICON.arrowLeft;
 }
+// ── Sign-in through /api/auth (e-mail or Iraqi number; password + code; remembered devices) ──
+function pxIraqiPhone(value){
+  let d=String(value??'').replace(/[٠-٩]/g,ch=>String(ch.charCodeAt(0)-1632)).replace(/[۰-۹]/g,ch=>String(ch.charCodeAt(0)-1776)).replace(/\D/g,'');
+  if(d.startsWith('00964')) d=d.slice(5); else if(d.startsWith('964')) d=d.slice(3); else if(d.startsWith('0')) d=d.slice(1);
+  return /^7[3-9]\d{8}$/.test(d)?'+964'+d:null;
+}
+// What the person typed → the key their remembered device is stored under.
+function pxIdentifierKey(value){
+  const raw=String(value||'').trim();
+  return raw.includes('@')?raw.toLowerCase():(pxIraqiPhone(raw)||raw);
+}
+const PX_DEVICE_STORE='px_trusted_devices_v1';
+function pxDeviceToken(identifier){
+  try{ return (JSON.parse(localStorage.getItem(PX_DEVICE_STORE)||'{}'))[pxIdentifierKey(identifier)]||''; }catch(_){ return ''; }
+}
+function pxRememberDevice(identifier,token){
+  if(!token) return;
+  try{ const all=JSON.parse(localStorage.getItem(PX_DEVICE_STORE)||'{}'); all[pxIdentifierKey(identifier)]=token; localStorage.setItem(PX_DEVICE_STORE,JSON.stringify(all)); }catch(_){}
+}
+async function pxAuthApi(action,payload,withSession=false){
+  try{
+    const headers={'Content-Type':'application/json','Accept':'application/json'};
+    if(withSession&&sb){ const {data}=await sb.auth.getSession(); if(data?.session?.access_token) headers.Authorization='Bearer '+data.session.access_token; }
+    const res=await fetch('/api/auth',{method:'POST',headers,body:JSON.stringify({action,...payload})});
+    const body=await res.json().catch(()=>({}));
+    return {ok:res.ok&&body.ok!==false,status:res.status,...body};
+  }catch(e){ return {ok:false,status:0,error:'هەڵەی تۆڕ، دووبارە هەوڵ بدەرەوە'}; }
+}
+// Error text for the person, with the remaining tries or the end of a 24-hour block.
+function pxAuthError(r){
+  if(r.code==='LOCKED'||r.status===423){
+    let when='';
+    try{ if(r.locked_until) when=' تا '+new Date(r.locked_until).toLocaleString('en-GB',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit'}); }catch(_){}
+    return 'بەهۆی ٣ هەوڵی هەڵە، ئەم هەژمارە بۆ ٢٤ کاتژمێر بلۆک کراوە'+when+'.';
+  }
+  let text=r.error||'هەڵەیەک ڕووی دا، دووبارە هەوڵ بدەرەوە';
+  if(Number.isInteger(r.attempts_left)&&r.attempts_left>0) text+=' ('+r.attempts_left+' هەوڵ ماوە)';
+  return text;
+}
+async function pxSignedIn(r,identifier,remember){
+  if(remember&&r.device_token) pxRememberDevice(identifier,r.device_token);
+  const {data,error}=await sb.auth.setSession({access_token:r.session.access_token,refresh_token:r.session.refresh_token});
+  if(error||!data?.user) throw new Error('چوونەژوورەوەی هەژمار سەرکەوتوو نەبوو؛ تکایە دووبارە هەوڵ بدەرەوە');
+  return data.user;
+}
+let _authFlow=null;
+// E-mail for e-mail accounts; the 07… number for number accounts (their Auth address is internal).
+function pxAccountLabel(){
+  const email=String(curUser?.email||'');
+  if(email.endsWith('@phone.proxobalance.app')) return curProfile?.phone||('0'+email.slice(4,14));
+  return email;
+}   // {kind:'login'|'signup', identifier|phone, password, name, remember, channel, target}
+
 async function submitLogin(){
   if(_authSubmitting||_authStepBusy) return;
-  const email=document.getElementById('authEmail').value.trim();
-  if(!email){ showAmsg('ئیمەیڵەکەت بنووسە','err'); return; }
-  if(!_authEmailOk(email)){ showAmsg('فۆرماتی ئیمەیڵ هەڵەیە','err'); return; }
-  _authEmail=email; _authIsNewUser=false;
-  return doAuth(document.getElementById('authPass').value,'authBtn');
+  const identifier=document.getElementById('authEmail').value.trim();
+  const password=document.getElementById('authPass').value;
+  const remember=!!document.getElementById('authRemember')?.checked;
+  if(!identifier){ showAmsg('ژمارەی مۆبایل یان ئیمەیڵەکەت بنووسە','err'); return; }
+  if(identifier.includes('@')){ if(!_authEmailOk(identifier)){ showAmsg('فۆرماتی ئیمەیڵ هەڵەیە','err'); return; } }
+  else if(!pxIraqiPhone(identifier)){ showAmsg('تەنها ژمارەی مۆبایلی عێراقی قبوڵ دەکرێت (07XX XXX XXXX)','err'); return; }
+  if(!password){ showAmsg('وشەی نهێنی بنووسە','err'); return; }
+  _authSubmitting=true; _authIsNewUser=false;
+  const btn=document.getElementById('authBtn'); if(btn){btn.disabled=true;btn.innerHTML=ICON.spin+' پشکنین...';}
+  try{
+    if(window.ProxoAccess&&!await ProxoAccess.check()) return;
+    await window.trackAuthAttempt?.(identifier,'login');
+    const r=await pxAuthApi('login_start',{identifier,password,device_token:pxDeviceToken(identifier)});
+    if(!r.ok){ window.trackEvent?.('login_failed',identifier); showAmsg(pxAuthError(r),'err'); return; }
+    if(r.session){                                   // remembered device: no code needed
+      const user=await pxSignedIn(r,identifier,false);
+      window.trackEvent?.('login'); await startApp(user); return;
+    }
+    _authFlow={kind:'login',identifier,password,remember,channel:r.channel,target:r.target};
+    _otpPurpose='login';
+    showOtpStep(r.target,r.channel);
+  }catch(e){ showAmsg(kuErr(e?.message)||'هەڵەیەک ڕووی دا','err'); }
+  finally{ restoreAuthButton('authBtn'); _authSubmitting=false; }
 }
 async function submitSignup(){
   if(_authSignupChecking||_authSubmitting) return;
-  _authSignupChecking=true;
-  const btn=document.getElementById('signupSubmitBtn');
-  if(btn){btn.disabled=true;btn.innerHTML=ICON.spin+' پشکنین...';}
+  const name=document.getElementById('authName').value.trim();
+  const phoneRaw=document.getElementById('signupPhone').value.trim();
+  const password=document.getElementById('signupPass').value;
+  const confirm=document.getElementById('signupConfirmPass').value;
+  const remember=!!document.getElementById('signupRemember')?.checked;
+  if(name.length<3){showAmsg('ناوی تەواوت بنووسە','err');return;}
+  const phone=pxIraqiPhone(phoneRaw);
+  if(!phone){showAmsg('تەنها ژمارەی مۆبایلی عێراقی قبوڵ دەکرێت (07XX XXX XXXX)','err');return;}
+  if(password.length<8){showAmsg('وشەی نهێنی دەبێت کەمترین ٨ پیت بێت','err');return;}
+  if(password!==confirm){showAmsg('وشە نهێنییەکان یەکسان نین','err');return;}
+  _authSignupChecking=true; _authIsNewUser=true;
+  const btn=document.getElementById('signupSubmitBtn'); if(btn){btn.disabled=true;btn.innerHTML=ICON.spin+' کۆد دەنێردرێت...';}
   try{
-    const name=document.getElementById('authName').value.trim();
-    const email=document.getElementById('signupEmail').value.trim();
-    const pass=document.getElementById('signupPass').value;
-    const confirm=document.getElementById('signupConfirmPass').value;
-    if(!name){showAmsg('ناوی تەواوت بنووسە','err');return;}
-    if(!email){showAmsg('ئیمەیڵەکەت بنووسە','err');return;}
-    if(!_authEmailOk(email)){showAmsg('فۆرماتی ئیمەیڵ هەڵەیە','err');return;}
-    if(!pass||pass.length<6){showAmsg('وشەی نهێنی دەبێت کەمترین ٦ پیت بێت','err');return;}
-    if(pass!==confirm){showAmsg('وشە نهێنییەکان یەکسان نین','err');return;}
     if(window.ProxoAccess&&!await ProxoAccess.check()) return;
-    const {data:exists,error}=await sb.rpc('ex_email_exists',{p_email:email});
-    if(error) throw error;
-    if(exists){showAmsg('ئەم ئیمەیڵە پێشتر تۆمارکراوە؛ تکایە بچۆ ژوورەوە','err');return;}
-    _authName=name;_authEmail=email;_authIsNewUser=true;
-    await doAuth(pass,'signupSubmitBtn');
-  }catch(e){showAmsg(kuErr(e?.message)||'هەڵەی تۆڕ، دووبارە هەوڵ بدەرەوە','err');}
-  finally{_authSignupChecking=false;if(!_authSubmitting)restoreAuthButton('signupSubmitBtn');}
-}
-
-async function doAuth(passOverride,buttonId='authBtn'){
-  if(_authSubmitting) return;
-  _authSubmitting=true;
-  const btn=document.getElementById(buttonId);
-  try{
-    if(window.ProxoAccess && !await ProxoAccess.check()) return;
-    const pass=String(passOverride??document.getElementById('authPass')?.value??'');
-    if(!pass){ showAmsg('وشەی نهێنی بنووسە','err'); return; }
-    if(pass.length<6){ showAmsg('وشەی نهێنی دەبێت کەمترین ٦ پیت بێت','err'); return; }
-    if(btn){btn.disabled=true;btn.innerHTML=ICON.spin+' پشکنین...';}
-    try{
-      await window.trackAuthAttempt?.(_authEmail,_authIsNewUser?'signup':'login');
-      if(_authIsNewUser){
-        _otpPendingData={pass,name:_authName}; _otpPurpose='signup';
-      } else {
-        try{ await sb.auth.signOut(); }catch(_){}
-        const {error:chkErr}=await sb.auth.signInWithPassword({email:_authEmail,password:pass});
-        if(chkErr){ window.trackEvent?.('login_failed',_authEmail); showAmsg('ئیمەیل یان وشەی نهێنی هەڵەیە','err'); return; }
-        try{ await sb.auth.signOut(); }catch(_){}
-        _otpPendingData={pass}; _otpPurpose='login';
-      }
-      btn.innerHTML=ICON.spin+' کۆد دەنێردرێت...';
-      const result=await requestOtp(_authEmail,_otpPurpose);
-      if(!result.success){ showAmsg(result.message||'هەڵەی ناردنی کۆد','err'); return; }
-      showOtpStep(_authEmail);
-    }catch(e){
-      showAmsg(kuErr(e.message)||'هەڵەیەک ڕووی دا','err');
-    }
-  }catch(e){
-    showAmsg(kuErr(e?.message)||'هەڵەیەک ڕووی دا','err');
-  }finally{
-    restoreAuthButton(buttonId);
-    _authSubmitting=false;
-  }
+    await window.trackAuthAttempt?.(phone,'signup');
+    const r=await pxAuthApi('signup_start',{phone,name,password});
+    if(!r.ok){ showAmsg(pxAuthError(r),'err'); return; }
+    _authFlow={kind:'signup',phone,name,password,remember,channel:r.channel,target:r.target};
+    _otpPurpose='signup';
+    showOtpStep(r.target,r.channel);
+  }catch(e){ showAmsg(kuErr(e?.message)||'هەڵەی تۆڕ، دووبارە هەوڵ بدەرەوە','err'); }
+  finally{ _authSignupChecking=false; restoreAuthButton('signupSubmitBtn'); }
 }
 
 // ══ OTP STEP ══
-function showOtpStep(email){
+function showOtpStep(target,channel){
   blurAuthInput();
-  _otpEmail=email;
+  _otpEmail=String(target||'');
   setAuthRoute(_otpPurpose==='signup'?'signup/otp':'login/otp',true);
-  document.getElementById('otpEmailLbl').textContent='کۆدی ٦ ژمارە بۆ '+email+' نێردرا';
+  const lbl=document.getElementById('otpEmailLbl');
+  if(lbl){ lbl.textContent=channel==='whatsapp'?'کۆدی ٦ ژمارە بۆ واتسئاپی ':'کۆدی ٦ ژمارە بۆ ئیمەیڵی '; const b=document.createElement('bdi'); b.dir='ltr'; b.textContent=_otpEmail; lbl.append(b,' نێردرا'); }
   ['otp1','otp2','otp3','otp4','otp5','otp6'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
   document.getElementById('otpMsg').style.display='none';
   document.getElementById('otpResendBtn').style.display='none';
-  startOtpTimer(600);
+  document.getElementById('otpTimerWrap').style.color='';
+  startOtpTimer(channel==='whatsapp'?300:600);
 }
-function cancelOtp(){ clearInterval(_otpTimer); const target=_otpPurpose==='signup'?'signup':'login'; _otpPendingData=null; authBackTo(target); }
+function cancelOtp(){ clearInterval(_otpTimer); const target=_otpPurpose==='signup'?'signup':'login'; _otpPendingData=null; _authFlow=null; authBackTo(target); }
 function startOtpTimer(seconds){
   clearInterval(_otpTimer); let remaining=seconds;
   function tick(){
@@ -1101,85 +1150,59 @@ function startBanCountdown(email,msgElId,resendBtnId){
 
 let _otpVerifying=false;
 async function verifyOtp(){
-  if(_otpVerifying) return;
+  if(_otpVerifying||!_authFlow) return;
   _otpVerifying=true;
   const btn=document.getElementById('otpVerifyBtn');
-  let keepLocked=false;
+  const unlock=()=>{ if(btn){ btn.disabled=false; btn.innerHTML=ICON.check+' دڵنیاکردنەوە'; } };
   try{
     if(window.ProxoAccess && !await ProxoAccess.check()) return;
     const code=['otp1','otp2','otp3','otp4','otp5','otp6'].map(id=>document.getElementById(id)?.value||'').join('');
     if(code.length<6){ showOtpMsg('کۆدەکە تەواو بنووسە','err'); return; }
-    const rlChk=otpRateCheck(_otpEmail);
-    if(!rlChk.ok){ showOtpMsg('قفڵکراوە — تکایە '+rlChk.remaining+' خولەکی تر هەوڵ بدەرەوە','err'); startBanCountdown(_otpEmail,'otpMsg','otpResendBtn'); return; }
-    btn.disabled=true; btn.innerHTML=ICON.spin+' پشکنین...';
-    const result=await verifyOtpCode(_otpEmail,code,_otpPurpose);
-    if(!result.success){
-      const rl=otpRateRecord(_otpEmail);
-      if(rl && !rl.ok){ showOtpMsg('زۆر جار هەوڵت دا — تکایە '+rl.remaining+' خولەکی تر هەوڵ بدەرەوە','err'); startBanCountdown(_otpEmail,'otpMsg','otpResendBtn'); }
-      else showOtpMsg(result.message||'کۆدی هەڵە','err');
-      btn.disabled=false; btn.innerHTML=ICON.check+' دڵنیاکردنەوە'; return;
+    if(btn){ btn.disabled=true; btn.innerHTML=ICON.spin+' پشکنین...'; }
+    const f=_authFlow;
+    const r=f.kind==='signup'
+      ? await pxAuthApi('signup_finish',{phone:f.phone,name:f.name,password:f.password,code,remember:f.remember})
+      : await pxAuthApi('login_finish',{identifier:f.identifier,password:f.password,code,remember:f.remember});
+    if(!r.ok){
+      showOtpMsg(pxAuthError(r),'err');
+      if(r.code==='LOCKED'||r.status===423){ clearInterval(_otpTimer); document.getElementById('otpResendBtn').style.display='none'; if(btn) btn.disabled=true; return; }
+      ['otp1','otp2','otp3','otp4','otp5','otp6'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+      document.getElementById('otp1')?.focus();
+      if(r.code==='CODE_EXPIRED') document.getElementById('otpResendBtn').style.display='flex';
+      unlock(); return;
     }
     clearInterval(_otpTimer);
-    showOtpMsg('سەرکەوتوو بوو!','ok');
-    keepLocked=true;
-    setTimeout(async()=>{
-      try{
-        let user;
-        if(_authIsNewUser){
-          showOtpMsg('هەژمار دروستدەکرێت...','ok');
-          const {data,error}=await sb.auth.signUp({ email:_otpEmail, password:_otpPendingData.pass, options:{ data:{ full_name:_otpPendingData.name, source:'exchange' } } });
-          if(error) throw error;
-          if(data?.session && data?.user){
-            user=data.user;
-          } else {
-            const {data:ld,error:le}=await sb.auth.signInWithPassword({email:_otpEmail,password:_otpPendingData.pass});
-            if(le) throw le;
-            if(!ld?.session||!ld?.user) throw new Error('چوونەژوورەوەی هەژمار سەرکەوتوو نەبوو؛ تکایە دووبارە هەوڵ بدەرەوە');
-            user=ld.user;
-          }
-        } else {
-          const {data,error}=await sb.auth.signInWithPassword({email:_otpEmail,password:_otpPendingData.pass});
-          if(error) throw error;
-          if(!data?.session||!data?.user) throw new Error('چوونەژوورەوەی هەژمار سەرکەوتوو نەبوو؛ تکایە دووبارە هەوڵ بدەرەوە');
-          user=data.user;
-        }
-        if(!user) throw new Error('نەتوانرا هەژمارەکە بکەوێتە کار؛ تکایە دووبارە هەوڵ بدەرەوە');
-        // track.js is loaded after app.js and owns the server-side IP capture.
-        // Send immediately while the freshly issued Supabase session is present;
-        // its Authorization header lets /api/track attach this IP to the account.
-        if(typeof window.trackEvent==='function'){
-          window.trackEvent(_authIsNewUser?'signup':'login');
-        }
-        await startApp(user);
-      }catch(e){
-        showOtpMsg(kuErr(e.message)||'هەڵەیەک ڕووی دا','err');
-        btn.disabled=false; btn.innerHTML=ICON.check+' دڵنیاکردنەوە';
-      }finally{
-        _otpVerifying=false;
-      }
-    },800);
+    showOtpMsg(f.kind==='signup'?'هەژمارەکەت دروستکرا!':'سەرکەوتوو بوو!','ok');
+    const user=await pxSignedIn(r,f.kind==='signup'?f.phone:f.identifier,f.remember);
+    _authFlow=null;
+    // track.js owns the server-side IP capture; the new session lets it attach this IP to the account.
+    if(typeof window.trackEvent==='function') window.trackEvent(f.kind==='signup'?'signup':'login');
+    await startApp(user);
   }catch(e){
-    showOtpMsg(kuErr(e?.message)||'هەڵەیەک ڕووی دا','err');
-    if(btn){ btn.disabled=false; btn.innerHTML=ICON.check+' دڵنیاکردنەوە'; }
+    showOtpMsg(kuErr(e?.message)||'هەڵەیەک ڕووی دا','err'); unlock();
   }finally{
-    if(!keepLocked) _otpVerifying=false;
+    _otpVerifying=false;
   }
 }
 
 let _otpResending=false;
 async function resendOtp(){
-  if(_otpResending) return;
+  if(_otpResending||!_authFlow) return;
   const btn=document.getElementById('otpResendBtn');
   if(!btn||btn.disabled||getComputedStyle(btn).display==='none') return;
-  const chk=otpRateCheck(_otpEmail);
-  if(!chk.ok){ showOtpMsg('تکایە '+chk.remaining+' خولەکی تر هەوڵ بدەرەوە','err'); startBanCountdown(_otpEmail,'otpMsg','otpResendBtn'); return; }
   _otpResending=true; btn.disabled=true; btn.style.display='none';
   document.getElementById('otpTimerWrap').style.color='';
   showOtpMsg('ناردن...','ok');
   try{
-    const result=await requestOtp(_otpEmail,_otpPurpose);
-    if(result.success){ showOtpMsg('کۆدی نوێ نێردرا','ok'); ['otp1','otp2','otp3','otp4','otp5','otp6'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; }); startOtpTimer(600); }
-    else { showOtpMsg(result.message||'هەڵە','err'); btn.style.display='flex'; }
+    const f=_authFlow;
+    const r=f.kind==='signup'
+      ? await pxAuthApi('signup_start',{phone:f.phone,name:f.name,password:f.password})
+      : await pxAuthApi('login_start',{identifier:f.identifier,password:f.password});
+    if(r.ok&&r.otp_required){
+      showOtpMsg('کۆدی نوێ نێردرا','ok');
+      ['otp1','otp2','otp3','otp4','otp5','otp6'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+      startOtpTimer(r.channel==='whatsapp'?300:600);
+    } else { showOtpMsg(pxAuthError(r),'err'); if(!(r.code==='LOCKED'||r.status===423)) btn.style.display='flex'; }
   }catch(e){ showOtpMsg(kuErr(e?.message)||'هەڵەی ناردنی کۆد','err'); btn.style.display='flex'; }
   finally{ _otpResending=false; btn.disabled=false; }
 }
@@ -1187,15 +1210,15 @@ async function resendOtp(){
 // ══════════════════════════════════════════════════════════════
 // ═══ FORGOT PASSWORD ═══════════════════════════════════════════
 // ══════════════════════════════════════════════════════════════
-let _fpTimer=null, _fpEmail='', _fpVerified=false;
+let _fpTimer=null, _fpEmail='', _fpVerified=false, _fpCode='', _fpPhone='', _fpGrant='';
 function showForgotStep(){
   blurAuthInput();
   setAuthRoute('forgetpassword',true);
   document.getElementById('forgotEmail').value=_fpEmail||document.getElementById('authEmail')?.value.trim()||'';
   document.getElementById('fpMsgA').style.display='none';
 }
-function cancelForgotStep(){ clearInterval(_fpTimer); _fpVerified=false; _fpEmail=''; authBackTo('login'); }
-function fpBackToA(){ blurAuthInput(); clearInterval(_fpTimer); _fpVerified=false; authBackTo('forgetpassword'); }
+function cancelForgotStep(){ clearInterval(_fpTimer); _fpVerified=false; _fpCode=''; _fpEmail=''; _fpPhone=''; _fpGrant=''; authBackTo('login'); }
+function fpBackToA(){ blurAuthInput(); clearInterval(_fpTimer); _fpVerified=false; _fpCode=''; _fpGrant=''; authBackTo('forgetpassword'); }
 function authHeaderBack(){
   if(_authStepBusy||_authSubmitting||_authSignupChecking||_otpVerifying||_otpResending||_fpResending||_fpSending||_fpVerifying||_fpSaving) return;
   const target={'signup':'login','login/otp':'login','signup/otp':'signup',forgetpassword:'login','forgetpassword/otp':'forgetpassword',newpassword:'forgetpassword/otp'}[authRoute];
@@ -1245,6 +1268,17 @@ async function fpResendOtp(){
   if(_fpResending) return;
   const btn=document.getElementById('fpResendBtn');
   if(!btn||btn.disabled||getComputedStyle(btn).display==='none') return;
+  if(_fpPhone){
+    _fpResending=true; btn.disabled=true; btn.style.display='none';
+    document.getElementById('fpTimerWrap').style.color='';
+    fpShowMsg('B','ناردن...','ok');
+    try{
+      const r=await pxAuthApi('reset_start',{phone:_fpPhone});
+      if(r.ok){ fpShowMsg('B','کۆدی نوێ نێردرا','ok'); ['fp1','fp2','fp3','fp4','fp5','fp6'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; }); fpStartTimer(300); }
+      else { fpShowMsg('B',pxAuthError(r),'err'); if(r.status!==423) btn.style.display='flex'; }
+    }finally{ _fpResending=false; btn.disabled=false; }
+    return;
+  }
   const chk=otpRateCheck(_fpEmail);
   if(!chk.ok){ fpShowMsg('B','تکایە '+chk.remaining+' خولەکی تر هەوڵ بدەرەوە','err'); startBanCountdown(_fpEmail,'fpMsgB','fpResendBtn'); return; }
   _fpResending=true; btn.disabled=true; btn.style.display='none';
@@ -1261,13 +1295,30 @@ async function fpResendOtp(){
 async function doForgotSendOtp(){
   if(_fpSending) return;
   const email=document.getElementById('forgotEmail').value.trim();
-  if(!email){ fpShowMsg('A','ئیمەیلەکەت بنووسە','err'); return; }
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ fpShowMsg('A','فۆرماتی ئیمەیل هەڵەیە','err'); return; }
+  if(!email){ fpShowMsg('A','ژمارەی مۆبایل یان ئیمەیڵەکەت بنووسە','err'); return; }
+  const phone=email.includes('@')?null:pxIraqiPhone(email);
+  if(!email.includes('@')&&!phone){ fpShowMsg('A','تەنها ژمارەی مۆبایلی عێراقی قبوڵ دەکرێت (07XX XXX XXXX)','err'); return; }
+  if(email.includes('@')&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ fpShowMsg('A','فۆرماتی ئیمەیل هەڵەیە','err'); return; }
   const btn=document.getElementById('forgotSendBtn');
   if(!btn||btn.disabled) return;
   _fpSending=true;
   btn.disabled=true; btn.innerHTML=ICON.spin+' پشکنین...';
   try{
+    if(phone){
+      const r=await pxAuthApi('reset_start',{phone});
+      if(!r.ok){ fpShowMsg('A',pxAuthError(r),'err'); return; }
+      _fpPhone=phone; _fpEmail=''; _fpGrant=''; _fpVerified=false;
+      const lbl=document.getElementById('fpOtpLbl'); lbl.textContent='کۆدی ٦ ژمارە بۆ واتسئاپی '; const b=document.createElement('bdi'); b.dir='ltr'; b.textContent=r.target||''; lbl.append(b,' نێردرا');
+      ['fp1','fp2','fp3','fp4','fp5','fp6'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+      document.getElementById('fpMsgB').style.display='none';
+      document.getElementById('fpResendBtn').style.display='none';
+      document.getElementById('fpTimerWrap').style.color='';
+      blurAuthInput();
+      setAuthRoute('forgetpassword/otp',true);
+      fpStartTimer(300);
+      return;
+    }
+    _fpPhone='';
     const {data:exists,error}=await sb.rpc('ex_email_exists',{p_email:email});
     if(error) throw new Error('هەڵەی پشکنین، دووبارە هەوڵ بدەرەوە');
     if(!exists){ fpShowMsg('A','ئەم ئیمەیلە تۆمارنەکراوە','err'); return; }
@@ -1298,6 +1349,24 @@ async function doForgotVerifyOtp(){
   try{
     const code=['fp1','fp2','fp3','fp4','fp5','fp6'].map(id=>document.getElementById(id)?.value||'').join('');
     if(code.length<6){ fpShowMsg('B','کۆدەکە تەواو بنووسە','err'); return; }
+    if(_fpPhone){
+      btn.disabled=true; btn.innerHTML=ICON.spin+' پشکنین...';
+      const r=await pxAuthApi('reset_verify',{phone:_fpPhone,code});
+      if(!r.ok){
+        fpShowMsg('B',pxAuthError(r),'err');
+        if(r.status===423){ clearInterval(_fpTimer); document.getElementById('fpResendBtn').style.display='none'; return; }
+        ['fp1','fp2','fp3','fp4','fp5','fp6'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+        if(r.code==='CODE_EXPIRED') document.getElementById('fpResendBtn').style.display='flex';
+        btn.disabled=false; btn.innerHTML=ICON.check+' دڵنیاکردنەوە'; return;
+      }
+      clearInterval(_fpTimer); blurAuthInput();
+      _fpVerified=true; _fpGrant=r.grant||'';
+      setAuthRoute('newpassword',true);
+      document.getElementById('fpNewPass').value=''; document.getElementById('fpConfirmPass').value='';
+      document.getElementById('fpMsgC').style.display='none';
+      btn.disabled=false; btn.innerHTML=ICON.check+' دڵنیاکردنەوە';
+      return;
+    }
     const rlChk=otpRateCheck(_fpEmail);
     if(!rlChk.ok){ fpShowMsg('B','قفڵکراوە — تکایە '+rlChk.remaining+' خولەکی تر هەوڵ بدەرەوە','err'); startBanCountdown(_fpEmail,'fpMsgB','fpResendBtn'); return; }
     btn.disabled=true; btn.innerHTML=ICON.spin+' پشکنین...';
@@ -1311,6 +1380,7 @@ async function doForgotVerifyOtp(){
     clearInterval(_fpTimer);
     blurAuthInput();
     _fpVerified=true;
+    _fpCode=code;   // the server only accepts the reset together with this verified code
     setAuthRoute('newpassword',true);
     document.getElementById('fpNewPass').value=''; document.getElementById('fpConfirmPass').value='';
     document.getElementById('fpMsgC').style.display='none';
@@ -1326,12 +1396,23 @@ async function doForgotSavePass(){
   _fpSaving=true;
   try{
     const np=document.getElementById('fpNewPass').value, cp=document.getElementById('fpConfirmPass').value;
-    if(!np||np.length<6){ fpShowMsg('C','وشەی نهێنی دەبێت کەمترین ٦ پیت بێت','err'); return; }
+    if(!np||np.length<8){ fpShowMsg('C','وشەی نهێنی دەبێت کەمترین ٨ پیت بێت','err'); return; }
     if(np!==cp){ fpShowMsg('C','وشەی نهێنیەکان یەکسان نین','err'); return; }
     const btn=document.getElementById('fpSaveBtn'); if(!btn||btn.disabled) return;
     btn.disabled=true; btn.innerHTML=ICON.spin+' گۆڕین...';
     try{
-      const {data:rData,error:rErr}=await sb.rpc('reset_user_password',{ user_email:_fpEmail, new_pass:np });
+      if(_fpPhone){
+        const r=await pxAuthApi('reset_finish',{phone:_fpPhone,grant:_fpGrant,password:np});
+        if(!r.ok){ fpShowMsg('C',pxAuthError(r),'err'); return; }
+        fpShowMsg('C','وشەی نهێنیەکە گۆڕدرا، چوونەژوورەوە...','ok');
+        const user=await pxSignedIn(r,_fpPhone,false);
+        clearInterval(_fpTimer); _fpVerified=false; _fpGrant=''; _fpPhone='';
+        document.getElementById('forgotStep').style.display='none';
+        window.trackEvent?.('login');
+        await startApp(user);
+        return;
+      }
+      const {data:rData,error:rErr}=await sb.rpc('reset_user_password',{ user_email:_fpEmail, new_pass:np, p_code:_fpCode });
       if(rErr){ fpShowMsg('C',rErr.message||'هەڵەی گۆڕینی پاسۆرد','err'); return; }
       if(rData && rData.success===false){ fpShowMsg('C',rData.message||'هەڵەیەک ڕووی دا','err'); return; }
       fpShowMsg('C','وشەی نهێنیەکە گۆڕدرا، چوونەژوورەوە...','ok');
@@ -1343,7 +1424,7 @@ async function doForgotSavePass(){
         await startApp(ld.user);
       } else {
         const resetEmail=_fpEmail;
-        clearInterval(_fpTimer); _fpVerified=false;
+        clearInterval(_fpTimer); _fpVerified=false; _fpCode='';
         setAuthRoute('login',false,true);
         _authEmail=resetEmail; _authIsNewUser=false;
         document.getElementById('authEmail').value=_fpEmail;
@@ -1474,6 +1555,33 @@ async function ensureExProfile(user){
   return created;
 }
 
+// ── app shell while a saved session is still loading ─────────────
+// With a saved session the person is signed in; on a slow connection the
+// profile can take a while. Instead of the login screen they see the app
+// with skeletons (not tappable) until startApp() hands over.
+function pxPaintSkeletons(){
+  if(!window.PXS) return;
+  const fill=(id,html)=>{ const el=document.getElementById(id); if(el){ el.innerHTML=html; } };
+  fill('historyPreview', PXS.dbRows ? PXS.dbRows(4) : PXS.txItems(3));
+  if(!_ordersLoaded) fill('txList', PXS.txItems(4));
+  fill('supportCasesList', PXS.supportCases(2));
+  fill('ratesNow', PXS.rateCards(3));
+  fill('changesList', PXS.changeItems(3));
+  fill('bhList', PXS.balHist(3));
+  if(!_notifLoaded) fill('notifPanelBody', PXS.notifItems(4));
+  fill('kycBanner', PXS.kycBanner());
+  fill('txScreenBody', PXS.summary());
+}
+function pxBootShell(route){
+  if(!ROUTES[route]) route='home';
+  document.body.classList.add('app-booting');
+  pxPaintSkeletons();
+  Object.keys(ROUTES).forEach(r=>{ const el=document.getElementById(ROUTES[r]); if(el) el.classList.toggle('active', r===route); });
+  const navRoute = navRouteOf(route);
+  document.querySelectorAll('.bn-item, .hdr-nav-link, .pxn-item, .pxh-link, .pxn-fab').forEach(b=>b.classList.toggle('on', b.dataset.route===navRoute));
+}
+function pxBootEnd(){ document.body.classList.remove('app-booting'); }
+
 async function startApp(user){
   curUser=user;
   if(typeof resetCustomerConveniences==='function')resetCustomerConveniences();
@@ -1489,11 +1597,17 @@ async function startApp(user){
     });
     return;
   }
+  // asked to delete the account: a new sign-in reactivates it, an older session is signed out
+  const deletionState=await checkAccountDeletion();
+  if(deletionState==='pending') return;
   document.getElementById('authWrap').style.display='none';
   document.getElementById('mainApp').style.display='block';
+  pxBootEnd();
+  if(deletionState==='reactivated') setTimeout(()=>{ try{ showToast('دووبارە بەخێربێیتەوە. هەژمارەکەت چالاک کرایەوە و سڕینەوەکە هەڵوەشایەوە.','success'); }catch(_){} },400);
   document.body.classList.add('has-nav');
   applyProfileToUI();
   fillProfileForm();
+  try{ renderDashboard(); }catch(_){}
   loadKycStatus(true);
   document.getElementById('adminBtn').style.display=curProfile?.is_admin?'flex':'none';
   if(curProfile?.phone){
@@ -1510,8 +1624,8 @@ async function startApp(user){
   navigate(routeFromLocation(), false);
   if(typeof window.__dismissAppSplash==='function') window.__dismissAppSplash();
   refreshFormHints();
-  startProofPolling();
-  await Promise.all([loadWallets(),loadRates(),loadMyRewards(),
+  clearInterval(_proofTimer);                  // the public feed is gone from the signed-in app
+  await Promise.all([loadWallets(),loadRates(),
     ...(typeof loadCustomerConveniences==='function'?[loadCustomerConveniences()]:[])]);
   pickInitialWallets();
   refreshTrigger('from');
@@ -1602,35 +1716,6 @@ async function loadRates(){
   }catch(e){}
   if(!RATES_STRICT) RATES=Object.assign({},FALLBACK_RATES);
 }
-// Customer sees only their own rewards (RLS). The database order trigger
-// is authoritative: browser previews never decide or consume a reward.
-let _rewardLoadId=0;
-async function loadMyRewards(){
-  const generation=++_rewardLoadId,owner=curUser?.id;
-  try{
-    if(curUser && sb){
-      const {data,error}=await sb.from('ex_user_rewards')
-        .select('id,kind,discount_percent,max_uses,used_count,max_amount_iqd,max_discount_iqd,reward_scope,valid_until,active,created_at,campaign_key')
-        .eq('user_id',curUser.id).eq('active',true).order('created_at');
-      if(error)throw error;
-      if(generation!==_rewardLoadId||curUser?.id!==owner)return;
-      MY_REWARDS=data||[];
-    }
-  }catch(_){ if(generation!==_rewardLoadId||curUser?.id!==owner)return;MY_REWARDS=[]; }
-  if(!owner)MY_REWARDS=[];
-  calc();
-}
-function availableFeeReward(from,to,fee){
-  if(!curUser || from==='USDT' || to==='USDT' || fee<=0)return null;
-  const now=Date.now();
-  const scope=ProxoRewardPricing.routeScope(from,to);
-  return MY_REWARDS.filter(r=>(r.reward_scope||'wallets')===scope && r.active && (r.max_uses==null || Number(r.used_count)<Number(r.max_uses))
-      && (!r.valid_until || Date.parse(r.valid_until)>now))
-    .sort((a,b)=>(a.valid_until?Date.parse(a.valid_until):Infinity)-
-      (b.valid_until?Date.parse(b.valid_until):Infinity) ||
-      (a.kind==='free_transactions'?0:1)-(b.kind==='free_transactions'?0:1) ||
-      Date.parse(a.created_at)-Date.parse(b.created_at) || String(a.id).localeCompare(String(b.id)))[0]||null;
-}
 // Smallest amount any exchange is accepted for, in IQD.
 const MIN_AMOUNT = 10000;
 const CARRIER_SENDER_METHODS = new Set(['Korek','Asiacell']);
@@ -1679,7 +1764,10 @@ function updateWallet(){
   const info = getWalletInfo(key);
   const numEl = document.getElementById('myNum');
   const copyBtn = document.querySelector('.wallet-row .copy-btn');
-  if(internal){
+  if(!internal && WALLETS_STATE==='loading' && !info.number){
+    numEl.innerHTML=_skb(116,13);
+    numEl.classList.remove('locked-text');
+  } else if(internal){
     numEl.textContent='باڵانسی بەردەست: '+(document.getElementById('balanceAvailable')?.textContent||'—');
     numEl.classList.remove('locked-text');
     if(copyBtn)copyBtn.style.display='none';
@@ -1794,10 +1882,6 @@ function calc(){
   document.getElementById('xcSumResult')?.classList.remove('has-payout');
   const feeEl=document.getElementById('feeDisplay');
   feeEl.hidden=true;
-  const rewardBanner=document.getElementById('rewardBanner');
-  if(rewardBanner)rewardBanner.hidden=true;
-  const discountRow=document.getElementById('bdDiscountRow');
-  if(discountRow)discountRow.hidden=true;
   const bdRate=document.getElementById('bdRate');
   const bdFee=document.getElementById('bdFee');
   const bdSent=document.getElementById('bdSent');
@@ -1817,7 +1901,7 @@ function calc(){
 
   if(from===to){ totalEl.innerText='هەمان واڵێت نابێت'; totalEl.classList.add('warn-text'); feeEl.innerText=''; setBd('—','—'); showRate(false); showFee(false); return; }
   const rawRate=RATES[from+'>'+to];
-  const r=rawRate&&!isUsdt?ProxoRewardPricing.effectiveRate(rawRate,amt):rawRate;
+  const r=rawRate&&!isUsdt?ProxoPricing.effectiveRate(rawRate,amt):rawRate;
   const tierRow=document.getElementById('bdTierRow'),tierHint=document.getElementById('bdTierHint');
   if(tierRow)tierRow.hidden=true;if(tierHint)tierHint.hidden=true;
   // Closed direction: show it as closed. Never fall back to a guessed rate and
@@ -1840,7 +1924,7 @@ function calc(){
   else                           setBd('—', formatNum(r.value)+' IQD');
   // Amount-tiered fee: say which percentage this amount gets and where the tier changes.
   if(rawRate&&rawRate.tier&&!isUsdt&&amt>0){
-    const pct=ProxoRewardPricing.tierPercent(rawRate,amt);
+    const pct=ProxoPricing.tierPercent(rawRate,amt);
     const pctEl=document.getElementById('bdTierPct');
     if(tierRow&&pctEl&&pct!==null){pctEl.textContent=fmtPct(pct)+'%';tierRow.hidden=false;}
     if(tierHint){tierHint.textContent=tierHintText(rawRate.tier);tierHint.hidden=false;}
@@ -1873,32 +1957,11 @@ function calc(){
         : (fmtPct(100-r.value*100)+'%');
     }else{ showFee(false); if(bdFee) bdFee.textContent='بێ کرێ'; }
   }
-  // Match the database's decimal calculation, including the uncovered principal.
-  const baseQuote=isUsdt?null:ProxoRewardPricing.quote(amt,r,null);
+  // Same decimal calculation as the database (ex_order_quote).
+  const baseQuote=isUsdt?null:ProxoPricing.quote(amt,r);
   const basePayout=baseQuote?baseQuote.total:Math.floor(final);
-  const baseFee=baseQuote?baseQuote.fee:Math.max(0,amt-basePayout);
-  displayFee=baseFee;
+  displayFee=baseQuote?baseQuote.fee:Math.max(0,amt-basePayout);
   if(baseQuote){final=baseQuote.total;if(bdFee&&amt>0)bdFee.textContent=formatNum(baseQuote.fee)+' IQD';}
-  const reward=availableFeeReward(from,to,baseFee);
-  if(reward){
-    const quote=ProxoRewardPricing.quote(amt,r,reward);
-    if(quote.discount_iqd>0){
-      final=quote.total;displayFee=quote.fee;
-      if(bdFee)bdFee.textContent=formatNum(quote.fee)+' IQD';
-      if(discountRow)discountRow.hidden=false;
-      const saving=document.getElementById('bdDiscount');
-      if(saving)saving.textContent=formatNum(quote.discount_iqd)+' IQD';
-      if(rewardBanner){
-        rewardBanner.hidden=false;
-        const left=reward.max_uses==null?'بێ سنوور':formatNum(reward.max_uses-reward.used_count)+' مامەڵەی ماوە';
-        rewardBanner.textContent=(reward.kind==='free_transactions'?'پاداشتی مامەڵەی بێ لێبڕین':'داشکاندنی '+reward.discount_percent+'% لە لێبڕین')+
-          (reward.max_discount_iqd==null?'':' · زۆرترین داشکاندن '+formatNum(reward.max_discount_iqd)+' دینار')+
-          (reward.max_amount_iqd==null?'':' · تا '+formatNum(reward.max_amount_iqd)+' دینار لە بڕی مامەڵە')+
-          ' · '+ProxoRewardPricing.scopeLabel(reward.reward_scope||'wallets')+' · '+left+
-          (quote.excess_amount_iqd>0?'\nبڕی زیادە بە لێبڕینی ئاسایی: '+formatNum(quote.excess_amount_iqd)+' دینار':'');
-      }
-    }
-  }
   const expected=baseQuote?final:Math.floor(final);
   totalEl.innerText=formatNum(expected)+(to==='USDT'?' $':' IQD');
   feeEl.innerText=amt>0 && !isUsdt ? 'حمولە: '+formatNum(displayFee)+' IQD' : '';
@@ -1974,7 +2037,6 @@ function _validateOrderFields(){
 }
 
 async function openOrderConfirm(){
-  await loadMyRewards();
   if(document.getElementById('from').value==='AccountBalance')await loadMyBalance();
   if(kycExchangeBlocked()){ showKycExchangeBlocked(); return; }
   if(!_validateOrderFields()) return;
@@ -2137,8 +2199,6 @@ async function processOrder(){
     }
     const orderRow=orderPayload.order;_balanceOrderKey=null;
     if(from==='AccountBalance')await loadMyBalance();
-    // Fetch the new remaining quota; a rejected order restores it on the server.
-    await loadMyRewards();
 
     // The Telegram alert is sent by /api/notify-order. The bot token lives in a
     // Vercel environment variable, so it never reaches the browser, and the
@@ -2191,8 +2251,19 @@ async function processOrder(){
 }
 
 let _historyChannel=null;
+let _ordersLoaded=false, _historyRetryTimer=null, _historyRetryDelay=3000;
+function scheduleHistoryRetry(){
+  if(_historyRetryTimer) return;
+  _historyRetryTimer=setTimeout(()=>{ _historyRetryTimer=null; if(curUser) loadHistory(); }, _historyRetryDelay);
+  _historyRetryDelay=Math.min(_historyRetryDelay*2, 30000);
+}
 async function loadHistory(){
-  const {data}=await sb.from('ex_orders').select('*').eq('user_id',curUser.id).order('created_at',{ascending:false});
+  let data, error;
+  try{ ({data,error}=await sb.from('ex_orders').select('*').eq('user_id',curUser.id).order('created_at',{ascending:false})); }
+  catch(e){ error=e; }
+  // a slow or failed connection never shows "no transactions": the skeleton (or the last list) stays and we retry
+  if(error || !Array.isArray(data)){ scheduleHistoryRetry(); return; }
+  _historyRetryDelay=3000;
   const {data:feedbackRows}=await sb.from('ex_order_feedback').select('order_id,rating,comment,created_at').eq('user_id',curUser.id);
   const feedbackByOrder=new Map((feedbackRows||[]).map(row=>[String(row.order_id),row]));
   renderHistory((data||[]).map(order=>({...order,feedback:feedbackByOrder.get(String(order.id))||null})));
@@ -2392,7 +2463,7 @@ let _txSheetId=null;
 let _feedbackDraftRating=0;
 let _homeFeedbackPromptShownThisSession=false;
 let _homeFeedbackPromptQueued=false;
-const FEEDBACK_LABELS=['زۆر خراپ','خراپ','مام ناوەند','باش','زۆر باش'];
+const FEEDBACK_LABELS=['زۆر خراپ','خراپ','ئاسایی','باش','نایاب'];
 const FB_STAR='<svg class="fb-star-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3.2l2.6 5.4 5.9.8-4.3 4.1 1.1 5.9L12 16.6 6.7 19.4l1.1-5.9L3.5 9.4l5.9-.8L12 3.2z"/></svg>';
 
 function feedbackOrderSnapshot(order){
@@ -2527,14 +2598,13 @@ function renderTransactionSummary(order){
   const payout=typeof ProxoPayoutRounding==='object'?ProxoPayoutRounding.forOrder(order):null;
   const financial=typeof ProxoTransactionSummaryFinancials==='object'
     ?ProxoTransactionSummaryFinancials.breakdown(order,payout)
-    :{sourceAmount:Number(order.amount),total:Number(order.total),feeBeforeDiscount:Number(order.reward_original_fee_iqd??((Number(order.fee)||0)+(Number(order.reward_discount_iqd)||0))),discount:Number(order.reward_discount_iqd)||0,recipientAmount:payout?.settled?Number(payout.payout_iqd):(order.status==='پەسەندکرا'?Number(order.total)||0:0),returnedAmount:payout?.settled?Number(payout.remainder_iqd):(Number(order.payout_rounding_iqd)||Number(order.shortfall_refunded_iqd)||0),sameIqd:order.from_method!=='USDT'&&order.to_method!=='USDT'};
+    :{sourceAmount:Number(order.amount),total:Number(order.total),netFee:Number(order.fee),recipientAmount:payout?.settled?Number(payout.payout_iqd):Number(order.total),returnedAmount:0,sameIqd:order.from_method!=='USDT'&&order.to_method!=='USDT'};
   const split=tfSplitOf(order);
   if(!split.refunded&&!split.pending&&!split.rejected&&order.status==='پەسەندکرا'){
     // a settled order: trust the server breakdown when it carries more detail
     if(Number(financial.recipientAmount)>=0&&financial.recipientAmount!==null) split.recipient=Number(financial.recipientAmount);
     if(Number(financial.returnedAmount)>0) split.returned=Number(financial.returnedAmount);
   }
-  const discount=Number(financial.discount)||0;
   const hero=split.refunded
     ? {label:'بڕی گەڕاوە بۆ باڵانس',amount:txAmount(split.returned,'IQD'),to:'AccountBalance'}
     : split.rejected
@@ -2542,8 +2612,7 @@ function renderTransactionSummary(order){
       : {label:split.pending?'بڕی دەنێردرێت بۆ وەرگر':'بڕی گەیشتوو بە وەرگر',amount:txAmount(split.recipient,order.to_method)};
   const rows=
       tfRow('بڕی نێردراو',txAmount(financial.sourceAmount,order.from_method),{ltr:true})
-    + tfRow('کرێی خزمەتگوزاری',financial.sameIqd&&financial.feeBeforeDiscount!==null?txAmount(financial.feeBeforeDiscount,'IQD'):'—',{ltr:true})
-    + tfRow('بڕی داشکاندن',financial.sameIqd?txAmount(discount,'IQD'):'—',{ltr:true,cls:discount>0?'is-good':''})
+    + tfRow('کرێی خزمەتگوزاری',financial.sameIqd&&financial.netFee!==null?txAmount(financial.netFee,'IQD'):'—',{ltr:true})
     + tfRow('کۆی گشتی دوای کرێ',txAmount(financial.total,order.to_method),{ltr:true,row:'is-total'});
   const splitRows=tfSplitRows(order,split);
   const info=
@@ -2622,7 +2691,6 @@ async function loadTransactionSummaryPage(session){
     if(response.status===400){showTransactionSummaryError('لینکی مامەڵەکە دروست نییە.','گەڕانەوە بۆ سەرەتا',closeTransactionSummary);return;}
     if(!response.ok||!payload.order)throw new Error('SUMMARY_LOAD_FAILED');
     _summaryOrder=payload.order;_orders=[payload.order];
-    if(curUser)await loadMyRewards();
     renderTransactionSummary(payload.order);
   }catch(_){
     showTransactionSummaryError('کێشەیەک لە پەیوەندی ڕوویدا. تکایە دووبارە هەوڵ بدەرەوە.','دووبارە هەوڵدانەوە',retryTransactionSummary);
@@ -2642,10 +2710,38 @@ function openFeedbackSheet(orderId){
   if(!order||order.status!=='پەسەندکرا'||order.feedback||!sheet||!body) return;
   _feedbackSheetId=String(order.id);
   _feedbackDraftRating=0;
-  body.innerHTML='<div class="tf-flow">'+renderOrderFeedback(order,{sheet:true})+'</div>';
+  body.innerHTML=fbSheetHTML(order);
   body.scrollTop=0;
   openSheet(sheet);
 }
+// Rating sheet: order summary (from · to · amount) → one question → five stars → optional note → «ناردن».
+// After sending: a check, one short line and «باشە». Nothing else.
+const FB_STAR_SVG='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.9l2.75 5.6 6.15.9-4.45 4.33 1.05 6.12L12 16.97l-5.5 2.88 1.05-6.12L3.1 9.4l6.15-.9z"/></svg>';
+function fbSheetHTML(order){
+  const id=escHtml(String(order.id));
+  return '<div class="fbx">'
+    + '<div class="fbx-sum">'
+      + '<span class="dbr-pair fbx-pair" aria-hidden="true">'+dbLogoHTML(order.from_method)+dbLogoHTML(order.to_method)+'</span>'
+      + '<span class="fbx-route" dir="ltr">'+txRouteInner(order.from_method,order.to_method)+'</span>'
+      + '<b class="fbx-amt" dir="ltr">'+escHtml(txAmount(order.amount,order.from_method))+'</b>'
+    + '</div>'
+    + '<h4 class="fbx-q" id="fbxTitle">چۆن بوو ئەم مامەڵەیە؟</h4>'
+    + '<div class="fb-stars fbx-stars" role="radiogroup" aria-labelledby="fbxTitle">'
+      + Array.from({length:5},(_,i)=>'<button type="button" class="fb-star fbx-star" data-rating="'+(i+1)+'" role="radio" aria-checked="false" aria-label="'+(i+1)+' ئەستێرە" onclick="selectOrderFeedbackRating('+(i+1)+')">'+FB_STAR_SVG+'</button>').join('')
+    + '</div>'
+    + '<textarea id="orderFeedbackComment" class="fbx-note" maxlength="1000" rows="2" placeholder="تێبینی (ئارەزوومەندانە)" aria-label="تێبینی"></textarea>'
+    + '<div class="fb-error fbx-err" id="orderFeedbackError" role="alert"></div>'
+    + '<button type="button" class="fbx-send" id="orderFeedbackSubmit" disabled onclick="submitOrderFeedback(\''+id+'\')"><span class="fbx-spin" aria-hidden="true"></span><span class="fbx-send-lbl">ناردن</span></button>'
+    + '</div>';
+}
+function fbThanksHTML(){
+  return '<div class="fbx fbx-thanks" role="status">'
+    + '<span class="fbx-done-ico" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m6 12.5 4 4L18.5 8"/></svg></span>'
+    + '<h4>سوپاس بۆ هەڵسەنگاندنەکەت</h4>'
+    + '<button type="button" class="fbx-send" onclick="closeFeedbackSheet()"><span class="fbx-send-lbl">باشە</span></button>'
+    + '</div>';
+}
+function fbEnableSend(){ const b=document.getElementById('orderFeedbackSubmit'); if(b && !b.classList.contains('is-loading')) b.disabled=false; }
 function closeFeedbackSheet(){
   const sheet=document.getElementById('feedbackSheet');
   _feedbackSheetId=null;
@@ -2657,7 +2753,8 @@ function selectOrderFeedbackRating(rating){
     const selected=index<_feedbackDraftRating;button.classList.toggle('selected',selected);button.setAttribute('aria-checked',String(Number(button.dataset.rating)===_feedbackDraftRating));
   });
   const label=document.getElementById('fbRatingLabel');
-  if(label){ label.textContent=FEEDBACK_LABELS[_feedbackDraftRating-1]||''; label.classList.add('is-set'); }
+  if(label){ label.textContent=FEEDBACK_LABELS[_feedbackDraftRating-1]||''; label.classList.add('is-set'); label.dataset.rating=String(_feedbackDraftRating); }
+  if(typeof fbEnableSend==='function') fbEnableSend();
   const err=document.getElementById('orderFeedbackError'); if(err) err.textContent='';
 }
 async function submitOrderFeedback(orderId){
@@ -2669,18 +2766,19 @@ async function submitOrderFeedback(orderId){
   if(!curUser?.id){if(errorEl)errorEl.textContent='بۆ ناردنی هەڵسەنگاندن بچۆ ژوورەوە.';return;}
   const comment=(document.getElementById('orderFeedbackComment')?.value||'').trim();
   if(comment.length>1000){if(errorEl)errorEl.textContent='تێبینی نابێت لە ١٠٠٠ پیت زیاتر بێت.';return;}
-  if(button){button.disabled=true;button.textContent='دەنێردرێت...';}
+  if(errorEl)errorEl.textContent='';
+  if(button){ button.disabled=true; if(fromSheet){ button.classList.add('is-loading'); button.setAttribute('aria-busy','true'); } else button.textContent='دەنێردرێت...'; }
   try{
     const {data,error}=await sb.from('ex_order_feedback').insert({order_id:order.id,user_id:curUser.id,rating:_feedbackDraftRating,comment}).select('order_id,rating,comment,created_at').single();
     if(error)throw error;
     order.feedback=data;_feedbackDraftRating=0;renderHomeFeedbackPrompt();
-    if(fromSheet){ closeFeedbackSheet(); }
+    if(fromSheet){ const body=document.getElementById('feedbackSheetBody'); if(body){ body.innerHTML=fbThanksHTML(); body.scrollTop=0; } else closeFeedbackSheet(); return; }
     else if(_route==='summary'){ renderTxScreen(); }
     else { navigate('home',true); }
     showToast('سوپاس بۆ هەڵسەنگاندنەکەت.','success');
   }catch(error){
     if(errorEl)errorEl.textContent=error.code==='23505'?'هەڵسەنگاندنی ئەم داواکارییە پێشتر تۆمار کراوە.':'نەتوانرا هەڵسەنگاندنەکەت تۆمار بکرێت؛ تکایە دووبارە هەوڵ بدەرەوە.';
-    if(button){button.disabled=false;button.textContent='ناردنی هەڵسەنگاندن';}
+    if(button){ button.disabled=false; if(fromSheet){ button.classList.remove('is-loading'); button.removeAttribute('aria-busy'); } else button.textContent='ناردنی هەڵسەنگاندن'; }
   }
 }
 function txRow(label, value, opts){
@@ -2747,7 +2845,7 @@ function renderTxScreen(){
     body.innerHTML=txScreenMessage('مامەڵەکە نەدۆزرایەوە','ئەم مامەڵەیە سەر بە ئەم هەژمارە نییە. دڵنیابە بە هەمان هەژمار چوویتە ژوورەوە.','گەڕانەوە بۆ مامەڵەکان',"navigate('transactions')");
     return;
   }
-  body.innerHTML='<div class="ts-loading"><span class="ts-spinner"></span><span>زانیارییەکانی مامەڵە بار دەکرێن...</span></div>';
+  body.innerHTML=window.PXS?PXS.summary():'<div class="ts-loading"><span class="ts-spinner"></span><span>زانیارییەکانی مامەڵە بار دەکرێن...</span></div>';
   fetchTxScreenOrder(_txScreenToken);
 }
 async function fetchTxScreenOrder(token){
@@ -2775,7 +2873,6 @@ function txDetailHTML(o){
   const rate=Number(o.amount)>0 ? (Number(o.total)/Number(o.amount)) : 0;
   const isUsdt=o.from_method==='USDT';
   const fee=!isUsdt && o.to_method!=='USDT' && Number(o.amount)>Number(o.total) ? Math.floor(Number(o.amount)-Number(o.total)) : 0;
-  const discountIqd=Math.max(0,Math.floor(Number(o.reward_discount_iqd)||0));
   const payout=typeof ProxoPayoutRounding==='object'?ProxoPayoutRounding.forOrder(o):null;
   const rounded=!o.balance_refunded_at&&payout&&(payout.planned||payout.has_settlement);
   const received=payout?payout.display_amount:o.total;
@@ -2792,7 +2889,6 @@ function txDetailHTML(o){
     // A rate only means something across currencies; IQD → IQD is a fee.
     + (isUsdt && rate ? tfRow('نرخی ئاڵوگۆڕ','1 $ = '+formatNum(Math.round(rate))+' IQD',{ltr:true}) : '')
     + (!refundedSheet && iqdRoute ? tfRow('کرێی خزمەتگوزاری',formatNum(fee)+' IQD',{ltr:true}) : '')
-    + (!refundedSheet && iqdRoute ? tfRow('بڕی داشکاندن',formatNum(discountIqd)+' IQD',{ltr:true,cls:discountIqd>0?'is-good':''}) : '')
     + (!refundedSheet ? tfRow('کۆی گشتی دوای کرێ',txAmount(o.total,o.to_method),{ltr:true,row:'is-total'}) : '');
   const splitRows=tfSplitRows(o,split)
     + (!refundedSheet&&payout&&payout.valid&&(payout.planned||payout.has_settlement)&&payout.payout_iqd===0?tfRow('ناردنی دەرەکی','هیچ بڕێک بۆ وەرگر نانێردرێت'):'');
@@ -2880,7 +2976,6 @@ async function resubmitRejectedOrder(orderId){
     closeTxDetail();
     await Promise.allSettled([
       loadHistory(),
-      loadMyRewards(),
       sourceOrder.from_method==='AccountBalance'?loadMyBalance():Promise.resolve()
     ]);
     try{
@@ -3083,9 +3178,11 @@ function methodLabel(key){
 
 function renderHistory(rows){
   _orders = rows || [];
+  _ordersLoaded = true;
   // an open detail sheet follows realtime status changes
   if(_route==='summary') renderTxScreen();
   renderHomePreview();
+  renderDashboard();
   renderHomeFeedbackPrompt();
   maybePromptHomeFeedback();
   renderTxPage();
@@ -3109,7 +3206,7 @@ function renderHomeFeedbackPrompt(){
   if(!order||isFeedbackRead(order.id)){el.hidden=true;el.innerHTML='';return;}
   el.hidden=false;
   el.innerHTML='<span class="home-feedback-icon" aria-hidden="true"><span class="icn icon--solar icon--solar--star-linear"></span></span>'+
-    '<span class="home-feedback-copy"><b>مامەڵەکەت چۆن بوو؟</b><span>هەڵسەنگاندنەکەت بنێرە و یارمەتیمان بدە خزمەتگوزارییەکە باشتر بکەین.</span></span>'+
+    '<span class="home-feedback-copy"><b>چۆن بوو ئەم مامەڵەیە؟</b><span>هەڵسەنگاندنەکەت یارمەتیمان دەدات.</span></span>'+
     '<button type="button" class="home-feedback-action" onclick="openHomePendingFeedback()">هەڵسەنگاندن</button>';
 }
 function openHomePendingFeedback(){
@@ -3140,9 +3237,77 @@ function maybePromptHomeFeedback(){
 function renderHomePreview(){
   const el=document.getElementById('historyPreview');
   if(!el) return;
-  const rows=_orders.slice(0,3);
-  el.innerHTML = rows.length ? rows.map(orderCardHTML).join('')
-    : '<div class="empty-state">هێشتا هیچ مامەڵەیەکت نییە</div>';
+  const rows=_orders.slice(0,4);
+  el.innerHTML = rows.length ? '<div class="dbr-list">'+rows.map(dbRowHTML).join('')+'</div>'
+    : '<div class="db-empty"><span class="db-empty-ico"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg></span>'
+      + '<b>هێشتا هیچ ئاڵوگۆڕێکت نییە</b><small>یەکەم ئاڵوگۆڕەکەت لە چەند هەنگاوێکدا بکە.</small>'
+      + '<button type="button" onclick="navigate(\'exchange\')"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14"/><path d="M5 12h14"/></svg>ئاڵوگۆڕی نوێ</button></div>';
+}
+
+// ── dashboard: one row of "latest exchanges" — wallet pair · route + time · amount + status ──
+function dbLogoHTML(key){
+  const html=methodIconHTML(key,'');
+  if(html) return html;
+  const label=String(methodLabel(key)||'?').trim();
+  return '<span class="method-icon dbr-fb">'+escHtml(label.charAt(0).toUpperCase()||'?')+'</span>';
+}
+function dbRowHTML(o){
+  const refunded=!!o.balance_refunded_at;
+  const to=refunded?'AccountBalance':o.to_method;
+  const payout=typeof ProxoPayoutRounding==='object'?ProxoPayoutRounding.forOrder(o):null;
+  const received=payout?payout.display_amount:o.total;
+  const amount=refunded?txAmount(o.amount,'AccountBalance'):txAmount(received,o.to_method);
+  const tone=tfToneOf(o), id=escHtml(String(o.id));
+  return '<button type="button" class="dbr is-'+tone+'" onclick="openTxDetail(\''+id+'\')"'
+    + ' aria-label="'+escHtml(methodLabel(o.from_method)+' بۆ '+methodLabel(to)+'، '+amount+'، '+txShortLabelOf(o))+'">'
+    + '<span class="dbr-pair" aria-hidden="true">'+dbLogoHTML(o.from_method)+dbLogoHTML(to)+'</span>'
+    + '<span class="dbr-main"><span class="dbr-title" dir="ltr">'+txRouteInner(o.from_method,to)+'</span>'
+    + '<span class="dbr-sub">'+escHtml(timeAgo(o.created_at))+'</span></span>'
+    + '<span class="dbr-end"><b class="dbr-amt" dir="ltr">'+escHtml(amount)+'</b>'
+    + '<span class="dbr-st"><i aria-hidden="true"></i>'+escHtml(txShortLabelOf(o))+'</span></span>'
+    + '</button>';
+}
+
+// ── dashboard (home): approved count + the three other states + greeting ──
+function renderDashboard(){
+  const num=document.getElementById('dbApproved'); if(!num) return;
+  const nameEl=document.getElementById('dbName');
+  if(nameEl && curProfile){
+    const full=String(curProfile.full_name||curProfile.username||'').trim() || pxAccountLabel() || '—';
+    nameEl.textContent=full;
+    const av=document.getElementById('dbAvatar');
+    if(av && typeof setAvatar==='function') setAvatar(av, full);
+  }
+  const greet=document.getElementById('dbGreet');
+  if(greet){ const h=new Date().getHours(); greet.textContent = h<12 ? 'بەیانیت باش' : h<18 ? 'ڕۆژت باش' : 'ئێوارەت باش'; }
+  if(!_ordersLoaded) return;                                   // skeletons stay until the first load
+  const c={done:0,pending:0,action:0,rejected:0};
+  for(const o of _orders){ const k=txStateOf(o).key; if(k in c) c[k]++; }
+  const total=_orders.length;
+  const fmt=n=>Number(n).toLocaleString('en-US');
+  num.textContent=fmt(c.done);
+  const tot=document.getElementById('dbTotal');
+  if(tot) tot.textContent = total ? ('کۆی گشتی '+fmt(total)) : 'هێشتا هیچ داواکارییەک نییە';
+  const set=(id,n)=>{ const el=document.getElementById(id); if(el){ el.textContent=fmt(n); el.closest('.dbo-row')?.classList.toggle('is-zero',!n); } };
+  set('dbApprovedRow',c.done); set('dbPending',c.pending); set('dbAction',c.action); set('dbRejected',c.rejected);
+  // status ring: one arc per state, in the legend's order, with a small gap between arcs
+  const ring=document.getElementById('dbRing');
+  if(ring){
+    const C=2*Math.PI*50, parts=[['done','is-ok'],['pending','is-wait'],['action','is-fix'],['rejected','is-bad']].filter(([k])=>c[k]>0);
+    const gap=parts.length>1?4:0; let at=0, html='';
+    for(const [k,cls] of parts){
+      const len=Math.max(c[k]/total*C-gap,1.5);
+      html+='<circle class="dbo-arc '+cls+'" cx="60" cy="60" r="50" stroke-dasharray="'+len.toFixed(2)+' '+C.toFixed(2)+'" stroke-dashoffset="'+(-at).toFixed(2)+'"/>';
+      at+=c[k]/total*C;
+    }
+    ring.innerHTML=html;
+  }
+}
+// a status tile opens /transactions already filtered to that status
+function dbOpenStatus(key){
+  navigate('transactions');
+  const chip=document.querySelector('#txStatusFilters .filter-chip[data-status="'+key+'"]');
+  if(typeof setTxStatus==='function') setTxStatus(key, chip);
 }
 
 function updateNavBadge(){
@@ -3225,6 +3390,8 @@ function renderTxList(){
   const list=_orders.filter(txMatches);
   const cnt=document.getElementById('txResultCount');
   const narrowed = !!_txQuery || _txStatus!=='all' || _txTime!=='all';
+  if(!_ordersLoaded){ if(cnt) cnt.textContent=''; el.innerHTML=window.PXS?PXS.txItems(4):''; el.setAttribute('aria-busy','true'); return; }
+  el.removeAttribute('aria-busy');
   if(cnt) cnt.textContent = (narrowed && _orders.length) ? (list.length+' لە '+_orders.length+' مامەڵە') : '';
   if(!list.length){
     el.innerHTML = '<div class="empty-state">'
@@ -3275,9 +3442,10 @@ Object.assign(ICON, {
 //   'hash' → www.domain.com/#/profile. Works on ANY static host with no
 //            server config at all. Switch to this if you cannot add rewrites.
 const ROUTE_MODE = 'path';
-const ROUTES = { home:'pageHome', transactions:'pageTx', changes:'pageChanges', rules:'pageRules', profile:'pageProfile', support:'pageSupport', verify:'pageVerify', balance:'pageBalance', summary:'pageSummary' };
+const ROUTES = { home:'pageDash', exchange:'pageHome', transactions:'pageTx', changes:'pageChanges', rules:'pageRules', profile:'pageProfile', support:'pageSupport', verify:'pageVerify', balance:'pageBalance', 'delete-account':'pageDeleteAccount', summary:'pageSummary' };
 const ROUTE_TITLES = {
   home:'Proxo — ئاڵوگۆڕی دراو',
+  exchange:'ئاڵوگۆڕی نوێ — Proxo',
   transactions:'مامەڵەکان — Proxo',
   changes:'گۆڕانکاری نرخەکان — Proxo',
   rules:'یاساکانی ئەپ — Proxo',
@@ -3285,7 +3453,8 @@ const ROUTE_TITLES = {
   support:'پشتگیری — Proxo',
   verify:'پشتڕاستکردنەوەی ناسنامە — Proxo',
   balance:'مێژووی مامەڵەکان — Proxo',
-  summary:'پوختەی مامەڵە — Proxo'
+  summary:'پوختەی مامەڵە — Proxo',
+  'delete-account':'سڕینەوەی هەژمار — Proxo'
 };
 // Everything before the route segment, so the app works at the domain root
 // (/profile) and inside a sub-folder (/exchange/profile) with no edits.
@@ -3311,7 +3480,6 @@ function routeFromLocation(){
 }
 function urlFor(route){
   if(route==='home') return BASE_PATH;
-  if(route==='balance') return BASE_PATH+'#/balance';          // sub-screen of the profile: needs no server rewrite
   if(route==='summary') return _txScreenToken ? BASE_PATH+'summarytransaction/'+encodeURIComponent(_txScreenToken) : location.pathname;
   return ROUTE_MODE==='hash' ? BASE_PATH+'#/'+route : BASE_PATH+route;
 }
@@ -3329,8 +3497,8 @@ function navigate(route, push){
     if(el) el.classList.toggle('active', r===route);
   });
   // /changes lives under the profile tab
-  const navRoute = (route==='changes' || route==='support' || route==='verify' || route==='balance') ? 'profile' : route==='summary' ? 'transactions' : route;
-  document.querySelectorAll('.bn-item, .hdr-nav-link, .pxn-item, .pxh-link').forEach(b=>b.classList.toggle('on', b.dataset.route===navRoute));
+  const navRoute = navRouteOf(route);
+  document.querySelectorAll('.bn-item, .hdr-nav-link, .pxn-item, .pxh-link, .pxn-fab').forEach(b=>b.classList.toggle('on', b.dataset.route===navRoute));
   if(push && location.pathname+location.hash!==urlFor(route)){ try{ history.pushState({route:route}, '', urlFor(route)); }catch(_){} }
   document.title = ROUTE_TITLES[route] || 'Proxo';
   closeNotifPanel();
@@ -3340,6 +3508,9 @@ function navigate(route, push){
   if(route==='home'){
     renderHomeFeedbackPrompt();
     maybePromptHomeFeedback();
+    if(typeof renderDashboard==='function') renderDashboard();
+  }
+  if(route==='exchange'){
     if(curUser && typeof loadMyBalance==='function')loadMyBalance();
   }
   if(route==='changes')      loadChangeLog();
@@ -3347,6 +3518,14 @@ function navigate(route, push){
   if(route==='balance')    pxBalHistLoad(true);
   if(route==='verify')     { renderVerifyPage(); loadKycStatus(true); }
   if(route==='support')      loadSupportCases();
+  if(route==='delete-account') loadAccountDeletionInfo();
+}
+// Which bottom-bar tab a screen belongs to. The new-order screen (/exchange) opens from the dashboard.
+function navRouteOf(route){
+  if(['changes','support','verify','balance','delete-account'].includes(route)) return 'profile';
+  if(route==='summary') return 'transactions';
+  if(route==='exchange') return 'home';
+  return route;
 }
 // ══════════════════════════════════════════════════════════════
 // ═══ SECTION LIFECYCLE
@@ -3381,18 +3560,20 @@ function resetProfileForms(){
 }
 function resetSupportForm(){
   const cat=document.getElementById('supportCategory'); if(cat) cat.selectedIndex=0;
+  try{ syncSupportCategoryChips(); }catch(_){}
   ['supportOrderCode','supportDescription'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
   clearFieldError('supportDescription');
   try{ updateSupportDescriptionCount(); }catch(_){}
   try{ removeSupportImage(); }catch(_){}
 }
 function resetSection(route){
-  if(route==='home')         resetHomeForm();
+  if(route==='exchange')     resetHomeForm();
   else if(route==='transactions') { resetTxFilters(); renderTxPage(); }
   else if(route==='profile') resetProfileForms();
   else if(route==='verify')  { if(!_kycSubmitting) kycResetForm(); }
   else if(route==='support') resetSupportForm();
   else if(route==='balance') pxBalHistReset();
+  else if(route==='delete-account') daxReset();
 }
 
 let _refreshing=false;
@@ -3405,7 +3586,8 @@ async function refreshSection(route, opts){
     if(!opts.keepForms) resetSection(route);
     const legacy=()=>{ try{ return typeof loadMyBalance==='function' ? Promise.resolve(loadMyBalance()).catch(()=>{}) : null; }catch(_){ return null; } };
     const jobs=[];
-    if(route==='home')              jobs.push(loadHistory(), loadRates(), loadWallets(), loadMyRewards(), legacy());
+    if(route==='home')              jobs.push(loadHistory());
+    else if(route==='exchange')     jobs.push(loadRates(), loadWallets(), legacy());
     else if(route==='transactions') jobs.push(loadHistory());
     else if(route==='profile')      jobs.push(loadKycStatus(true), pxBalanceLoad(true), legacy(), (typeof loadWhatsappSettings==='function'?loadWhatsappSettings():null));
     else if(route==='balance')      jobs.push(pxBalHistLoad(true), pxBalanceLoad(true));
@@ -3414,7 +3596,7 @@ async function refreshSection(route, opts){
     else if(route==='verify')       jobs.push(loadKycStatus(true));
     const out=await Promise.all(jobs);
     if(out.some(v=>v===false)) return false;
-    if(route==='home'){ try{ calc(); }catch(_){} }
+    if(route==='exchange'){ try{ calc(); }catch(_){} }
     return true;
   }catch(e){
     return false;
@@ -3481,7 +3663,7 @@ function renderBalHist(){
   if(_bhError && !_bhRows.length){
     list.innerHTML='<div class="bh-state"><b>نەتوانرا مێژووەکە بار بکرێت</b><span>پەیوەندی ئینتەرنێتەکەت بپشکنە و دووبارە هەوڵبدەرەوە.</span><button type="button" onclick="pxBalHistLoad(true)">دووبارە هەوڵبدەرەوە</button></div>';
   }else if(_bhBusy && !_bhRows.length){
-    list.innerHTML='<div class="bh-skel"></div><div class="bh-skel"></div><div class="bh-skel"></div>';
+    list.innerHTML=window.PXS?PXS.balHist(3):'<div class="bh-skel"></div><div class="bh-skel"></div><div class="bh-skel"></div>';
   }else if(!_bhRows.length){
     list.innerHTML='<div class="bh-state"><b>هێشتا هیچ مامەڵەیەک نییە</b><span>کاتێک باڵانس بۆ هەژمارەکەت زیاد بکرێت یان بگەڕێندرێتەوە، لێرە دەردەکەوێت.</span></div>';
   }else{
@@ -3631,7 +3813,7 @@ function chgRouteHTML(r){
 function rateOutcome(amount, r){
   const tier=rateTierFromRow(r);
   const eff=tier&&(r.rate_type==='fee_percent'||r.rate_type==='multiplier')
-    ?ProxoRewardPricing.effectiveRate({type:r.rate_type,value:Number(r.rate_value),tier:tier},amount):null;
+    ?ProxoPricing.effectiveRate({type:r.rate_type,value:Number(r.rate_value),tier:tier},amount):null;
   const v=Number(eff?eff.value:r.rate_value)||0;
   if(r.rate_type==='fee_percent') return { out: amount - (amount*v/100), fee: v>0 ? ('لێبڕین '+fmtPct(v)+'%') : 'بێ لێبڕین' };
   if(r.rate_type==='fee_fixed')   return { out: Math.max(0, amount-v),   fee: v>0 ? ('لێبڕین '+formatNum(v)+' IQD') : 'بێ لێبڕین' };
@@ -3673,7 +3855,10 @@ let _changesLoaded=false;
 async function loadChangeLog(force){
   const el=document.getElementById('changesList'); if(!el) return;
   if(_changesLoaded && !force) return;
-  el.innerHTML='<div class="empty-state">بارکردن...</div>';
+  if(window.PXS){
+    el.innerHTML=PXS.changeItems(3);
+    const now=document.getElementById('ratesNow'); if(now && !now.querySelector('.rate-card:not(.is-skel)')) now.innerHTML=PXS.rateCards(3);
+  }else el.innerHTML='<div class="empty-state">بارکردن...</div>';
   try{
     const res = await Promise.all([
       sb.from('ex_change_log').select('*').order('created_at',{ascending:false}).limit(60),
@@ -3683,6 +3868,7 @@ async function loadChangeLog(force){
     renderRatesNow((res[1] && res[1].data) || []);
     renderChangeLog((res[0] && res[0].data) || []);
   }catch(e){
+    const now=document.getElementById('ratesNow'); if(now && now.querySelector('.is-skel')) now.innerHTML='';
     el.innerHTML='<div class="empty-state">نەتوانرا گۆڕانکارییەکان باربکرێن</div>';
   }
 }
@@ -3768,7 +3954,7 @@ function updateProfileCooldownUI(){
 }
 
 function applyProfileToUI(){
-  const name = (curProfile && curProfile.full_name) || (curUser && curUser.email) || '';
+  const name = (curProfile && curProfile.full_name) || pxAccountLabel() || '';
   const nameEl=document.getElementById('userName'); if(nameEl) nameEl.innerText=name;
   setAvatar(document.getElementById('greetAvatar'), name);
   setAvatar(document.getElementById('pfAvatar'), name);
@@ -3777,7 +3963,7 @@ function applyProfileToUI(){
   const unEdit=document.getElementById('pfUsernameEdit');
   if(unEdit) unEdit.hidden=!(curProfile && curProfile.username && !curProfile.username_changed_at);
   const pfName=document.getElementById('pfNameLbl'); if(pfName) pfName.textContent=name||'—';
-  const pfMail=document.getElementById('pfEmailLbl'); if(pfMail) pfMail.textContent=(curUser&&curUser.email)||'—';
+  const pfMail=document.getElementById('pfEmailLbl'); if(pfMail) pfMail.textContent=pxAccountLabel()||'—';
   syncSenderIdentity();
   const joined=document.getElementById('pfJoined');
   if(joined && curProfile && curProfile.created_at){
@@ -4004,10 +4190,40 @@ function supportCaseNumber(row){
   return Number.isInteger(value) ? String(value).padStart(6,'0') : '—';
 }
 
+// category chips mirror the (hidden) #supportCategory select, which stays the source of the value
+function syncSupportCategoryChips(){
+  const sel=document.getElementById('supportCategory'); const value=sel?sel.value:'order';
+  document.querySelectorAll('#supportCategoryChips .sc-cat').forEach(b=>{
+    const on=b.dataset.value===value; b.classList.toggle('is-on',on); b.setAttribute('aria-checked',on?'true':'false');
+  });
+}
+function setSupportCategory(value){
+  const sel=document.getElementById('supportCategory'); if(!sel) return;
+  sel.value=value; syncSupportCategoryChips();
+}
+const SC_ICO={
+  order:'<path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M14 8H8"/><path d="M16 12H8"/>',
+  payment:'<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>',
+  account:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  technical:'<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+  general:'<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
+  reply:'<path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/>',
+  image:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21"/>',
+  alert:'<circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>'
+};
+function scIcon(key){ return '<svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'+(SC_ICO[key]||SC_ICO.general)+'</svg>'; }
+function supportEmptyHTML(title,sub,icon){
+  return '<div class="sc-empty"><span class="sc-tile">'+scIcon(icon||'general')+'</span><b>'+title+'</b>'+(sub?'<small>'+sub+'</small>':'')+'</div>';
+}
+function setSupportCasesCount(n){
+  const c=document.getElementById('supportCasesCount'); if(!c) return;
+  c.textContent=String(n); c.hidden=!n;
+}
+
 function updateSupportDescriptionCount(){
   const input=document.getElementById('supportDescription');
   const count=document.getElementById('supportDescriptionCount');
-  if(count) count.textContent=formatNum((input?.value||'').length)+' / ٢٠٠٠';
+  if(count){ const n=(input?.value||'').length; count.textContent=n+' / 2000'; count.classList.toggle('is-near',n>=1800); }
   if((input?.value||'').trim().length>=10) clearFieldError('supportDescription');
 }
 
@@ -4153,6 +4369,7 @@ async function submitSupportCase(){
     document.getElementById('supportDescription').value='';
     document.getElementById('supportOrderCode').value='';
     document.getElementById('supportCategory').value='order';
+    syncSupportCategoryChips();
     updateSupportDescriptionCount();
     removeSupportImage();
     showToast('کەیسەکەت بە سەرکەوتوویی نێردرا','success');
@@ -4173,7 +4390,7 @@ async function submitSupportCase(){
 async function loadSupportCases(){
   const list=document.getElementById('supportCasesList');
   if(!list || !curUser) return;
-  list.innerHTML='<div class="support-loading">'+ICON.spin+' بارکردن...</div>';
+  if(!list.querySelector('.sc-case:not(.is-skel)')) list.innerHTML=window.PXS?PXS.supportCases(2):'';
   try{
     const {data,error}=await sb.from('ex_support_cases')
       .select('id,case_number,category,order_code,description,image_path,status,admin_note,created_at,updated_at')
@@ -4186,24 +4403,31 @@ async function loadSupportCases(){
     }));
     renderSupportCases();
   }catch(e){
-    list.innerHTML='<div class="empty-state">نەتوانرا کەیسەکان باربکرێن</div>';
+    list.innerHTML=supportEmptyHTML('نەتوانرا کەیسەکان باربکرێن','پەیوەندی ئینتەرنێتەکەت بپشکنە و دووبارە هەوڵ بدەرەوە.','alert');
+    setSupportCasesCount(0);
     reportAppError(e,{operation:'support_cases_load',stage:'case_list'});
   }
 }
 
 function renderSupportCases(){
   const list=document.getElementById('supportCasesList'); if(!list) return;
-  if(!_supportCases.length){ list.innerHTML='<div class="empty-state">هێشتا هیچ کەیسێکت نییە</div>'; return; }
-  list.innerHTML=_supportCases.map(row=>`<article class="support-case-card ${supportStatusClass(row.status)}">
-    <div class="support-case-head">
-      <div><b dir="ltr">${escHtml(supportCaseNumber(row))}</b><small>${escHtml(timeAgo(row.created_at))}</small></div>
-      <span class="support-case-status">${escHtml(supportStatusLabel(row.status))}</span>
+  setSupportCasesCount(_supportCases.length);
+  if(!_supportCases.length){ list.innerHTML=supportEmptyHTML('هێشتا هیچ کەیسێکت نییە','ئەگەر کێشەیەکت هەبوو، لە سەرەوە کەیسێک بنێرە.'); return; }
+  list.innerHTML=_supportCases.map(row=>{
+    const cat=['order','payment','account','technical'].includes(row.category)?row.category:'general';
+    return `<article class="support-case-card sc-case is-${supportStatusClass(row.status)}">
+    <div class="sc-case-head">
+      <span class="sc-tile sc-case-ico">${scIcon(cat)}</span>
+      <div class="sc-case-id"><b>کەیسی <span dir="ltr">#${escHtml(supportCaseNumber(row))}</span></b><small>${escHtml(supportCategoryLabel(row.category))} · ${escHtml(timeAgo(row.created_at))}</small></div>
+      <span class="sc-status"><i aria-hidden="true"></i>${escHtml(supportStatusLabel(row.status))}</span>
     </div>
-    <div class="support-case-meta"><span>${escHtml(supportCategoryLabel(row.category))}</span>${row.order_code?`<span dir="ltr">${escHtml(row.order_code)}</span>`:''}</div>
-    <p class="support-case-description">${escHtml(row.description)}</p>
-    ${row.image_url?`<button type="button" class="support-case-image-link" onclick="openSupportImageById('${escHtml(row.id)}')"><img src="${escHtml(row.image_url)}" alt="وێنەی کێشە"><span>بینینی وێنە</span></button>`:''}
-    ${row.admin_note?`<div class="support-admin-reply"><b>وەڵامی پشتگیری</b><p>${escHtml(row.admin_note)}</p></div>`:''}
-  </article>`).join('');
+    <p class="sc-case-desc">${escHtml(row.description)}</p>
+    ${(row.order_code||row.image_url)?`<div class="sc-case-meta">
+      ${row.order_code?`<span class="sc-chip">ئایدی مامەڵە <b dir="ltr">${escHtml(row.order_code)}</b></span>`:''}
+      ${row.image_url?`<button type="button" class="sc-chip sc-chip-img" onclick="openSupportImageById('${escHtml(row.id)}')"><img src="${escHtml(row.image_url)}" alt="">بینینی وێنە</button>`:''}
+    </div>`:''}
+    ${row.admin_note?`<div class="sc-reply"><span class="sc-reply-ico">${scIcon('reply')}</span><div><b>وەڵامی پشتگیری</b><p>${escHtml(row.admin_note)}</p></div></div>`:''}
+  </article>`;}).join('');
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -4389,9 +4613,9 @@ function renderKycProfile(){
   if(badge){
     badge.dataset.state=status;
     const ico=document.getElementById('pfKycBadgeIco');
-    if(ico) ico.innerHTML = status==='loading' ? kycSolar(meta.icon,'icn-sm icn-spin') : kycBadgeSvg(status);
+    if(ico) ico.innerHTML = status==='loading' ? _skb(16,16,true) : kycBadgeSvg(status);
     const txt=document.getElementById('pfKycBadgeText');
-    if(txt) txt.textContent=meta.label;
+    if(txt){ if(status==='loading') txt.innerHTML=_skb(92,10); else txt.textContent=meta.label; }
   }
   const dot=document.getElementById('pfVerifiedDot');
   if(dot){
@@ -4489,7 +4713,7 @@ function renderVerifyPage(){
   if(status==='none' && !KYC_SELF_START_ENABLED) canSubmit=false;
 
   if(status==='loading'){
-    banner.innerHTML=`${kycIco('loading')}<div><b>بارکردنی دۆخی ناسنامە...</b></div>`;
+    banner.innerHTML=window.PXS?PXS.kycBanner():`${kycIco('loading')}<div><b>بارکردنی دۆخی ناسنامە...</b></div>`;
     form.hidden=true; return;
   }
   if(status==='error'){
@@ -5083,7 +5307,7 @@ window.addEventListener('scroll', function(){
 }, { passive:true });
 
 function focusExchangeForm(){
-  navigate('home');
+  navigate('exchange');
   const el=document.getElementById('amt');
   const card=document.getElementById('exchangeCard');
   if(card) card.scrollIntoView({ behavior:'smooth', block:'start' });
@@ -5161,7 +5385,7 @@ function updateHeaderRate(){
   const raw=RATES[from+'>'+to];
   if(from===to || !raw || !routeAllowed(from,to)){ el.textContent='—'; return; }
   const typed=parseFloat(typeof getAmtRaw==='function'?getAmtRaw():'')||0;
-  const r=raw.tier&&typed>0&&from!=='USDT'&&to!=='USDT'?ProxoRewardPricing.effectiveRate(raw,typed):raw;
+  const r=raw.tier&&typed>0&&from!=='USDT'&&to!=='USDT'?ProxoPricing.effectiveRate(raw,typed):raw;
   if(r.type==='multiplier')      el.textContent = '1 = '+fmtPct(r.value);
   else if(r.type==='fee_percent')el.textContent = fmtPct(r.value)+'% کرێ';
   else                           el.textContent = formatNum(r.value)+' IQD کرێ';
@@ -5234,7 +5458,7 @@ function startProofPolling(){
   loadPublicProof();
   clearInterval(_proofTimer);
   _proofTimer=setInterval(function(){
-    if(document.visibilityState==='visible' && _route==='home') loadPublicProof();
+    if(document.visibilityState==='visible' && !curUser) loadPublicProof();
   }, 60000);
 }
 
@@ -5336,10 +5560,11 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     dismissAppSplash();return;
   }
   sb=window.supabase.createClient(SB_URL,SB_KEY,{ auth:{ persistSession:true, autoRefreshToken:true, storageKey:'zex_sb_session' } });
+  pxPaintSkeletons();
+  try{ if(localStorage.getItem('zex_sb_session') && !authRouteFromLocation()) pxBootShell(routeFromLocation()); }catch(_){}
   sb.auth.onAuthStateChange((_event,nextSession)=>{
     activeSession=nextSession||null;
     if(_event==='SIGNED_OUT'){
-      ++_rewardLoadId;MY_REWARDS=[];
       if(typeof resetMyBalance==='function')resetMyBalance();
       if(typeof resetCustomerConveniences==='function')resetCustomerConveniences();
     }
@@ -5354,19 +5579,22 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     showAmsg(kuErr(error?.message)||'کێشەی تۆڕ، پەڕەکە نوێ بکەرەوە','err');
   }
   if(session?.user){
-    await startApp(session.user);
+    try{ await startApp(session.user); }catch(e){ pxBootEnd(); throw e; }
   }else if(isTransactionSummaryRoute()){
+    pxBootEnd();
     // remember the transaction, sign in, then open it inside the app
     const pending=summaryTokenFromPath();
     try{ if(TX_TOKEN_RE.test(pending)) sessionStorage.setItem('px_pending_summary',pending); }catch(_){}
     setAuthRoute('login',false,true);
     try{ showAmsg('بۆ بینینی پوختەی مامەڵەکە سەرەتا بچۆ ژوورەوە.','ok'); }catch(_){}
   }else{
+    pxBootEnd();
     let route=authRouteFromLocation()||'login';
     if((route==='login/otp'||route==='signup/otp')&&!_otpPendingData) route=route.split('/')[0];
     if(route==='forgetpassword/otp'&&!_fpEmail) route='forgetpassword';
     if(route==='newpassword'&&!_fpVerified) route='forgetpassword';
     setAuthRoute(route,false,true);
+    try{ const notice=sessionStorage.getItem('px_auth_notice'); if(notice){ sessionStorage.removeItem('px_auth_notice'); showAmsg(notice,'ok'); } }catch(_){}
   }
   dismissAppSplash();
 });
@@ -5376,3 +5604,98 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   const run=()=>{try{const v=document.querySelector('#mainApp .pfx-version'),a=document.getElementById('authAppVersion');if(v&&a&&v.textContent.trim())a.textContent=v.textContent.trim();}catch(_){}};
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',run); else run();
 })();
+
+// ══════════════════════════════════════════════════════════════
+// ═══ ACCOUNT DELETION (route "/delete-account")
+// ═══  The account is deleted 7 days after the request. Signing in again
+// ═══  before then reactivates it. Server: ex_account_deletion_* (Supabase).
+// ══════════════════════════════════════════════════════════════
+let _daxBlocked=false, _daxBusy=false;
+const DAX_ERRORS={
+  ACCOUNT_DELETE_BALANCE:'سەرەتا باڵانسەکەت دەربهێنە، پاشان هەژمارەکەت بسڕەوە.',
+  ACCOUNT_DELETE_OPEN_ORDERS:'داواکارییەکی تەواونەبووت هەیە. چاوەڕێ بکە تا تەواو دەبێت.',
+  ACCOUNT_DELETE_OPEN_PAYOUTS:'داواکاریی دەرهێنانی پارەت هەیە و هێشتا تەواو نەبووە.',
+  ACCOUNT_DELETE_STAFF:'هەژماری ستاف لێرەوە ناسڕدرێتەوە.'
+};
+function daxDate(iso){
+  const d=new Date(iso);
+  return isNaN(d)?'':d.toLocaleDateString('en-GB',{day:'2-digit',month:'2-digit',year:'numeric'});
+}
+function daxSync(){
+  const btn=document.getElementById('daxBtn'), pass=document.getElementById('daxPass');
+  if(btn&&!_daxBusy) btn.disabled=_daxBlocked||!pass||pass.value.length<6;
+}
+function daxReset(){
+  const pass=document.getElementById('daxPass'), err=document.getElementById('daxErr');
+  if(pass) pass.value='';
+  if(err) err.textContent='';
+  daxSync();
+}
+async function loadAccountDeletionInfo(){
+  const box=document.getElementById('daxBlock');
+  _daxBlocked=false;
+  if(box){ box.hidden=true; box.textContent=''; }
+  daxSync();
+  if(!curUser||!sb) return;
+  try{
+    const {data,error}=await sb.rpc('ex_account_deletion_info');
+    if(error||!data) return;
+    if(data.blocker){
+      _daxBlocked=true;
+      const text=DAX_ERRORS['ACCOUNT_DELETE_'+data.blocker]||'';
+      if(box&&text){
+        box.textContent=text;
+        if(data.blocker==='BALANCE'){
+          const amt=document.createElement('bdi'); amt.dir='ltr'; amt.textContent=formatNum(Number(data.balance_iqd)||0)+' IQD';
+          box.prepend('باڵانسی ئێستات: ',amt,'. ');
+        }
+        box.hidden=false;
+      }
+    }
+  }catch(_){}
+  daxSync();
+}
+async function submitAccountDeletion(){
+  if(_daxBusy||_daxBlocked||!curUser||!sb) return;
+  const pass=document.getElementById('daxPass'), err=document.getElementById('daxErr'), btn=document.getElementById('daxBtn');
+  const password=String(pass?.value||'');
+  if(err) err.textContent='';
+  if(password.length<6){ if(err) err.textContent='وشەی نهێنی بنووسە'; return; }
+  _daxBusy=true;
+  if(btn){ btn.disabled=true; btn.classList.add('is-loading'); btn.setAttribute('aria-busy','true'); }
+  try{
+    // checked by the server: number accounts keep their password outside Supabase Auth
+    const check=await pxAuthApi('verify_password',{password},true);
+    if(!check.ok){ if(err) err.textContent=check.error||'وشەی نهێنی هەڵەیە'; return; }
+    const {data,error}=await sb.rpc('ex_account_deletion_request',{p_reason:null});
+    if(error) throw error;
+    const when=daxDate(data?.scheduled_for);
+    try{ sessionStorage.setItem('px_auth_notice','داواکارییەکەت وەرگیرا. هەژمارەکەت'+(when?' لە '+when:' دوای ٧ ڕۆژ')+' دەسڕدرێتەوە. بۆ هەڵوەشاندنەوە، تەنها بچۆرەوە ژوورەوە.'); }catch(_){}
+    try{ await sb.auth.signOut({scope:'local'}); }catch(_){}
+    try{ location.replace(BASE_PATH+'login'); }catch(_){ location.reload(); }
+  }catch(e){
+    const code=Object.keys(DAX_ERRORS).find(k=>String(e?.message||'').includes(k));
+    if(code){ _daxBlocked=true; const box=document.getElementById('daxBlock'); if(box){ box.textContent=DAX_ERRORS[code]; box.hidden=false; } }
+    else if(err) err.textContent=kuErr(e?.message)||'هەڵەیەک ڕووی دا، دووبارە هەوڵ بدەرەوە.';
+  }finally{
+    _daxBusy=false;
+    if(btn){ btn.classList.remove('is-loading'); btn.removeAttribute('aria-busy'); }
+    daxSync();
+  }
+}
+// After sign-in: 'active' | 'reactivated' | 'pending' (an old session → signed out) | 'unknown'
+async function checkAccountDeletion(){
+  if(!sb) return 'unknown';
+  try{
+    const {data,error}=await sb.rpc('ex_account_deletion_check');
+    if(error||!data) return 'unknown';
+    if(data.state==='pending'){
+      const when=daxDate(data.scheduled_for);
+      try{ sessionStorage.setItem('px_auth_notice','هەژمارەکەت'+(when?' لە '+when:'')+' دەسڕدرێتەوە. بۆ چالاککردنەوەی، دووبارە بچۆرەوە ژوورەوە.'); }catch(_){}
+      try{ await sb.auth.signOut({scope:'local'}); }catch(_){}
+      try{ location.replace(BASE_PATH+'login'); }catch(_){ location.reload(); }
+      return 'pending';
+    }
+    return data.state||'unknown';
+  }catch(_){ return 'unknown'; }
+}

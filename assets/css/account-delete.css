@@ -1,0 +1,103 @@
+/* ═════════════════════════════════════════════════════════════════
+   Delete account (#pageDeleteAccount, route "/delete-account") and its
+   entry in the profile menu. Light and dark. Calm, not alarming: one red
+   accent on the icon and the final button only.
+     type   12 · 13 · 14 · 18 (Rabar)     space 8 · 12 · 16 · 24
+     radius 12 (controls) · 16 (cards)
+   ═════════════════════════════════════════════════════════════════ */
+html body #mainApp#mainApp #pageDeleteAccount {
+  --dx-card: #ffffff; --dx-soft: #f5f7fa; --dx-line: #e7ebf1;
+  --dx-ink: #0f172a; --dx-text: #334155; --dx-muted: #6b7a90;
+  --dx-danger: #d92d20; --dx-danger-press: #b42318; --dx-danger-soft: #fef1f0;
+  --dx-warn: #9a5b00; --dx-warn-soft: #fff6e5; --dx-warn-line: #f6dfb1;
+  --dx-accent: #0265ff;
+  --dx-font: Rabar, Arial, sans-serif;
+}
+html[data-theme="dark"] body #mainApp#mainApp #pageDeleteAccount {
+  --dx-card: #131c2e; --dx-soft: #0f1828; --dx-line: #25324a;
+  --dx-ink: #e8edf6; --dx-text: #c4cee0; --dx-muted: #98a6bd;
+  --dx-danger: #f04438; --dx-danger-press: #d92d20; --dx-danger-soft: #2a1618;
+  --dx-warn: #f7c66b; --dx-warn-soft: #2a2213; --dx-warn-line: #4a3a1c;
+  --dx-accent: #3b8cff;
+}
+
+html body #mainApp#mainApp #pageDeleteAccount .dax { display: flex; flex-direction: column; gap: 24px; font-family: var(--dx-font); color: var(--dx-ink); }
+
+/* header: back · title */
+html body #mainApp#mainApp #pageDeleteAccount .dax-bar { display: grid; grid-template-columns: 40px 1fr 40px; align-items: center; gap: 8px; }
+html body #mainApp#mainApp #pageDeleteAccount .dax-bar h2 { margin: 0; text-align: center; color: var(--dx-ink); font-size: 16px; font-weight: 700; line-height: 1.5; }
+html body #mainApp#mainApp #pageDeleteAccount .dax-back {
+  width: 40px; height: 40px; display: grid; place-items: center; padding: 0; margin: 0;
+  border: 1px solid var(--dx-line); border-radius: 12px; background: var(--dx-card); color: var(--dx-text); cursor: pointer;
+}
+html body #mainApp#mainApp #pageDeleteAccount .dax-back .pxi { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* what this does */
+html body #mainApp#mainApp #pageDeleteAccount .dax-hero { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; padding: 8px 8px 0; }
+html body #mainApp#mainApp #pageDeleteAccount .dax-hero-ico {
+  width: 56px; height: 56px; margin-bottom: 4px; display: grid; place-items: center; border-radius: 50%;
+  background: var(--dx-danger-soft); color: var(--dx-danger);
+}
+html body #mainApp#mainApp #pageDeleteAccount .dax-hero-ico .pxi { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+html body #mainApp#mainApp #pageDeleteAccount .dax-hero h3 { margin: 0; color: var(--dx-ink); font-size: 18px; font-weight: 700; line-height: 1.5; }
+html body #mainApp#mainApp #pageDeleteAccount .dax-hero p { margin: 0; max-width: 34ch; color: var(--dx-muted); font-size: 14px; line-height: 1.75; }
+
+html body #mainApp#mainApp #pageDeleteAccount .dax-list {
+  list-style: none; margin: 0; padding: 4px 16px; border: 1px solid var(--dx-line); border-radius: 16px; background: var(--dx-card);
+}
+html body #mainApp#mainApp #pageDeleteAccount .dax-list li { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; }
+html body #mainApp#mainApp #pageDeleteAccount .dax-list li + li { border-top: 1px solid var(--dx-line); }
+html body #mainApp#mainApp #pageDeleteAccount .dax-li-ico {
+  flex: 0 0 36px; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 10px; background: var(--dx-soft); color: var(--dx-text);
+}
+html body #mainApp#mainApp #pageDeleteAccount .dax-li-ico .pxi { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+html body #mainApp#mainApp #pageDeleteAccount .dax-list div { min-width: 0; display: flex; flex-direction: column; }
+html body #mainApp#mainApp #pageDeleteAccount .dax-list b { color: var(--dx-ink); font-size: 14px; font-weight: 600; line-height: 1.6; }
+html body #mainApp#mainApp #pageDeleteAccount .dax-list small { color: var(--dx-muted); font-size: 12.5px; line-height: 1.7; }
+
+/* why it cannot be done yet (balance / open order) */
+html body #mainApp#mainApp #pageDeleteAccount .dax-block {
+  margin: -8px 0 0; padding: 12px 14px; border: 1px solid var(--dx-warn-line); border-radius: 12px;
+  background: var(--dx-warn-soft); color: var(--dx-warn); font-size: 13px; line-height: 1.7;
+}
+html body #mainApp#mainApp #pageDeleteAccount .dax-block[hidden] { display: none; }
+
+/* password + action */
+html body #mainApp#mainApp #pageDeleteAccount .dax-form { display: flex; flex-direction: column; gap: 8px; }
+html body #mainApp#mainApp #pageDeleteAccount .dax-form label { color: var(--dx-text); font-size: 13px; font-weight: 600; line-height: 1.6; }
+html body #mainApp#mainApp #pageDeleteAccount #daxPass {
+  width: 100%; height: 50px; margin: 0; padding: 0 14px; box-sizing: border-box;
+  border: 1px solid var(--dx-line) !important; border-radius: 12px !important; background: var(--dx-card) !important; box-shadow: none !important;
+  color: var(--dx-ink) !important; font-size: 16px !important; text-align: left;
+}
+html body #mainApp#mainApp #pageDeleteAccount #daxPass:focus { outline: 0; border-color: var(--dx-accent) !important; }
+html body #mainApp#mainApp #pageDeleteAccount #daxPass:disabled { opacity: .6; }
+html body #mainApp#mainApp #pageDeleteAccount .dax-err { margin: 0; min-height: 0; color: var(--dx-danger); font-size: 13px; line-height: 1.6; }
+html body #mainApp#mainApp #pageDeleteAccount .dax-err:empty { display: none; }
+html body #mainApp#mainApp #pageDeleteAccount .dax-btn {
+  position: relative; width: 100%; height: 52px; margin: 8px 0 0; padding: 0 16px; display: flex; align-items: center; justify-content: center; gap: 8px;
+  border: 0; border-radius: 14px; background: var(--dx-danger); color: #fff;
+  font-family: var(--dx-font); font-size: 16px; font-weight: 600; cursor: pointer;
+  transition: transform .12s ease, background-color .15s ease, opacity .15s ease;
+}
+html body #mainApp#mainApp #pageDeleteAccount .dax-btn:not(:disabled):active { transform: scale(.98); background: var(--dx-danger-press); }
+html body #mainApp#mainApp #pageDeleteAccount .dax-btn:disabled:not(.is-loading) { background: var(--dx-soft); color: var(--dx-muted); box-shadow: inset 0 0 0 1px var(--dx-line); cursor: default; }
+html body #mainApp#mainApp #pageDeleteAccount .dax-btn.is-loading { cursor: progress; opacity: .9; }
+html body #mainApp#mainApp #pageDeleteAccount .dax-spin { display: none; width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .35); border-top-color: #fff; animation: daxSpin .7s linear infinite; }
+html body #mainApp#mainApp #pageDeleteAccount .dax-btn.is-loading .dax-spin { display: block; }
+@keyframes daxSpin { to { transform: rotate(360deg); } }
+html body #mainApp#mainApp #pageDeleteAccount .dax-cancel {
+  width: 100%; height: 48px; margin: 0; border: 0; border-radius: 14px; background: transparent; color: var(--dx-text);
+  font-family: var(--dx-font); font-size: 15px; font-weight: 600; cursor: pointer;
+}
+html body #mainApp#mainApp #pageDeleteAccount .dax-cancel:active { background: var(--dx-soft); }
+
+/* profile menu entry */
+html body #mainApp#mainApp #pageProfile .pfx-item-danger .pfx-item-ico { background: #fef1f0; color: #d92d20; }
+html body #mainApp#mainApp #pageProfile .pfx-item-danger .pfx-item-txt b { color: #d92d20; }
+html[data-theme="dark"] body #mainApp#mainApp #pageProfile .pfx-item-danger .pfx-item-ico { background: #2a1618; color: #f97066; }
+html[data-theme="dark"] body #mainApp#mainApp #pageProfile .pfx-item-danger .pfx-item-txt b { color: #f97066; }
+
+@media (prefers-reduced-motion: reduce) {
+  html body #mainApp#mainApp #pageDeleteAccount :is(.dax-btn, .dax-spin) { transition: none !important; animation: none !important; }
+}

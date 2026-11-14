@@ -1,5 +1,7 @@
 # Exchange customer and staff features
 
+> **2026-11-14 — the discount/reward system was removed permanently.** No customer or admin can grant, receive or apply a discount. Every order is priced by `ex_orders_apply_pricing` with the configured fee only. See `supabase/migrations/20261114170219_remove_reward_discount_system_20261114.sql`. The backup is in the private schema `backup_rewards_20261114`. Past orders keep their `reward_*` columns as history. The reward notes below are historical.
+
 Wallet labels are configured manually in the admin wallet editor: none, popular, most popular, or new. New is recorded after a signed-in customer actually sees the wallet in the picker. It disappears on the next opening for that customer, across devices. Offscreen wallets are not marked seen. Changing the label away from New and back creates a new campaign.
 
 Saved recipients are available beside the recipient number in Send. Customers can save, select, edit and delete up to 50 destinations. Entries belong to their owner, validate wallet-specific numbers, and respect active routes. Selecting an entry retains normal confirmation and identity checks.

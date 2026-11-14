@@ -1,4 +1,5 @@
 import admin from '../api-handlers/admin.js';
+import auth from '../api-handlers/auth.js';
 import balance from '../api-handlers/balance.js';
 import errorLog from '../api-handlers/error-log.js';
 import forms from '../api-handlers/forms.js';
@@ -15,6 +16,7 @@ import { json } from '../api-handlers/_lib/security.js';
 const ROUTE_PARAM = '__pb_api_route';
 const handlers = Object.freeze({
   admin,
+  auth,
   balance,
   'error-log': errorLog,
   forms,

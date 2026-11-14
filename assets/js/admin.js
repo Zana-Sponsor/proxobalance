@@ -242,7 +242,6 @@ const pageConfig = {
   accounts:{ title:'هەژمارەکان', sub:'بەڕێوەبردنی هەژمارەکانی بەکارهێنەران', load: ()=>loadAccounts() },
   kyc:{ title:'پشتڕاستکردنەوەی ناسنامە', sub:'داواکردن، پشکنین و پەسەندکردنی بەڵگەنامەی ناسنامە', load: ()=>loadKycAdmin() },
   wallets:{ title:'واڵێتەکان', sub:'زیادکردن، قوفڵکردن و دەستکاریکردنی واڵێتەکانی وەرگرتنی پارە', load: ()=>loadWalletsAdmin() },
-  rewards:{ title:'پاداشت و داشکاندن', sub:'داشکاندنی لێبڕین و مامەڵەی بێ لێبڕین بۆ بەکارهێنەری دیاریکراو', load: ()=>loadRewardsPanel() },
   balance:{title:'ڕیفاوند و باڵانس',sub:'گەڕاندنەوەی پارە، داواکاری ناردن و چاودێریی دارایی',load:()=>loadBalanceAdmin()},
   rates:{ title:'نرخ و کرێ', sub:'ڕێکخستنی نرخی گۆڕینەوە و کرێی هەر ڕێگایەک', load: ()=>loadRates() },
   contracts:{ title:'گرێبەست', sub:'گرێبەستی بەکرێدان و واژووی هەردوو لایەن', load: ()=>loadContracts() },
@@ -2036,127 +2035,6 @@ async function submitCreateUser(){
   }finally{
     btn.disabled=false; btn.innerHTML='<i class="fas fa-check"></i> دروستکردن';
   }
-}
-
-// ═══ PER-CUSTOMER FEE REWARDS (server-only admin writes) ════════════
-let rewardSelectedUserId = null;
-let rewardAdminRows = [];
-async function loadRewardsPanel(){
-  const wrap=document.getElementById('rewardsTableWrap');
-  if(wrap) wrap.textContent='بارکردنی پاداشتەکان...';
-  try{
-    const [users, rewards] = await Promise.all([
-      allAccounts.length ? Promise.resolve(allAccounts) : fetchAllProfiles(),
-      adminApiRequest('list_rewards',{ limit:200 })
-    ]);
-    allAccounts=users;
-    rewardAdminRows=Array.isArray(rewards)?rewards:[];
-    renderRewardsList();
-    searchRewardUsers();
-  }catch(e){
-    if(wrap) wrap.textContent='هەڵە لە بارکردن: '+e.message;
-  }
-}
-function updateRewardKind(){
-  const free=document.getElementById('rewardKind').value==='free_transactions';
-  const percent=document.getElementById('rewardPercent');
-  percent.disabled=free;
-  if(free)percent.value=100;
-  const uses=document.getElementById('rewardUses');
-  if(free && !uses.value)uses.value=2;
-}
-function searchRewardUsers(){
-  rewardSelectedUserId=null;
-  const selected=document.getElementById('rewardSelectedUser');
-  if(selected)selected.textContent='';
-  const el=document.getElementById('rewardUserSearch');
-  const out=document.getElementById('rewardUserResults');
-  if(!el || !out)return;
-  const q=el.value.trim().toLowerCase().replace(/^@/,'');
-  if(!q){out.innerHTML='';return;}
-  const found=allAccounts.filter(a=>!a.is_banned && (
-    String(a.id||'').toLowerCase()===q ||
-    String(a.full_name||'').toLowerCase().includes(q) ||
-    String(a.email||'').toLowerCase().includes(q) ||
-    String(a.username||'').toLowerCase().includes(q))).slice(0,12);
-  out.innerHTML=found.map(a=>'<button type="button" class="act-btn dark" style="text-align:right;display:block;width:100%" onclick="pickRewardUser(\''+a.id+'\')">'+
-    esc(a.full_name||a.username||a.email||a.id)+' — '+esc(a.username?'@'+a.username:(a.email||''))+'</button>').join('') ||
-    '<div class="ex-note">هیچ بەکارهێنەرێک نەدۆزرایەوە</div>';
-}
-function pickRewardUser(id){
-  const user=allAccounts.find(a=>a.id===id && !a.is_banned);
-  if(!user)return;
-  rewardSelectedUserId=id;
-  document.getElementById('rewardUserSearch').value=user.username?'@'+user.username:(user.email||user.full_name||id);
-  document.getElementById('rewardSelectedUser').textContent='بەکارهێنەری هەڵبژێردراو: '+(user.full_name||user.email||id);
-  document.getElementById('rewardUserResults').innerHTML='';
-}
-async function saveUserReward(){
-  const err=document.getElementById('rewardError');
-  err.textContent='';
-  if(!rewardSelectedUserId){err.textContent='سەرەتا بەکارهێنەرێک هەڵبژێرە';return;}
-  const kind=document.getElementById('rewardKind').value;
-  const reward_scope=document.getElementById('rewardScope').value;
-  const discount_percent=kind==='free_transactions'?100:Number(document.getElementById('rewardPercent').value);
-  const rawUses=document.getElementById('rewardUses').value.trim();
-  const max_uses=rawUses===''?null:Number(rawUses);
-  const rawCap=document.getElementById('rewardAmountCap').value.trim();
-  const max_amount_iqd=rawCap===''?null:Number(rawCap);
-  const dateValue=document.getElementById('rewardUntil').value;
-  const valid_until=dateValue?new Date(dateValue).toISOString():null;
-  if(!(discount_percent>0 && discount_percent<=100) ||
-     (max_uses===null && kind==='free_transactions') ||
-     (max_uses!==null && (!Number.isInteger(max_uses)||max_uses<1||max_uses>1000))){
-    err.textContent='ڕێژە و ژمارەی مامەڵەکان بە دروستی دیاری بکە';return;
-  }
-  if(max_amount_iqd!==null&&(!Number.isSafeInteger(max_amount_iqd)||max_amount_iqd<1||max_amount_iqd>1000000000)){
-    err.textContent='سنووری بڕی پاداشت دەبێت ژمارەیەکی تەواو بێت لە 1 تا 1,000,000,000 دینار';return;
-  }
-  if(valid_until && new Date(valid_until)<=new Date()){
-    err.textContent='بەرواری بەسەرچوون دەبێت لە داهاتوودا بێت';return;
-  }
-  if(!confirm('پاداشت بۆ ئەم بەکارهێنەرە بنێردرێت؟'))return;
-  const button=document.getElementById('rewardSendBtn');
-  button.disabled=true;
-  try{
-    await adminApiRequest('grant_reward',{
-      user_id:rewardSelectedUserId, kind, discount_percent,max_uses,max_amount_iqd,reward_scope,valid_until,
-      note:document.getElementById('rewardNote').value
-    });
-    showToast('پاداشتەکە بە سەرکەوتوویی نێردرا','gr');
-    document.getElementById('rewardNote').value='';
-    await loadRewardsPanel();
-  }catch(e){err.textContent=e.message;}
-  finally{button.disabled=false;}
-}
-function renderRewardsList(){
-  const wrap=document.getElementById('rewardsTableWrap');
-  if(!wrap)return;
-  if(!rewardAdminRows.length){wrap.innerHTML='<div class="empty">هیچ پاداشتێک تۆمار نەکراوە</div>';return;}
-  wrap.innerHTML='<table><thead><tr><th>بەکارهێنەر</th><th>پاداشت</th><th>تایبەت بە</th><th>سنووری بڕ / مامەڵە</th><th>بەکارهاتوو / کۆی</th><th>بەسەرچوون</th><th>دۆخ</th><th>کردار</th></tr></thead><tbody>'+
-    rewardAdminRows.map(r=>{
-      const p=r.profile||{};
-      const expired=r.valid_until && Date.parse(r.valid_until)<=Date.now();
-      const exhausted=r.max_uses!==null && r.used_count>=r.max_uses;
-      const status=!r.active?'هەڵوەشاوە':expired?'بەسەرچووە':exhausted?'تەواوبووە':'چالاک';
-      const feedbackReward=String(r.campaign_key||'').startsWith('order_feedback_v1:');
-      const rewardLabel=(r.kind==='free_transactions'?'بێ لێبڕین':'داشکاندنی '+r.discount_percent+'%')+(feedbackReward?' · پاداشتی هەڵسەنگاندن':'');
-      const caps=[r.max_discount_iqd!=null?'داشکاندن تا '+formatNum(r.max_discount_iqd)+' دینار':null,
-        r.max_amount_iqd!=null?'بڕی مامەڵە تا '+formatNum(r.max_amount_iqd)+' دینار':null].filter(Boolean);
-      return '<tr><td>'+esc(p.full_name||p.username||p.email||r.user_id)+'</td>'+
-        '<td>'+esc(rewardLabel)+'</td>'+
-        '<td>'+esc(({wallets:'جزدانەکان',korek:'کۆڕەک',asiacell:'ئاسیاسێڵ'})[r.reward_scope||'wallets'])+'</td>'+
-        '<td>'+esc(caps.length?caps.join(' · '):'بێ سنوور')+'</td>'+
-        '<td dir="ltr">'+esc(r.used_count)+' / '+esc(r.max_uses===null?'∞':r.max_uses)+'</td>'+
-        '<td>'+esc(r.valid_until?fmtDate(r.valid_until):'بێ کۆتایی')+'</td>'+
-        '<td>'+esc(status)+'</td>'+
-        '<td>'+(r.active?'<button type="button" class="act-btn rd" onclick="revokeUserReward(\''+r.id+'\')">هەڵوەشاندنەوە</button>':'—')+'</td></tr>';
-    }).join('')+'</tbody></table>';
-}
-async function revokeUserReward(id){
-  if(!confirm('ئەم پاداشتە هەڵبوەشێتەوە؟ مامەڵەکانی پێشوو ناگۆڕدرێن.'))return;
-  try{await adminApiRequest('revoke_reward',{id});showToast('پاداشت هەڵوەشێندرایەوە','gr');await loadRewardsPanel();}
-  catch(e){document.getElementById('rewardError').textContent=e.message;}
 }
 
 // ══════════════════════════════════════════════════════════════

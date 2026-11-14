@@ -2,54 +2,30 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 
+// v37+: the discount / reward system is gone everywhere (UI, API, database).
 const read=path=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
 const app=read('assets/js/app.js');
 const html=read('index.html');
-const migration=read('supabase/migrations/20261113230300_disable_feedback_and_signup_rewards.sql');
+const admin=read('exchange-admin.html');
 const workflow=read('.github/workflows/exchange-production-smoke.yml');
-
-function sqlFunction(name){
-  const start=migration.indexOf(`function public.${name}()`);
-  assert.notEqual(start,-1,`${name} is replaced in the migration`);
-  const end=migration.indexOf('$function$;',start);
-  assert.notEqual(end,-1,`${name} definition terminates`);
-  return migration.slice(start,end);
-}
 
 test('rating still submits and displays, but no longer promises or grants a reward',()=>{
   assert.match(app,/sb\.from\('ex_order_feedback'\)\.insert\(/);
-  assert.match(app,/home-feedback-copy/);
-  assert.match(app,/ناردنی هەڵسەنگاندن/);
+  assert.match(app,/چۆن بوو ئەم مامەڵەیە؟/);
   assert.match(app,/سوپاس بۆ هەڵسەنگاندنەکەت/);
-  assert.doesNotMatch(app,/FEEDBACK_REWARD|feedbackRewardGranted|feedbackRewardCard|order_feedback_v1:/);
-  assert.doesNotMatch(app,/هەڵسەنگاندنەکەت بنێرە و[^'"`]*داشکان/);
-  assert.doesNotMatch(app,/داشکاندنی[^'"`]*بۆ مامەڵەی داهاتووت زیادکرا/);
+  assert.doesNotMatch(app,/FEEDBACK_REWARD|feedbackRewardGranted|feedbackRewardCard|order_feedback_v1:|MY_REWARDS|loadMyRewards/);
 });
 
-test('new-account welcome reward is no longer shown or rendered by the app',()=>{
-  assert.doesNotMatch(html,/welcomeReward|welcomeRewardExpiry|پاداشتی هەژماری نوێ/);
-  assert.doesNotMatch(app,/renderWelcomeReward|welcome_signup_v1/);
+test('no reward or discount UI in the customer app or the admin panel',()=>{
+  assert.doesNotMatch(html,/welcomeReward|rewardBanner|bdDiscountRow|exchange-reward-pricing/);
+  assert.doesNotMatch(admin,/pgRewards|rewardAmountCap|rewardScope|پاداشت و داشکاندن/);
+  assert.match(html,/\/assets\/js\/exchange-pricing\.js\?v=\d+/);
 });
 
-test('Supabase feedback trigger only validates ownership and approval; it inserts no reward',()=>{
-  const fn=sqlFunction('ex_award_order_feedback_reward');
-  assert.match(fn,/from public\.ex_orders/);
-  assert.match(fn,/user_id=new\.user_id/);
-  assert.match(fn,/status is distinct from 'پەسەندکرا'/);
-  assert.match(fn,/return new/);
-  assert.doesNotMatch(fn,/insert into public\.ex_user_rewards/i);
-});
-
-test('Supabase signup trigger still creates profiles but no longer grants welcome rewards',()=>{
-  const fn=sqlFunction('ex_handle_new_user');
-  assert.match(fn,/insert into public\.ex_profiles/);
-  assert.match(fn,/return new/);
-  assert.doesNotMatch(fn,/insert into public\.ex_user_rewards/i);
-  assert.doesNotMatch(fn,/ex_notifications/i);
-});
-
-test('production smoke tracks the cache-busted customer bundle',()=>{
-  assert.match(html,/app\.js\?v=82/);
-  assert.match(workflow,/app\.js\?v=82/);
-  assert.doesNotMatch(workflow,/app\.js\?v=80/);
+test('production smoke tracks the current customer bundle',()=>{
+  const version=html.match(/\/assets\/js\/app\.js\?v=(\d+)/)?.[1];
+  assert.ok(version);
+  assert.match(workflow,new RegExp('app\\.js\\?v='+version));
+  assert.doesNotMatch(workflow,/app\.js\?v=82/);
+  assert.match(workflow,/for bad in [^\n]*id="rewardBanner"/);   // the check fails if the old UI comes back
 });

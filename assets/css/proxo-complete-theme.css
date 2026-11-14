@@ -1,5 +1,5 @@
 /* Proxo Complete Theme
-   One readable surface for auth, home, profile, rewards, feedback, notifications,
+   One readable surface for auth, home, profile, feedback, notifications,
    transactions, forms, error states and request submission. */
 :root {
   --proxo-bg: #f8fafc;
@@ -64,14 +64,14 @@ body #authWrap { min-height: 100dvh !important; background: var(--proxo-bg) !imp
 #mainApp #exchangeCard, #mainApp #xcForm, #mainApp .exchange-card { background: #fff !important; border: 1px solid var(--proxo-line) !important; border-radius: 18px !important; box-shadow: var(--proxo-shadow) !important; }
 #mainApp #exchangeCard .method-card, #mainApp #exchangeCard .select-card, #mainApp #exchangeCard .field, #mainApp .request-step, #mainApp .form-section { border-color: var(--proxo-line) !important; border-radius: 12px !important; }
 #mainApp .ux-progress-item.is-current, #mainApp .ux-progress-item.active { color: var(--proxo-blue) !important; }
-#mainApp .fee-note, #mainApp .reward-detail, #mainApp .notice, #mainApp .alert { border-radius: 12px !important; border: 1px solid #dbeafe !important; background: var(--proxo-blue-soft) !important; color: #26466f !important; line-height: 1.8 !important; }
+#mainApp .fee-note, #mainApp .notice, #mainApp .alert { border-radius: 12px !important; border: 1px solid #dbeafe !important; background: var(--proxo-blue-soft) !important; color: #26466f !important; line-height: 1.8 !important; }
 #mainApp .error, #mainApp .field-error, #mainApp .amsg.error, #mainApp .alert-danger { border-radius: 11px !important; background: #fff4f4 !important; border-color: #f3c6ca !important; color: var(--proxo-danger) !important; }
 #mainApp .success, #mainApp .alert-success { border-radius: 11px !important; background: #effaf5 !important; border-color: #bfe8d1 !important; color: var(--proxo-success) !important; }
 
-/* Notifications, rewards, feedback and transaction sheets */
+/* Notifications, feedback and transaction sheets */
 #mainApp .notif-panel, #mainApp .notif-bar, #mainApp .tx-sheet, #mainApp .modal, #mainApp .result-modal { background: #fff !important; border-color: var(--proxo-line) !important; border-radius: 18px !important; box-shadow: 0 18px 48px rgba(15,23,42,.12) !important; }
-#mainApp .welcome-reward, #mainApp .home-feedback-prompt { border-color: #dbeafe !important; background: linear-gradient(180deg,#fff,#f8fbff) !important; }
-#mainApp .welcome-reward h3, #mainApp .feedback-kicker, #mainApp .feedback-section-heading h3 { color: #145bc2 !important; }
+#mainApp .home-feedback-prompt { border-color: #dbeafe !important; background: linear-gradient(180deg,#fff,#f8fbff) !important; }
+#mainApp .feedback-kicker, #mainApp .feedback-section-heading h3 { color: #145bc2 !important; }
 #mainApp .feedback-submit-btn, #mainApp .home-feedback-action { background: var(--proxo-blue) !important; color: white !important; }
 #mainApp .feedback-star.selected, #mainApp .feedback-star:hover { color: #f59e0b !important; }
 #mainApp .tx-sheet-body, #mainApp .notif-panel-body { color: var(--proxo-ink) !important; }

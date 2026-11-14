@@ -32,6 +32,24 @@ async function telegram(method, payload) {
   }
 }
 
+// Stored receipt address → signed link (null when it cannot be made).
+const RECEIPT_MARK = '/storage/v1/object/public/receipts/';
+async function signedReceiptUrl(address) {
+  const at = typeof address === 'string' ? address.indexOf(RECEIPT_MARK) : -1;
+  if (at < 0) return null;
+  const path = address.slice(at + RECEIPT_MARK.length).split(/[?#]/)[0];
+  try {
+    const signed = await serviceFetch('/storage/v1/object/sign/receipts/' + path, {
+      method: 'POST', body: JSON.stringify({ expiresIn: 7 * 24 * 3600 })
+    });
+    const rel = signed?.signedURL || signed?.signedUrl;
+    if (!rel) return null;
+    return address.slice(0, at) + '/storage/v1' + (rel.startsWith('/') ? rel : '/' + rel);
+  } catch (_) {
+    return null;
+  }
+}
+
 export default withSecurity(async (req, res, { user }) => {
   if (!process.env.TELEGRAM_BOT_TOKEN || !process.env.TELEGRAM_CHAT_ID) {
     return json(res, 202, { ok: true, delivered: false, reason: 'not_configured' });
@@ -82,13 +100,14 @@ export default withSecurity(async (req, res, { user }) => {
     : undefined;
 
   // Preferred path: the receipt itself, with the details as its caption.
-  // Telegram fetches the URL server-side, which works because the receipts
-  // bucket is public. Captions cap at 1024 characters — this is far under.
-  if (order.receipt_url) {
+  // The receipts bucket is private: Telegram gets a signed link (7 days).
+  // Captions cap at 1024 characters — this is far under.
+  const receiptLink = await signedReceiptUrl(order.receipt_url);
+  if (receiptLink) {
     const photo = await telegram('sendPhoto', {
       chat_id: process.env.TELEGRAM_CHAT_ID,
       message_thread_id: threadId,
-      photo: order.receipt_url,
+      photo: receiptLink,
       caption,
       parse_mode: 'HTML'
     });
@@ -100,8 +119,8 @@ export default withSecurity(async (req, res, { user }) => {
     // include the link so the receipt is still one tap away.
   }
 
-  const text = order.receipt_url
-    ? `${caption}\n\n<a href="${esc(order.receipt_url)}">وەسڵ / Receipt</a>`
+  const text = receiptLink
+    ? `${caption}\n\n<a href="${esc(receiptLink)}">وەسڵ / Receipt</a>`
     : caption;
 
   const sent = await telegram('sendMessage', {

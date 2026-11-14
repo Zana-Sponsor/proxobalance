@@ -99,7 +99,7 @@ async function openAccountBalanceSend(){
   }
   const from=document.getElementById('from');
   if(!from||typeof FROM_OPTIONS==='undefined'||!FROM_OPTIONS.includes('AccountBalance'))return;
-  if(typeof navigate==='function')navigate('home');
+  if(typeof navigate==='function')navigate('exchange');
   from.value='AccountBalance';
   if(typeof _balanceOrderKey!=='undefined')_balanceOrderKey=null;
   updateWallet();
@@ -182,8 +182,7 @@ async function cancelMyBalancePayout(id){
 // Refresh when the customer returns to Send or resumes the page after a refund.
 function refreshVisibleBalance(){
   if(curUser&&document.visibilityState!=='hidden'&&
-    (typeof _route==='undefined'||_route==='home'||_route==='profile'))return Promise.all([loadMyBalance(),
-      ...(typeof loadMyRewards==='function'?[loadMyRewards()]:[])]);
+    (typeof _route==='undefined'||_route==='exchange'||_route==='profile'))return loadMyBalance();
 }
 window.addEventListener('focus',refreshVisibleBalance);
 window.addEventListener('pageshow',refreshVisibleBalance);

@@ -1,0 +1,20 @@
+/* Icon & size balance inside the app (light + dark).
+   One size for every icon tile at the top of a card, one glyph size inside it,
+   one radius, and the same weight for every page title. Loaded after app-dark.css. */
+
+/* card-head icon tiles: home steps, balance card, rules (support: support-case.css) → 36px, radius 12, glyph 20 */
+html body #mainApp#mainApp :is(.xc-step-ico, .bx-ico, .rule-num),
+html body #mainApp#mainApp #pageProfile .pfx-card.pfx-balance .bx-ico {
+  width: 36px !important; height: 36px !important; min-width: 36px !important; flex: 0 0 36px !important;
+  border-radius: 12px !important; display: grid !important; place-items: center !important;
+}
+html body #mainApp#mainApp :is(.xc-step-ico, .bx-ico, .rule-num) svg,
+html body #mainApp#mainApp #pageProfile .pfx-card.pfx-balance .bx-ico svg {
+  width: 20px !important; height: 20px !important; padding: 0 !important; margin: 0 !important;
+  background: transparent !important; border-radius: 0 !important;
+}
+
+/* page titles: same weight everywhere (transactions was lighter than the rest) */
+html body #mainApp#mainApp #pageTx .tx-profit-head h2 { font-weight: 600 !important; }
+
+/* support page (form, picker, send button, case list): see support-case.css */

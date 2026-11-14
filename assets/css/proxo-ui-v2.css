@@ -1254,7 +1254,7 @@ body #mainApp #txSheet .tx-receipt-actions .btn-ghost {
 body #mainApp #txSheet .tx-receipt-actions .btn-ghost { background: #eef2f8 !important; color: var(--v2-text) !important; }
 body #mainApp #txSheet .tx-receipt-actions .btn-ghost svg { width: 19px !important; height: 19px !important; }
 
-/* ── feedback inside the sheet: heading, one reward line, stars, note, send ── */
+/* ── feedback inside the sheet: heading, stars, note, send ── */
 body #mainApp #txSheet .order-feedback {
   margin: 0 0 12px !important;
   padding: 16px 14px !important;
@@ -1283,27 +1283,6 @@ body #mainApp #txSheet .feedback-heading-icon .icn { width: 20px !important; hei
 body #mainApp #txSheet .feedback-submitted-badge { min-height: 26px; padding: 0 10px; display: inline-flex; align-items: center; gap: 4px; border-radius: 999px; background: #e6f6ec; color: #15803d; font-size: 11.5px; }
 body #mainApp #txSheet .feedback-submitted-badge .pxi { width: 14px; height: 14px; stroke-width: 2.4; }
 body #mainApp #txSheet .feedback-order-snapshot { display: none !important; }
-
-body #mainApp #txSheet .feedback-reward-card {
-  margin: 0 0 14px !important;
-  padding: 10px 12px !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 10px !important;
-  border: 0 !important;
-  border-radius: 14px !important;
-  background: #fff8e8 !important;
-}
-body #mainApp #txSheet .feedback-reward-card.is-earned { background: #e9f7ee !important; }
-body #mainApp #txSheet .feedback-reward-icon { width: 34px !important; height: 34px !important; flex: 0 0 auto; display: grid !important; place-items: center !important; border-radius: 11px !important; background: #fdecc4 !important; color: #b86e00 !important; font-size: 14px !important; }
-body #mainApp #txSheet .feedback-reward-card.is-earned .feedback-reward-icon { background: #cdeed8 !important; color: #15803d !important; }
-body #mainApp #txSheet .feedback-reward-icon .pxi { width: 18px; height: 18px; }
-body #mainApp #txSheet .feedback-reward-copy { min-width: 0; flex: 1; display: flex !important; flex-direction: column !important; gap: 0 !important; }
-body #mainApp #txSheet .feedback-reward-copy b { color: var(--v2-muted) !important; font-size: 11.5px !important; font-weight: 400 !important; }
-body #mainApp #txSheet .feedback-reward-copy strong { color: var(--v2-ink) !important; font-size: 13px !important; font-weight: 400 !important; line-height: 1.6; }
-body #mainApp #txSheet .feedback-reward-copy span,
-body #mainApp #txSheet .feedback-reward-copy small { display: none !important; }
-body #mainApp #txSheet .feedback-reward-tag { display: none !important; }
 
 body #mainApp #txSheet .feedback-input-label { margin: 0 0 8px !important; display: flex !important; align-items: center !important; justify-content: space-between !important; color: var(--v2-text) !important; font-size: 12.5px !important; font-weight: 400 !important; }
 body #mainApp #txSheet .feedback-input-label span { color: var(--v2-muted) !important; font-size: 11.5px !important; }
@@ -1433,9 +1412,9 @@ body #mainApp #notifPanel .notif-empty .icn { width: 40px !important; height: 40
 body #mainApp #txSheet .feedback-input-label:not([for]) { display: none !important; }
 
 /* ── less text in the request form ── */
-body #mainApp #pageHome #exchangeCard :is(#amtHint, #phoneHint, #etaBadge, #payoutRoundingNote, #rewardBanner) { display: none !important; }
+body #mainApp #pageHome #exchangeCard :is(#amtHint,#phoneHint,#etaBadge,#payoutRoundingNote) { display: none !important; }
 
-/* ── price details: rows add up (fee, discount as a minus line, amount received) ── */
+/* ── price details: rows add up (fee, amount received) ── */
 body #mainApp #pageHome #exchangeCard .xc-sum-row { min-height: 42px !important; gap: 12px !important; }
 body #mainApp #pageHome #exchangeCard .xc-sum-row .lbl { font-size: 13px !important; }
 body #mainApp #pageHome #exchangeCard .xc-sum-row .v { font-size: 13.5px !important; text-align: end; }
@@ -1456,7 +1435,6 @@ body #mainApp #txSheet .tx-save { color: #15803d; }
 
 /* receipt picker: one icon is enough */
 body #mainApp #pageHome #exchangeCard .file-picker .file-picker-action { display: none !important; }
-
 
 /* ═════════════════════════════════════════════════════════════════
    TOASTS — white 3D cards that stack (see /assets/js/proxo-toast.js)
@@ -1662,7 +1640,6 @@ body #mainApp .copy-btn.is-copied,
 body #mainApp .tx-dcode.is-copied,
 body #mainApp .pfx-handle.is-copied { display: inline-flex; align-items: center; justify-content: center; gap: 5px; }
 
-
 /* ═════════════════════════════════════════════════════════════════
    BOTTOM NAV — slides away while scrolling down, comes back smoothly
    when scrolling up (class toggled in proxo-ui-v2.js)
@@ -1682,7 +1659,6 @@ body #mainApp #bottomNav.pxn.is-hidden {
   body #mainApp #bottomNav.pxn.is-hidden { transition-duration: .01ms; transition-delay: 0s; }
 }
 
-
 /* ═════════════════════════════════════════════════════════════════
    TRANSACTIONS — route direction, date, rejection reason
    ═════════════════════════════════════════════════════════════════ */
@@ -1695,7 +1671,6 @@ body #mainApp #txSheet .tx-dval .tx-date { display: inline-block; }
 /* the reason a request was rejected */
 body #mainApp #txSheet .tx-dnote.is-reason { background: #fdeeee !important; }
 body #mainApp #txSheet .tx-dnote.is-reason b { color: #b42318 !important; }
-
 
 /* ═════════════════════════════════════════════════════════════════
    TRANSACTION DETAILS in the request form — aligned rows
@@ -1797,7 +1772,6 @@ body #mainApp #pageHome #exchangeCard .xc-info-btn .pxi { width: 18px; height: 1
 #roundingInfoSheet .xc-info-body p:first-child { color: #1f2d44; }
 #roundingInfoSheet .xc-info-body p:last-child { margin-bottom: 0; }
 
-
 /* ═════════════════════════════════════════════════════════════════
    FIELD ERRORS (under inputs) — a small soft-red callout that hangs from
    the field: a tiny pointer on the start side, a solid round "!" badge and
@@ -1854,7 +1828,6 @@ body .input.has-error, body .field.has-error .input {
   background: #fffafa !important;
   box-shadow: 0 0 0 3px rgba(229, 72, 77, .10) !important;
 }
-
 
 /* ═════════════════════════════════════════════════════════════════
    NOTIFICATIONS — one tidy card
@@ -1944,7 +1917,6 @@ body #mainApp #notifPanel .notif-reason span { min-width: 0; overflow-wrap: anyw
 
 /* the banner on the home page uses the same clean text */
 body #mainApp #notifBar .notif-bar-title, body #mainApp #notifBar .notif-bar-msg { unicode-bidi: plaintext; }
-
 
 /* ═════════════════════════════════════════════════════════════════
    TRANSACTION CARD = RECEIPT (پسووڵە)
@@ -2070,7 +2042,6 @@ body #mainApp :is(#pageTx, #pageHome) .tx-receipt .tx-card-action {
   font-size: 12px !important; text-align: center;
 }
 
-
 /* ═════════════════════════════════════════════════════════════════
    ACCOUNT VERIFICATION — one badge system, every state
    The same shield-with-a-mark is used on the avatar, the status pill,
@@ -2180,7 +2151,6 @@ body #mainApp .kyc-card .kyc-facts > span + span { border-inline-start: 1px soli
 body #mainApp .kyc-card .kyc-facts small { color: #6b7a90 !important; font-size: 11.5px; }
 body #mainApp .kyc-card .kyc-facts b { color: var(--v2-ink, #0f172a) !important; font-size: 13px; font-weight: 500; overflow-wrap: anywhere; }
 
-
 /* ═════════════════════════════════════════════════════════════════
    IDENTITY VERIFICATION FORM — balanced, one rhythm
    steps (3 equal columns) → numbered panels → 2-column grids of equal
@@ -2375,7 +2345,6 @@ body #mainApp .kyc-success-ico { width: 64px; height: 64px; display: grid; place
 body #mainApp .kyc-success h3 { margin: 4px 0 0; color: var(--v2-ink); font-size: 16px; font-weight: 600; }
 body #mainApp .kyc-success p { margin: 0 0 6px; color: var(--v2-muted); font-size: 13px; line-height: 1.9; }
 
-
 /* bottom nav: the active tab spins softly while a double-tap refresh runs */
 @keyframes pxnRefresh { to { transform: rotate(360deg); } }
 body #mainApp #bottomNav .pxn-item.is-refreshing .pxn-cap { animation: pxnRefresh .8s linear infinite; }
@@ -2383,10 +2352,9 @@ body #mainApp #bottomNav .pxn-item.is-refreshing .pxn-cap { animation: pxnRefres
   body #mainApp #bottomNav .pxn-item.is-refreshing .pxn-cap { animation: none; opacity: .6; }
 }
 
-
 /* ═════════════════════════════════════════════════════════════════
    FEEDBACK — bottom sheet on the home page (and the same block inside
-   the transaction details). One rhythm: summary → reward (two equal
+   the transaction details). One rhythm: summary → cells (two equal
    cells) → stars (five equal cells) → note → send.
    Own colours, so it also works outside #mainApp (the sheet is a root element).
    ═════════════════════════════════════════════════════════════════ */
@@ -2420,20 +2388,7 @@ body .fb.is-submitted .fb-head-ico svg { fill: none; stroke: currentColor; strok
 body .fb-head h3 { margin: 0; color: #0f172a; font-size: 16px; font-weight: 600; line-height: 1.6; }
 body .fb-head p { margin: 0; color: #62718a; font-size: 12.5px; line-height: 1.7; }
 
-/* reward: two equal cells */
-body .fb-reward { padding: 10px; border: 1px solid #f1dfb0; border-radius: 14px; background: #fff9ec; }
-body .fb-reward-head { display: flex; align-items: center; gap: 10px; }
-body .fb-reward-ico { flex: 0 0 auto; width: 32px; height: 32px; display: grid; place-items: center; border-radius: 12px; background: #ffe8b3; color: #b26a00; }
-body .fb-reward-ico svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-body .fb-reward-head b { display: block; color: #0f172a; font-size: 13px; font-weight: 600; line-height: 1.6; }
-body .fb-reward-head small { display: block; color: #62718a; font-size: 11.5px; line-height: 1.6; }
-body .fb-reward-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
-body .fb-reward-cell { display: grid; gap: 0; padding: 6px 10px; border: 1px solid #f1e3bd; border-radius: 12px; background: #fff; text-align: start; }
-body .fb-reward-cell small { color: #62718a; font-size: 11.5px; line-height: 1.6; }
-body .fb-reward-cell b { color: #0f172a; font-size: 16px; font-weight: 600; line-height: 1.4; font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; text-align: start; }
-body .fb-reward.is-earned { border-color: #c2e8d1; background: #f1faf5; }
-body .fb-reward.is-earned .fb-reward-ico { background: #d5f1e0; color: #16a34a; }
-body .fb-reward.is-earned .fb-reward-cell { border-color: #cfeadb; }
+/* two equal cells */
 
 /* stars: five equal cells */
 body .fb-block { display: grid; gap: 6px; }
@@ -2464,7 +2419,6 @@ body .fb-submit:disabled { opacity: .65; box-shadow: none; }
 body .fb-submit-ico { display: grid; place-items: center; }
 body .fb-submit-ico svg { width: 18px; height: 18px; fill: currentColor; stroke: none; }
 body .fb-error:not(:empty) { padding: 9px 12px; border: 1px solid #f5c9cb; border-radius: 12px; background: #fff3f3; color: #a4262c; font-size: 12.5px; line-height: 1.8; }
-
 
 /* ═════════════════════════════════════════════════════════════════
    USERNAME — edit pill beside the handle + the one-time change sheet
@@ -2511,7 +2465,6 @@ body .un-confirm { display: flex; align-items: center; gap: 10px; padding: 12px;
 body .un-confirm input { flex: 0 0 auto; width: 20px; height: 20px; margin: 0; accent-color: #0265ff; }
 body .un-submit { width: 100%; min-height: 50px; margin: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 14px; background: #0265ff; color: #fff; font: inherit; font-size: 15px; box-shadow: 0 10px 22px -12px rgba(2, 101, 255, .6); transition: opacity .15s; }
 body .un-submit:disabled { opacity: .45; box-shadow: none; cursor: not-allowed; }
-
 
 /* ═════════════════════════════════════════════════════════════════
    PROFILE BALANCE — only the balance and two equal buttons
@@ -2606,7 +2559,6 @@ html, body { overscroll-behavior-y: contain; }
 @keyframes pxPtrSpin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { #mainApp .page.px-ptr-settle { transition-duration: .01s; } .px-ptr.is-loading .px-ptr-ico svg.px-ptr-arrow { animation-duration: 1.6s; } }
 
-
 /* ═════════════════════════════════════════════════════════════════
    IDENTITY VERIFICATION FORM — balanced, one rhythm
    steps (3 equal columns) → numbered panels → 2-column grids of equal
@@ -2801,7 +2753,6 @@ body #mainApp .kyc-success-ico { width: 64px; height: 64px; display: grid; place
 body #mainApp .kyc-success h3 { margin: 4px 0 0; color: var(--v2-ink); font-size: 16px; font-weight: 600; }
 body #mainApp .kyc-success p { margin: 0 0 6px; color: var(--v2-muted); font-size: 13px; line-height: 1.9; }
 
-
 /* bottom nav: the active tab spins softly while a double-tap refresh runs */
 @keyframes pxnRefresh { to { transform: rotate(360deg); } }
 body #mainApp #bottomNav .pxn-item.is-refreshing .pxn-cap { animation: pxnRefresh .8s linear infinite; }
@@ -2809,10 +2760,9 @@ body #mainApp #bottomNav .pxn-item.is-refreshing .pxn-cap { animation: pxnRefres
   body #mainApp #bottomNav .pxn-item.is-refreshing .pxn-cap { animation: none; opacity: .6; }
 }
 
-
 /* ═════════════════════════════════════════════════════════════════
    FEEDBACK — bottom sheet on the home page (and the same block inside
-   the transaction details). One rhythm: summary → reward (two equal
+   the transaction details). One rhythm: summary → cells (two equal
    cells) → stars (five equal cells) → note → send.
    Own colours, so it also works outside #mainApp (the sheet is a root element).
    ═════════════════════════════════════════════════════════════════ */
@@ -2846,20 +2796,7 @@ body .fb.is-submitted .fb-head-ico svg { fill: none; stroke: currentColor; strok
 body .fb-head h3 { margin: 0; color: #0f172a; font-size: 16px; font-weight: 600; line-height: 1.6; }
 body .fb-head p { margin: 0; color: #62718a; font-size: 12.5px; line-height: 1.7; }
 
-/* reward: two equal cells */
-body .fb-reward { padding: 10px; border: 1px solid #f1dfb0; border-radius: 14px; background: #fff9ec; }
-body .fb-reward-head { display: flex; align-items: center; gap: 10px; }
-body .fb-reward-ico { flex: 0 0 auto; width: 32px; height: 32px; display: grid; place-items: center; border-radius: 12px; background: #ffe8b3; color: #b26a00; }
-body .fb-reward-ico svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-body .fb-reward-head b { display: block; color: #0f172a; font-size: 13px; font-weight: 600; line-height: 1.6; }
-body .fb-reward-head small { display: block; color: #62718a; font-size: 11.5px; line-height: 1.6; }
-body .fb-reward-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
-body .fb-reward-cell { display: grid; gap: 0; padding: 6px 10px; border: 1px solid #f1e3bd; border-radius: 12px; background: #fff; text-align: start; }
-body .fb-reward-cell small { color: #62718a; font-size: 11.5px; line-height: 1.6; }
-body .fb-reward-cell b { color: #0f172a; font-size: 16px; font-weight: 600; line-height: 1.4; font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; text-align: start; }
-body .fb-reward.is-earned { border-color: #c2e8d1; background: #f1faf5; }
-body .fb-reward.is-earned .fb-reward-ico { background: #d5f1e0; color: #16a34a; }
-body .fb-reward.is-earned .fb-reward-cell { border-color: #cfeadb; }
+/* two equal cells */
 
 /* stars: five equal cells */
 body .fb-block { display: grid; gap: 6px; }
@@ -2890,7 +2827,6 @@ body .fb-submit:disabled { opacity: .65; box-shadow: none; }
 body .fb-submit-ico { display: grid; place-items: center; }
 body .fb-submit-ico svg { width: 18px; height: 18px; fill: currentColor; stroke: none; }
 body .fb-error:not(:empty) { padding: 9px 12px; border: 1px solid #f5c9cb; border-radius: 12px; background: #fff3f3; color: #a4262c; font-size: 12.5px; line-height: 1.8; }
-
 
 /* ═════════════════════════════════════════════════════════════════
    USERNAME — edit pill beside the handle + the one-time change sheet
@@ -2937,7 +2873,6 @@ body .un-confirm { display: flex; align-items: center; gap: 10px; padding: 12px;
 body .un-confirm input { flex: 0 0 auto; width: 20px; height: 20px; margin: 0; accent-color: #0265ff; }
 body .un-submit { width: 100%; min-height: 50px; margin: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 14px; background: #0265ff; color: #fff; font: inherit; font-size: 15px; box-shadow: 0 10px 22px -12px rgba(2, 101, 255, .6); transition: opacity .15s; }
 body .un-submit:disabled { opacity: .45; box-shadow: none; cursor: not-allowed; }
-
 
 /* ═════════════════════════════════════════════════════════════════
    PROFILE BALANCE — one wallet panel: title → two equal cells → two equal
@@ -3014,7 +2949,6 @@ body #mainApp #pageProfile .pfx-balance .pb-history:not([hidden]) {
 }
 body #mainApp #pageProfile .pfx-balance .pb-history > * { margin: 0 !important; padding: 11px 0 !important; border: 0 !important; border-bottom: 1px solid #e8ecf3 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; color: inherit; }
 body #mainApp #pageProfile .pfx-balance .pb-history > *:last-child { border-bottom: 0 !important; }
-
 
 /* ═════════════════════════════════════════════════════════════════
    IDENTITY VERIFICATION FORM — new layout (.kyc-form-card.kf)
@@ -3114,7 +3048,6 @@ body #mainApp #kycFormCard.kf .kyc-submit-btn { box-sizing: border-box; width: 1
 body #mainApp #kycFormCard.kf .kyc-submit-btn:disabled { opacity: .6; box-shadow: none !important; }
 body #mainApp #kycFormCard.kf .kyc-doc-grid { grid-auto-rows: 1fr; }
 
-
 /* Compact access to saved payout recipients in the receive-step heading. */
 body #mainApp .xc-step-head .xc-saved-recipients-btn {
   box-sizing: border-box; width: 38px; height: 38px; flex: 0 0 38px; margin-inline-start: auto; padding: 0;
@@ -3124,7 +3057,6 @@ body #mainApp .xc-step-head .xc-saved-recipients-btn {
 }
 body #mainApp .xc-step-head .xc-saved-recipients-btn .icn { width: 19px; height: 19px; }
 body #mainApp .xc-step-head .xc-saved-recipients-btn:active { background: var(--v2-sky, #eef5ff) !important; transform: scale(.96); }
-
 
 /* ═════════════════════════════════════════════════════════════════
    PROFILE BALANCE — title and amount aligned with the other account cards

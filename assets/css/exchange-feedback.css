@@ -1,4 +1,4 @@
-/* Customer order feedback: clear review flow and earned-reward receipt. */
+/* Customer order feedback: review flow. */
 .order-feedback{
   --fb-ink:#15243a;--fb-muted:#65758d;--fb-line:#e5eaf2;
   position:relative;isolation:isolate;margin:16px 0 4px;padding:18px;
@@ -25,20 +25,7 @@
 .feedback-order-amounts>div:last-child b{color:#16824d}
 .feedback-order-date{margin-top:9px;padding-top:8px;border-top:1px dashed #e7ebf2;font-size:9px}
 .feedback-order-date b{color:#52647d;font-size:9px;font-weight:650}
-.feedback-reward-card{position:relative;display:flex;align-items:center;gap:11px;margin:0 0 15px;padding:13px 12px;border:1px solid #f0dda8;border-radius:17px;background:linear-gradient(115deg,#fff8e5 0%,#fffdf7 72%,#fef8eb 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.9)}
-.feedback-reward-card.is-earned{border-color:#bde7cf;background:linear-gradient(115deg,#edfbf3 0%,#fbfffc 78%,#eaf9f0 100%)}
-.feedback-reward-icon{display:grid;place-items:center;flex:0 0 38px;width:38px;height:38px;border-radius:13px;background:#f8e8bd;color:#98630b;font-size:18px;font-weight:900}
-.feedback-reward-card.is-earned .feedback-reward-icon{background:#d9f4e4;color:#16824d}
-.feedback-reward-copy{display:flex;min-width:0;flex:1;flex-direction:column;gap:2px}
-.feedback-reward-copy>b{color:#72500f;font-size:10px;font-weight:850}
-.feedback-reward-card.is-earned .feedback-reward-copy>b{color:#167548}
-.feedback-reward-copy>strong{color:#253751;font-size:13px;font-weight:900;line-height:1.55}
-.feedback-reward-copy>span{color:#785d25;font-size:10px;font-weight:800}
-.feedback-reward-card.is-earned .feedback-reward-copy>span{color:#246747}
-.feedback-reward-copy>small{color:#7c7562;font-size:9px;line-height:1.7}
-.feedback-reward-card.is-earned .feedback-reward-copy>small{color:#5e7668}
-.feedback-reward-tag{align-self:flex-start;padding:4px 6px;border-radius:7px;background:rgba(241,187,70,.2);color:#8a6212;font-size:8px;font-weight:900;white-space:nowrap}
-.feedback-reward-card.is-earned .feedback-reward-tag{background:#d9f4e4;color:#167548}
+
 .feedback-input-label{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:13px 0 5px;color:#263955;font-size:11px;font-weight:850}
 .feedback-input-label span{color:#8a95a7;font-size:9px;font-weight:600}
 .feedback-star-picker,.feedback-stars{display:flex;align-items:center;gap:7px;direction:ltr;margin:6px 0 12px}
@@ -72,16 +59,15 @@
 @media(max-width:480px){
   .order-feedback{margin:13px 0 3px;padding:15px;border-radius:20px}
   .feedback-section-heading h3{font-size:16px}
-  .feedback-reward-card{gap:9px;padding:11px 9px;border-radius:15px}
-  .feedback-reward-icon{width:34px;height:34px;flex-basis:34px;border-radius:11px}
-  .feedback-reward-copy>strong{font-size:12px}
-  .feedback-reward-tag{font-size:7px;padding:4px 5px}
+
+
+
+
   .feedback-star-picker{gap:6px}
   .feedback-star-picker .feedback-star{width:37px;height:38px;border-radius:12px}
   .feedback-order-snapshot{padding:10px}
 }
 @media(prefers-reduced-motion:reduce){.order-feedback *{transition:none!important;scroll-behavior:auto!important}}
-
 
 /* Simpler order-rating design: fewer effects, clearer hierarchy, regular type. */
 .order-feedback,
@@ -111,20 +97,7 @@
 .feedback-order-amounts small,
 .feedback-order-date b { font-size: 10px; font-weight: 400; }
 .feedback-order-amounts b { font-size: 12px; font-weight: 600; }
-.feedback-reward-card {
-  gap: 9px;
-  padding: 11px;
-  border-radius: 10px;
-  background: #fff9e9;
-  box-shadow: none;
-}
-.feedback-reward-card.is-earned { background: #f0faf4; }
-.feedback-reward-icon { width: 32px; height: 32px; flex-basis: 32px; border-radius: 8px; font-weight: 600; }
-.feedback-reward-copy > b,
-.feedback-reward-copy > span { font-size: 11px; font-weight: 500; }
-.feedback-reward-copy > strong { font-size: 13px; font-weight: 600; line-height: 1.45; }
-.feedback-reward-copy > small { font-size: 10px; font-weight: 400; line-height: 1.5; }
-.feedback-reward-tag { padding: 4px 6px; border-radius: 6px; font-size: 9px; font-weight: 500; }
+
 .feedback-input-label { font-size: 12px; font-weight: 500; }
 .feedback-input-label span { font-size: 10px; font-weight: 400; }
 .feedback-star-picker { gap: 7px; margin: 7px 0 12px; }
@@ -152,7 +125,7 @@
 @media (max-width: 480px) {
   .order-feedback { padding: 13px; border-radius: 12px; }
   .feedback-section-heading h3 { font-size: 15px; }
-  .feedback-reward-card { padding: 10px; border-radius: 9px; }
+
   .feedback-star-picker .feedback-star { width: 36px; height: 36px; border-radius: 8px; }
 }
 

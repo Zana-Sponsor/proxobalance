@@ -1,4 +1,6 @@
-# Proxo Balance: admin refunds, IQD balance and capped fee rewards
+# Proxo Balance: admin refunds and IQD balance
+
+> **2026-11-14 — the discount/reward system was removed permanently.** No customer or admin can grant, receive or apply a discount. Every order is priced by `ex_orders_apply_pricing` with the configured fee only. See `supabase/migrations/20261114170219_remove_reward_discount_system_20261114.sql`. The backup is in the private schema `backup_rewards_20261114`. Past orders keep their `reward_*` columns as history. The reward notes below are historical.
 
 ## Exact-thousand IQD payouts and automatic balance refunds
 
@@ -89,7 +91,7 @@ The backend verifies the current authenticated admin and **refunds permission on
 - Only IQD-to-IQD orders with an original receipt and verified received funds are eligible. Approved orders or orders with payout proof are blocked; USDT needs separate reconciliation.
 - A credited order retains its original proof and refund timestamps. Its amount, receipt, route and status are then protected against modification. Journals, entries and refund cases are append-only.
 
-## Per-transaction reward amount cap
+## Per-transaction reward amount cap (removed 2026-11-14, historical)
 - Apply `SUPABASE_EXCHANGE_SCOPED_REWARDS.sql` after the capped-reward migration. Every reward is now separately assigned to `wallets`, `korek` or `asiacell`. Existing grants become wallet-only; no usage quota or historical financial value is rewritten. Carrier rewards have their own percentages, caps, expiry and use counts. A carrier leg uses that carrier scope; if both legs are carriers, the sending carrier determines eligibility. USDT remains excluded. Wallet rewards cannot consume quota or reduce fees for either carrier. Orders and usage records preserve the applied scope.
 - The admin sets `max_amount_iqd` on each user's reward, alongside its use count, percentage and expiry. The form defaults to 50,000 IQD. A blank cap means unlimited amount coverage; existing rewards remain unlimited until replaced by an admin.
 - The cap covers principal **per transaction**, not a cumulative spending allowance. With a 50,000 cap and a 60,000 transfer, the first 50,000 receives the reward and the excess 10,000 uses the normal route fee. At a 2% route fee, a free reward results in a 200 IQD fee and 59,800 IQD received.

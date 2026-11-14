@@ -185,8 +185,7 @@ body :is(#recipientSheet,#pickerSheet,#confirmSheet) .sheet-close,
 #mainApp #pageHome .picker-trigger-label { font-size: 12px !important; line-height: 1.35 !important; }
 #mainApp #pageHome .picker-trigger-value { font-size: 14px !important; line-height: 1.5 !important; }
 #mainApp #pageHome .ux-review-grid .file-picker { min-height: 64px !important; padding: 10px 12px !important; border-radius: 12px !important; box-shadow: none !important; }
-#mainApp #pageHome .welcome-reward { background: #fff !important; border-color: var(--proxo-line) !important; border-radius: 14px !important; box-shadow: none !important; }
-#mainApp #pageHome .welcome-reward h3 { color: var(--proxo-ink) !important; font-size: 14px !important; }
+
 #mainApp #pageHome .home-feedback-copy :is(span,small),
 #mainApp #pageHome .greet-hi { font-size: 12px !important; color: var(--proxo-muted); }
 #mainApp #pageHome .home-feedback-action { min-height: 44px; font-size: 12px; padding-inline: 12px; }
@@ -218,12 +217,11 @@ body :is(#recipientSheet,#pickerSheet,#confirmSheet) .sheet-close,
   background: #fff;
 }
 #mainApp .tx-sheet .feedback-section-heading h3 { font-size: 16px !important; color: var(--proxo-ink); font-weight: 600; }
-#mainApp .tx-sheet :is(.feedback-kicker,.feedback-order-top,.feedback-order-date,.feedback-order-date b,.feedback-order-amounts small,.feedback-input-label span,.feedback-char-hint,.feedback-thanks,.feedback-comment-box > small,.feedback-reward-copy > small,.feedback-reward-copy > span) { font-size: 12px; line-height: 1.65; }
+#mainApp .tx-sheet :is(.feedback-kicker,.feedback-order-top,.feedback-order-date,.feedback-order-date b,.feedback-order-amounts small,.feedback-input-label span,.feedback-char-hint,.feedback-thanks,.feedback-comment-box > small) { font-size: 12px; line-height: 1.65; }
 #mainApp .tx-sheet .feedback-order-amounts b { font-size: 14px; }
 #mainApp .tx-sheet .feedback-star-picker .feedback-star { min-width: 44px; width: 44px; min-height: 44px; height: 44px; flex: 0 0 44px; border-radius: 10px; }
 #mainApp .tx-sheet .order-feedback textarea { min-height: 96px; border-radius: 12px; font-size: 14px; }
-#mainApp .tx-sheet .feedback-reward-card { align-items: flex-start; }
-#mainApp .tx-sheet .feedback-reward-tag { font-size: 10px; }
+
 #mainApp .tx-sheet .feedback-submit-btn { width: 100%; }
 
 /* Rules and rates use neutral title/icon chrome; status signals keep their colors. */
@@ -300,8 +298,8 @@ body :is(#recipientSheet,#pickerSheet,#confirmSheet) .sheet,
   #mainApp #pageHome .home-feedback-prompt { flex-wrap: wrap; }
   #mainApp #pageHome .home-feedback-copy { flex-basis: calc(100% - 50px); }
   #mainApp #pageHome .home-feedback-action { margin-inline-start: 49px; }
-  #mainApp .tx-sheet .feedback-reward-card { flex-wrap: wrap; }
-  #mainApp .tx-sheet .feedback-reward-tag { margin-inline-start: 41px; }
+
+
 }
 @media (prefers-reduced-motion: reduce) {
   body :is(#mainApp,#authWrap,#recipientSheet,#pickerSheet,#confirmSheet,#resultModal,#orderCorrectionModal) * { transition-duration: .01ms !important; animation-duration: .01ms !important; }
@@ -325,7 +323,6 @@ body :is(#recipientSheet,#pickerSheet,#confirmSheet) .sheet,
   color: #64748b !important;
   opacity: 1 !important;
 }
-
 
 /* Final Proxo app alignment: compact appbar, balanced icon nav, and PR-style surfaces. */
 #mainApp .site-header {
@@ -419,7 +416,6 @@ body :is(#recipientSheet,#pickerSheet,#confirmSheet) .sheet,
 #mainApp #pageHome #exchangeCard :is(.xc-kyc-gate,.xc-error,.field-error-wrap) { border-radius: 12px !important; border: 1px solid #f3c6ca !important; background: #fff4f4 !important; color: #9f303b !important; box-shadow: none !important; }
 #mainApp #pageHome #exchangeCard .btn-primary { min-height: 50px !important; border-radius: 11px !important; }
 
-
 /* Keep the original four-destination customer bottom navigation. */
 #mainApp .bottom-nav-inner { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; max-width: 520px !important; }
 #mainApp .bn-item { min-width: 0 !important; }
@@ -455,7 +451,6 @@ body :is(#recipientSheet,#pickerSheet,#confirmSheet) .sheet,
 }
 #mainApp #pageProfile > .page-head .profile-page-action:hover { background: #f1f5f9 !important; }
 #mainApp #pageProfile > .page-head .profile-page-action .icn { width: 21px !important; height: 21px !important; }
-
 
 /* Reference-matched Proxo shell, measured from PR #46 code and release screenshots. */
 #mainApp .site-header {
@@ -571,7 +566,6 @@ body :is(#recipientSheet,#pickerSheet,#confirmSheet) .sheet,
 #mainApp #pageProfile > .page-head .profile-page-back { grid-column: 3 !important; }
 #mainApp #pageProfile > .page-head :is(.profile-page-action,.profile-page-back) .icn { width: 22px !important; height: 22px !important; }
 #mainApp #pageProfile > .page-head :is(.profile-page-action,.profile-page-back):hover { background: #fafafa !important; }
-
 
 /* Profile balance: compact, calm and proportionate to the other account cards. */
 html body #mainApp #pageProfile .pfx-card.pfx-balance {

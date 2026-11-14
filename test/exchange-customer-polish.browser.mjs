@@ -6,8 +6,7 @@ const require=createRequire(import.meta.url);
 const {chromium}=require(process.env.PROXO_PLAYWRIGHT_MODULE||'playwright');
 const root=new URL('../',import.meta.url),read=p=>readFileSync(new URL(p,root),'utf8');
 const app=read('assets/js/app.js');
-const realFunctions=app.slice(app.indexOf('let _welcomeRewardExpiryTimer='),app.indexOf('// Smallest amount'))+
-  app.slice(app.indexOf('function calc(){'),app.indexOf('function _validateOrderFields()'))+
+const realFunctions=app.slice(app.indexOf('function calc(){'),app.indexOf('function _validateOrderFields()'))+
   app.slice(app.indexOf('function orderCodeOf('),app.indexOf('// ── transaction details'))+
   app.slice(app.indexOf('function renderTxPage('),app.indexOf('function copyNum()'));
 const html=read('index.html').replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'')
@@ -38,9 +37,6 @@ try{
       document.getElementById('from').innerHTML='<option value="FastPay">FastPay</option><option value="Korek">Korek</option>';
       document.getElementById('receiveVia').innerHTML='<option value="FIB">FIB Bank</option>';
       window.amount='60000';window.getAmtRaw=()=>window.amount;window.curUser={id:'fixture'};
-      window.MY_REWARDS=[{id:'welcome',campaign_key:'welcome_signup_v1',kind:'fee_discount',discount_percent:50,
-        max_uses:1,used_count:0,max_amount_iqd:30000,reward_scope:'wallets',active:true,
-        valid_until:new Date(Date.now()+7*86400000).toISOString(),created_at:new Date().toISOString()}];
       window.formatNum=v=>Number(v).toLocaleString('en-US');window.fmtPct=String;
       window.kycFmtDate=iso=>new Date(iso).toLocaleDateString('en-GB');
       window.RATES={'FastPay>FIB':{type:'fee_percent',value:2},'Korek>FIB':{type:'fee_percent',value:20}};
@@ -54,28 +50,17 @@ try{
       window.txMatches=()=>true;window._txQuery='';window._txStatus='all';window._txTime='all';
       window.openTxDetail=id=>{window.openedOrder=id;};
     });
-    await page.addScriptTag({content:read('assets/js/exchange-reward-pricing.js')});
+    await page.addScriptTag({content:read('assets/js/exchange-pricing.js')});
     await page.addScriptTag({content:realFunctions});
     await page.evaluate(()=>calc());
-    assert.equal(await page.locator('#welcomeReward').isVisible(),true);
-    assert.equal(await page.locator('#bdFee').textContent(),'900 IQD');
-    assert.equal(await page.locator('#bdDiscount').textContent(),'300 IQD');
-    assert.equal(await page.locator('#totalDisplay').innerText(),'59,100 IQD');
-    assert.equal(await page.locator('#feeDisplay').isVisible(),false,'No duplicated fee row');
-    assert.match(await page.locator('#rewardBanner').textContent(),/30,000/);
-    if(process.env.PROXO_SCREENSHOT_DIR && width===390){
-      await page.locator('#xcBreakdown').screenshot({path:process.env.PROXO_SCREENSHOT_DIR+'/exchange-price-mobile.png'});
-      await page.locator('#welcomeReward').screenshot({path:process.env.PROXO_SCREENSHOT_DIR+'/exchange-welcome-mobile.png'});
-    }
-    await page.evaluate(()=>{MY_REWARDS[0].used_count=1;calc();});
-    assert.equal(await page.locator('#welcomeReward').isVisible(),false);
-    assert.equal(await page.locator('#bdDiscountRow').isVisible(),false);
+    // No discount anywhere: the full configured fee is charged and no discount UI exists.
+    for(const id of ['#welcomeReward','#rewardBanner','#bdDiscountRow','#bdDiscount'])
+      assert.equal(await page.locator(id).count(),0,id);
     assert.equal(await page.locator('#bdFee').textContent(),'1,200 IQD');
-    await page.evaluate(()=>{MY_REWARDS[0].used_count=0;MY_REWARDS[0].valid_until=new Date(Date.now()-1).toISOString();calc();});
-    assert.equal(await page.locator('#rewardBanner').isVisible(),false);
-    await page.evaluate(()=>{MY_REWARDS[0].valid_until=new Date(Date.now()+50).toISOString();calc();});
-    await page.waitForFunction(()=>document.getElementById('welcomeReward').hidden);
-    assert.equal(await page.locator('#bdFee').textContent(),'1,200 IQD','Expiry recalculates without interaction');
+    assert.equal(await page.locator('#totalDisplay').innerText(),'58,800 IQD');
+    assert.equal(await page.locator('#feeDisplay').isVisible(),false,'No duplicated fee row');
+    if(process.env.PROXO_SCREENSHOT_DIR && width===390)
+      await page.locator('#xcBreakdown').screenshot({path:process.env.PROXO_SCREENSHOT_DIR+'/exchange-price-mobile.png'});
     await page.evaluate(()=>{
       document.getElementById('pageHome').classList.remove('active');
       document.getElementById('pageTx').classList.add('active');renderTxPage();
@@ -92,6 +77,6 @@ try{
     assert.deepEqual(errors,[]);
     await page.close();
   }
-  console.log('PASS: 390/1280px fee/reward/expiry and completed/refund receipts, keyboard navigation, no overflow');
+  console.log('PASS: 390/1280px fee (no discount) and completed/refund receipts, keyboard navigation, no overflow');
 }finally{await browser.close();}
 function _uuid(){return '11111111-1111-4111-8111-111111111111';}

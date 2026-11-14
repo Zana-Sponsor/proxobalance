@@ -1,0 +1,124 @@
+/* ═════════════════════════════════════════════════════════════════
+   Rating sheet (#feedbackSheet) — minimal fintech layout.
+   Contains only: handle + close · order summary (from · to · amount) ·
+   «چۆن بوو ئەم مامەڵەیە؟» · five stars · optional note · «ناردن».
+   After sending: check · one line · «باشە».
+   Light and dark. The sheet sits outside #mainApp, so it is scoped by its own id.
+   ═════════════════════════════════════════════════════════════════ */
+html body #feedbackSheet {
+  --fx-card: #ffffff; --fx-soft: #f5f7fa; --fx-line: #e7ebf1;
+  --fx-ink: #0f172a; --fx-text: #334155; --fx-muted: #8391a7;
+  --fx-accent: #0265ff; --fx-accent-press: #0052d6;
+  --fx-star: #f5b301; --fx-star-off: #dfe4ec;
+  --fx-ok: #16a34a; --fx-ok-soft: #e9f7ee; --fx-bad: #d92d20;
+  --fx-font: Rabar, Arial, sans-serif;
+}
+html[data-theme="dark"] body #feedbackSheet {
+  --fx-card: #121a2b; --fx-soft: #0c1322; --fx-line: #233049;
+  --fx-ink: #edf1f8; --fx-text: #c3ccdb; --fx-muted: #8b98ae;
+  --fx-accent: #3b8cff; --fx-accent-press: #2f7af0;
+  --fx-star: #f7c13a; --fx-star-off: #2a3650;
+  --fx-ok: #4ade80; --fx-ok-soft: #10301f; --fx-bad: #ff8a80;
+}
+html[data-theme="dark"] body #feedbackSheet .sheet { background: var(--fx-card) !important; border-color: var(--fx-line) !important; }
+
+/* header: the sheet's own drag handle + a quiet close button; no title (kept for screen readers) */
+html body #feedbackSheet .sheet-head { border: 0 !important; padding-bottom: 0 !important; min-height: 0 !important; justify-content: flex-end !important; }
+html body #feedbackSheet .sheet-head h3 { position: absolute !important; width: 1px !important; height: 1px !important; overflow: hidden !important; clip: rect(0 0 0 0) !important; white-space: nowrap !important; }
+html body #feedbackSheet .sheet-head :is(button, .sheet-close) {
+  width: 32px !important; height: 32px !important; border-radius: 50% !important; border: 0 !important;
+  background: var(--fx-soft) !important; color: var(--fx-muted) !important; box-shadow: none !important;
+}
+
+html body #feedbackSheet .fbx {
+  display: flex; flex-direction: column; align-items: stretch; gap: 24px; padding: 4px 4px 8px;
+  font-family: var(--fx-font); color: var(--fx-ink); animation: fxIn .28s ease both;
+}
+@keyframes fxIn { from { opacity: 0; transform: translateY(8px); } }
+
+/* order summary: from · to on one side, amount on the other */
+html body #feedbackSheet .fbx-sum {
+  display: flex; flex-direction: row; align-items: center; gap: 12px; padding: 14px 16px;
+  border: 1px solid var(--fx-line); border-radius: 16px; background: var(--fx-soft);
+}
+html body #feedbackSheet .fbx-pair { position: relative; flex: 0 0 auto; width: 50px; height: 30px; display: flex; flex-direction: row; direction: ltr; }
+html body #feedbackSheet .fbx-pair .method-icon {
+  position: relative; flex: 0 0 30px; width: 30px !important; height: 30px !important; min-width: 0 !important; margin: 0 !important;
+  display: grid !important; place-items: center !important; overflow: hidden !important; border-radius: 50% !important;
+  box-shadow: 0 0 0 2px var(--fx-soft) !important; color: #fff; font-size: 12px; font-weight: 700;
+}
+html body #feedbackSheet .fbx-pair .method-icon + .method-icon { margin-left: -10px !important; }
+html body #feedbackSheet .fbx-pair .method-icon img { width: 100% !important; height: 100% !important; object-fit: cover !important; }
+html body #feedbackSheet .fbx-pair .method-icon :is(svg, .icn) { width: 15px !important; height: 15px !important; }
+html body #feedbackSheet .fbx-pair .dbr-fb { background: var(--fx-card) !important; color: var(--fx-text) !important; border: 1px solid var(--fx-line); }
+html body #feedbackSheet .fbx-route {
+  flex: 1 1 auto; min-width: 0; display: inline-flex; flex-direction: row; align-items: center; gap: 5px;
+  color: var(--fx-text); font-size: 14px; font-weight: 600; line-height: 1.5; white-space: nowrap; overflow: hidden;
+}
+html body #feedbackSheet .fbx-route .tx-route-end { color: inherit; font: inherit; overflow: hidden; text-overflow: ellipsis; }
+html body #feedbackSheet .fbx-route :is(svg, .tx-route-arrow) { width: 12px; height: 12px; flex: 0 0 12px; color: var(--fx-muted); }
+html body #feedbackSheet .fbx-amt { flex: 0 0 auto; color: var(--fx-ink); font-size: 15px; font-weight: 700; line-height: 1.5; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* the question */
+html body #feedbackSheet .fbx-q { margin: 4px 0 -8px; text-align: center; color: var(--fx-ink); font-size: 20px; font-weight: 700; line-height: 1.5; letter-spacing: 0; }
+
+/* five stars: the main control (first star on the right in RTL) */
+html body #feedbackSheet .fbx-stars { display: flex; flex-direction: row; justify-content: center; gap: 6px; }
+html body #feedbackSheet .fbx-star,
+html body #feedbackSheet .fbx-star.selected,
+html body #feedbackSheet .fbx-star:hover {
+  width: 52px; height: 52px; display: grid; place-items: center; padding: 0; margin: 0;
+  border: 0 !important; border-radius: 14px; background: none !important; box-shadow: none !important; cursor: pointer;
+  -webkit-tap-highlight-color: transparent; transition: transform .18s cubic-bezier(.3, .7, .4, 1.4);
+}
+html body #feedbackSheet .fbx-star svg { width: 40px; height: 40px; stroke: none; fill: var(--fx-star-off) !important; transition: fill .18s ease; }
+html body #feedbackSheet .fbx-star.selected svg { fill: var(--fx-star) !important; }
+html body #feedbackSheet .fbx-star:active { transform: scale(.88); }
+html body #feedbackSheet .fbx-star.selected { animation: fxPop .24s ease; }
+html body #feedbackSheet .fbx-star:focus-visible { outline: 2px solid var(--fx-accent); outline-offset: 0; }
+@keyframes fxPop { 50% { transform: scale(1.1); } }
+
+/* optional note */
+html body #feedbackSheet .fbx-note {
+  display: block; width: 100%; min-height: 76px; margin: 0; padding: 12px 14px; resize: none; direction: rtl; text-align: right;
+  border: 1px solid var(--fx-line) !important; border-radius: 14px !important; background: var(--fx-card) !important; box-shadow: none !important;
+  color: var(--fx-ink) !important; font-family: var(--fx-font) !important; font-size: 16px !important; line-height: 1.7 !important;
+  transition: border-color .15s ease;
+}
+html body #feedbackSheet .fbx-note::placeholder { color: var(--fx-muted); opacity: 1; font-size: 14px; }
+html body #feedbackSheet .fbx-note:focus { outline: 0; border-color: var(--fx-accent) !important; }
+
+/* error */
+html body #feedbackSheet .fbx-err:empty { display: none; }
+html body #feedbackSheet .fbx-err { margin: -12px 0 -8px; color: var(--fx-bad); font-size: 13px; text-align: center; line-height: 1.6; }
+
+/* «ناردن» — brand blue, full width; disabled until a star; spinner while sending */
+html body #feedbackSheet .fbx-send {
+  position: relative; display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; height: 52px; margin: 0; padding: 0 16px; border: 0; border-radius: 14px;
+  background: var(--fx-accent); color: #fff; font-family: var(--fx-font); font-size: 16px; font-weight: 600; cursor: pointer;
+  transition: transform .12s ease, background-color .15s ease, opacity .15s ease;
+}
+html body #feedbackSheet .fbx-send:not(:disabled):active { transform: scale(.98); background: var(--fx-accent-press); }
+html body #feedbackSheet .fbx-send:disabled:not(.is-loading) { background: var(--fx-soft); color: var(--fx-muted); cursor: default; box-shadow: inset 0 0 0 1px var(--fx-line); }
+html body #feedbackSheet .fbx-send.is-loading { cursor: progress; opacity: .9; }
+html body #feedbackSheet .fbx-spin { display: none; width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .35); border-top-color: #fff; animation: fxSpin .7s linear infinite; }
+html body #feedbackSheet .fbx-send.is-loading .fbx-spin { display: block; }
+@keyframes fxSpin { to { transform: rotate(360deg); } }
+
+/* success */
+html body #feedbackSheet .fbx-thanks { align-items: center; text-align: center; gap: 16px; padding-top: 12px; }
+html body #feedbackSheet .fbx-done-ico { width: 64px; height: 64px; display: grid; place-items: center; border-radius: 50%; background: var(--fx-ok-soft); color: var(--fx-ok); animation: fxPop .32s ease; }
+html body #feedbackSheet .fbx-done-ico svg { width: 32px; height: 32px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+html body #feedbackSheet .fbx-thanks h4 { margin: 0 0 8px; color: var(--fx-ink); font-size: 18px; font-weight: 700; line-height: 1.5; }
+html body #feedbackSheet .fbx-thanks .fbx-send { align-self: stretch; }
+
+@media (max-width: 350px) {
+  html body #feedbackSheet :is(.fbx-star, .fbx-star.selected) { width: 46px; height: 46px; }
+  html body #feedbackSheet .fbx-star svg { width: 36px; height: 36px; }
+  html body #feedbackSheet .fbx-sum { padding: 12px; gap: 10px; }
+  html body #feedbackSheet .fbx-q { font-size: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html body #feedbackSheet :is(.fbx, .fbx-star, .fbx-send, .fbx-done-ico, .fbx-spin) { animation: none !important; transition: none !important; }
+}

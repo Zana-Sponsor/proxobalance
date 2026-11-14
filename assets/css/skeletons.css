@@ -1,0 +1,56 @@
+/* ═════════════════════════════════════════════════════════════════
+   Skeleton loading (light + dark). The markup comes from assets/js/skeletons.js
+   and reuses each real card's classes, so only the text turns into bars —
+   card size, padding and spacing stay exactly as when the data arrives.
+   ═════════════════════════════════════════════════════════════════ */
+:root { --skb: #edf1f6; --skb-hi: #f8fafc; }
+html[data-theme="dark"] { --skb: #1b2740; --skb-hi: #263552; }
+
+/* a bar of text: .skb-w takes the line's height (zero-width space), .skb is the shimmering bar */
+html body .skb-w {
+  display: inline-block !important; vertical-align: baseline !important; flex: 0 1 auto !important; min-width: 0 !important;
+  max-width: 100% !important; margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important;
+  overflow: visible !important; white-space: nowrap !important; color: transparent !important; text-align: start !important;
+}
+html body .skb {
+  display: inline-block !important; vertical-align: middle !important; width: 100% !important;
+  margin: 0 !important; padding: 0 !important; border: 0 !important; box-shadow: none !important;
+  border-radius: 6px !important; color: transparent !important;
+  background: linear-gradient(90deg, var(--skb) 0%, var(--skb) 38%, var(--skb-hi) 50%, var(--skb) 62%, var(--skb) 100%) !important;
+  background-size: 300% 100% !important;
+  animation: skbWave 1.35s ease-in-out infinite;
+}
+html body .skb.skb-c { border-radius: 999px !important; }
+html body .skb-w + .skb-w { margin-inline-start: 6px !important; }
+@keyframes skbWave { from { background-position: 100% 0; } to { background-position: 0 0; } }
+
+/* icon tiles inside a skeleton card keep their real size and shape */
+html body .is-skel :is(.tx-item-ico, .tf-hero-ico, .chg-ico, .bh-ico, .notif-item-ico, .sc-case-ico),
+html body .is-skel-tile,
+html body .method-icon.is-skel-ico {
+  color: transparent !important; border-color: transparent !important; box-shadow: none !important;
+  background: linear-gradient(90deg, var(--skb) 0%, var(--skb) 38%, var(--skb-hi) 50%, var(--skb) 62%, var(--skb) 100%) !important;
+  background-size: 300% 100% !important; animation: skbWave 1.35s ease-in-out infinite;
+}
+html body .is-skel :is(.tx-item-ico, .tf-hero-ico, .chg-ico, .bh-ico, .notif-item-ico, .sc-case-ico) > *,
+html body .is-skel-tile > * { display: none !important; }
+html body .kyc-ico.is-skel-tile { width: 40px; height: 40px; flex: 0 0 40px; border-radius: 12px !important; display: inline-block; }
+
+/* a skeleton is not a button: no tap, no hover, neutral card colours */
+html body .is-skel { pointer-events: none !important; cursor: default !important; user-select: none !important; }
+html body .is-skel :is(.tx-item-route, .tx-item-when, .tx-item-amount, .tx-item-status, .tf-k, .tf-v, .rate-in, .rate-out, .rate-fee, .chg-vals, .bh-amt) { color: transparent !important; }
+html body #mainApp .tx-item.is-skel::before, html body #mainApp .tx-item.is-skel::after { display: none !important; }
+
+/* inline value placeholders (profile name, balance, wallet number …) */
+html body :is(#pfNameLbl, #pfEmailLbl, #pfUsername, #pfJoined, #bxAmount, #myNum, #pfKycBadgeText, .picker-trigger-value) > .skb-w:only-child { vertical-align: baseline !important; }
+
+/* the app shell while a signed-in session is still loading its profile */
+body.app-booting #authWrap { display: none !important; }
+body.app-booting #mainApp { display: block !important; pointer-events: none !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  html body :is(.skb, .is-skel-tile, .method-icon.is-skel-ico),
+  html body .is-skel :is(.tx-item-ico, .tf-hero-ico, .chg-ico, .bh-ico, .notif-item-ico, .sc-case-ico) { animation: none !important; }
+}
+/* empty filter counts (before loading, or zero) take no space */
+html body #mainApp #pageTx .filter-chip .chip-count:empty { display: none !important; }

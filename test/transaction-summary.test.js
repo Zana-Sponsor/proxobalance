@@ -43,7 +43,7 @@ test('summary route requires an authenticated owner and only selects the existin
   const selectedFields = api.match(/const ORDER_FIELDS = \[([\s\S]*?)\]\.join/)?.[1] || '';
   assert.doesNotMatch(selectedFields, /secure_token/);
   assert.doesNotMatch(selectedFields, /sender_phone/);
-  assert.match(selectedFields, /reward_original_fee_iqd/);
+  assert.doesNotMatch(selectedFields, /reward_/);
   assert.doesNotMatch(api, /gen_random_uuid|randomUUID|set\s+secure_token\s*=/i);
 });
 
@@ -54,7 +54,7 @@ test('the summary is one in-app screen, not a separate page or a bottom sheet', 
   assert.doesNotMatch(html, /id="txSheet"/);
   assert.doesNotMatch(html, /transaction-summary-route\.js/);
   assert.match(html, /id="summaryInfoBackdrop"/);
-  assert.match(html, /src="\/assets\/js\/transaction-summary-financials\.js\?v=1"/);
+  assert.match(html, /src="\/assets\/js\/transaction-summary-financials\.js\?v=2"/);
   assert.doesNotMatch(css, /transaction-summary-active/);
   assert.match(css, /#pageSummary/);
   assert.match(app, /summary:'pageSummary'/);
@@ -75,7 +75,8 @@ test('signed-out visitors log in first and then land on the same transaction', (
 
 test('summary details keep amount, split and transaction sections in order', () => {
   const body = functionBody(app, 'txDetailHTML');
-  const rows = ['بڕی نێردراو', 'کرێی خزمەتگوزاری', 'بڕی داشکاندن', 'کۆی گشتی دوای کرێ'];
+  const rows = ['بڕی نێردراو', 'کرێی خزمەتگوزاری', 'کۆی گشتی دوای کرێ'];
+  assert.doesNotMatch(body, /داشکاندن|discount/i);
   const positions = rows.map(label => body.indexOf(`tfRow('${label}'`));
   assert.ok(positions.every(position => position >= 0), 'all amount rows exist');
   assert.deepEqual(positions, [...positions].sort((a, b) => a - b));
@@ -89,18 +90,17 @@ test('summary details keep amount, split and transaction sections in order', () 
   assert.match(body, /downloadTransactionReceipt/);
 });
 
-test('screenshot transaction total subtracts gross fee and applies discount exactly once', () => {
+test('screenshot transaction total subtracts the charged fee exactly once', () => {
   const order = {
     from_method: 'FastPay', to_method: 'FIB', amount: '11500', total: '11385', fee: '115',
-    reward_original_fee_iqd: '230', reward_discount_iqd: '115', status: 'پەسەندکرا', payout_iqd: 11000,
+    status: 'پەسەندکرا', payout_iqd: 11000,
     payout_rounding_iqd: 385, shortfall_refunded_iqd: 385
   };
   const payout = { settled: true, has_settlement: true, payout_iqd: 11000, remainder_iqd: 385 };
   const result = financials.breakdown(order, payout);
-  assert.equal(result.feeBeforeDiscount, 230);
   assert.equal(result.netFee, 115);
-  assert.equal(result.discount, 115);
-  assert.equal(result.formulaTotal, 11500 - 230 + 115);
+  assert.equal(result.formulaTotal, 11500 - 115);
+  assert.equal('discount' in result, false);
   assert.equal(result.total, 11385);
   assert.equal(result.formulaMatchesTotal, true);
   assert.equal(result.recipientAmount, 11000);
@@ -111,7 +111,7 @@ test('screenshot transaction total subtracts gross fee and applies discount exac
 test('AccountBalance example keeps source debit distinct from the recipient-side total', () => {
   const order = {
     from_method: 'AccountBalance', to_method: 'FIB', amount: '11000', total: '10780', fee: '220',
-    reward_original_fee_iqd: null, reward_discount_iqd: '0', status: 'پەسەندکرا', payout_iqd: 10000,
+    status: 'پەسەندکرا', payout_iqd: 10000,
     payout_rounding_iqd: 780
   };
   const payout = { settled: true, has_settlement: true, payout_iqd: 10000, remainder_iqd: 780 };

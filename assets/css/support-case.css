@@ -1,0 +1,241 @@
+/* ═════════════════════════════════════════════════════════════════
+   Support (کەیس) — new case form + "my cases" list, light and dark.
+   Every rule is scoped to #pageSupport with a doubled #mainApp id, so it
+   wins over the older support layers (app.css, proxo-design-system.css,
+   exchange-light-panel.css, app-dark.css). Loaded last.
+   ═════════════════════════════════════════════════════════════════ */
+
+html body #mainApp#mainApp #pageSupport {
+  --sc-card: #fff; --sc-field: #fff; --sc-soft: #f5f7fb;
+  --sc-line: #e6ebf2; --sc-field-line: #dfe5ee;
+  --sc-ink: #0f172a; --sc-text: #334155; --sc-muted: #64748b;
+  --sc-accent: #0265ff; --sc-accent-soft: #eff4fe; --sc-ring: rgba(2, 101, 255, .14);
+  --sc-ok: #15803d; --sc-ok-soft: #eaf8ef; --sc-warn: #b45309; --sc-warn-soft: #fff5e3;
+  --sc-gray: #64748b; --sc-gray-soft: #f1f4f8; --sc-bad: #dc2626;
+  --sc-shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 4px 14px -10px rgba(16, 24, 40, .12);
+  --sc-font: Rabar, Arial, sans-serif;
+}
+html[data-theme="dark"] body #mainApp#mainApp #pageSupport {
+  --sc-card: #131c2e; --sc-field: #0e1725; --sc-soft: #0f1828;
+  --sc-line: #25324a; --sc-field-line: #2b3a55;
+  --sc-ink: #e8edf6; --sc-text: #c4cee0; --sc-muted: #a3b1c7;
+  --sc-accent: #3b8cff; --sc-accent-soft: #10223d; --sc-ring: rgba(59, 140, 255, .18);
+  --sc-ok: #4ade80; --sc-ok-soft: #10301f; --sc-warn: #f7b955; --sc-warn-soft: #33270d;
+  --sc-gray: #a3b1c7; --sc-gray-soft: #1a2438; --sc-bad: #ff8a80;
+  --sc-shadow: none;
+}
+
+html body #mainApp#mainApp #pageSupport :is(.sc-form, .sc-list-head, #supportCasesList) { font-family: var(--sc-font) !important; }
+html body #mainApp#mainApp #pageSupport .pxi { fill: none !important; stroke: currentColor !important; stroke-width: 1.9 !important; stroke-linecap: round !important; stroke-linejoin: round !important; }
+
+/* shared icon tile */
+html body #mainApp#mainApp #pageSupport .sc-tile {
+  width: 36px !important; height: 36px !important; min-width: 36px !important; flex: 0 0 36px !important;
+  display: grid !important; place-items: center !important; padding: 0 !important; margin: 0 !important;
+  border: 0 !important; border-radius: 12px !important;
+  background: var(--sc-accent-soft) !important; color: var(--sc-accent) !important; box-shadow: none !important;
+}
+html body #mainApp#mainApp #pageSupport .sc-tile svg { width: 20px !important; height: 20px !important; background: transparent !important; padding: 0 !important; color: inherit !important; }
+
+/* ── form card ─────────────────────────────────────────────── */
+html body #mainApp#mainApp #pageSupport .sc-form {
+  display: flex !important; flex-direction: column !important; gap: 18px !important;
+  margin: 0 0 8px !important; padding: 18px 16px !important;
+  background: var(--sc-card) !important; border: 1px solid var(--sc-line) !important;
+  border-radius: 16px !important; box-shadow: var(--sc-shadow) !important;
+}
+html body #mainApp#mainApp #pageSupport .sc-form-head {
+  display: flex !important; align-items: center !important; gap: 12px !important;
+  margin: 0 !important; padding: 0 0 16px !important; border: 0 !important;
+  border-bottom: 1px solid var(--sc-line) !important; background: transparent !important;
+}
+html body #mainApp#mainApp #pageSupport .sc-form-head > div { display: flex !important; flex-direction: column !important; gap: 3px !important; min-width: 0 !important; }
+html body #mainApp#mainApp #pageSupport .sc-form-head b { margin: 0 !important; color: var(--sc-ink) !important; font-size: 16px !important; font-weight: 600 !important; line-height: 1.5 !important; }
+html body #mainApp#mainApp #pageSupport .sc-private { display: inline-flex !important; align-items: center !important; gap: 5px !important; color: var(--sc-muted) !important; font-size: 12.5px !important; font-weight: 400 !important; line-height: 1.6 !important; }
+html body #mainApp#mainApp #pageSupport .sc-private svg { width: 13px !important; height: 13px !important; flex: 0 0 13px !important; }
+
+html body #mainApp#mainApp #pageSupport .sc-field { display: flex !important; flex-direction: column !important; gap: 8px !important; margin: 0 !important; }
+html body #mainApp#mainApp #pageSupport .sc-label {
+  display: flex !important; align-items: center !important; gap: 6px !important; margin: 0 !important;
+  color: var(--sc-ink) !important; font-size: 13.5px !important; font-weight: 600 !important; line-height: 1.5 !important;
+}
+html body #mainApp#mainApp #pageSupport .sc-label label { color: inherit !important; font: inherit !important; margin: 0 !important; }
+html body #mainApp#mainApp #pageSupport .sc-label small:not(.sc-count-chip) { color: var(--sc-muted) !important; font-size: 11.5px !important; font-weight: 400 !important; }
+html body #mainApp#mainApp #pageSupport .support-label-row.sc-label { justify-content: space-between !important; }
+html body #mainApp#mainApp #pageSupport .sc-count-chip {
+  padding: 2px 8px !important; border-radius: 999px !important; background: var(--sc-soft) !important;
+  color: var(--sc-muted) !important; font-size: 11.5px !important; font-weight: 500 !important; font-variant-numeric: tabular-nums !important; unicode-bidi: isolate !important;
+}
+html body #mainApp#mainApp #pageSupport .sc-count-chip.is-near { color: var(--sc-warn) !important; background: var(--sc-warn-soft) !important; }
+
+/* category chips (the select stays hidden as the value holder) */
+html body #mainApp#mainApp #pageSupport .sc-native { display: none !important; }
+html body #mainApp#mainApp #pageSupport .sc-cats { display: grid !important; grid-template-columns: repeat(5, minmax(0, 1fr)) !important; gap: 8px !important; }
+html body #mainApp#mainApp #pageSupport .sc-cat {
+  display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; gap: 6px !important;
+  min-width: 0 !important; height: 66px !important; margin: 0 !important; padding: 6px 2px !important;
+  background: var(--sc-field) !important; border: 1px solid var(--sc-field-line) !important; border-radius: 12px !important;
+  color: var(--sc-muted) !important; font-family: var(--sc-font) !important; font-size: 12px !important; font-weight: 500 !important; line-height: 1.3 !important;
+  box-shadow: none !important; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease, transform .1s ease;
+}
+html body #mainApp#mainApp #pageSupport .sc-cat svg { width: 20px !important; height: 20px !important; }
+html body #mainApp#mainApp #pageSupport .sc-cat span { max-width: 100% !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; }
+html body #mainApp#mainApp #pageSupport .sc-cat:active { transform: scale(.97); }
+html body #mainApp#mainApp #pageSupport .sc-cat.is-on { background: var(--sc-accent-soft) !important; border-color: var(--sc-accent) !important; color: var(--sc-accent) !important; font-weight: 600 !important; }
+html body #mainApp#mainApp #pageSupport .sc-cat:focus-visible { outline: 0 !important; box-shadow: 0 0 0 4px var(--sc-ring) !important; }
+
+/* inputs */
+html body #mainApp#mainApp #pageSupport .sc-input-wrap { position: relative !important; }
+html body #mainApp#mainApp #pageSupport .sc-input-ico { position: absolute !important; top: 50% !important; left: 14px !important; transform: translateY(-50%) !important; display: grid !important; color: var(--sc-muted) !important; pointer-events: none !important; }
+html body #mainApp#mainApp #pageSupport .sc-input-ico svg { width: 18px !important; height: 18px !important; }
+html body #mainApp#mainApp #pageSupport :is(.sc-input, .sc-textarea) {
+  width: 100% !important; margin: 0 !important; background: var(--sc-field) !important; background-image: none !important;
+  border: 1px solid var(--sc-field-line) !important; border-radius: 12px !important; box-shadow: none !important;
+  color: var(--sc-ink) !important; font-family: var(--sc-font) !important; font-size: 16px !important; font-weight: 500 !important;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+html body #mainApp#mainApp #pageSupport .sc-input { height: 48px !important; padding: 0 14px 0 42px !important; text-align: left !important; letter-spacing: .6px !important; }
+html body #mainApp#mainApp #pageSupport .sc-textarea { min-height: 124px !important; padding: 12px 14px !important; line-height: 1.85 !important; text-align: right !important; resize: vertical !important; }
+html body #mainApp#mainApp #pageSupport :is(.sc-input, .sc-textarea)::placeholder { color: var(--sc-muted) !important; opacity: .7 !important; font-weight: 400 !important; letter-spacing: 0 !important; }
+html body #mainApp#mainApp #pageSupport :is(.sc-input, .sc-textarea):focus { outline: 0 !important; border-color: var(--sc-accent) !important; box-shadow: 0 0 0 4px var(--sc-ring) !important; }
+html body #mainApp#mainApp #pageSupport :is(.sc-input, .sc-textarea).has-error { border-color: var(--sc-bad) !important; }
+html body #mainApp#mainApp #pageSupport .sc-field .field-error { color: var(--sc-bad) !important; font-size: 12.5px !important; margin: 0 !important; }
+
+/* image picker */
+html body #mainApp#mainApp #pageSupport .sc-picker {
+  display: flex !important; align-items: center !important; gap: 12px !important; margin: 0 !important; padding: 12px !important; min-height: 0 !important;
+  background: var(--sc-soft) !important; border: 1.5px dashed var(--sc-field-line) !important; border-radius: 12px !important; box-shadow: none !important; cursor: pointer;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+html body #mainApp#mainApp #pageSupport .sc-picker:hover { border-color: var(--sc-accent) !important; }
+html body #mainApp#mainApp #pageSupport .sc-picker.selected { border-style: solid !important; border-color: var(--sc-accent) !important; background: var(--sc-accent-soft) !important; }
+html body #mainApp#mainApp #pageSupport .sc-picker .sc-tile { background: var(--sc-card) !important; border: 1px solid var(--sc-line) !important; }
+html body #mainApp#mainApp #pageSupport .sc-picker-txt { display: flex !important; flex-direction: column !important; gap: 2px !important; flex: 1 !important; min-width: 0 !important; }
+html body #mainApp#mainApp #pageSupport .sc-picker-txt b { color: var(--sc-ink) !important; font-size: 13.5px !important; font-weight: 600 !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; }
+html body #mainApp#mainApp #pageSupport .sc-picker-txt small { color: var(--sc-muted) !important; font-size: 11.5px !important; font-weight: 400 !important; }
+html body #mainApp#mainApp #pageSupport .sc-picker-go {
+  width: 34px !important; height: 34px !important; flex: 0 0 34px !important; display: grid !important; place-items: center !important;
+  border-radius: 10px !important; background: var(--sc-accent) !important; color: #fff !important;
+}
+html body #mainApp#mainApp #pageSupport .sc-picker-go svg { width: 17px !important; height: 17px !important; }
+html body #mainApp#mainApp #pageSupport .sc-preview { position: relative !important; margin: 0 !important; border: 0 !important; background: transparent !important; padding: 0 !important; }
+html body #mainApp#mainApp #pageSupport .sc-preview img { display: block !important; width: 100% !important; max-height: 200px !important; object-fit: cover !important; border-radius: 12px !important; border: 1px solid var(--sc-line) !important; }
+html body #mainApp#mainApp #pageSupport .sc-preview button {
+  position: absolute !important; top: 8px !important; left: 8px !important; right: auto !important;
+  width: 32px !important; height: 32px !important; display: grid !important; place-items: center !important; padding: 0 !important;
+  border: 0 !important; border-radius: 50% !important; background: rgba(15, 23, 42, .72) !important; color: #fff !important; cursor: pointer;
+}
+html body #mainApp#mainApp #pageSupport .sc-preview button svg { width: 16px !important; height: 16px !important; stroke-width: 2.4 !important; }
+
+/* submit + success */
+html body #mainApp#mainApp #pageSupport .sc-submit {
+  display: flex !important; align-items: center !important; justify-content: center !important; gap: 8px !important;
+  width: 100% !important; height: 50px !important; margin: 2px 0 0 !important; padding: 0 16px !important;
+  background: var(--sc-accent) !important; border: 0 !important; border-radius: 12px !important; color: #fff !important;
+  font-family: var(--sc-font) !important; font-size: 15px !important; font-weight: 600 !important;
+  box-shadow: 0 8px 18px -10px var(--sc-accent) !important; transition: transform .1s ease, opacity .15s ease;
+}
+html body #mainApp#mainApp #pageSupport .sc-submit svg { width: 18px !important; height: 18px !important; color: #fff !important; background: transparent !important; }
+html body #mainApp#mainApp #pageSupport .sc-submit:active { transform: scale(.98); }
+html body #mainApp#mainApp #pageSupport .sc-submit:disabled { opacity: .65 !important; }
+html body #mainApp#mainApp #pageSupport .sc-success[style*="flex"] {
+  align-items: center !important; gap: 12px !important; margin: 0 !important; padding: 12px 14px !important;
+  background: var(--sc-ok-soft) !important; border: 1px solid color-mix(in srgb, var(--sc-ok) 28%, transparent) !important; border-radius: 12px !important;
+}
+html body #mainApp#mainApp #pageSupport .sc-success-ico { width: 36px !important; height: 36px !important; flex: 0 0 36px !important; display: grid !important; place-items: center !important; border-radius: 50% !important; background: var(--sc-card) !important; color: var(--sc-ok) !important; }
+html body #mainApp#mainApp #pageSupport .sc-success-ico svg { width: 20px !important; height: 20px !important; }
+html body #mainApp#mainApp #pageSupport .sc-success > div { display: flex !important; flex-direction: column !important; gap: 2px !important; }
+html body #mainApp#mainApp #pageSupport .sc-success b { color: var(--sc-ok) !important; font-size: 14px !important; font-weight: 600 !important; }
+html body #mainApp#mainApp #pageSupport .sc-success span { color: var(--sc-text) !important; font-size: 12.5px !important; }
+html body #mainApp#mainApp #pageSupport .sc-success strong { color: var(--sc-ink) !important; font-weight: 600 !important; letter-spacing: .4px !important; }
+
+/* ── my cases ──────────────────────────────────────────────── */
+html body #mainApp#mainApp #pageSupport .sc-list-head { display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 10px !important; margin: 26px 2px 12px !important; }
+html body #mainApp#mainApp #pageSupport .sc-list-head h3 {
+  display: flex !important; align-items: center !important; gap: 8px !important; margin: 0 !important; padding: 0 !important; border: 0 !important;
+  color: var(--sc-ink) !important; font-size: 16px !important; font-weight: 600 !important; line-height: 1.5 !important;
+}
+html body #mainApp#mainApp #pageSupport .sc-list-head h3 svg { width: 20px !important; height: 20px !important; color: var(--sc-muted) !important; }
+html body #mainApp#mainApp #pageSupport .sc-list-count:not([hidden]) {
+  display: inline-grid !important; place-items: center !important; min-width: 26px !important; height: 26px !important; padding: 0 8px !important;
+  border-radius: 999px !important; background: var(--sc-accent-soft) !important; color: var(--sc-accent) !important; font-size: 12.5px !important; font-weight: 600 !important;
+}
+html body #mainApp#mainApp #pageSupport #supportCasesList { display: flex !important; flex-direction: column !important; gap: 12px !important; }
+
+html body #mainApp#mainApp #pageSupport .sc-case {
+  --st: var(--sc-accent); --st-soft: var(--sc-accent-soft);
+  display: flex !important; flex-direction: column !important; gap: 12px !important; margin: 0 !important; padding: 16px !important;
+  background: var(--sc-card) !important; border: 1px solid var(--sc-line) !important; border-radius: 16px !important; box-shadow: var(--sc-shadow) !important;
+}
+html body #mainApp#mainApp #pageSupport .sc-case.is-progress { --st: var(--sc-warn); --st-soft: var(--sc-warn-soft); }
+html body #mainApp#mainApp #pageSupport .sc-case.is-resolved { --st: var(--sc-ok); --st-soft: var(--sc-ok-soft); }
+html body #mainApp#mainApp #pageSupport .sc-case.is-closed { --st: var(--sc-gray); --st-soft: var(--sc-gray-soft); }
+
+html body #mainApp#mainApp #pageSupport .sc-case-head { display: flex !important; align-items: center !important; gap: 12px !important; margin: 0 !important; padding: 0 !important; border: 0 !important; }
+html body #mainApp#mainApp #pageSupport .sc-case-ico { background: var(--sc-soft) !important; color: var(--sc-text) !important; border: 1px solid var(--sc-line) !important; }
+html body #mainApp#mainApp #pageSupport .sc-case-id { flex: 1 !important; min-width: 0 !important; display: flex !important; flex-direction: column !important; gap: 2px !important; }
+html body #mainApp#mainApp #pageSupport .sc-case-id b { color: var(--sc-ink) !important; font-size: 14.5px !important; font-weight: 600 !important; line-height: 1.5 !important; }
+html body #mainApp#mainApp #pageSupport .sc-case-id b span { font-variant-numeric: tabular-nums !important; letter-spacing: .3px !important; unicode-bidi: isolate !important; }
+html body #mainApp#mainApp #pageSupport .sc-case-id small { color: var(--sc-muted) !important; font-size: 12px !important; font-weight: 400 !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; }
+html body #mainApp#mainApp #pageSupport .sc-status {
+  display: inline-flex !important; align-items: center !important; gap: 6px !important; flex: 0 0 auto !important;
+  height: 26px !important; padding: 0 10px !important; border-radius: 999px !important;
+  background: var(--st-soft) !important; color: var(--st) !important; font-size: 12px !important; font-weight: 600 !important; white-space: nowrap !important;
+}
+html body #mainApp#mainApp #pageSupport .sc-status i { width: 6px !important; height: 6px !important; border-radius: 50% !important; background: currentColor !important; }
+html body #mainApp#mainApp #pageSupport .sc-case-desc { margin: 0 !important; color: var(--sc-text) !important; font-size: 14px !important; font-weight: 400 !important; line-height: 1.85 !important; overflow-wrap: anywhere !important; }
+html body #mainApp#mainApp #pageSupport .sc-case-meta { display: flex !important; flex-wrap: wrap !important; gap: 8px !important; }
+html body #mainApp#mainApp #pageSupport .sc-chip {
+  display: inline-flex !important; align-items: center !important; gap: 6px !important; height: 30px !important; margin: 0 !important; padding: 0 10px !important;
+  background: var(--sc-soft) !important; border: 1px solid var(--sc-line) !important; border-radius: 10px !important;
+  color: var(--sc-muted) !important; font-family: var(--sc-font) !important; font-size: 12px !important; font-weight: 400 !important;
+}
+html body #mainApp#mainApp #pageSupport .sc-chip b { color: var(--sc-ink) !important; font-weight: 600 !important; letter-spacing: .3px !important; }
+html body #mainApp#mainApp #pageSupport .sc-chip-img { color: var(--sc-accent) !important; font-weight: 600 !important; cursor: pointer; }
+html body #mainApp#mainApp #pageSupport .sc-chip-img img { width: 20px !important; height: 20px !important; border-radius: 5px !important; object-fit: cover !important; }
+html body #mainApp#mainApp #pageSupport .sc-reply {
+  display: flex !important; gap: 10px !important; margin: 0 !important; padding: 12px !important;
+  background: var(--sc-soft) !important; border: 1px solid var(--sc-line) !important; border-radius: 12px !important;
+}
+html body #mainApp#mainApp #pageSupport .sc-reply-ico { width: 30px !important; height: 30px !important; flex: 0 0 30px !important; display: grid !important; place-items: center !important; border-radius: 50% !important; background: var(--sc-accent-soft) !important; color: var(--sc-accent) !important; }
+html body #mainApp#mainApp #pageSupport .sc-reply-ico svg { width: 16px !important; height: 16px !important; }
+html body #mainApp#mainApp #pageSupport .sc-reply b { display: block !important; color: var(--sc-accent) !important; font-size: 12.5px !important; font-weight: 600 !important; line-height: 1.6 !important; }
+html body #mainApp#mainApp #pageSupport .sc-reply p { margin: 2px 0 0 !important; color: var(--sc-ink) !important; font-size: 13.5px !important; line-height: 1.8 !important; }
+
+/* empty / error / loading */
+html body #mainApp#mainApp #pageSupport .sc-empty {
+  display: flex !important; flex-direction: column !important; align-items: center !important; gap: 4px !important; padding: 28px 16px !important; text-align: center !important;
+  background: var(--sc-card) !important; border: 1.5px dashed var(--sc-field-line) !important; border-radius: 16px !important;
+}
+html body #mainApp#mainApp #pageSupport .sc-empty .sc-tile { margin-bottom: 8px !important; }
+html body #mainApp#mainApp #pageSupport .sc-empty b { color: var(--sc-ink) !important; font-size: 14.5px !important; font-weight: 600 !important; }
+html body #mainApp#mainApp #pageSupport .sc-empty small { color: var(--sc-muted) !important; font-size: 12.5px !important; line-height: 1.7 !important; }
+html body #mainApp#mainApp #pageSupport .sc-skel { display: flex !important; flex-direction: column !important; gap: 12px !important; }
+html body #mainApp#mainApp #pageSupport .sc-skel span { display: block !important; height: 112px !important; border-radius: 16px !important; background: var(--sc-card) !important; border: 1px solid var(--sc-line) !important; animation: scPulse 1.2s ease-in-out infinite; }
+@keyframes scPulse { 50% { opacity: .55; } }
+
+@media (max-width: 350px) {
+  html body #mainApp#mainApp #pageSupport .sc-cats { gap: 6px !important; }
+  html body #mainApp#mainApp #pageSupport .sc-cat { height: 62px !important; font-size: 11px !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html body #mainApp#mainApp #pageSupport :is(.sc-cat, .sc-submit, .sc-skel span) { transition: none !important; animation: none !important; }
+}
+
+/* field errors: a quiet line under the field instead of the global bubble */
+html body #mainApp#mainApp #pageSupport .sc-field .field-error.show {
+  display: flex !important; align-items: center !important; gap: 6px !important; margin: 0 !important; padding: 0 2px !important;
+  background: transparent !important; border: 0 !important; box-shadow: none !important; position: static !important; transform: none !important;
+  color: var(--sc-bad) !important; font-size: 12.5px !important; font-weight: 500 !important; line-height: 1.6 !important;
+}
+html body #mainApp#mainApp #pageSupport .sc-field .field-error::before,
+html body #mainApp#mainApp #pageSupport .sc-field .field-error::after { display: none !important; content: none !important; }
+html body #mainApp#mainApp #pageSupport .sc-field .field-error .fe-ico {
+  width: 16px !important; height: 16px !important; flex: 0 0 16px !important; display: grid !important; place-items: center !important;
+  border-radius: 50% !important; background: var(--sc-bad) !important; color: #fff !important; margin: 0 !important;
+}
+html body #mainApp#mainApp #pageSupport .sc-field .field-error .fe-ico svg { width: 11px !important; height: 11px !important; }
+html body #mainApp#mainApp #pageSupport .sc-field .field-error .fe-txt { color: inherit !important; background: transparent !important; }
+/* "0.84 MB" reads left-to-right */
+html body #mainApp#mainApp #pageSupport #supportImageMeta { unicode-bidi: plaintext !important; text-align: right !important; }

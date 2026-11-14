@@ -12,7 +12,7 @@ const approved={id:'order-1',order_code:'P123456789AB',status:'پەسەندکر�
 function reminderContext(rows=[{...approved}]){
   const element={hidden:true,innerHTML:''},timers=[],opened=[],routes=[];
   const context=vm.createContext({
-    _orders:rows,curUser:{id:'user-1'},_route:'home',_txSheetId:null,FEEDBACK_REWARD:{percent:50},
+    _orders:rows,curUser:{id:'user-1'},_route:'home',_txSheetId:null,
     _homeFeedbackPromptShownThisSession:false,_homeFeedbackPromptQueued:false,_feedbackSheetId:null,
     document:{getElementById:()=>element},
     escHtml:s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),
@@ -42,14 +42,13 @@ test('Home only reminds about approved unrated orders',()=>{
   assert.equal(context.pendingHomeFeedbackOrder().id,'pending-rating');
 });
 
-test('Home feedback reminder invites a rating without promising a reward',()=>{
+test('Home rating reminder asks the plain question safely, with no discount offer',()=>{
   const {context,element}=reminderContext([{...approved,order_code:'<script>unsafe</script>'}]);
   context.renderHomeFeedbackPrompt();
   assert.equal(element.hidden,false);
   assert(!element.innerHTML.includes('<script>'));
-  assert(element.innerHTML.includes('هەڵسەنگاندنەکەت بنێرە'));
-  assert(!element.innerHTML.includes('50%'));
-  assert(!element.innerHTML.includes('داشکان'));
+  assert(element.innerHTML.includes('چۆن بوو ئەم مامەڵەیە؟'));
+  assert(!/50%|داشکاندن|پاداشت/.test(element.innerHTML));
   assert(!element.innerHTML.includes('<script>'));
 });
 

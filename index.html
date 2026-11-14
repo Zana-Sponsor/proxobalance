@@ -113,19 +113,27 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
 <link rel="stylesheet" href="/assets/css/exchange-balance.css?v=5">
 <link rel="stylesheet" href="/assets/css/exchange-features.css?v=2">
 <link rel="stylesheet" href="/assets/css/exchange-auth-app.css?v=1"><script src="/assets/js/exchange-access.js?v=1"></script>
-<link rel="stylesheet" href="/assets/css/exchange-customer-polish.css?v=2">
-<link rel="stylesheet" href="/assets/css/exchange-feedback.css?v=3">
+<link rel="stylesheet" href="/assets/css/exchange-customer-polish.css?v=3">
+<link rel="stylesheet" href="/assets/css/exchange-feedback.css?v=4">
 <link rel="stylesheet" href="/assets/css/exchange-auth-modern.css?v=11">
 <link rel="stylesheet" href="/assets/css/app-ui-polish.css?v=2">
-<link rel="stylesheet" href="/assets/css/proxo-app-shell.css?v=1">
-<link rel="stylesheet" href="/assets/css/proxo-balance-polish.css?v=1">
-<link rel="stylesheet" href="/assets/css/proxo-complete-theme.css?v=1">
-<link rel="stylesheet" href="/assets/css/proxo-ui-v2.css?v=14">
-<link rel="stylesheet" href="/assets/css/proxo-dark.css?v=6">
-<link rel="stylesheet" href="/assets/css/proxo-design-system.css?v=3">
+<link rel="stylesheet" href="/assets/css/proxo-app-shell.css?v=2">
+<link rel="stylesheet" href="/assets/css/proxo-balance-polish.css?v=2">
+<link rel="stylesheet" href="/assets/css/proxo-complete-theme.css?v=2">
+<link rel="stylesheet" href="/assets/css/proxo-ui-v2.css?v=15">
+<link rel="stylesheet" href="/assets/css/proxo-dark.css?v=7">
+<link rel="stylesheet" href="/assets/css/proxo-design-system.css?v=4">
 <link rel="stylesheet" href="/assets/css/transaction-summary.css?v=5">
 <link rel="stylesheet" href="/assets/css/whatsapp-notify.css?v=1">
 <link rel="stylesheet" href="/assets/css/auth-balance.css?v=6">
+<link rel="stylesheet" href="/assets/css/auth-phone.css?v=1">
+<link rel="stylesheet" href="/assets/css/app-dark.css?v=5">
+<link rel="stylesheet" href="/assets/css/app-icons.css?v=2">
+<link rel="stylesheet" href="/assets/css/support-case.css?v=1">
+<link rel="stylesheet" href="/assets/css/skeletons.css?v=2">
+<link rel="stylesheet" href="/assets/css/dashboard.css?v=7">
+<link rel="stylesheet" href="/assets/css/account-delete.css?v=1">
+<link rel="stylesheet" href="/assets/css/feedback-sheet.css?v=3">
 </head>
 
 <body>
@@ -452,17 +460,18 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
           </div>
           <p>بەخێربێیتەوە. بۆ بەردەوامبوون بچۆ ژوورەوە.</p>
         </div>
-        <label class="auth-field-label" for="authEmail">ئیمەیڵ</label>
+        <label class="auth-field-label" for="authEmail">ژمارەی مۆبایل یان ئیمەیڵ</label>
         <div class="input-wrap">
-          <span class="input-ico"><span class="icn icn-sm icon--solar icon--solar--letter-linear" aria-hidden="true"></span></span>
-          <input class="input" type="email" autocomplete="username" aria-label="ئیمەیڵ" id="authEmail" placeholder="example@gmail.com" dir="ltr" inputmode="email" autocapitalize="none" spellcheck="false">
+          <span class="input-ico"><span class="icn icn-sm icon--solar icon--solar--user-linear" aria-hidden="true"></span></span>
+          <input class="input" type="text" autocomplete="username" aria-label="ژمارەی مۆبایل یان ئیمەیڵ" id="authEmail" placeholder="07XX XXX XXXX" dir="ltr" autocapitalize="none" spellcheck="false">
         </div>
         <label class="auth-field-label" for="authPass">وشەی نهێنی</label>
         <div class="pass-wrap field">
           <input class="input" type="password" autocomplete="current-password" aria-label="وشەی نهێنی" id="authPass" placeholder="وشەی نهێنییەکەت بنووسە" dir="ltr">
           <button type="button" class="pass-eye" onclick="togglePass('authPass',this)" aria-label="پیشاندانی وشەی نهێنی" aria-pressed="false"><span class="pass-eye-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path><circle cx="12" cy="12" r="2.7"></circle></svg></span></button>
         </div>
-        <div id="forgotLinkWrap" class="auth-forgot-wrap">
+        <div id="forgotLinkWrap" class="auth-forgot-wrap auth-row-between">
+          <label class="auth-remember"><input type="checkbox" id="authRemember"><span>ئەم ئامێرەم لەبیربێت</span></label>
           <button type="button" class="auth-link auth-link-button" onclick="showForgotStep()">وشەی نهێنیم لەبیرکردووە؟</button>
         </div>
         <button type="button" class="btn btn-primary btn-block" id="authBtn" onclick="submitLogin()">
@@ -490,14 +499,15 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
           <span class="input-ico"><span class="icn icn-sm icon--solar icon--solar--user-linear" aria-hidden="true"></span></span>
           <input class="input" type="text" autocomplete="name" aria-label="ناوی تەواو" id="authName" placeholder="بۆ نموونە: زانا ئەحمەد">
         </div>
-        <label class="auth-field-label" for="signupEmail">ئیمەیڵ</label>
+        <label class="auth-field-label" for="signupPhone">ژمارەی مۆبایل</label>
         <div class="input-wrap">
-          <span class="input-ico"><span class="icn icn-sm icon--solar icon--solar--letter-linear" aria-hidden="true"></span></span>
-          <input class="input" type="email" autocomplete="email" aria-label="ئیمەیڵ" id="signupEmail" placeholder="example@gmail.com" dir="ltr" inputmode="email" autocapitalize="none" spellcheck="false">
+          <span class="input-ico"><span class="icn icn-sm icon--solar icon--solar--phone-linear" aria-hidden="true"></span></span>
+          <input class="input" type="tel" autocomplete="tel" aria-label="ژمارەی مۆبایل" id="signupPhone" placeholder="07XX XXX XXXX" dir="ltr" inputmode="tel">
         </div>
+        <p class="auth-hint">تەنها ژمارەی عێراقی. کۆدی دڵنیاکردنەوە بۆ واتسئاپ دەنێردرێت.</p>
         <label class="auth-field-label" for="signupPass">وشەی نهێنی</label>
         <div class="pass-wrap field">
-          <input class="input" type="password" autocomplete="new-password" aria-label="وشەی نهێنی" id="signupPass" placeholder="کەمترین ٦ پیت" dir="ltr">
+          <input class="input" type="password" autocomplete="new-password" aria-label="وشەی نهێنی" id="signupPass" placeholder="کەمترین ٨ پیت" dir="ltr">
           <button type="button" class="pass-eye" onclick="togglePass('signupPass',this)" aria-label="پیشاندانی وشەی نهێنی" aria-pressed="false"><span class="pass-eye-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path><circle cx="12" cy="12" r="2.7"></circle></svg></span></button>
         </div>
         <label class="auth-field-label" for="signupConfirmPass">دووبارە وشەی نهێنی</label>
@@ -505,6 +515,7 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
           <input class="input" type="password" autocomplete="new-password" aria-label="دووبارە وشەی نهێنی" id="signupConfirmPass" placeholder="هەمان وشەی نهێنی بنووسەرەوە" dir="ltr">
           <button type="button" class="pass-eye" onclick="togglePass('signupConfirmPass',this)" aria-label="پیشاندانی وشەی نهێنی" aria-pressed="false"><span class="pass-eye-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path><circle cx="12" cy="12" r="2.7"></circle></svg></span></button>
         </div>
+        <label class="auth-remember auth-remember-block"><input type="checkbox" id="signupRemember"><span>ئەم ئامێرەم لەبیربێت</span></label>
         <button type="button" class="btn btn-primary btn-block" id="signupSubmitBtn" onclick="submitSignup()">
           <span>دروستکردنی هەژمار</span>
           <span class="icn icon--solar icon--solar--arrow-left-linear" aria-hidden="true"></span>
@@ -557,12 +568,12 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
               <div class="auth-step-icon"><span class="icn icn-lg icon--solar icon--solar--key-linear" aria-hidden="true"></span></div>
               <h3>گەڕاندنەوەی هەژمار</h3>
             </div>
-            <p>ئیمەیڵەکەت بنووسە بۆ وەرگرتنی کۆد.</p>
+            <p>ژمارەی مۆبایل یان ئیمەیڵەکەت بنووسە بۆ وەرگرتنی کۆد.</p>
           </div>
-          <label class="auth-field-label" for="forgotEmail">ئیمەیڵ</label>
+          <label class="auth-field-label" for="forgotEmail">ژمارەی مۆبایل یان ئیمەیڵ</label>
           <div class="field input-wrap">
-            <span class="input-ico"><span class="icn icn-sm icon--solar icon--solar--letter-linear" aria-hidden="true"></span></span>
-            <input class="input" type="email" id="forgotEmail" placeholder="example@gmail.com" dir="ltr">
+            <span class="input-ico"><span class="icn icn-sm icon--solar icon--solar--user-linear" aria-hidden="true"></span></span>
+            <input class="input" type="text" id="forgotEmail" placeholder="07XX XXX XXXX" dir="ltr" autocapitalize="none" spellcheck="false">
           </div>
           <button class="btn btn-primary btn-block" id="forgotSendBtn" onclick="doForgotSendOtp()">
             <span class="icn icon--solar icon--solar--plain-2-linear" aria-hidden="true"></span>
@@ -615,7 +626,7 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
           </div>
           <label class="auth-field-label" for="fpNewPass">وشەی نهێنیی نوێ</label>
           <div class="pass-wrap field">
-            <input class="input" type="password" id="fpNewPass" placeholder="کەمترین ٦ پیت" dir="ltr">
+            <input class="input" type="password" id="fpNewPass" placeholder="کەمترین ٨ پیت" dir="ltr">
             <button type="button" class="pass-eye" onclick="togglePass('fpNewPass',this)" aria-label="پیشاندانی وشەی نهێنی" aria-pressed="false"><span class="pass-eye-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path><circle cx="12" cy="12" r="2.7"></circle></svg></span></button>
           </div>
           <label class="auth-field-label" for="fpConfirmPass">دووبارە وشەی نهێنیی نوێ</label>
@@ -648,7 +659,8 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
       </a>
 
       <nav class="pxh-nav" aria-label="ڕێنیشاندەر">
-        <button type="button" class="pxh-link on" data-route="home" onclick="navigate('home')"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>ئاڵوگۆڕ</button>
+        <button type="button" class="pxh-link on" data-route="home" onclick="navigate('home')"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 10.2 12 3.5l8.5 6.7"/><path d="M5.5 8.8V19a1.5 1.5 0 0 0 1.5 1.5h3.2v-5.2a1.8 1.8 0 0 1 3.6 0v5.2H17a1.5 1.5 0 0 0 1.5-1.5V8.8"/></svg>سەرەکی</button>
+        <button type="button" class="pxh-link" data-route="exchange" onclick="navigate('exchange')"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>ئاڵوگۆڕ</button>
         <button type="button" class="pxh-link" data-route="transactions" onclick="navigate('transactions')"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M14 8H8"/><path d="M16 12H8"/><path d="M13 16H8"/></svg>مامەڵەکان</button>
         <button type="button" class="pxh-link" data-route="changes" onclick="navigate('changes')"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg>نرخەکان</button>
         <button type="button" class="pxh-link" data-route="rules" onclick="navigate('rules')"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="pxn-f" d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="m9 15 2 2 4-4"/></svg>یاساکان</button>
@@ -691,8 +703,23 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
     <div class="notif-panel-body" id="notifPanelBody" tabindex="0"></div>
   </aside>
 
-  <!-- ══════════════ PAGE: HOME (route "/") ══════════════ -->
-  <section class="page active" id="pageHome" data-route="home">
+  <!-- ══════════════ PAGE: HOME — dashboard (route "/") ══════════════ -->
+  <section class="page active" id="pageDash" data-route="home">
+
+  <div class="db db-top">
+    <div class="db-hello">
+      <div class="db-hello-txt">
+        <small id="dbGreet">بەخێربێیتەوە</small>
+        <h2 id="dbName"><span class="skb-w" style="width:120px" aria-hidden="true"><span class="skb" style="height:18px"></span>&#8203;</span></h2>
+      </div>
+      <button type="button" class="db-avatar" id="dbAvatar" onclick="navigate('profile')" aria-label="پڕۆفایل"></button>
+    </div>
+    <button type="button" class="db-new" id="dbNewOrder" onclick="navigate('exchange')">
+      <span class="db-new-ico" aria-hidden="true"><svg class="pxi" viewBox="0 0 24 24" focusable="false"><path d="M12 5v14"/><path d="M5 12h14"/></svg></span>
+      <span class="db-new-txt"><b>داواکاری نوێ</b><small>ئاڵوگۆڕی دراو لە نێوان جزدانەکان</small></span>
+      <span class="db-new-go" aria-hidden="true"><svg class="pxi" viewBox="0 0 24 24" focusable="false"><path d="m15 18-6-6 6-6"/></svg></span>
+    </button>
+  </div>
 
   <aside class="home-feedback-prompt" id="homeFeedbackPrompt" aria-live="polite" hidden></aside>
 
@@ -733,7 +760,51 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
     </button>
   </div>
 
+  <div class="db">
+    <section class="dbo" aria-labelledby="dboTitle">
+      <div class="dbo-head">
+        <h3 id="dboTitle">داواکارییەکانت</h3>
+        <span class="dbo-total" id="dbTotal"><span class="skb-w" style="width:64px" aria-hidden="true"><span class="skb" style="height:10px"></span>&#8203;</span></span>
+      </div>
+      <div class="dbo-body">
+        <div class="dbo-legend">
+          <button type="button" class="dbo-row is-ok" onclick="dbOpenStatus('done')">
+            <i class="dbo-dot" aria-hidden="true"></i><span class="dbo-lbl">پەسەندکرا</span><b class="dbo-num" id="dbApprovedRow"><span class="skb-w" style="width:18px" aria-hidden="true"><span class="skb" style="height:13px"></span>&#8203;</span></b>
+          </button>
+          <button type="button" class="dbo-row is-wait" onclick="dbOpenStatus('pending')">
+            <i class="dbo-dot" aria-hidden="true"></i><span class="dbo-lbl">چاوەڕوانی</span><b class="dbo-num" id="dbPending"><span class="skb-w" style="width:18px" aria-hidden="true"><span class="skb" style="height:13px"></span>&#8203;</span></b>
+          </button>
+          <button type="button" class="dbo-row is-fix" onclick="dbOpenStatus('action')">
+            <i class="dbo-dot" aria-hidden="true"></i><span class="dbo-lbl">ڕاستکردنەوە</span><b class="dbo-num" id="dbAction"><span class="skb-w" style="width:18px" aria-hidden="true"><span class="skb" style="height:13px"></span>&#8203;</span></b>
+          </button>
+          <button type="button" class="dbo-row is-bad" onclick="dbOpenStatus('rejected')">
+            <i class="dbo-dot" aria-hidden="true"></i><span class="dbo-lbl">ڕەتکرایەوە</span><b class="dbo-num" id="dbRejected"><span class="skb-w" style="width:18px" aria-hidden="true"><span class="skb" style="height:13px"></span>&#8203;</span></b>
+          </button>
+        </div>
+        <button type="button" class="dbo-ring" onclick="dbOpenStatus('done')" aria-label="داواکارییە پەسەندکراوەکان">
+          <svg viewBox="0 0 120 120" aria-hidden="true" focusable="false"><circle class="dbo-track" cx="60" cy="60" r="50"/><g id="dbRing"></g></svg>
+          <span class="dbo-ring-in"><b id="dbApproved"><span class="skb-w" style="width:34px" aria-hidden="true"><span class="skb" style="height:26px"></span>&#8203;</span></b><small>پەسەندکرا</small></span>
+        </button>
+      </div>
+    </section>
+
+    <div class="db-sec-head">
+      <h3>دوایین ئاڵوگۆڕەکان</h3>
+      <button type="button" class="db-link" onclick="navigate('transactions')">هەمووی</button>
+    </div>
+    <div id="historyPreview" class="db-recent" style="width:100%;"></div>
+  </div>
+  </section>
+
+  <!-- ══════════════ PAGE: EXCHANGE (route "/exchange", opened from the + button) ══════════════ -->
+  <section class="page" id="pageHome" data-route="exchange">
+    <div class="page-head support-page-head ex-head">
+      <button type="button" class="support-back ex-back" onclick="navigate('home')" aria-label="گەڕانەوە بۆ سەرەکی"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"/></svg></button>
+      <div><h2>ئاڵوگۆڕی نوێ</h2><p>ڕێگا و بڕەکە هەڵبژێرە، پاشان داواکارییەکەت بنێرە.</p></div>
+    </div>
+
   <div class="panel" id="exchangeCard">
+
     <!-- Shown instead of the form while an admin-requested verification is not approved -->
     <div class="xc-kyc-gate" id="exchangeKycGate" role="alert" hidden>
       <span class="xc-kyc-gate-ico" aria-hidden="true">
@@ -762,10 +833,10 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
             <!-- filled from ex_wallets only -->
           </select>
           <button type="button" class="picker-trigger" id="fromTrigger" onclick="openPicker('from')">
-            <span class="method-icon" id="fromTriggerIcon"></span>
+            <span class="method-icon is-skel-ico" id="fromTriggerIcon"></span>
             <span class="picker-trigger-text">
               <span class="picker-trigger-label">ڕێگای ناردن</span>
-              <span class="picker-trigger-value" id="fromTriggerLabel">بارکردن…</span>
+              <span class="picker-trigger-value" id="fromTriggerLabel"><span class="skb-w" style="width:76px" aria-hidden="true"><span class="skb" style="height:12px"></span>&#8203;</span></span>
             </span>
             <span class="select-chevron"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-down-linear" aria-hidden="true"></span></span>
           </button>
@@ -777,7 +848,7 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
             <span class="wallet-label">ژمارەی هەژماری ناردن</span>
           </div>
           <div class="wallet-row-line">
-            <span class="wallet-value" id="myNum" dir="ltr">---</span>
+            <span class="wallet-value" id="myNum" dir="ltr"><span class="skb-w" style="width:116px" aria-hidden="true"><span class="skb" style="height:13px"></span>&#8203;</span></span>
             <button type="button" class="copy-btn" onclick="copyNum(this)" aria-label="کۆپیکردنی ژمارە">
               <span class="icn icn-sm icon--solar icon--solar--copy-linear" aria-hidden="true"></span>
               <span>کۆپی</span>
@@ -854,10 +925,10 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
             <!-- filled from ex_wallets only -->
           </select>
           <button type="button" class="picker-trigger" id="receiveViaTrigger" onclick="openPicker('receiveVia')">
-            <span class="method-icon" id="receiveViaTriggerIcon"></span>
+            <span class="method-icon is-skel-ico" id="receiveViaTriggerIcon"></span>
             <span class="picker-trigger-text">
               <span class="picker-trigger-label">ڕێگای وەرگرتن</span>
-              <span class="picker-trigger-value" id="receiveViaTriggerLabel">بارکردن…</span>
+              <span class="picker-trigger-value" id="receiveViaTriggerLabel"><span class="skb-w" style="width:76px" aria-hidden="true"><span class="skb" style="height:12px"></span>&#8203;</span></span>
             </span>
             <span class="select-chevron"><span class="icn icn-sm icon--solar icon--solar--alt-arrow-down-linear" aria-hidden="true"></span></span>
           </button>
@@ -905,10 +976,6 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
           <span class="v" id="bdTierPct" dir="ltr">—</span>
         </div>
         <div class="xc-tier-hint" id="bdTierHint" hidden></div>
-        <div class="xc-sum-row fee-saving" id="bdDiscountRow" hidden>
-          <span class="lbl">سوودی داشکاندن</span>
-          <span class="v" id="bdDiscount" dir="ltr">—</span>
-        </div>
       </div>
 
       <!-- what comes out of it -->
@@ -933,7 +1000,6 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
       </div>
       <p class="payout-rounding-note" id="payoutRoundingNote" hidden></p>
       <div id="feeDisplay" class="fee-note" hidden></div>
-      <div id="rewardBanner" class="fee-note reward-detail" role="status" hidden></div>
     </div>
 
       </div>
@@ -979,120 +1045,6 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
     </div>
   </div>
 
-  <!-- ══════════════ SOCIAL PROOF + PUBLIC FEED ══════════════ -->
-  <div class="proof-wrap">
-    <!-- Banner removed from view. The nodes stay in the DOM (hidden) so app.js
-         can still write proofCount / proof24h / proofUsers without throwing —
-         deleting them would break the rest of its stats handler. -->
-    <div class="proof-card" hidden style="display:none">
-      <div class="proof-top">
-        <span class="icn icon--solar icon--solar--verified-check-linear" aria-hidden="true"></span>
-        مامەڵەی سەرکەوتوو
-      </div>
-      <div class="proof-num" id="proofCount">—</div>
-      <div class="proof-sub">داواکاری پەسەندکراو و گەیشتوو بە دەستی خاوەنەکەی</div>
-      <div class="proof-mini">
-        <div><b id="proof24h">—</b><span>لە ٢٤ کاتژمێری ڕابردوو</span></div>
-        <div><b id="proofUsers">—</b><span>بەکارهێنەری چالاک</span></div>
-      </div>
-    </div>
-
-    <div>
-      <h3 class="section-title">
-        <span class="icn icon--solar icon--solar--clock-circle-linear" aria-hidden="true"></span>
-        دوایین ئاڵوگۆڕە تەواوبووەکان
-      </h3>
-      <div class="feed-wrap" id="publicFeed" aria-live="polite">
-        <div class="feed-skel">
-          <span class="fs-main">
-            <span class="fs-line"><span class="sk" style="width:16px;height:16px;border-radius:50%"></span><span class="sk" style="width:104px;height:11px"></span></span>
-            <span class="fs-line">
-              <span class="sk" style="width:26px;height:26px;border-radius:8px"></span>
-              <span class="sk" style="width:56px;height:14px"></span>
-              <span class="sk" style="width:14px;height:9px"></span>
-              <span class="sk" style="width:26px;height:26px;border-radius:8px"></span>
-              <span class="sk" style="width:64px;height:14px"></span>
-            </span>
-            <span class="fs-line"><span class="sk" style="width:86px;height:11px"></span></span>
-          </span>
-          <span class="fs-side">
-            <span class="sk" style="width:78px;height:10px"></span>
-            <span class="fs-line"><span class="sk" style="width:44px;height:10px"></span><span class="sk" style="width:82px;height:18px"></span></span>
-            <span class="fs-line"><span class="sk" style="width:34px;height:10px"></span><span class="sk" style="width:68px;height:13px"></span></span>
-          </span>
-        </div>
-        <div class="feed-skel">
-          <span class="fs-main">
-            <span class="fs-line"><span class="sk" style="width:16px;height:16px;border-radius:50%"></span><span class="sk" style="width:104px;height:11px"></span></span>
-            <span class="fs-line">
-              <span class="sk" style="width:26px;height:26px;border-radius:8px"></span>
-              <span class="sk" style="width:46px;height:14px"></span>
-              <span class="sk" style="width:14px;height:9px"></span>
-              <span class="sk" style="width:26px;height:26px;border-radius:8px"></span>
-              <span class="sk" style="width:72px;height:14px"></span>
-            </span>
-            <span class="fs-line"><span class="sk" style="width:86px;height:11px"></span></span>
-          </span>
-          <span class="fs-side">
-            <span class="sk" style="width:84px;height:10px"></span>
-            <span class="fs-line"><span class="sk" style="width:44px;height:10px"></span><span class="sk" style="width:74px;height:18px"></span></span>
-            <span class="fs-line"><span class="sk" style="width:34px;height:10px"></span><span class="sk" style="width:62px;height:13px"></span></span>
-          </span>
-        </div>
-        <div class="feed-skel">
-          <span class="fs-main">
-            <span class="fs-line"><span class="sk" style="width:16px;height:16px;border-radius:50%"></span><span class="sk" style="width:104px;height:11px"></span></span>
-            <span class="fs-line">
-              <span class="sk" style="width:26px;height:26px;border-radius:8px"></span>
-              <span class="sk" style="width:62px;height:14px"></span>
-              <span class="sk" style="width:14px;height:9px"></span>
-              <span class="sk" style="width:26px;height:26px;border-radius:8px"></span>
-              <span class="sk" style="width:54px;height:14px"></span>
-            </span>
-            <span class="fs-line"><span class="sk" style="width:86px;height:11px"></span></span>
-          </span>
-          <span class="fs-side">
-            <span class="sk" style="width:72px;height:10px"></span>
-            <span class="fs-line"><span class="sk" style="width:44px;height:10px"></span><span class="sk" style="width:90px;height:18px"></span></span>
-            <span class="fs-line"><span class="sk" style="width:34px;height:10px"></span><span class="sk" style="width:72px;height:13px"></span></span>
-          </span>
-        </div>
-      </div>
-      <div class="xc-hint" style="margin:9px 4px 0">
-        <span class="icn icon--solar icon--solar--lock-linear" aria-hidden="true"></span>
-        <span>ژمارەکان بۆ پاراستنی تایبەتمەندێتی لەسەر سێرڤەر شاردراونەتەوە — ژمارەی تەواو هەرگیز نانێردرێت بۆ وێبگەڕ.</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="home-history-panel">
-  <h3 class="section-title">
-    <span class="icn icon--solar icon--solar--bill-list-linear" aria-hidden="true"></span>
-    دوایین مامەڵەکان
-    <span class="title-link" role="button" tabindex="0" onclick="navigate('transactions')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigate('transactions')}">
-      بینینی هەموو
-      <span class="icn icon--solar icon--solar--alt-arrow-left-linear" aria-hidden="true"></span>
-    </span>
-  </h3>
-  <div id="historyPreview" style="width:100%;">
-  <div class="tx-skel">
-    <div class="tx-skel-head"><span class="sk sk-w30"></span><span class="sk sk-pill sk-w30"></span></div>
-    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w60"></span></div>
-    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w45"></span></div>
-  </div>
-  <div class="tx-skel">
-    <div class="tx-skel-head"><span class="sk sk-w30"></span><span class="sk sk-pill sk-w30"></span></div>
-    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w75"></span></div>
-    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w45"></span></div>
-  </div>
-  <div class="tx-skel">
-    <div class="tx-skel-head"><span class="sk sk-w30"></span><span class="sk sk-pill sk-w30"></span></div>
-    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w60"></span></div>
-    <div class="tx-skel-row"><span class="sk sk-ico"></span><span class="sk sk-w45"></span></div>
-  </div>
-  </div>
-  </div>
-
   </section>
 
   <!-- ══════════════ PAGE: TRANSACTIONS (route "/transactions") ══════════════ -->
@@ -1116,11 +1068,11 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
     </div>
 
     <div class="filter-scroll" id="txStatusFilters">
-      <button type="button" class="filter-chip on" data-status="all" onclick="setTxStatus('all', this)">هەموو <span class="chip-count" id="fcAll">0</span></button>
-      <button type="button" class="filter-chip" data-status="action" onclick="setTxStatus('action', this)">پێویستی بە ڕاستکردنەوە <span class="chip-count" id="fcCorrection">0</span></button>
-      <button type="button" class="filter-chip" data-status="pending" onclick="setTxStatus('pending', this)">چاوەڕوانی <span class="chip-count" id="fcWait">0</span></button>
-      <button type="button" class="filter-chip" data-status="done" onclick="setTxStatus('done', this)">پەسەندکرا <span class="chip-count" id="fcOk">0</span></button>
-      <button type="button" class="filter-chip" data-status="rejected" onclick="setTxStatus('rejected', this)">ڕەتکرایەوە <span class="chip-count" id="fcNo">0</span></button>
+      <button type="button" class="filter-chip on" data-status="all" onclick="setTxStatus('all', this)">هەموو <span class="chip-count" id="fcAll"></span></button>
+      <button type="button" class="filter-chip" data-status="action" onclick="setTxStatus('action', this)">پێویستی بە ڕاستکردنەوە <span class="chip-count" id="fcCorrection"></span></button>
+      <button type="button" class="filter-chip" data-status="pending" onclick="setTxStatus('pending', this)">چاوەڕوانی <span class="chip-count" id="fcWait"></span></button>
+      <button type="button" class="filter-chip" data-status="done" onclick="setTxStatus('done', this)">پەسەندکرا <span class="chip-count" id="fcOk"></span></button>
+      <button type="button" class="filter-chip" data-status="rejected" onclick="setTxStatus('rejected', this)">ڕەتکرایەوە <span class="chip-count" id="fcNo"></span></button>
     </div>
 
     </div>
@@ -1252,13 +1204,13 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
     <div class="pfx-hero">
       <div class="pfx-cover" aria-hidden="true"></div>
       <div class="pfx-avatar-wrap">
-        <div class="pfx-avatar" id="pfAvatar">؟</div>
+        <div class="pfx-avatar" id="pfAvatar"></div>
         <span class="pfx-verified" id="pfVerifiedDot" hidden title="ناسنامە پشتڕاستکراوەتەوە"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5"/></svg></span>
       </div>
-      <div class="pfx-name" id="pfNameLbl">—</div>
+      <div class="pfx-name" id="pfNameLbl"><span class="skb-w" style="width:128px" aria-hidden="true"><span class="skb" style="height:16px"></span>&#8203;</span></div>
       <div class="un-row">
         <button type="button" class="pfx-handle" id="pfUsernameBtn" onclick="copyUsername(this)" aria-label="کۆپیکردنی ناوی بەکارهێنەر">
-          <span id="pfUsername" dir="ltr">@—</span>
+          <span id="pfUsername" dir="ltr"><span class="skb-w" style="width:64px" aria-hidden="true"><span class="skb" style="height:11px"></span>&#8203;</span></span>
           <svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
         </button>
         <button type="button" class="un-edit" id="pfUsernameEdit" onclick="openUsernameSheet()" hidden aria-label="گۆڕینی ناوی بەکارهێنەر">
@@ -1266,14 +1218,14 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
           <span>گۆڕین</span>
         </button>
       </div>
-      <div class="pfx-email" id="pfEmailLbl">—</div>
+      <div class="pfx-email" id="pfEmailLbl"><span class="skb-w" style="width:150px" aria-hidden="true"><span class="skb" style="height:10px"></span>&#8203;</span></div>
 
       <div class="pfx-meta">
         <button type="button" class="kyc-badge" id="pfKycBadge" data-state="loading" onclick="openVerifyPage()" aria-live="polite">
-          <span class="kyc-badge-ico" id="pfKycBadgeIco"><span class="icn icn-sm icn-spin icon--solar icon--solar--refresh-linear" aria-hidden="true"></span></span>
-          <span id="pfKycBadgeText">دۆخی ناسنامە...</span>
+          <span class="kyc-badge-ico" id="pfKycBadgeIco"><span class="skb-w" style="width:16px" aria-hidden="true"><span class="skb skb-c" style="height:16px"></span>&#8203;</span></span>
+          <span id="pfKycBadgeText"><span class="skb-w" style="width:92px" aria-hidden="true"><span class="skb" style="height:10px"></span>&#8203;</span></span>
         </button>
-        <span class="pfx-chip" id="pfJoinedChip"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><span id="pfJoined">—</span></span>
+        <span class="pfx-chip" id="pfJoinedChip"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg><span id="pfJoined"><span class="skb-w" style="width:40px" aria-hidden="true"><span class="skb" style="height:10px"></span>&#8203;</span></span></span>
         <span class="pfx-chip is-admin" id="pfAdminChip" style="display:none"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg><span id="pfAdminChipText">بەڕێوەبەر</span></span>
       </div>
     </div>
@@ -1283,7 +1235,7 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
         <span class="bx-ico"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></span>
         <span class="bx-title">باڵانسی هەژمار</span>
       </div>
-      <div class="bx-amount" aria-live="polite"><strong id="bxAmount" dir="ltr">—</strong></div>
+      <div class="bx-amount" aria-live="polite"><strong id="bxAmount" dir="ltr"><span class="skb-w" style="width:140px" aria-hidden="true"><span class="skb" style="height:24px"></span>&#8203;</span></strong></div>
       <div class="bx-actions">
         <button type="button" class="bx-btn" id="bxRefreshBtn" onclick="pxBalanceRefresh()">
           <svg class="pxi bx-spin" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
@@ -1384,9 +1336,55 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
       </a>
     </div>
 
+    <div class="pfx-menu">
+      <button type="button" class="pfx-item pfx-item-danger" onclick="navigate('delete-account')">
+        <span class="pfx-item-ico"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></span>
+        <span class="pfx-item-txt"><b>سڕینەوەی هەژمار</b><small>دوای ٧ ڕۆژ هەژمارەکەت دەسڕدرێتەوە</small></span>
+        <span class="pfx-item-go"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg></span>
+      </button>
+    </div>
+
     <button type="button" class="pfx-logout" onclick="logout()"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2v10"/><path d="M18.4 6.6a9 9 0 1 1-12.77.04"/></svg>چوونەدەرەوە</button>
 
     <div class="pfx-version">Proxo Balance • v3.0</div>
+  </section>
+
+  <!-- ══════════════ PAGE: DELETE ACCOUNT (route "/delete-account") ══════════════ -->
+  <section class="page" id="pageDeleteAccount" data-route="delete-account">
+    <div class="dax">
+      <div class="dax-bar">
+        <button type="button" class="dax-back" onclick="navigate('profile')" aria-label="گەڕانەوە بۆ پڕۆفایل"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"/></svg></button>
+        <h2>سڕینەوەی هەژمار</h2>
+        <span aria-hidden="true"></span>
+      </div>
+
+      <div class="dax-hero">
+        <span class="dax-hero-ico" aria-hidden="true"><svg class="pxi" viewBox="0 0 24 24" focusable="false"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></span>
+        <h3>هەژمارەکەت دوای ٧ ڕۆژ دەسڕدرێتەوە</h3>
+        <p>ئەگەر لەم ماوەیەدا بچیتەوە ژوورەوە، هەژمارەکەت چالاک دەبێتەوە و هیچ شتێکت لەدەست ناچێت.</p>
+      </div>
+
+      <ul class="dax-list">
+        <li><span class="dax-li-ico" aria-hidden="true"><svg class="pxi" viewBox="0 0 24 24" focusable="false"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg></span>
+          <div><b>دەستبەجێ دەچیتە دەرەوە</b><small>لە هەموو ئامێرەکانت.</small></div></li>
+        <li><span class="dax-li-ico" aria-hidden="true"><svg class="pxi" viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <div><b>٧ ڕۆژ کاتت هەیە</b><small>بۆ هەڵوەشاندنەوە، تەنها بچۆرەوە ژوورەوە.</small></div></li>
+        <li><span class="dax-li-ico" aria-hidden="true"><svg class="pxi" viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 12.5-6.6"/><path d="m17 17 4 4"/><path d="m21 17-4 4"/></svg></span>
+          <div><b>زانیارییە کەسییەکانت دەسڕدرێنەوە</b><small>ناو، ئیمەیل، ژمارەی مۆبایل، وەرگرە پاشەکەوتکراوەکان و ئاگادارییەکان.</small></div></li>
+        <li><span class="dax-li-ico" aria-hidden="true"><svg class="pxi" viewBox="0 0 24 24" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h4"/></svg></span>
+          <div><b>تۆماری مامەڵەکان هەڵدەگیرێن</b><small>بەپێی یاسا، بەبێ ناو و زانیاریی پەیوەندی.</small></div></li>
+      </ul>
+
+      <div class="dax-block" id="daxBlock" role="status" hidden></div>
+
+      <div class="dax-form">
+        <label for="daxPass">بۆ دڵنیابوون، وشەی نهێنییەکەت بنووسە</label>
+        <input type="password" id="daxPass" autocomplete="current-password" dir="ltr" oninput="daxSync()" onkeydown="if(event.key==='Enter')submitAccountDeletion()">
+        <p class="dax-err" id="daxErr" role="alert"></p>
+        <button type="button" class="dax-btn" id="daxBtn" onclick="submitAccountDeletion()" disabled><span class="dax-spin" aria-hidden="true"></span><span>سڕینەوەی هەژمار</span></button>
+        <button type="button" class="dax-cancel" onclick="navigate('profile')">پاشگەزبوونەوە</button>
+      </div>
+    </div>
   </section>
 
   <!-- ══════════════ PAGE: IDENTITY VERIFICATION (route "/verify") ══════════════ -->
@@ -1580,65 +1578,75 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
       </div>
     </div>
 
-    <div class="support-form-card">
-      <div class="support-form-title">
-        <span class="support-form-icon"><span class="icn icon--solar icon--solar--pen-linear" aria-hidden="true"></span></span>
-        <div><b>کەیسێکی نوێ</b><span>هەموو زانیارییەکان بە نهێنی دەپارێزرێن</span></div>
+    <div class="support-form-card sc-form">
+      <div class="support-form-title sc-form-head">
+        <span class="support-form-icon sc-tile"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span>
+        <div><b>کەیسێکی نوێ</b><span class="sc-private"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>هەموو زانیارییەکان بە نهێنی دەپارێزرێن</span></div>
       </div>
 
-      <div class="field">
-        <span class="field-label">جۆری کێشە</span>
-        <select class="input support-select" id="supportCategory">
+      <div class="field sc-field">
+        <span class="field-label sc-label" id="supportCategoryLabel">جۆری کێشە</span>
+        <select class="input support-select sc-native" id="supportCategory" tabindex="-1" aria-hidden="true">
           <option value="order">کێشەی داواکاری</option>
           <option value="payment">کێشەی پارەدان</option>
           <option value="account">کێشەی هەژمار</option>
           <option value="technical">کێشەی تەکنیکی</option>
           <option value="general">کێشەی تر</option>
         </select>
+        <div class="sc-cats" role="radiogroup" aria-labelledby="supportCategoryLabel" id="supportCategoryChips">
+          <button type="button" class="sc-cat is-on" role="radio" aria-checked="true" data-value="order" onclick="setSupportCategory('order')"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M14 8H8"/><path d="M16 12H8"/></svg><span>داواکاری</span></button>
+          <button type="button" class="sc-cat" role="radio" aria-checked="false" data-value="payment" onclick="setSupportCategory('payment')"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg><span>پارەدان</span></button>
+          <button type="button" class="sc-cat" role="radio" aria-checked="false" data-value="account" onclick="setSupportCategory('account')"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>هەژمار</span></button>
+          <button type="button" class="sc-cat" role="radio" aria-checked="false" data-value="technical" onclick="setSupportCategory('technical')"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><span>تەکنیکی</span></button>
+          <button type="button" class="sc-cat" role="radio" aria-checked="false" data-value="general" onclick="setSupportCategory('general')"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg><span>جۆری تر</span></button>
+        </div>
       </div>
 
-      <div class="field">
-        <span class="field-label">ئایدی مامەڵە <small>(ئارەزوومەندانە)</small></span>
-        <input type="text" class="input" id="supportOrderCode" maxlength="12" dir="ltr" placeholder="PXXXXXXXXXXX" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,12)">
+      <div class="field sc-field">
+        <label class="field-label sc-label" for="supportOrderCode">ئایدی مامەڵە <small>ئارەزوومەندانە</small></label>
+        <div class="sc-input-wrap">
+          <span class="sc-input-ico"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9h16"/><path d="M4 15h16"/><path d="M10 3 8 21"/><path d="M16 3l-2 18"/></svg></span>
+          <input type="text" class="input sc-input" id="supportOrderCode" maxlength="12" dir="ltr" autocomplete="off" placeholder="PXXXXXXXXXXX" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,12)">
+        </div>
       </div>
 
-      <div class="field">
-        <span class="field-label support-label-row"><span>دەربارەی کێشەکە</span><small id="supportDescriptionCount">٠ / ٢٠٠٠</small></span>
-        <textarea class="input support-description" id="supportDescription" maxlength="2000" placeholder="کێشەکە بە ڕوونی بنووسە..." oninput="updateSupportDescriptionCount()"></textarea>
+      <div class="field sc-field">
+        <span class="field-label support-label-row sc-label"><label for="supportDescription">دەربارەی کێشەکە</label><small id="supportDescriptionCount" class="sc-count-chip" dir="ltr">0 / 2000</small></span>
+        <textarea class="input support-description sc-textarea" id="supportDescription" maxlength="2000" placeholder="کێشەکە بە ڕوونی بنووسە: چی ڕوویدا و کەی..." oninput="updateSupportDescriptionCount()"></textarea>
         <span class="field-error" id="supportDescriptionError"></span>
       </div>
 
-      <div class="field">
-        <span class="field-label">وێنەی کێشە <small>(ئارەزوومەندانە — تا 5MB)</small></span>
-        <label class="support-image-picker" for="supportImageInput" id="supportImagePicker">
-          <span class="support-image-picker-icon"><span class="icn icon--solar icon--solar--gallery-linear" aria-hidden="true"></span></span>
-          <span><b id="supportImageName">وێنە هەڵبژێرە</b><small id="supportImageMeta">JPG، PNG یان WEBP</small></span>
-          <span class="icn support-upload-arrow icon--solar icon--solar--upload-minimalistic-linear" aria-hidden="true"></span>
+      <div class="field sc-field">
+        <span class="field-label sc-label">وێنەی کێشە <small>ئارەزوومەندانە · تا 5MB</small></span>
+        <label class="support-image-picker sc-picker" for="supportImageInput" id="supportImagePicker">
+          <span class="support-image-picker-icon sc-tile"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21"/></svg></span>
+          <span class="sc-picker-txt"><b id="supportImageName">وێنە هەڵبژێرە</b><small id="supportImageMeta">JPG، PNG یان WEBP</small></span>
+          <span class="support-upload-arrow sc-picker-go"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 15V3"/><path d="m17 8-5-5-5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg></span>
         </label>
         <input type="file" id="supportImageInput" accept="image/jpeg,image/png,image/webp" hidden onchange="onSupportImageSelected(this)">
-        <div class="support-image-preview" id="supportImagePreview" style="display:none">
+        <div class="support-image-preview sc-preview" id="supportImagePreview" style="display:none">
           <img id="supportImagePreviewImg" alt="وێنەی هەڵبژێردراو">
-          <button type="button" onclick="removeSupportImage()" aria-label="لابردنی وێنە">×</button>
+          <button type="button" onclick="removeSupportImage()" aria-label="لابردنی وێنە"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
         </div>
         <span class="field-error" id="supportImageError"></span>
       </div>
 
-      <button type="button" class="btn btn-primary btn-block support-submit-btn" id="supportSubmitBtn" onclick="submitSupportCase()">
-        <span class="icn icon--solar icon--solar--plain-2-linear" aria-hidden="true"></span>
+      <button type="button" class="btn btn-primary btn-block support-submit-btn sc-submit" id="supportSubmitBtn" onclick="submitSupportCase()">
+        <svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14.54 21.69a.5.5 0 0 0 .94-.03l6.5-19a.5.5 0 0 0-.64-.64l-19 6.5a.5.5 0 0 0-.03.94l7.93 3.18a2 2 0 0 1 1.11 1.11z"/><path d="m21.85 2.15-10.94 10.93"/></svg>
         ناردنی کەیس
       </button>
 
-      <div class="support-success" id="supportSuccess" role="status" aria-live="polite" style="display:none">
-        <span class="icn icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>
+      <div class="support-success sc-success" id="supportSuccess" role="status" aria-live="polite" style="display:none">
+        <span class="sc-success-ico"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg></span>
         <div><b>کەیسەکەت نێردرا</b><span>ژمارەی کەیس: <strong id="supportSuccessNumber" dir="ltr">—</strong></span></div>
       </div>
     </div>
 
-    <h3 class="section-title support-list-title">
-      <span class="icn icon--solar icon--solar--bill-list-linear" aria-hidden="true"></span>
-      کەیسەکانی من
-    </h3>
-    <div id="supportCasesList"><div class="empty-state">هێشتا هیچ کەیسێکت نییە</div></div>
+    <div class="sc-list-head">
+      <h3 class="section-title support-list-title"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg>کەیسەکانی من</h3>
+      <span class="sc-list-count" id="supportCasesCount" hidden>0</span>
+    </div>
+    <div id="supportCasesList"><div class="sc-empty"><span class="sc-tile"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><b>هێشتا هیچ کەیسێکت نییە</b><small>ئەگەر کێشەیەکت هەبوو، لە سەرەوە کەیسێک بنێرە.</small></div></div>
   </section>
 
   <!-- ══════════════ BOTTOM NAV ══════════════ -->
@@ -1647,20 +1655,20 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
       <span class="pxn-pill" aria-hidden="true"></span>
       <span class="pxn-line" aria-hidden="true"></span>
       <div class="pxn-inner">
-      <button type="button" class="pxn-item on" data-route="home" onclick="navigate('home')" aria-label="ئاڵوگۆڕ">
-        <span class="pxn-cap" aria-hidden="true"><svg class="pxi pxn-ico pxn-off" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 8h17"/><path d="m16.5 4 4 4-4 4"/><path d="M20.5 16h-17"/><path d="m7.5 12-4 4 4 4"/></svg><svg class="pxi pxn-ico pxn-on" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path style="stroke-width:2.8" d="M4 8h11"/><path d="M14 3.8 20.8 8 14 12.2z"/><path style="stroke-width:2.8" d="M20 16H9"/><path d="M10 11.8 3.2 16 10 20.2z"/></svg></span>
-        <span class="pxn-label">ئاڵوگۆڕ</span>
+      <button type="button" class="pxn-item on" data-route="home" onclick="navigate('home')" aria-label="سەرەکی">
+        <span class="pxn-cap" aria-hidden="true"><svg class="pxi pxn-ico pxn-one" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="f" d="M3.5 10.1a2 2 0 0 1 .7-1.5l6.5-5.6a2 2 0 0 1 2.6 0l6.5 5.6a2 2 0 0 1 .7 1.5V19a2 2 0 0 1-2 2H5.5a2 2 0 0 1-2-2Z"/><path d="M9.5 21v-6.2a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1V21"/></svg></span>
+        <span class="pxn-label">سەرەکی</span>
       </button>
       <button type="button" class="pxn-item" data-route="transactions" onclick="navigate('transactions')" aria-label="مامەڵەکان">
-        <span class="pxn-cap" aria-hidden="true"><svg class="pxi pxn-ico pxn-off" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g transform="translate(12 12) scale(0.92) translate(-12 -12)" style="stroke-width:2"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M14 8H8"/><path d="M16 12H8"/><path d="M13 16H8"/></g></svg><svg class="pxi pxn-ico pxn-on" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g transform="translate(12 12) scale(0.92) translate(-12 -12)" style="stroke-width:1.6"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path class="pxn-cut" d="M14 8H8M16 12H8M13 16H8"/></g></svg><span class="pxn-badge" id="bnTxDot">0</span></span>
+        <span class="pxn-cap" aria-hidden="true"><svg class="pxi pxn-ico pxn-one" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect class="f" x="4" y="3" width="16" height="18" rx="3"/><path d="M8.5 8h7"/><path d="M8.5 12h7"/><path d="M8.5 16h4"/></svg><span class="pxn-badge" id="bnTxDot">0</span></span>
         <span class="pxn-label">مامەڵەکان</span>
       </button>
       <button type="button" class="pxn-item" data-route="rules" onclick="navigate('rules')" aria-label="یاساکان">
-        <span class="pxn-cap" aria-hidden="true"><svg class="pxi pxn-ico pxn-off" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g transform="translate(12 12) scale(0.92) translate(-12 -12)" style="stroke-width:2"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="m9 15 2 2 4-4"/></g></svg><svg class="pxi pxn-ico pxn-on" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g transform="translate(12 12) scale(0.92) translate(-12 -12)" style="stroke-width:1.6"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path class="pxn-cut" d="M14 2v5a1 1 0 0 0 1 1h5"/><path class="pxn-cut" d="m9 15 2 2 4-4"/></g></svg></span>
+        <span class="pxn-cap" aria-hidden="true"><svg class="pxi pxn-ico pxn-one" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="f" d="M12 3 4.4 5.8v5.7c0 4.5 3.1 8.1 7.6 9.6 4.5-1.5 7.6-5.1 7.6-9.6V5.8Z"/><path d="m8.9 12.2 2.1 2.1 4.1-4.1"/></svg></span>
         <span class="pxn-label">یاساکان</span>
       </button>
       <button type="button" class="pxn-item" data-route="profile" onclick="navigate('profile')" aria-label="پڕۆفایل">
-        <span class="pxn-cap" aria-hidden="true"><svg class="pxi pxn-ico pxn-off" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="7.6" r="4.2"/><path d="M4 20.6a8 8 0 0 1 16 0"/></svg><svg class="pxi pxn-ico pxn-on" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="7.6" r="4.2"/><path d="M4 20.6a8 8 0 0 1 16 0z"/></svg><span class="pxn-badge pxn-state" id="bnProfileDot" role="img"></span></span>
+        <span class="pxn-cap" aria-hidden="true"><svg class="pxi pxn-ico pxn-one" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle class="f" cx="12" cy="8" r="4.5"/><path class="f" d="M4 21a8 8 0 0 1 16 0Z"/></svg><span class="pxn-badge pxn-state" id="bnProfileDot" role="img"></span></span>
         <span class="pxn-label">پڕۆفایل</span>
       </button>
       </div>
@@ -1683,16 +1691,18 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
 
 
 <script src="/assets/js/index-svg-icons.js?v=2"></script>
-<script src="/assets/js/exchange-reward-pricing.js?v=5"></script>
+<script src="/assets/js/exchange-pricing.js?v=1"></script>
 <script src="/assets/js/exchange-payout-rounding.js?v=1"></script>
-<script src="/assets/js/transaction-summary-financials.js?v=1"></script>
+<script src="/assets/js/transaction-summary-financials.js?v=2"></script>
 <script src="/assets/js/exchange-live.js?v=1"></script>
 <script src="/assets/js/proxo-toast.js?v=1"></script>
-<script src="/assets/js/app.js?v=82"></script>
+<script src="/assets/js/skeletons.js?v=2"></script>
+<script src="/assets/js/app.js?v=95"></script>
+<script src="/assets/js/receipt-access.js?v=1"></script>
 <script src="/assets/js/whatsapp-notify.js?v=1"></script>
 <script src="/assets/js/proxo-ui-v2.js?v=4"></script>
-<script src="/assets/js/exchange-customer-features.js?v=3"></script>
-<script src="/assets/js/exchange-balance.js?v=7"></script>
+<script src="/assets/js/exchange-customer-features.js?v=4"></script>
+<script src="/assets/js/exchange-balance.js?v=9"></script>
 <script src="/assets/js/exchange-ux.js?v=1"></script>
 <script src="/assets/js/receipt-download.js?v=5"></script>
 <script src="/assets/js/track.js?v=3"></script>
