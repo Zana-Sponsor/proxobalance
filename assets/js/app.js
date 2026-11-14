@@ -1508,6 +1508,7 @@ async function startApp(user){
   }catch(_){}
   if(isTransactionSummaryRoute()){ _txScreenPushed=false; _txReturnRoute='transactions'; }
   navigate(routeFromLocation(), false);
+  if(typeof window.__dismissAppSplash==='function') window.__dismissAppSplash();
   refreshFormHints();
   startProofPolling();
   await Promise.all([loadWallets(),loadRates(),loadMyRewards(),
@@ -5310,13 +5311,20 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   const appSplash=document.getElementById('appSplash');
   const appSplashStartedAt=performance.now();
   let appSplashDismissQueued=false;
+  // Short and soft: at least 0.5s (the logo's fade-in), closed as soon as the first screen is ready
+  // (startApp calls it right after the app shell is shown — data keeps loading behind it), 2.5s at most.
   const dismissAppSplash=()=>{
     if(!appSplash||appSplashDismissQueued)return;
     appSplashDismissQueued=true;
-    const wait=Math.max(0,1400-(performance.now()-appSplashStartedAt));
-    setTimeout(()=>appSplash.classList.add('is-hidden'),wait);
+    const wait=Math.max(0,500-(performance.now()-appSplashStartedAt));
+    setTimeout(()=>{
+      document.body.classList.add('app-entering');
+      appSplash.classList.add('is-hidden');
+      setTimeout(()=>document.body.classList.remove('app-entering'),450);
+    },wait);
   };
-  setTimeout(dismissAppSplash,4200);
+  window.__dismissAppSplash=dismissAppSplash;
+  setTimeout(dismissAppSplash,2500);
   applyTheme();
   // Public trust numbers need no session — visitors see them on the login screen.
   loadPublicProof();
@@ -5362,3 +5370,9 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   }
   dismissAppSplash();
 });
+
+// Auth footer shows the same version line as the profile page — change the version only in #mainApp .pfx-version.
+(function syncAuthAppVersion(){
+  const run=()=>{try{const v=document.querySelector('#mainApp .pfx-version'),a=document.getElementById('authAppVersion');if(v&&a&&v.textContent.trim())a.textContent=v.textContent.trim();}catch(_){}};
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',run); else run();
+})();

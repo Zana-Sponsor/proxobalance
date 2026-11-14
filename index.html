@@ -88,13 +88,18 @@ document.getElementById('themeColorMeta').setAttribute('content',d?'#0b1220':'#f
 
 <!-- Solar Icons (480 Design, CC BY 4.0) — all icons as CSS mask images -->
 <style id="splashStyle">
-html body #appSplash{position:fixed!important;inset:0!important;z-index:100000!important;display:grid!important;place-items:center!important;overflow:hidden!important;background:#fff!important;opacity:1;visibility:visible;transition:opacity .7s cubic-bezier(.4,0,.2,1) .1s,visibility 0s linear 0s!important}
-html body #appSplash .app-splash-content{display:grid!important;place-items:center!important;width:100%!important;padding:0 24px!important;background:none!important;transform:scale(1);transform-origin:50% 50%;will-change:transform,opacity;transition:transform .8s cubic-bezier(.5,0,.15,1),opacity .55s ease .15s!important}
-html body #appSplash .app-splash-icon{display:block!important;width:min(42vw,180px)!important;min-width:124px!important;max-width:180px!important;height:auto!important;margin:0!important;animation:spIn 1.15s cubic-bezier(.2,.75,.25,1) both}
-html body #appSplash.is-hidden{opacity:0!important;visibility:hidden!important;pointer-events:none!important;transition:opacity .32s ease .04s,visibility 0s linear .36s!important}
-html body #appSplash.is-hidden .app-splash-content{transform:scale(1.04)!important;opacity:0!important}
-@keyframes spIn{0%{opacity:0;transform:scale(.55)}70%{opacity:1;transform:scale(1.08)}88%{opacity:1;transform:scale(.98)}100%{opacity:1;transform:scale(1)}}
-@media (prefers-reduced-motion:reduce){html body #appSplash .app-splash-icon{animation:none!important}html body #appSplash.is-hidden .app-splash-content{transform:none!important}}
+html body #appSplash{position:fixed!important;inset:0!important;z-index:100000!important;display:grid!important;place-items:center!important;overflow:hidden!important;background:#fafafa!important;opacity:1;visibility:visible;animation:pxSplashFallback 3s linear forwards!important;transition:opacity .35s cubic-bezier(.4,0,.2,1),visibility 0s linear 0s!important}
+html body #appSplash .app-splash-content{display:grid!important;place-items:center!important;width:100%!important;padding:0 24px!important;background:none!important;transform:scale(1);transform-origin:50% 50%;will-change:transform,opacity;transition:transform .35s cubic-bezier(.4,0,.2,1),opacity .3s ease!important}
+html body #appSplash .app-splash-icon{display:block!important;width:min(42vw,180px)!important;min-width:124px!important;max-width:180px!important;height:auto!important;margin:0!important;animation:spIn .45s cubic-bezier(.2,.8,.2,1) both}
+html body #appSplash.is-hidden{opacity:0!important;visibility:hidden!important;pointer-events:none!important;animation:none!important;transition:opacity .35s cubic-bezier(.4,0,.2,1),visibility 0s linear .35s!important}
+html body #appSplash.is-hidden .app-splash-content{transform:scale(1.03)!important;opacity:0!important}
+@keyframes spIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+@keyframes pxSplashFallback{0%,92%{opacity:1;visibility:visible}100%{opacity:0;visibility:hidden}}
+/* the app fades in underneath while the splash fades out (opacity only: keeps fixed bars in place) */
+@keyframes pxAppIn{from{opacity:0}to{opacity:1}}
+html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezier(.4,0,.2,1) both}
+@media (prefers-color-scheme:dark){html body #appSplash{background:#0b1220!important}}
+@media (prefers-reduced-motion:reduce){html body #appSplash .app-splash-icon{animation:none!important}html body #appSplash.is-hidden .app-splash-content{transform:none!important}html body.app-entering :is(#mainApp,#authWrap){animation:none!important}}
 </style>
 <link rel="stylesheet" href="/assets/css/tokens.css?v=4">
 <link rel="stylesheet" href="/assets/css/app.css?v=24">
@@ -120,6 +125,7 @@ html body #appSplash.is-hidden .app-splash-content{transform:scale(1.04)!importa
 <link rel="stylesheet" href="/assets/css/proxo-design-system.css?v=3">
 <link rel="stylesheet" href="/assets/css/transaction-summary.css?v=5">
 <link rel="stylesheet" href="/assets/css/whatsapp-notify.css?v=1">
+<link rel="stylesheet" href="/assets/css/auth-balance.css?v=6">
 </head>
 
 <body>
@@ -413,7 +419,7 @@ html body #appSplash.is-hidden .app-splash-content{transform:scale(1.04)!importa
 
     <div class="auth-topbar">
       <button type="button" class="auth-appbar-refresh" id="authRefreshBtn" onclick="refreshAuthPage()" aria-label="نوێکردنەوەی پەڕە" title="نوێکردنەوەی پەڕە">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.9-3L3 11"></path><path d="M3 4v7h7"></path><path d="M4 13a8 8 0 0 0 14.9 3L21 13"></path><path d="M21 20v-7h-7"></path></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36L21 8"></path><path d="M21 3v5h-5"></path></svg>
       </button>
       <div class="auth-appbar-brand"><img src="/assets/images/auth/proxo-logo.webp" alt="Proxo"></div>
       <button type="button" class="auth-appbar-back" id="authHeaderBack" onclick="authHeaderBack()" aria-label="گەڕانەوە" hidden>
@@ -453,7 +459,7 @@ html body #appSplash.is-hidden .app-splash-content{transform:scale(1.04)!importa
         </div>
         <label class="auth-field-label" for="authPass">وشەی نهێنی</label>
         <div class="pass-wrap field">
-          <input class="input" type="password" autocomplete="current-password" aria-label="وشەی نهێنی" id="authPass" placeholder="وشەی نهێنی" dir="ltr">
+          <input class="input" type="password" autocomplete="current-password" aria-label="وشەی نهێنی" id="authPass" placeholder="وشەی نهێنییەکەت بنووسە" dir="ltr">
           <button type="button" class="pass-eye" onclick="togglePass('authPass',this)" aria-label="پیشاندانی وشەی نهێنی" aria-pressed="false"><span class="pass-eye-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path><circle cx="12" cy="12" r="2.7"></circle></svg></span></button>
         </div>
         <div id="forgotLinkWrap" class="auth-forgot-wrap">
@@ -482,7 +488,7 @@ html body #appSplash.is-hidden .app-splash-content{transform:scale(1.04)!importa
         <label class="auth-field-label" for="authName">ناوی تەواو</label>
         <div class="input-wrap">
           <span class="input-ico"><span class="icn icn-sm icon--solar icon--solar--user-linear" aria-hidden="true"></span></span>
-          <input class="input" type="text" autocomplete="name" aria-label="ناوی تەواو" id="authName" placeholder="ناوی تەواو">
+          <input class="input" type="text" autocomplete="name" aria-label="ناوی تەواو" id="authName" placeholder="بۆ نموونە: زانا ئەحمەد">
         </div>
         <label class="auth-field-label" for="signupEmail">ئیمەیڵ</label>
         <div class="input-wrap">
@@ -496,7 +502,7 @@ html body #appSplash.is-hidden .app-splash-content{transform:scale(1.04)!importa
         </div>
         <label class="auth-field-label" for="signupConfirmPass">دووبارە وشەی نهێنی</label>
         <div class="pass-wrap field">
-          <input class="input" type="password" autocomplete="new-password" aria-label="دووبارە وشەی نهێنی" id="signupConfirmPass" placeholder="دووبارە بنووسە" dir="ltr">
+          <input class="input" type="password" autocomplete="new-password" aria-label="دووبارە وشەی نهێنی" id="signupConfirmPass" placeholder="هەمان وشەی نهێنی بنووسەرەوە" dir="ltr">
           <button type="button" class="pass-eye" onclick="togglePass('signupConfirmPass',this)" aria-label="پیشاندانی وشەی نهێنی" aria-pressed="false"><span class="pass-eye-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path><circle cx="12" cy="12" r="2.7"></circle></svg></span></button>
         </div>
         <button type="button" class="btn btn-primary btn-block" id="signupSubmitBtn" onclick="submitSignup()">
@@ -609,12 +615,12 @@ html body #appSplash.is-hidden .app-splash-content{transform:scale(1.04)!importa
           </div>
           <label class="auth-field-label" for="fpNewPass">وشەی نهێنیی نوێ</label>
           <div class="pass-wrap field">
-            <input class="input" type="password" id="fpNewPass" placeholder="وشەی نهێنیی نوێ — کەمترین ٦ پیت" dir="ltr">
+            <input class="input" type="password" id="fpNewPass" placeholder="کەمترین ٦ پیت" dir="ltr">
             <button type="button" class="pass-eye" onclick="togglePass('fpNewPass',this)" aria-label="پیشاندانی وشەی نهێنی" aria-pressed="false"><span class="pass-eye-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path><circle cx="12" cy="12" r="2.7"></circle></svg></span></button>
           </div>
           <label class="auth-field-label" for="fpConfirmPass">دووبارە وشەی نهێنیی نوێ</label>
           <div class="pass-wrap field">
-            <input class="input" type="password" id="fpConfirmPass" placeholder="دووبارە وشەی نهێنیی نوێ" dir="ltr">
+            <input class="input" type="password" id="fpConfirmPass" placeholder="هەمان وشەی نهێنی بنووسەرەوە" dir="ltr">
             <button type="button" class="pass-eye" onclick="togglePass('fpConfirmPass',this)" aria-label="پیشاندانی وشەی نهێنی" aria-pressed="false"><span class="pass-eye-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path><circle cx="12" cy="12" r="2.7"></circle></svg></span></button>
           </div>
           <div class="amsg" id="fpMsgC"></div>
@@ -625,6 +631,7 @@ html body #appSplash.is-hidden .app-splash-content{transform:scale(1.04)!importa
         </div>
       </div>
     </div>
+    <footer class="auth-footer" id="authAppVersion" dir="ltr">Proxo Balance • v3.0</footer>
   </div>
 </div>
 
@@ -727,7 +734,6 @@ html body #appSplash.is-hidden .app-splash-content{transform:scale(1.04)!importa
   </div>
 
   <div class="panel" id="exchangeCard">
-
     <!-- Shown instead of the form while an admin-requested verification is not approved -->
     <div class="xc-kyc-gate" id="exchangeKycGate" role="alert" hidden>
       <span class="xc-kyc-gate-ico" aria-hidden="true">
@@ -1682,7 +1688,7 @@ html body #appSplash.is-hidden .app-splash-content{transform:scale(1.04)!importa
 <script src="/assets/js/transaction-summary-financials.js?v=1"></script>
 <script src="/assets/js/exchange-live.js?v=1"></script>
 <script src="/assets/js/proxo-toast.js?v=1"></script>
-<script src="/assets/js/app.js?v=81"></script>
+<script src="/assets/js/app.js?v=82"></script>
 <script src="/assets/js/whatsapp-notify.js?v=1"></script>
 <script src="/assets/js/proxo-ui-v2.js?v=4"></script>
 <script src="/assets/js/exchange-customer-features.js?v=3"></script>

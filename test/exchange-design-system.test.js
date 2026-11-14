@@ -11,10 +11,12 @@ test('Shared design contract precedes the summary and WhatsApp route stylesheets
   const designIndex=sheets.indexOf('/assets/css/proxo-design-system.css?v=3');
   const summaryIndex=sheets.indexOf('/assets/css/transaction-summary.css?v=5');
   const whatsappIndex=sheets.indexOf('/assets/css/whatsapp-notify.css?v=1');
+  const authIndex=sheets.indexOf('/assets/css/auth-balance.css?v=6');
   assert.ok(designIndex>=0);
   assert.ok(summaryIndex>designIndex);
   assert.ok(whatsappIndex>summaryIndex);
-  assert.equal(sheets.at(-1),'/assets/css/whatsapp-notify.css?v=1');
+  assert.ok(authIndex>whatsappIndex);
+  assert.equal(sheets.at(-1),'/assets/css/auth-balance.css?v=6');
   assert(!read('exchange-admin.html').includes('proxo-design-system.css'));
 });
 
@@ -28,12 +30,19 @@ test('Profile balance and splash mark use restrained, consistent proportions',()
   assert(css.includes('.pfx-balance .bx-head {\n  justify-content: center !important;'));
   assert(css.includes('.pfx-balance .bx-amount { justify-content: center !important;'));
   assert(html.includes('width:min(42vw,180px)'));
-  assert(html.includes('animation:spIn 1.15s'));
-  assert(html.includes('transform:scale(.55)'));
-  assert(html.includes('transform:scale(1.08)'));
-  assert(read('assets/js/app.js').includes('1400-(performance.now()-appSplashStartedAt)'));
-  assert(html.includes('transform:scale(1.04)'));
+  assert(html.includes('animation:spIn .45s'));
+  assert(html.includes('@keyframes spIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}'));
+  assert(read('assets/js/app.js').includes('500-(performance.now()-appSplashStartedAt)'));
+  assert(html.includes('transform:scale(1.03)'));
   assert(!html.includes('transform:scale(6)'));
+});
+
+test('Auth balance styles are cache-versioned and use the current full-bleed form layout',()=>{
+  const authCss=read('assets/css/auth-balance.css');
+  assert(html.includes('/assets/css/auth-balance.css?v=6'));
+  assert(authCss.includes('html body #authWrap#authWrap .auth-card'));
+  assert(authCss.includes(':placeholder-shown'));
+  assert(authCss.includes('html[data-theme="dark"] body #authWrap#authWrap'));
 });
 
 test('Auth remains full-bleed and password recovery gets the same email icon',()=>{
@@ -65,21 +74,23 @@ test('Design layer leaves hidden/route mechanics untouched and provides accessib
 
 test('Production smoke waits for the changed customer version and verifies its design contract',()=>{
   const workflow=read('.github/workflows/exchange-production-smoke.yml');
-  assert(workflow.includes('app.js?v=81'));
+  assert(workflow.includes('app.js?v=82'));
   assert(workflow.includes('transaction-summary.css?v=5'));
   assert(workflow.includes('id="pageSummary" data-route="summary"'));
   assert(workflow.includes('id="txScreenBody"'));
   assert(workflow.includes('proxo-design-system.css?v=3'));
   assert(workflow.includes("grep -q 'width:min(42vw,180px)' current-index.html"));
-  assert(workflow.includes("grep -q 'animation:spIn 1.15s' current-index.html"));
+  assert(workflow.includes("grep -q 'auth-balance.css?v=6' current-index.html"));
+  assert(workflow.includes("grep -q 'animation:spIn .45s' current-index.html"));
   assert(workflow.includes("grep -q 'clamp(24px, 7vw, 30px)' proxo-design-system.css"));
-  assert(html.includes('/assets/js/app.js?v=81'));
+  assert(html.includes('/assets/js/app.js?v=82'));
   assert(html.includes('/assets/css/proxo-ui-v2.css?v=14'));
   assert(html.includes('/assets/css/transaction-summary.css?v=5'));
   assert(html.includes('/assets/css/whatsapp-notify.css?v=1'));
+  assert(html.includes('/assets/css/auth-balance.css?v=6'));
   assert(html.includes('/assets/js/proxo-ui-v2.js?v=4'));
   assert(html.includes('/assets/js/proxo-toast.js?v=1'));
-  assert(html.indexOf('proxo-toast.js?v=1') < html.indexOf('app.js?v=81'));
+  assert(html.indexOf('proxo-toast.js?v=1') < html.indexOf('app.js?v=82'));
   assert(shellCss.includes('.pxt-stack'));
   assert(shellCss.includes('.pxn-pill'));
   assert(shellCss.includes('.field-error.show'));

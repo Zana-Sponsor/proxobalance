@@ -48,7 +48,7 @@ test('Supabase signup trigger still creates profiles but no longer grants welcom
 });
 
 test('production smoke tracks the cache-busted customer bundle',()=>{
-  assert.match(html,/app\.js\?v=81/);
-  assert.match(workflow,/app\.js\?v=81/);
+  assert.match(html,/app\.js\?v=82/);
+  assert.match(workflow,/app\.js\?v=82/);
   assert.doesNotMatch(workflow,/app\.js\?v=80/);
 });
