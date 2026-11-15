@@ -61,6 +61,7 @@ test('Design layer leaves hidden/route mechanics untouched and provides accessib
 test('Production smoke waits for the changed customer version and verifies its design contract',()=>{
   const workflow=read('.github/workflows/exchange-production-smoke.yml');
   assert(workflow.includes('app.js?v=101'));
+  assert(workflow.includes('admin.js?v=35'));
   assert(workflow.includes('receipt-access.js?v=1'));
   assert(workflow.includes('auth-phone.css?v=2'));
   assert(workflow.includes('/assets/js/exchange-pricing.js?v=1'));

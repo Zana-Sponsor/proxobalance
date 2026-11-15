@@ -19,12 +19,12 @@ jobs:
                grep -q 'receipt-access.js?v=1' current-index.html &&
                grep -q 'auth-phone.css?v=2' current-index.html &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin' -o current-admin.html &&
-               grep -q 'admin.js?v=33' current-admin.html; then
+               grep -q 'admin.js?v=35' current-admin.html; then
               exit 0
             fi
             sleep 6
           done
-          echo 'FAIL: the v40 bundles were not published within the deployment window.'
+          echo 'FAIL: the v47 customer and admin bundles were not published within the deployment window.'
           exit 1
       - name: Verify the live customer page and admin panel
         shell: bash
