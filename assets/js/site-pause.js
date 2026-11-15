@@ -5,38 +5,62 @@
    The server and the database refuse a paused action anyway; this tells the
    customer before they fill in a form.
 
-     site       one screen over everything
-     exchange   the new-request screen      balance   paying with the balance
-     support    the new-case form           verify    the identity form
-     signup     the sign-up step            login     sign-in and "forgot password"
-     account    name, number, e-mail, password and delete screens
-   Reads the app's globals: SB_URL, SB_KEY, ROUTES, navigate. */
+     site                one screen over everything
+     a screen            its header stays, a notice replaces the rest
+     support             only the new-case form is replaced
+     balance             paying with the balance: the exchange send button stops
+     signup / login      a notice on the step, its button stops
+     rating / correction / whatsapp   the action answers with a short notice
+   Reads the app's globals: SB_URL, SB_KEY, ROUTES, navigate, showToast. */
 (function () {
   'use strict';
   var TITLES = {
     site: 'ماڵپەڕەکە بۆ ماوەیەک ڕاگیراوە',
+    home: 'سەرەکی بۆ ماوەیەک ڕاگیراوە',
     exchange: 'ئاڵوگۆڕ بۆ ماوەیەک ڕاگیراوە',
-    balance: 'باڵانس بۆ ماوەیەک ڕاگیراوە',
+    transactions: 'مامەڵەکان بۆ ماوەیەک ڕاگیراون',
+    correction: 'ڕاستکردنەوەی مامەڵە بۆ ماوەیەک ڕاگیراوە',
+    rating: 'هەڵسەنگاندنی مامەڵە بۆ ماوەیەک ڕاگیراوە',
+    balance: 'ناردنی باڵانس بۆ ماوەیەک ڕاگیراوە',
+    balance_history: 'مێژووی باڵانس بۆ ماوەیەک ڕاگیراوە',
     support: 'پشتگیری بۆ ماوەیەک ڕاگیراوە',
     verify: 'پشتڕاستکردنەوەی ناسنامە بۆ ماوەیەک ڕاگیراوە',
+    whatsapp: 'ئاگاداری واتسئاپ بۆ ماوەیەک ڕاگیراوە',
+    changes: 'گۆڕانکاری نرخەکان بۆ ماوەیەک ڕاگیراوە',
+    rules: 'یاساکان بۆ ماوەیەک ڕاگیراون',
+    profile: 'پڕۆفایل بۆ ماوەیەک ڕاگیراوە',
     signup: 'دروستکردنی هەژماری نوێ بۆ ماوەیەک ڕاگیراوە',
     login: 'چوونەژوورەوە بۆ ماوەیەک ڕاگیراوە',
-    account: 'گۆڕینی زانیاری هەژمار بۆ ماوەیەک ڕاگیراوە'
+    name: 'گۆڕینی ناو بۆ ماوەیەک ڕاگیراوە',
+    phone: 'گۆڕینی ژمارەی مۆبایل بۆ ماوەیەک ڕاگیراوە',
+    email: 'گۆڕینی ئیمەیڵ بۆ ماوەیەک ڕاگیراوە',
+    password: 'گۆڕینی وشەی نهێنی بۆ ماوەیەک ڕاگیراوە',
+    delete: 'سڕینەوەی هەژمار بۆ ماوەیەک ڕاگیراوە'
   };
   var LATER = 'تکایە دواتر هەوڵ بدەرەوە.';
-  // screen → section; "form" pages keep the rest of the screen and hide only the form
+  // screen → section; "form" screens keep the rest and hide only the form
   var PAGES = {
+    home: { key: 'home' },
     exchange: { key: 'exchange' },
+    transactions: { key: 'transactions' }, summary: { key: 'transactions' },
     support: { key: 'support', form: true },
     verify: { key: 'verify' },
-    'account-name': { key: 'account' }, 'change-phone': { key: 'account' }, 'change-email': { key: 'account' },
-    'change-password': { key: 'account' }, 'delete-account': { key: 'account' }
+    balance: { key: 'balance_history' },
+    changes: { key: 'changes' }, rules: { key: 'rules' }, profile: { key: 'profile' },
+    'account-name': { key: 'name' }, 'change-phone': { key: 'phone' }, 'change-email': { key: 'email' },
+    'change-password': { key: 'password' }, 'delete-account': { key: 'delete' }
   };
   var AUTH = [
     { id: 'authStepEmail', key: 'login', buttons: ['authBtn'] },
     { id: 'forgotStep', key: 'login', buttons: ['forgotSendBtn', 'fpVerifyBtn', 'fpSaveBtn'] },
     { id: 'authStepName', key: 'signup', buttons: ['signupSubmitBtn'] }
   ];
+  // actions without a screen of their own: the app function answers with a notice instead
+  var ACTIONS = {
+    rating: ['openFeedbackSheet', 'submitOrderFeedback', 'submitSummaryFeedback'],
+    correction: ['openOrderCorrection', 'submitOrderCorrection'],
+    whatsapp: ['toggleWhatsappNotify', 'openWhatsappSheet', 'submitWhatsappSheet']
+  };
   var state = {};
   var nativeFetch = window.fetch;
 
@@ -122,6 +146,8 @@
       paint(host, null, key);
       lock(a.buttons, !!key);
     });
+    var prompt = document.getElementById('homeFeedbackPrompt');
+    if (prompt && paused('rating')) prompt.hidden = true;
     Object.keys(PAGES).forEach(function (route) {
       var cfg = PAGES[route], page = pageEl(route);
       if (!page) return;
@@ -135,6 +161,34 @@
     });
   }
 
+  function paused(key) { return !!(state.site || state[key]); }
+  function tell(key) {
+    var k = state.site ? 'site' : key;
+    if (typeof window.showToast === 'function') window.showToast((state[k] && state[k].message) || LATER, 'warning', TITLES[k] || TITLES.site);
+  }
+  function guardActions() {
+    Object.keys(ACTIONS).forEach(function (key) {
+      ACTIONS[key].forEach(function (name) {
+        var fn = window[name];
+        if (typeof fn !== 'function' || fn.__svc) return;
+        var guarded = function () {
+          if (paused(key)) { tell(key); return; }
+          return fn.apply(this, arguments);
+        };
+        guarded.__svc = true;
+        window[name] = guarded;
+      });
+    });
+    // the dashboard's "rate your exchange" card waits while ratings are paused
+    ['renderHomeFeedbackPrompt', 'maybePromptHomeFeedback'].forEach(function (name) {
+      var fn = window[name];
+      if (typeof fn !== 'function' || fn.__svc) return;
+      var guarded = function () { if (paused('rating')) return; return fn.apply(this, arguments); };
+      guarded.__svc = true;
+      window[name] = guarded;
+    });
+  }
+
   // a request refused because a section is paused: show it now, then re-read
   if (nativeFetch) {
     window.fetch = function (input) {
@@ -145,7 +199,9 @@
             res.clone().json().then(function (body) {
               if (body && body.code === 'SECTION_PAUSED' && TITLES[body.section]) {
                 state[body.section] = { message: body.message || null };
-                apply(); load();
+                apply();
+                if (ACTIONS[body.section]) tell(body.section);
+                load();
               }
             }).catch(function () {});
           }
@@ -164,6 +220,10 @@
   setInterval(function () { if (document.visibilityState === 'visible') load(); }, 60 * 1000);
   // the app re-enables buttons and switches the sending wallet by itself; keep up with it
   setInterval(function () { if (Object.keys(state).length || document.querySelector('.svc-note')) apply(); }, 1500);
-  window.pxSitePause = { load: load, apply: apply, state: function () { return state; } };
+  window.pxSitePause = { load: load, apply: apply, paused: paused, state: function () { return state; } };
+  // the app's own scripts after this one (WhatsApp settings) are wrapped once they exist
+  guardActions();
+  document.addEventListener('DOMContentLoaded', guardActions);
+  window.addEventListener('load', guardActions);
   load();
 })();

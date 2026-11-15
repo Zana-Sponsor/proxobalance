@@ -1,12 +1,9 @@
 // ── Original admin module 1 ──
 // ══════════════════════════════════════════════════════════════
-// ═══ CONFIG (same Exchange Supabase project + Firebase as exchange.html) ═
+// ═══ CONFIG (same Exchange Supabase project as the customer site) ═
 // ══════════════════════════════════════════════════════════════
 const SB_URL='https://pycxuugoblkslvwebxuu.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB5Y3h1dWdvYmxrc2x2d2VieHV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYyMTk3OTksImV4cCI6MjEwMTc5NTc5OX0.VRRwxnnuLs_WORuVUO3oX3CLxrPtgG_uewIJaGrzn_s';
-const firebaseConfig = { apiKey: "AIzaSyB056_g2Y3AJjtjG9715FgtXIhtjFcMPPU", authDomain: "zana-exchange.firebaseapp.com", databaseURL: "https://zana-exchange-default-rtdb.firebaseio.com", projectId: "zana-exchange" };
-firebase.initializeApp(firebaseConfig);
-const fbdb = firebase.database();
 
 const METHOD_META = {
   AccountBalance: {label:'باڵانسی هەژمار',color:'#2563eb'},
@@ -238,8 +235,8 @@ async function recordAdminVisit(){
 // ══════════════════════════════════════════════════════════════
 const pageConfig = {
   dashboard:{ title:'داشبۆرد', sub:'دیمەنی گشتی سیستەم', load: ()=>loadDashboard() },
-  orders:{ title:'ئۆردەرەکان', sub:'پەسەندکردن و ڕەتکردنەوەی داواکارییە گۆڕینەوەکان', load: ()=>loadOrders() },
-  accounts:{ title:'هەژمارەکان', sub:'بەڕێوەبردنی هەژمارەکانی بەکارهێنەران', load: ()=>loadAccounts() },
+  orders:{ title:'ئۆردەرەکان', sub:'پەسەندکردن و ڕەتکردنەوەی داواکارییە گۆڕینەوەکان', load: ()=>openOrdersPage() },
+  accounts:{ title:'هەژمارەکان', sub:'بەڕێوەبردنی هەژمارەکانی بەکارهێنەران', load: ()=>openAccountsPage() },
   kyc:{ title:'پشتڕاستکردنەوەی ناسنامە', sub:'داواکردن، پشکنین و پەسەندکردنی بەڵگەنامەی ناسنامە', load: ()=>loadKycAdmin() },
   wallets:{ title:'واڵێتەکان', sub:'زیادکردن، قوفڵکردن و دەستکاریکردنی واڵێتەکانی وەرگرتنی پارە', load: ()=>loadWalletsAdmin() },
   balance:{title:'ڕیفاوند و باڵانس',sub:'گەڕاندنەوەی پارە، داواکاری ناردن و چاودێریی دارایی',load:()=>loadBalanceAdmin()},
@@ -247,7 +244,7 @@ const pageConfig = {
   contracts:{ title:'گرێبەست', sub:'گرێبەستی بەکرێدان و واژووی هەردوو لایەن', load: ()=>loadContracts() },
   notifications:{ title:'ئاگادارییەکان', sub:'ناردنی ئاگاداری و بینینی مێژوو', load: ()=>loadNotifPage() },
   cases:{ title:'کەیسەکانی کڕیار', sub:'وێنە، وردەکاری و چارەسەرکردنی کێشەکانی کڕیار', load: ()=>loadSupportCasesAdmin() },
-  announcement:{ title:'بانەری ئاگاداری', sub:'ئاگاداری گشتی سەرەوەی ئەپەکە', load: ()=>loadAnnouncement() },
+
   otp:{ title:'کۆدەکانی OTP', sub:'بینین و بەڕێوەبردنی کۆدەکانی دڵنیاکردنەوە', load: ()=>loadOtp() },
   security:{ title:'ئاسایش و IP', sub:'ڕووداوە گومانلێکراوەکان و بلۆککردنی IP و پەڕەی ئاگادارکردنەوە', load: ()=>loadSecurity() },
   errors:{ title:'لۆگی هەڵەکان', sub:'هەڵەکانی ماڵپەڕی بەکارهێنەر و سێرڤەر', load: ()=>loadErrorLogs() },
@@ -1195,22 +1192,43 @@ function subscribeOrdersAdmin(){
     })
     .subscribe();
 }
-async function loadOrders(){
-  document.getElementById('ordersTableWrap').innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
-  try{
-    const {data:orders,error} = await sb.from('ex_orders').select('*').order('created_at',{ascending:false}).limit(300);
-    if(error) throw error;
-    const profMap = await loadProfilesFor((orders||[]).map(o=>o.user_id));
-    _profMap = profMap;
-    allOrders = (orders||[]).map(o=>({...o, profile:profMap[o.user_id]||null}));
-    renderOrders();
-  }catch(e){
-    document.getElementById('ordersTableWrap').innerHTML=`<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>هەڵە: ${esc(e.message)}</p></div>`;
+let _ordShown=50, _ordLoadedAt=0, _ordLoading=null;
+function openOrdersPage(){
+  if(allOrders.length){
+    renderOrders((document.getElementById('orderSearch')?.value||'').toLowerCase());
+    if(!_ordLoadedAt||Date.now()-_ordLoadedAt>30000) loadOrders();
+    return;
   }
+  loadOrders();
 }
-function filterOrders(el){
+function showMoreOrders(){ _ordShown+=LIST_STEP; renderOrders((document.getElementById('orderSearch')?.value||'').toLowerCase()); }
+function loadOrders(){
+  if(_ordLoading) return _ordLoading;
+  const wrap=document.getElementById('ordersTableWrap');
+  if(!allOrders.length) wrap.innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
+  _ordLoading=(async()=>{
+    try{
+      const {data:orders,error} = await sb.from('ex_orders').select('*').order('created_at',{ascending:false}).limit(300);
+      if(error) throw error;
+      const profMap = await loadProfilesFor((orders||[]).map(o=>o.user_id));
+      _profMap = profMap;
+      allOrders = (orders||[]).map(o=>({...o, profile:profMap[o.user_id]||null}));
+      _ordLoadedAt=Date.now();
+      if(_curPage==='orders') renderOrders((document.getElementById('orderSearch')?.value||'').toLowerCase());
+    }catch(e){
+      if(!allOrders.length) wrap.innerHTML=`<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>هەڵە: ${esc(e.message)}</p></div>`;
+      else showToast('نوێکردنەوەی ئۆردەرەکان سەرکەوتوو نەبوو','rd');
+    }finally{ _ordLoading=null; }
+  })();
+  return _ordLoading;
+}
+let _ordSearchTimer=null;
+function filterOrders(el,typing){
   if(el){ document.querySelectorAll('[data-of]').forEach(x=>x.classList.remove('on')); el.classList.add('on'); orderFilter=el.dataset.of; }
-  renderOrders((document.getElementById('orderSearch')?.value||'').toLowerCase());
+  _ordShown=LIST_STEP;
+  const run=()=>renderOrders((document.getElementById('orderSearch')?.value||'').toLowerCase());
+  // typing waits a moment so every key does not redraw the list
+  if(typing){ clearTimeout(_ordSearchTimer); _ordSearchTimer=setTimeout(run,150); } else run();
 }
 function renderOrders(q=''){
   let list=allOrders;
@@ -1223,7 +1241,9 @@ function renderOrders(q=''){
       ||String(o.order_number||'').includes(qq)
       ||(o.phone||'').includes(qq));
   }
-  document.getElementById('ordersTableWrap').innerHTML = renderOrdersTable(list) + renderOrdersCards(list);
+  const page=list.slice(0,_ordShown);
+  document.getElementById('ordersTableWrap').innerHTML = (_wideList.matches ? renderOrdersTable(page) : (page.length ? renderOrdersCards(page) : renderOrdersTable(page)))
+    + listMoreHTML(page.length,list.length,'showMoreOrders');
 }
 function adminOrderPayoutHTML(order){
   if(order.balance_refunded_at)return '<span>'+formatNum(order.amount)+' IQD</span><small class="order-payout-credit">گەڕاوە بۆ باڵانس</small>';
@@ -1700,9 +1720,14 @@ async function saveOrderNote(id){
   showToast('تێبینی پاشەکەوتکرا','gr');
   refreshOrdersEverywhere();
 }
+// many changes arrive together (live updates): one refresh for all of them
+let _ordRefreshTimer=null;
 function refreshOrdersEverywhere(){
-  loadDashboardStats();
-  if(_curPage==='orders') loadOrders(); else loadDashOrders();
+  clearTimeout(_ordRefreshTimer);
+  _ordRefreshTimer=setTimeout(()=>{
+    loadDashboardStats();
+    if(_curPage==='orders') loadOrders(); else { _ordLoadedAt=0; loadDashOrders(); }
+  },400);
 }
 
 // ── Original admin module 3 ──
@@ -1710,12 +1735,27 @@ function refreshOrdersEverywhere(){
 // ═══ ACCOUNTS ════════════════════════════════════════════════════
 // ══════════════════════════════════════════════════════════════
 let _accountBalances = Object.create(null);
+// ── light lists: accounts and orders ────────────────────────────
+// What was loaded stays in memory: opening the page again shows it at once
+// and refreshes quietly behind it. Only 50 rows are drawn at a time (more on
+// request), and only the table on wide screens or the cards on narrow ones.
+const LIST_STEP=50;
+const _wideList=typeof window!=='undefined'&&window.matchMedia?window.matchMedia('(min-width:901px)'):{matches:true};
+let _accShown=LIST_STEP, _accLoadedAt=0, _accLoading=null;
+function listMoreHTML(shown,total,fn){
+  if(shown>=total) return '';
+  return `<div class="list-more"><span>${formatNum(shown)} لە ${formatNum(total)}</span><button type="button" class="act-btn dark" onclick="${fn}()">پیشاندانی ${formatNum(Math.min(LIST_STEP,total-shown))}ی تر</button></div>`;
+}
+function onWideListChange(){
+  if(_curPage==='orders'&&allOrders.length) renderOrders((document.getElementById('orderSearch')?.value||'').toLowerCase());
+  if(_curPage==='accounts'&&allAccounts.length) renderAccounts((document.getElementById('accSearch')?.value||'').toLowerCase());
+}
+if(_wideList.addEventListener) _wideList.addEventListener('change',onWideListChange);
 async function loadAccountBalances(userIds){
-  const balances=Object.create(null);
-  for(let from=0;from<userIds.length;from+=200){
-    const rows=await adminApiRequest('account_balances',{user_ids:userIds.slice(from,from+200)});
-    rows.forEach(row=>{balances[row.user_id]=row;});
-  }
+  const balances=Object.create(null), parts=[];
+  for(let from=0;from<userIds.length;from+=200) parts.push(userIds.slice(from,from+200));
+  const answers=await Promise.all(parts.map(ids=>adminApiRequest('account_balances',{user_ids:ids})));
+  answers.forEach(rows=>(rows||[]).forEach(row=>{balances[row.user_id]=row;}));
   _accountBalances=balances;
 }
 function accountBalanceValue(row){
@@ -1732,15 +1772,34 @@ function accountBalanceDetails(row){
     '<div class="detail-row"><div class="lbl">پارەی گیراو</div><div class="val">'+(row?formatNum(row.held_iqd)+' دینار':'—')+'</div></div>'+
     '<div class="detail-row"><div class="lbl">دوایین نوێکردنەوە</div><div class="val">'+(row?.updated_at?fmtDateTime(row.updated_at):'—')+'</div></div>';
 }
-async function loadAccounts(){
-  document.getElementById('accountsTableWrap').innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
-  try{
-    allAccounts = await fetchAllProfiles();
-    await Promise.all([(typeof staffFullAdmin!=='function'||staffFullAdmin())?loadAccountIps():Promise.resolve(),loadAccountBalances(allAccounts.map(a=>a.id))]);
-    filterAccounts();
-  }catch(e){
-    document.getElementById('accountsTableWrap').innerHTML=`<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>هەڵە: ${esc(e.message)}</p></div>`;
+function openAccountsPage(){
+  if(allAccounts.length){
+    renderAccounts((document.getElementById('accSearch')?.value||'').toLowerCase());
+    if(!_accLoadedAt||Date.now()-_accLoadedAt>60000) loadAccounts();
+    return;
   }
+  loadAccounts();
+}
+function showMoreAccounts(){ _accShown+=LIST_STEP; renderAccounts((document.getElementById('accSearch')?.value||'').toLowerCase()); }
+// The list shows as soon as the accounts arrive; balances and IPs fill in after.
+function loadAccounts(){
+  if(_accLoading) return _accLoading;
+  const wrap=document.getElementById('accountsTableWrap');
+  if(!allAccounts.length) wrap.innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
+  const redraw=()=>{ if(_curPage==='accounts') renderAccounts((document.getElementById('accSearch')?.value||'').toLowerCase()); };
+  _accLoading=(async()=>{
+    try{
+      allAccounts = await fetchAllProfiles();
+      _accLoadedAt=Date.now();
+      redraw();
+      await Promise.all([(typeof staffFullAdmin!=='function'||staffFullAdmin())?loadAccountIps():Promise.resolve(),loadAccountBalances(allAccounts.map(a=>a.id))]);
+      redraw();
+    }catch(e){
+      if(!allAccounts.length) wrap.innerHTML=`<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>هەڵە: ${esc(e.message)}</p></div>`;
+      else showToast('نوێکردنەوەی هەژمارەکان سەرکەوتوو نەبوو','rd');
+    }finally{ _accLoading=null; }
+  })();
+  return _accLoading;
 }
 // Loads EVERY account. A single request is capped by the API (at most 1000
 // rows, and the old .limit(300) hid the oldest accounts), so read page by
@@ -1758,9 +1817,13 @@ async function fetchAllProfiles(){
   }
   return rows;
 }
-function filterAccounts(el){
+let _accSearchTimer=null;
+function filterAccounts(el,typing){
   if(el){ document.querySelectorAll('[data-af]').forEach(x=>x.classList.remove('on')); el.classList.add('on'); accFilter=el.dataset.af; }
-  renderAccounts((document.getElementById('accSearch')?.value||'').toLowerCase());
+  _accShown=LIST_STEP;
+  const run=()=>renderAccounts((document.getElementById('accSearch')?.value||'').toLowerCase());
+  // typing waits a moment so every key does not redraw the list
+  if(typing){ clearTimeout(_accSearchTimer); _accSearchTimer=setTimeout(run,150); } else run();
 }
 function renderAccounts(q=''){
   let list=allAccounts;
@@ -1776,7 +1839,9 @@ function renderAccounts(q=''){
     const total=formatNum(allAccounts.length);
     countEl.textContent = list.length===allAccounts.length ? '('+total+')' : '('+formatNum(list.length)+' لە '+total+')';
   }
-  document.getElementById('accountsTableWrap').innerHTML = renderAccTable(list) + renderAccCards(list);
+  const page=list.slice(0,_accShown);
+  document.getElementById('accountsTableWrap').innerHTML = (_wideList.matches ? renderAccTable(page) : (page.length ? renderAccCards(page) : renderAccTable(page)))
+    + listMoreHTML(page.length,list.length,'showMoreAccounts');
 }
 function accBadges(a){
   let b='';
@@ -2961,100 +3026,8 @@ function deleteBroadcast(id){
   });
 }
 
-// ══════════════════════════════════════════════════════════════
-// ═══ ANNOUNCEMENT BANNER (Firebase) ═════════════════════════════
-// ══════════════════════════════════════════════════════════════
-function renderAnnItemRow(item){
-  item = item || {};
-  const action = item.action || {type:'none'};
-  const wrap=document.getElementById('annItemsWrap');
-  const labelMap = buildMethodLabelMap();
-  const fromKeys = buildFromMethodKeys(), toKeys = buildToMethodKeys();
-  const fromOpts = fromKeys.map(k=>`<option value="${esc(k)}" ${action.from===k?'selected':''}>${esc(labelMap.get(k)||k)}</option>`).join('');
-  const toOpts = `<option value="">— دیاری مەکە —</option>` + toKeys.map(k=>`<option value="${esc(k)}" ${action.to===k?'selected':''}>${esc(labelMap.get(k)||k)}</option>`).join('');
-  const row=document.createElement('div');
-  row.className='ann-item-row';
-  row.style.cssText='border:1px solid var(--b1);border-radius:12px;padding:12px;margin-bottom:12px';
-  row.innerHTML = `
-    <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px">
-      <textarea class="minp mta ann-item-text" style="flex:1" placeholder="دەقی ئاگادارییەک بنووسە...">${esc(item.text||'')}</textarea>
-      <div class="act-btn rd" onclick="this.closest('.ann-item-row').remove()"><i class="fas fa-trash"></i></div>
-    </div>
-    <label class="modal-lbl" style="margin-top:0">کردار کاتێک بەکارهێنەر کلیکی لێدەکات</label>
-    <select class="msel ann-item-action-type" onchange="updateAnnItemActionUI(this)">
-      <option value="none" ${action.type==='none'?'selected':''}>هیچ (کلیک ناکات)</option>
-      <option value="url" ${action.type==='url'?'selected':''}>کردنەوەی لینک</option>
-      <option value="wallet" ${action.type==='wallet'?'selected':''}>دیاریکردنی ناردن/وەرگرتن لە فۆرمی گۆڕینەوە</option>
-    </select>
-    <div class="ann-item-url-wrap" style="display:${action.type==='url'?'':'none'};margin-top:8px">
-      <input class="minp ann-item-url" dir="ltr" placeholder="https://..." value="${esc(action.url||'')}">
-    </div>
-    <div class="ann-item-wallet-wrap" style="display:${action.type==='wallet'?'':'none'};margin-top:8px">
-      <div class="modal-row">
-        <div>
-          <label class="modal-lbl">ناردن لە (پێویستە)</label>
-          <select class="msel ann-item-from">${fromOpts}</select>
-        </div>
-        <div>
-          <label class="modal-lbl">وەرگرتن لە (ئارەزوومەندانە)</label>
-          <select class="msel ann-item-to">${toOpts}</select>
-        </div>
-      </div>
-    </div>`;
-  wrap.appendChild(row);
-}
-function updateAnnItemActionUI(sel){
-  const row = sel.closest('.ann-item-row');
-  row.querySelector('.ann-item-url-wrap').style.display = sel.value==='url' ? '' : 'none';
-  row.querySelector('.ann-item-wallet-wrap').style.display = sel.value==='wallet' ? '' : 'none';
-}
-function addAnnItem(){ renderAnnItemRow({}); }
-async function loadAnnouncement(){
-  try{
-    if(!allWallets.length) await loadWalletsAdmin();
-    const snap = await fbdb.ref('announcement').once('value');
-    const val = snap.val() || {};
-    document.getElementById('annShow').checked = !!val.show;
-    document.getElementById('annInterval').value = val.interval || 5;
-    const wrap=document.getElementById('annItemsWrap'); wrap.innerHTML='';
-    // supports both the new {items:[{text,action}]} shape and the old single {text} shape
-    let items = Array.isArray(val.items)
-      ? val.items.map(x=> (typeof x==='string') ? {text:x} : {text:(x&&x.text)||'', action:(x&&x.action)||{type:'none'}})
-      : (val.text ? [{text:val.text}] : []);
-    if(!items.length) items=[{}];
-    items.forEach(it=>renderAnnItemRow(it));
-  }catch(e){ showToast('هەڵەی بارکردنی بانەر: '+e.message,'rd'); }
-}
-async function saveAnnouncement(){
-  const show=document.getElementById('annShow').checked;
-  let interval=parseInt(document.getElementById('annInterval').value,10);
-  if(isNaN(interval)||interval<2) interval=5;
-  const items=[];
-  document.querySelectorAll('.ann-item-row').forEach(row=>{
-    const text=row.querySelector('.ann-item-text').value.trim();
-    if(!text) return;
-    const type=row.querySelector('.ann-item-action-type').value;
-    let action={type:'none'};
-    if(type==='url'){
-      const url=row.querySelector('.ann-item-url').value.trim();
-      if(url) action={type:'url', url};
-    }else if(type==='wallet'){
-      const from=row.querySelector('.ann-item-from').value;
-      const to=row.querySelector('.ann-item-to').value;
-      if(from){ action={type:'wallet', from}; if(to) action.to=to; }
-    }
-    items.push({text, action});
-  });
-  const btn=document.getElementById('annSaveBtn'); btn.disabled=true;
-  try{
-    await fbdb.ref('announcement').set({show, interval, items});
-    showToast('✅ بانەر پاشەکەوتکرا','gr');
-  }catch(e){
-    showToast('هەڵە: '+e.message,'rd');
-  }finally{ btn.disabled=false; }
-}
+// The Firebase text banner page was replaced in v53 by «بانەرەکان» (exchange-banners-admin.js).
 
-// ── Original admin module 6 ──
 // ══════════════════════════════════════════════════════════════
 // ═══ OTP CODES (full admin read + edit) ════════════════════════
 // All calls go through SECURITY DEFINER RPCs gated by is_ex_admin():

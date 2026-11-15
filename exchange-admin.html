@@ -9,9 +9,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <!-- Firebase — announcement banner control only (same project as exchange.html) -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<link rel="stylesheet" href="assets/css/admin.css?v=14">
+<link rel="stylesheet" href="assets/css/admin.css?v=15">
 <link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/exchange-insights.css?v=2">
 <link rel="stylesheet" href="assets/css/exchange-features.css?v=4">
@@ -83,7 +81,7 @@
     <div class="sb-item" onclick="goPage('notifications')"><i class="fas fa-bell" style="color:#7c3aed"></i> ئاگادارییەکان</div>
     <div class="sb-item" onclick="goPage('whatsapp')"><i class="fas fa-whatsapp" style="color:#16a34a"></i> نامەکانی واتسئاپ <span class="sb-badge rd" id="sbWaFailed" style="display:none">0</span></div>
     <div class="sb-item" onclick="goPage('cases')"><i class="fas fa-headset" style="color:#2563eb"></i> کەیسەکانی کڕیار <span class="sb-badge rd" id="sbCaseCount" style="display:none">0</span></div>
-    <div class="sb-item" onclick="goPage('announcement')"><i class="fas fa-bullhorn" style="color:#0891b2"></i> بانەری ئاگاداری</div>
+    <div class="sb-item" onclick="goPage('banners')"><i class="fas fa-images" style="color:#0891b2"></i> بانەرەکان</div>
     <div class="sb-section">ئاسایش</div>
     <div class="sb-item" onclick="goPage('otp')"><i class="fas fa-key" style="color:#dc2626"></i> کۆدەکانی OTP</div>
     <div class="sb-item" onclick="goPage('security')"><i class="fas fa-user-shield" style="color:#dc2626"></i> ئاسایش و IP <span class="sb-badge rd" id="sbAlertCount" style="display:none">0</span></div>
@@ -231,7 +229,7 @@
       <div class="sec-hdr"><h3>هەموو ئۆردەرەکان</h3></div>
       <div class="tbl-wrap">
         <div class="tbl-filter">
-          <input class="tbl-search" id="orderSearch" placeholder="گەڕان بە ئایدی مامەڵە (P...)، ناو، ئیمەیل یان ژمارە..." oninput="filterOrders()">
+          <input class="tbl-search" id="orderSearch" placeholder="گەڕان بە ئایدی مامەڵە (P...)، ناو، ئیمەیل یان ژمارە..." oninput="filterOrders(null,true)">
           <div class="chip on" data-of="all" onclick="filterOrders(this)">هەموو</div>
           <div class="chip yw" data-of="چاوەڕوانە" onclick="filterOrders(this)">چاوەڕوان</div>
           <div class="chip rd" data-of="پێویستی بە ڕاستکردنەوەیە" onclick="filterOrders(this)">چاوەڕوانی کڕیار</div>
@@ -256,7 +254,7 @@
       </div>
       <div class="tbl-wrap">
         <div class="tbl-filter">
-          <input class="tbl-search" id="accSearch" placeholder="گەڕان بە ناو، ئیمەیل، @username یان ئایدی..." oninput="filterAccounts()">
+          <input class="tbl-search" id="accSearch" placeholder="گەڕان بە ناو، ئیمەیل، @username یان ئایدی..." oninput="filterAccounts(null,true)">
           <div class="chip on" data-af="all" onclick="filterAccounts(this)">هەموو</div>
           <div class="chip rd" data-af="banned" onclick="filterAccounts(this)">بۆیکۆتکراو</div>
           <div class="chip cy" data-af="admin" onclick="filterAccounts(this)">ئادمین</div>
@@ -605,22 +603,22 @@
     </div>
 
     <!-- ══ ANNOUNCEMENT BANNER ══ -->
-    <div class="pg" id="pgAnnouncement">
-      <div class="sec-hdr"><h3>بانەری ئاگاداری سەرەوەی ئەپ</h3></div>
-      <div class="tbl-wrap" style="padding:18px">
-        <div class="mswitch-row" style="border-bottom:1px solid var(--b1);padding-bottom:16px;margin-bottom:16px">
-          <span>پیشاندانی بانەر لەناو ئەپەکە</span>
-          <label class="mswitch"><input type="checkbox" id="annShow"><span class="track"></span></label>
+    <!-- ══ BANNERS (ex_banners; /api/admin banners_*) ══ -->
+    <div class="pg" id="pgBanners">
+      <section class="bn-card">
+        <div class="bn-head">
+          <div><h3>بانەری داشبۆرد</h3><small dir="ltr">1200 × 500</small></div>
+          <button type="button" class="act-btn dark" onclick="openBannerEditor('slide')"><i class="fas fa-plus"></i> زیادکردنی بانەر</button>
         </div>
-        <label class="modal-lbl">دەقەکانی بانەر (چەند دانە دەقی جیاواز، سلاید دەکرێن)</label>
-        <div id="annItemsWrap"></div>
-        <div class="act-btn dark" style="margin-top:2px;margin-bottom:16px;display:inline-flex" onclick="addAnnItem()"><i class="fas fa-plus"></i> زیادکردنی دەقێکی تر</div>
-
-        <label class="modal-lbl">چرکە لەنێوان گۆڕانی دەقەکان</label>
-        <input class="minp" type="number" min="2" step="1" id="annInterval" dir="ltr" placeholder="5">
-        <div class="fee-toggle-note"><i class="fas fa-circle-info" style="margin-left:4px"></i>ئەگەر زیاتر لە دەقێک هەبێت، بانەرەکە بەم ماوەیە (بە چرکە) لەنێوان دەقەکاندا سلاید دەکات. یەک دەق = بەبێ سلایدکردن.</div>
-        <button class="modal-btn cy" id="annSaveBtn" onclick="saveAnnouncement()"><i class="fas fa-check"></i> پاشەکەوتکردن</button>
-      </div>
+        <div class="bn-list" id="bnSlides"><div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div></div>
+      </section>
+      <section class="bn-card">
+        <div class="bn-head">
+          <div><h3>بانەری سەر شاشە</h3><small dir="ltr">720 × 900</small></div>
+          <button type="button" class="act-btn dark" onclick="openBannerEditor('popup')"><i class="fas fa-plus"></i> زیادکردنی بانەر</button>
+        </div>
+        <div class="bn-list" id="bnPopups"><div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div></div>
+      </section>
     </div>
 
     <!-- ══ OTP CODES ══ -->
@@ -1233,6 +1231,37 @@
 </div>
 
 <!-- ══ GENERIC CONFIRM ══ -->
+<div class="overlay" id="moBanner">
+  <div class="modal bn-modal">
+    <div class="modal-hdr">
+      <h3 id="bnModalTitle">بانەر</h3>
+      <div class="modal-close" onclick="closeMo('moBanner')"><i class="fas fa-xmark"></i></div>
+    </div>
+    <label class="modal-lbl">وێنە</label>
+    <button type="button" class="bn-pick" id="bnPick" onclick="document.getElementById('bnFile').click()"></button>
+    <input type="file" id="bnFile" accept="image/*" hidden onchange="pickBannerImage(this)">
+    <div class="bn-pick-meta" id="bnPickMeta" dir="ltr"></div>
+    <label class="modal-lbl">کاتێک کلیکی لێدەکرێت</label>
+    <div class="bn-seg" role="radiogroup" aria-label="کاتێک کلیکی لێدەکرێت">
+      <button type="button" role="radio" data-bn-act="none" onclick="setBannerAction('none')">هیچ</button>
+      <button type="button" role="radio" data-bn-act="section" onclick="setBannerAction('section')">بچێتە بەشێک</button>
+      <button type="button" role="radio" data-bn-act="url" onclick="setBannerAction('url')">لینک بکاتەوە</button>
+    </div>
+    <div id="bnSectionWrap" hidden><select class="msel" id="bnSection" aria-label="بەش"></select></div>
+    <div id="bnUrlWrap" hidden><input class="minp" type="url" id="bnUrl" dir="ltr" maxlength="500" placeholder="https://" aria-label="لینک"></div>
+    <div id="bnPlacesWrap" hidden>
+      <label class="modal-lbl">لە کام بەش پیشان بدرێت</label>
+      <div class="bn-places" id="bnPlaces"></div>
+    </div>
+    <div class="mswitch-row bn-active-row">
+      <span>پیشان بدرێت</span>
+      <label class="mswitch"><input type="checkbox" id="bnActive" checked><span class="track"></span></label>
+    </div>
+    <div class="bn-err" id="bnErr" role="alert"></div>
+    <button type="button" class="modal-btn dark" id="bnSaveBtn" onclick="saveBanner()">پاشەکەوتکردن</button>
+  </div>
+</div>
+
 <div class="overlay" id="moSitePause">
   <div class="modal" style="max-width:440px">
     <div class="modal-hdr">
@@ -1376,7 +1405,7 @@
   </div>
   <script src="assets/js/exchange-payout-rounding.js?v=1"></script>
   <script src="assets/js/exchange-live.js?v=1"></script>
-<script src="assets/js/admin.js?v=37"></script>
+<script src="assets/js/admin.js?v=38"></script>
 <script src="assets/js/receipt-access.js?v=1"></script>
 <script src="assets/js/admin-contracts.js?v=2"></script>
   <script src="assets/js/exchange-staff.js?v=11"></script>
@@ -1386,6 +1415,6 @@
   <script src="assets/js/exchange-refund-report.js?v=3"></script>
   <script src="assets/js/exchange-insights.js?v=7"></script>
   <script src="assets/js/exchange-profit.js?v=5"></script><script src="assets/js/exchange-whatsapp-admin.js?v=3"></script><script src="assets/js/exchange-activity-admin.js?v=1"></script>
-<script src="assets/js/exchange-admin-workspace.js?v=3"></script><script src="assets/js/exchange-fee-tiers.js?v=1"></script><script src="assets/js/exchange-site-pause-admin.js?v=1"></script><script src="assets/js/track.js?v=3"></script>
+<script src="assets/js/exchange-admin-workspace.js?v=3"></script><script src="assets/js/exchange-fee-tiers.js?v=1"></script><script src="assets/js/exchange-site-pause-admin.js?v=2"></script><script src="assets/js/exchange-banners-admin.js?v=1"></script><script src="assets/js/track.js?v=3"></script>
 </body>
 </html>

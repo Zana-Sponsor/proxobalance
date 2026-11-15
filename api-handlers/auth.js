@@ -565,8 +565,9 @@ const actions = {
 const ACTION_SECTION = {
   signup_start: 'signup', signup_finish: 'signup',
   login_start: 'login', login_finish: 'login', reset_start: 'login', reset_verify: 'login', reset_finish: 'login',
-  verify_password: 'account', phone_change_start: 'account', phone_change_finish: 'account',
-  email_change_start: 'account', email_change_finish: 'account', password_change: 'account'
+  verify_password: 'delete',            // only the delete-account screen asks for it
+  phone_change_start: 'phone', phone_change_finish: 'phone',
+  email_change_start: 'email', email_change_finish: 'email', password_change: 'password'
 };
 
 export default withSecurity(async (req, res, ctx) => {

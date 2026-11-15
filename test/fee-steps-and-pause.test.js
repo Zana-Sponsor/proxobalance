@@ -55,9 +55,12 @@ test('sign-up, sign-in and account changes each follow their own switch', async 
   assert.notEqual(login.status, 423);
 
   security.resetSectionPauseCache();
-  paused = [{ key: 'account', paused: true, message: null }];
-  assert.equal((await call(auth, '/api/auth', { action: 'password_change', current: 'a', password: 'b' })).section, 'account');
-  assert.equal((await call(auth, '/api/auth', { action: 'verify_password', password: 'a' })).section, 'account');
+  paused = [{ key: 'password', paused: true, message: null }];
+  assert.equal((await call(auth, '/api/auth', { action: 'password_change', current: 'a', password: 'b' })).section, 'password');
+  assert.notEqual((await call(auth, '/api/auth', { action: 'email_change_start', email: 'x@gmail.com' })).status, 423);
+  security.resetSectionPauseCache();
+  paused = [{ key: 'delete', paused: true, message: null }];
+  assert.equal((await call(auth, '/api/auth', { action: 'verify_password', password: 'a' })).section, 'delete');
 });
 
 test('switches are read at most every 10 seconds, and an unreadable table keeps the site open', async () => {
@@ -81,7 +84,7 @@ test('server: every customer action that a switch covers checks it', () => {
   assert.match(orders, /const paused = await sectionPaused\(balanceSource \? \['exchange', 'balance'\] : \['exchange'\]\);\n  if \(paused\) return json\(res, 423, pausedBody\(paused\)\);/);
   assert.match(read('api-handlers/balance.js'), /if\(action!=='request_payout'\)return json\(res,422,\{error:'Unknown balance action'\}\);\n  const paused=await sectionPaused\(\['balance'\]\);/);
   const authSrc = read('api-handlers/auth.js');
-  for (const [action, key] of [['signup_start', 'signup'], ['signup_finish', 'signup'], ['login_start', 'login'], ['reset_finish', 'login'], ['phone_change_start', 'account'], ['email_change_finish', 'account']])
+  for (const [action, key] of [['signup_start', 'signup'], ['signup_finish', 'signup'], ['login_start', 'login'], ['reset_finish', 'login'], ['phone_change_start', 'phone'], ['email_change_finish', 'email'], ['password_change', 'password']])
     assert.match(authSrc, new RegExp(`${action}: '${key}'`), action);
   assert.match(read('api-handlers/error-log.js'), /code === 'SECTION_PAUSED'\) return json\(res, 202, \{ ok: true, ignored: true \}\)/);
   const admin = read('api-handlers/admin.js');
@@ -106,8 +109,8 @@ test('database: switches are private, the status is public, and only the custome
 test('customer app: notices follow the switches, and a 423 shows at once', () => {
   const js = read('assets/js/site-pause.js');
   const index = read('index.html');
-  assert.match(index, /<script src="\/assets\/js\/activity-tracker\.js\?v=1"><\/script>\n<script src="\/assets\/js\/site-pause\.js\?v=1"><\/script>/);
-  assert.match(index, /<link rel="stylesheet" href="\/assets\/css\/site-pause\.css\?v=1">/);
+  assert.match(index, /<script src="\/assets\/js\/activity-tracker\.js\?v=1"><\/script>\n<script src="\/assets\/js\/site-pause\.js\?v=\d+"><\/script>/);
+  assert.match(index, /<link rel="stylesheet" href="\/assets\/css\/site-pause\.css\?v=\d+">/);
   assert.match(js, /\/rest\/v1\/rpc\/ex_site_status/);
   assert.match(js, /res\.status === 423 && url\.indexOf\('\/api\/'\) !== -1/);
   assert.match(js, /support: \{ key: 'support', form: true \}/);
@@ -168,7 +171,7 @@ test('panel: the rates page leads with the steps card and lists routes by wallet
   const html = read('exchange-admin.html');
   assert.match(html, /<section class="ft-card" id="feeTierCard" aria-labelledby="ftTitle">\s*<h3 id="ftTitle">لێبڕین بەپێی بڕ<\/h3>/);
   assert.match(html, /<div class="ft-modal" id="rateTierWrap" hidden><\/div>/);
-  assert.match(html, /<script src="assets\/js\/exchange-fee-tiers\.js\?v=1"><\/script><script src="assets\/js\/exchange-site-pause-admin\.js\?v=1"><\/script>/);
+  assert.match(html, /<script src="assets\/js\/exchange-fee-tiers\.js\?v=1"><\/script><script src="assets\/js\/exchange-site-pause-admin\.js\?v=\d+"><\/script>/);
   assert.match(html, /onclick="goPage\('pause'\)"/);
   const adminJs = read('assets/js/admin.js');
   assert.match(adminJs, /if\(typeof ftModalPatch==='function'\) Object\.assign\(row,ftModalPatch\(prevRate\)\);/);

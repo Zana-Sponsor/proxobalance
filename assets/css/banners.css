@@ -1,0 +1,67 @@
+/* Image banners (assets/js/banners.js).
+   Dashboard slides sit where the old text banner was: the dashboard's own
+   width, 16px below "داواکاری نوێ", 16px above "داواکارییەکانت", radius 16
+   and the same soft shadow as that banner, a fixed 12:5 frame so nothing
+   below moves when a picture arrives. Screen banner: a 4:5 picture, radius 20,
+   one close button. */
+html body #mainApp .dbb { display: block; margin: 0 0 16px; }
+html body #mainApp .dbb[hidden] { display: none; }
+html body #mainApp .dbb-view {
+  --dbb-ph: #eef2f7;
+  position: relative; overflow: hidden; aspect-ratio: 12 / 5; border-radius: 16px;
+  background: var(--dbb-ph);
+  box-shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 8px 24px -16px rgba(16, 24, 40, .18);
+  touch-action: pan-y; user-select: none; -webkit-user-select: none;
+}
+html[data-theme="dark"] body #mainApp .dbb-view { --dbb-ph: #131c2e; box-shadow: none; }
+html body #mainApp .dbb-track { display: flex; height: 100%; transition: transform .45s cubic-bezier(.2, .8, .2, 1); will-change: transform; }
+html body #mainApp .dbb-slide {
+  flex: 0 0 100%; width: 100%; height: 100%; margin: 0; padding: 0; border: 0; border-radius: 0;
+  background: none; display: block; cursor: default; -webkit-tap-highlight-color: transparent;
+}
+html body #mainApp .dbb-slide.is-link { cursor: pointer; }
+html body #mainApp .dbb-slide:focus-visible { outline: 2px solid #0265ff; outline-offset: -3px; border-radius: 16px; }
+html body #mainApp .dbb-slide img { display: block; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+html body #mainApp .dbb-dots { display: flex; justify-content: center; gap: 2px; margin-top: 6px; }
+html body #mainApp .dbb-dot {
+  --dot: #cbd5e1; --dot-on: #0265ff;
+  display: grid; place-items: center; width: 18px; height: 18px; margin: 0; padding: 0;
+  border: 0; background: none; cursor: pointer; transition: width .2s;
+}
+html[data-theme="dark"] body #mainApp .dbb-dot { --dot: #33415a; --dot-on: #3b8cff; }
+html body #mainApp .dbb-dot::before { content: ''; width: 6px; height: 6px; border-radius: 999px; background: var(--dot); transition: width .2s, background .2s; }
+html body #mainApp .dbb-dot.on { width: 26px; }
+html body #mainApp .dbb-dot.on::before { width: 18px; background: var(--dot-on); }
+html body #mainApp .dbb-dot:focus-visible { outline: 2px solid var(--dot-on); outline-offset: 1px; border-radius: 999px; }
+
+/* screen banner */
+html.bnp-on, html.bnp-on body { overflow: hidden !important; }
+.bnp {
+  position: fixed; inset: 0; z-index: 2147482000;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px 20px calc(24px + env(safe-area-inset-bottom));
+  background: rgba(15, 23, 42, .55);
+  animation: bnp-in .2s ease-out;
+}
+.bnp-box { position: relative; width: min(340px, calc((100dvh - 96px) * .8)); }
+.bnp-img {
+  display: block; width: 100%; aspect-ratio: 4 / 5; margin: 0; padding: 0; border: 0; border-radius: 20px;
+  overflow: hidden; background: #eef2f7; box-shadow: 0 24px 48px -20px rgba(0, 0, 0, .45); cursor: default;
+}
+html[data-theme="dark"] .bnp-img { background: #131c2e; }
+.bnp-img.is-link { cursor: pointer; }
+.bnp-img:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.bnp-img img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.bnp-close {
+  position: absolute; top: 10px; left: 10px;
+  display: grid; place-items: center; width: 36px; height: 36px; padding: 0; margin: 0;
+  border: 0; border-radius: 50%; background: rgba(255, 255, 255, .92); color: #1f2d44; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, .18);
+}
+.bnp-close svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.bnp-close:focus-visible { outline: 2px solid #0265ff; outline-offset: 2px; }
+@keyframes bnp-in { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  html body #mainApp .dbb-track, html body #mainApp .dbb-dot, html body #mainApp .dbb-dot::before { transition: none; }
+  .bnp { animation: none; }
+}

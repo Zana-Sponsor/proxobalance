@@ -3,15 +3,38 @@
 // The switch is on while the section works for customers.
 (function(){
   'use strict';
-  const SECTIONS = [
-    ['exchange', 'ئاڵوگۆڕ', 'داواکاریی نوێی ئاڵوگۆڕ'],
-    ['balance', 'باڵانس', 'ناردنی باڵانس و پارەدان بە باڵانس'],
-    ['support', 'پشتگیری', 'کەیسی نوێ'],
-    ['verify', 'پشتڕاستکردنەوەی ناسنامە', 'ناردنی بەڵگەنامە'],
-    ['signup', 'دروستکردنی هەژمار', 'خۆتۆمارکردنی نوێ'],
-    ['login', 'چوونەژوورەوە', 'چوونەژوورەوە و وشەی نهێنیی لەبیرچوو'],
-    ['account', 'زانیاری هەژمار', 'ناو، ژمارە، ئیمەیڵ، وشەی نهێنی و سڕینەوەی هەژمار']
+  // every section of the customer site, in the order a customer meets them
+  const GROUPS = [
+    ['سەرەکی و ئاڵوگۆڕ', [
+      ['home', 'سەرەکی', 'داشبۆرد'],
+      ['exchange', 'ئاڵوگۆڕ', 'داواکاریی نوێی ئاڵوگۆڕ'],
+      ['transactions', 'مامەڵەکان', 'لیستی مامەڵەکان و وردەکاری مامەڵە'],
+      ['correction', 'ڕاستکردنەوەی مامەڵە', 'ناردنەوەی پسوولە بۆ مامەڵەی ڕەتکراوە'],
+      ['rating', 'هەڵسەنگاندنی مامەڵە', 'ئەستێرە و کۆمێنت'],
+      ['changes', 'گۆڕانکاری نرخ', '']
+    ]],
+    ['باڵانس', [
+      ['balance', 'ناردنی باڵانس', 'ناردنی باڵانس و پارەدان بە باڵانس'],
+      ['balance_history', 'مێژووی باڵانس', '']
+    ]],
+    ['هەژمار', [
+      ['signup', 'دروستکردنی هەژمار', ''],
+      ['login', 'چوونەژوورەوە', 'لەگەڵ وشەی نهێنیی لەبیرچوو'],
+      ['profile', 'پڕۆفایل', ''],
+      ['name', 'گۆڕینی ناو', ''],
+      ['phone', 'گۆڕینی ژمارەی مۆبایل', ''],
+      ['email', 'گۆڕینی ئیمەیڵ', ''],
+      ['password', 'گۆڕینی وشەی نهێنی', ''],
+      ['delete', 'سڕینەوەی هەژمار', ''],
+      ['verify', 'پشتڕاستکردنەوەی ناسنامە', 'ناردنی بەڵگەنامە'],
+      ['whatsapp', 'ئاگاداری واتسئاپ', 'چالاککردن و ناچالاککردن لەلایەن کڕیار']
+    ]],
+    ['پشتگیری و زانیاری', [
+      ['support', 'پشتگیری', 'کەیسی نوێ'],
+      ['rules', 'یاساکان', '']
+    ]]
   ];
+  const SECTIONS = GROUPS.flatMap(g => g[1]);
   const NAMES = Object.fromEntries([['site', 'هەموو ماڵپەڕەکە'], ...SECTIONS.map(s => [s[0], s[1]])]);
   let data = null, pending = null, busy = false;
 
@@ -46,7 +69,7 @@
   function render(){
     const site = document.getElementById('psSite'), list = document.getElementById('psSections'), log = document.getElementById('psLog');
     if (site) { site.innerHTML = rowHTML('site', NAMES.site, 'هەموو بەشەکان بۆ کڕیار'); site.classList.toggle('is-off', !!row('site').paused); }
-    if (list) list.innerHTML = SECTIONS.map(s => rowHTML(s[0], s[1], s[2])).join('');
+    if (list) list.innerHTML = GROUPS.map(g => '<div class="ps-group"><h4>' + e(g[0]) + '</h4>' + g[1].map(s => rowHTML(s[0], s[1], s[2])).join('') + '</div>').join('');
     if (log) {
       const items = (data && data.log) || [];
       log.innerHTML = items.length

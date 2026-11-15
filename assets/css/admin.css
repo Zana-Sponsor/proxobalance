@@ -912,3 +912,67 @@ body{height:100% !important;min-height:0 !important;max-height:100% !important;
   .ps-card{padding:4px 16px}
   .ps-log-row{flex-direction:column;gap:3px}
 }
+
+/* ── v53 pause switches in groups ── */
+.ps-group{padding:2px 0 6px}
+.ps-group+.ps-group{border-top:1px solid #edf1f5}
+.ps-group h4{margin:0;padding:14px 0 2px;font-size:13px;font-weight:500;color:#8994a5}
+
+/* ── v53 banners (#pgBanners, #moBanner) — same card values as the rates page ── */
+.bn-card{background:#fff;border:1px solid #e8edf3;border-radius:18px;box-shadow:0 5px 22px rgba(20,39,69,.035);padding:6px 19px 10px;margin-bottom:15px}
+.bn-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0 12px;border-bottom:1px solid #edf1f5}
+.bn-head h3{margin:0;font-size:16px;font-weight:500;color:#1685fa}
+.bn-head small{display:block;margin-top:2px;font-size:12px;color:#8994a5;text-align:right}
+.bn-list{display:flex;flex-direction:column}
+.bn-item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid #f1f4f8}
+.bn-item:last-child{border-bottom:0}
+.bn-item.off .bn-thumb{opacity:.45}
+.bn-thumb{display:block;border-radius:10px;background:#eef2f7;object-fit:cover}
+.bn-thumb.slide{width:180px;height:75px}
+.bn-thumb.popup{width:60px;height:75px}
+.bn-info{min-width:0;display:flex;flex-direction:column;gap:3px}
+.bn-info b{font-size:14px;font-weight:500;color:#171d28;overflow-wrap:anywhere}
+.bn-info span{font-size:12.5px;color:#64748b}
+.bn-info .bn-hidden{color:#b45309}
+.bn-ctl{display:flex;align-items:center;gap:12px}
+.bn-btns{display:flex;gap:6px}
+.bn-btns .act-btn{width:36px;height:36px;justify-content:center;padding:0}
+.bn-empty{padding:16px 0;font-size:13px;color:#8994a5}
+.bn-modal{max-width:480px}
+.bn-pick{display:grid;place-items:center;width:100%;margin:0;padding:0;border:1px dashed #cbd5df;border-radius:14px;background:#f8fafc;cursor:pointer;overflow:hidden;font-family:'R',sans-serif;color:#64748b}
+.bn-pick.slide{aspect-ratio:12/5}
+.bn-pick.popup{aspect-ratio:4/5;width:min(100%,240px);margin:0 auto}
+.bn-pick.has{border-style:solid;border-color:#e0e7f0}
+.bn-pick img{display:block;width:100%;height:100%;object-fit:cover}
+.bn-pick span{display:flex;flex-direction:column;align-items:center;gap:4px}
+.bn-pick b{font-size:14px;font-weight:500;color:#1685fa}
+.bn-pick small{font-size:12px;color:#8994a5}
+.bn-pick:hover{border-color:#1685fa}
+.bn-pick:focus-visible{outline:2px solid #1685fa;outline-offset:2px}
+.bn-pick-meta{min-height:18px;margin-top:6px;font-size:11.5px;color:#8994a5;text-align:left}
+.bn-pick-meta:empty{display:none}
+.bn-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;background:#f2f4f7;border:1px solid #e4e8f0;border-radius:12px;margin-bottom:10px}
+.bn-seg button{height:40px;border:0;border-radius:9px;background:transparent;font-family:'R',sans-serif;font-size:13.5px;color:#475569;cursor:pointer}
+.bn-seg button.on{background:#fff;color:#171d28;box-shadow:0 1px 3px rgba(20,39,69,.12)}
+.bn-seg button:focus-visible{outline:2px solid #1685fa;outline-offset:1px}
+#bnSectionWrap,#bnUrlWrap{margin-bottom:4px}
+.bn-places{display:flex;flex-wrap:wrap;gap:8px}
+.bn-place{position:relative;display:inline-flex;align-items:center;min-height:36px;padding:6px 12px;border:1px solid #dce3eb;border-radius:11px;background:#fff;cursor:pointer;font-size:13px;color:#334155}
+.bn-place input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.bn-place:has(input:checked){background:#eef6ff;border-color:#1685fa;color:#0b5ed7}
+.bn-place:has(input:focus-visible){outline:2px solid #1685fa;outline-offset:2px}
+.bn-active-row{margin-top:8px;border-top:1px solid #edf1f5}
+.bn-err{min-height:0;font-size:12.5px;color:#c2414b;line-height:1.6}
+.bn-err:empty{display:none}
+@media(max-width:700px){
+  .bn-card{padding:4px 16px 8px}
+  .bn-item{grid-template-columns:auto minmax(0,1fr);gap:10px 12px}
+  .bn-thumb.slide{width:120px;height:50px}
+  .bn-thumb.popup{width:40px;height:50px}
+  .bn-ctl{grid-column:1 / -1;justify-content:space-between}
+}
+
+/* ── v53 light lists: "show more" under accounts and orders ── */
+.list-more{display:flex;align-items:center;justify-content:center;gap:14px;padding:14px 12px 16px;border-top:1px solid #edf1f5;font-size:12.5px;color:#8994a5}
+.list-more .act-btn{height:38px}
+#bnPlacesWrap .modal-lbl{margin-top:14px}

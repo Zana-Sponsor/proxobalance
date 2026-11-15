@@ -503,18 +503,31 @@ export const config = { SUPABASE_URL };
 
 
 // ── Admin pause switches (table ex_site_controls, set from the panel) ──
-// "site" stops every customer action; the others stop one section.
+// "site" stops every customer action; each of the others stops one section.
 // Read at most every 10 seconds per server instance. If the switches cannot
 // be read the site stays open: a pause is an admin convenience, not a lock.
 export const SECTION_TITLES = {
   site: 'ماڵپەڕەکە بۆ ماوەیەک ڕاگیراوە',
+  home: 'سەرەکی بۆ ماوەیەک ڕاگیراوە',
   exchange: 'ئاڵوگۆڕ بۆ ماوەیەک ڕاگیراوە',
-  balance: 'باڵانس بۆ ماوەیەک ڕاگیراوە',
+  transactions: 'مامەڵەکان بۆ ماوەیەک ڕاگیراون',
+  correction: 'ڕاستکردنەوەی مامەڵە بۆ ماوەیەک ڕاگیراوە',
+  rating: 'هەڵسەنگاندنی مامەڵە بۆ ماوەیەک ڕاگیراوە',
+  balance: 'ناردنی باڵانس بۆ ماوەیەک ڕاگیراوە',
+  balance_history: 'مێژووی باڵانس بۆ ماوەیەک ڕاگیراوە',
   support: 'پشتگیری بۆ ماوەیەک ڕاگیراوە',
   verify: 'پشتڕاستکردنەوەی ناسنامە بۆ ماوەیەک ڕاگیراوە',
+  whatsapp: 'ئاگاداری واتسئاپ بۆ ماوەیەک ڕاگیراوە',
+  changes: 'گۆڕانکاری نرخەکان بۆ ماوەیەک ڕاگیراوە',
+  rules: 'یاساکان بۆ ماوەیەک ڕاگیراون',
+  profile: 'پڕۆفایل بۆ ماوەیەک ڕاگیراوە',
   signup: 'دروستکردنی هەژماری نوێ بۆ ماوەیەک ڕاگیراوە',
   login: 'چوونەژوورەوە بۆ ماوەیەک ڕاگیراوە',
-  account: 'گۆڕینی زانیاری هەژمار بۆ ماوەیەک ڕاگیراوە'
+  name: 'گۆڕینی ناو بۆ ماوەیەک ڕاگیراوە',
+  phone: 'گۆڕینی ژمارەی مۆبایل بۆ ماوەیەک ڕاگیراوە',
+  email: 'گۆڕینی ئیمەیڵ بۆ ماوەیەک ڕاگیراوە',
+  password: 'گۆڕینی وشەی نهێنی بۆ ماوەیەک ڕاگیراوە',
+  delete: 'سڕینەوەی هەژمار بۆ ماوەیەک ڕاگیراوە'
 };
 const PAUSE_TTL_MS = 10 * 1000;
 let pauseCache = { at: 0, map: null };

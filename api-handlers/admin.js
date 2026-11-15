@@ -49,6 +49,39 @@ const REVIEWABLE_ORDER_STATUSES = new Set([STATUS_PENDING, STATUS_CORRECTED]);
 const SUPPORT_STATUSES = new Set(['open', 'in_progress', 'resolved', 'closed']);
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const isUuid = value => typeof value === 'string' && UUID.test(value);
+
+// ── banners ─────────────────────────────────────────────────────
+const BANNER_KINDS = ['slide', 'popup'];
+const BANNER_SECTIONS = ['home', 'exchange', 'transactions', 'changes', 'rules', 'profile', 'support', 'verify', 'balance'];
+const BANNER_SIZE = { slide: [1200, 500], popup: [720, 900] };
+// checked columns for ex_banners from what the panel sent; throws a Kurdish 400 otherwise
+function bannerRow(p) {
+  const kind = p.kind;
+  if (!BANNER_KINDS.includes(kind)) throw { status: 400, code: 'bad_input', message: 'kind is required' };
+  const image_path = String(p.image_path || '');
+  const folder = kind === 'slide' ? 'slides' : 'popups';
+  if (!new RegExp('^' + folder + '/[0-9a-f-]{36}\\.webp$').test(image_path)) throw { status: 400, code: 'bad_input', message: 'وێنە هەڵبژێرە' };
+  const [image_w, image_h] = BANNER_SIZE[kind];
+  const action_type = ['none', 'section', 'url'].includes(p.action_type) ? p.action_type : 'none';
+  let action_section = null, action_url = null;
+  if (action_type === 'section') {
+    if (!BANNER_SECTIONS.includes(p.action_section)) throw { status: 400, code: 'bad_input', message: 'بەشێک هەڵبژێرە' };
+    action_section = p.action_section;
+  }
+  if (action_type === 'url') {
+    const url = String(p.action_url || '').trim();
+    let ok = false;
+    try { ok = new URL(url).protocol === 'https:' && url.length <= 500 && !/\s/.test(url); } catch { ok = false; }
+    if (!ok) throw { status: 400, code: 'bad_input', message: 'لینکەکە دەبێت بە https:// دەست پێبکات' };
+    action_url = url;
+  }
+  let places = [];
+  if (kind === 'popup') {
+    places = [...new Set((Array.isArray(p.places) ? p.places : []).filter(x => BANNER_SECTIONS.includes(x)))];
+    if (!places.length) throw { status: 400, code: 'bad_input', message: 'لانیکەم یەک بەش هەڵبژێرە بۆ پیشاندان' };
+  }
+  return { kind, image_path, image_w, image_h, action_type, action_section, action_url, places, is_active: p.is_active !== false };
+}
 const REFUND_REPORT_PAGE_SIZE = 100;
 const REFUND_ORDER_FIELDS = 'id,order_code,user_id,amount,total,from_method,to_method,status,balance_refunded_at,payout_iqd,payout_rounding_iqd,payout_settlement_id';
 const BAGHDAD_CALENDAR = new Intl.DateTimeFormat('en-US-u-ca-gregory-nu-latn', {
@@ -1145,13 +1178,95 @@ const actions = {
     };
   },
   async site_control_set({ key, paused, message } = {}, ctx) {
-    const KEYS = ['site', 'exchange', 'balance', 'support', 'verify', 'signup', 'login', 'account'];
+    const KEYS = ['site', 'home', 'exchange', 'transactions', 'correction', 'rating', 'balance', 'balance_history',
+      'support', 'verify', 'whatsapp', 'changes', 'rules', 'profile', 'signup', 'login',
+      'name', 'phone', 'email', 'password', 'delete'];
     if (!KEYS.includes(key) || typeof paused !== 'boolean') throw { status: 400, code: 'bad_input', message: 'key and paused are required' };
     const text = message == null ? null : String(message).trim().slice(0, 300) || null;
     const { data, error } = await db.rpc('ex_admin_site_control_set', { p_key: key, p_paused: paused, p_message: text, p_admin: ctx.user.id });
     if (error) throw { status: 500, code: 'db_error', message: error.message };
     await audit(ctx.user.id, paused ? 'site_pause' : 'site_resume', null, { key, message: text });
     return data;
+  },
+
+  // ── banners: dashboard slides and screen banners (ex_banners, bucket "banners") ──
+  async banners_list(_payload, _ctx) {
+    const [list, seen] = await Promise.all([
+      db.from('ex_banners').select('*').order('kind').order('sort_order').order('created_at'),
+      db.from('ex_banner_seen').select('banner_id')
+    ]);
+    if (list.error) throw { status: 500, code: 'db_error', message: list.error.message };
+    const views = {};
+    (seen.data || []).forEach(r => { views[r.banner_id] = (views[r.banner_id] || 0) + 1; });
+    return (list.data || []).map(b => ({ ...b, seen: views[b.id] || 0 }));
+  },
+  // a one-time upload address for one new WebP image; the browser sends the file straight to storage
+  async banner_upload_url({ kind } = {}, _ctx) {
+    if (!BANNER_KINDS.includes(kind)) throw { status: 400, code: 'bad_input', message: 'kind is required' };
+    const path = (kind === 'slide' ? 'slides/' : 'popups/') + globalThis.crypto.randomUUID() + '.webp';
+    const { data, error } = await db.storage.from('banners').createSignedUploadUrl(path);
+    if (error) throw { status: 500, code: 'storage_error', message: error.message };
+    return { path: data.path || path, token: data.token };
+  },
+  async banner_save(payload = {}, ctx) {
+    const row = bannerRow(payload);
+    const id = payload.id == null ? null : payload.id;
+    if (id !== null && !isUuid(id)) throw { status: 400, code: 'bad_input', message: 'id is not valid' };
+    const [folder, file] = row.image_path.split('/');
+    const { data: files, error: fileError } = await db.storage.from('banners').list(folder, { search: file, limit: 1 });
+    if (fileError || !(files || []).some(f => f.name === file))
+      throw { status: 400, code: 'image_missing', message: 'وێنەکە بار نەکرا؛ دووبارە هەڵیبژێرەوە' };
+    let previous = null, saved;
+    if (id) {
+      const { data: old, error } = await db.from('ex_banners').select('id,kind,image_path').eq('id', id).maybeSingle();
+      if (error) throw { status: 500, code: 'db_error', message: error.message };
+      if (!old) throw { status: 404, code: 'not_found', message: 'ئەم بانەرە نەدۆزرایەوە' };
+      if (old.kind !== row.kind) throw { status: 400, code: 'bad_input', message: 'kind cannot change' };
+      previous = old;
+      const { data, error: saveError } = await db.from('ex_banners')
+        .update({ ...row, updated_at: new Date().toISOString(), updated_by: ctx.user.id }).eq('id', id).select('*').single();
+      if (saveError) throw { status: 500, code: 'db_error', message: saveError.message };
+      saved = data;
+    } else {
+      const { data: last } = await db.from('ex_banners').select('sort_order').eq('kind', row.kind)
+        .order('sort_order', { ascending: false }).limit(1);
+      const sort_order = ((last && last[0] && last[0].sort_order) || 0) + 1;
+      const { data, error } = await db.from('ex_banners')
+        .insert({ ...row, sort_order, created_by: ctx.user.id, updated_by: ctx.user.id }).select('*').single();
+      if (error) throw { status: 500, code: 'db_error', message: error.message };
+      saved = data;
+    }
+    // a replaced picture leaves storage
+    if (previous && previous.image_path !== saved.image_path) await db.storage.from('banners').remove([previous.image_path]).catch(() => null);
+    await audit(ctx.user.id, id ? 'banner_update' : 'banner_create', null, { id: saved.id, kind: saved.kind });
+    return saved;
+  },
+  async banner_set_active({ id, is_active } = {}, ctx) {
+    if (!isUuid(id) || typeof is_active !== 'boolean') throw { status: 400, code: 'bad_input', message: 'id and is_active are required' };
+    const { data, error } = await db.from('ex_banners')
+      .update({ is_active, updated_at: new Date().toISOString(), updated_by: ctx.user.id }).eq('id', id).select('id,is_active').maybeSingle();
+    if (error) throw { status: 500, code: 'db_error', message: error.message };
+    if (!data) throw { status: 404, code: 'not_found', message: 'ئەم بانەرە نەدۆزرایەوە' };
+    await audit(ctx.user.id, is_active ? 'banner_show' : 'banner_hide', null, { id });
+    return data;
+  },
+  // the new order of one kind, first to last
+  async banner_reorder({ ids } = {}, ctx) {
+    if (!Array.isArray(ids) || !ids.length || ids.length > 50 || !ids.every(isUuid)) throw { status: 400, code: 'bad_input', message: 'ids are required' };
+    for (let i = 0; i < ids.length; i++) {
+      const { error } = await db.from('ex_banners').update({ sort_order: i + 1 }).eq('id', ids[i]);
+      if (error) throw { status: 500, code: 'db_error', message: error.message };
+    }
+    await audit(ctx.user.id, 'banner_reorder', null, { ids });
+    return { ok: true };
+  },
+  async banner_delete({ id } = {}, ctx) {
+    if (!isUuid(id)) throw { status: 400, code: 'bad_input', message: 'id is required' };
+    const { data, error } = await db.from('ex_banners').delete().eq('id', id).select('id,kind,image_path').maybeSingle();
+    if (error) throw { status: 500, code: 'db_error', message: error.message };
+    if (data) await db.storage.from('banners').remove([data.image_path]).catch(() => null);
+    await audit(ctx.user.id, 'banner_delete', null, { id });
+    return { deleted: !!data };
   },
 
   async list_error_logs({ status = 'unresolved', limit = 200 }, _ctx) {

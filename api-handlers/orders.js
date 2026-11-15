@@ -178,7 +178,11 @@ async function submitOrderCorrection(res, body, user) {
 export default withSecurity(async (req, res, { context, user }) => {
   const body = await readJson(req);
 
-  if (req.method === 'PATCH') return submitOrderCorrection(res, body, user);
+  if (req.method === 'PATCH') {
+    const pausedFix = await sectionPaused(['correction']);
+    if (pausedFix) return json(res, 423, pausedBody(pausedFix));
+    return submitOrderCorrection(res, body, user);
+  }
 
   const retryId = oneLine(body.retry_rejected_order_id, 64);
   let retryOrder = null;
