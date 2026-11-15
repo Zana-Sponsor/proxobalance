@@ -1,5 +1,5 @@
 import {
-  json, readJson, serviceFetch, withSecurity
+  json, readJson, serviceFetch, withSecurity, sectionPaused, pausedBody
 } from './_lib/security.js';
 import { randomInt } from 'node:crypto';
 
@@ -93,6 +93,8 @@ function validateCaseFields(res, { description, orderCode }) {
 
 export default withSecurity(async (req, res, { user }) => {
   const body = await readJson(req);
+  const paused = await sectionPaused(['support']);
+  if (paused) return json(res, 423, pausedBody(paused));
 
   const { category, description, orderCode } = cleanCaseFields(body);
   const suppliedImage = cleanLine(body.image_path, 500);

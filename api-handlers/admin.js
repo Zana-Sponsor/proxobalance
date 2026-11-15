@@ -240,7 +240,7 @@ async function audit(adminId, action, targetUserId, detail) {
 export function assertStaffAction(profile,action){
   // account mutations are super-admin only (ordinary admins get read-only account controls)
   if(['set_ban','account_set_password','account_contact_update'].includes(action) && profile.role!=='super_admin')throw {status:403,code:'super_admin_required',message:'SUPER_ADMIN_REQUIRED'};
-  if(['error_log_summary','list_error_logs','resolve_error_log','resolve_all_error_logs','activity_overview','activity_user','whatsapp_subscribers','whatsapp_set'].includes(action)&&profile.role!=='super_admin')throw {status:403,code:'super_admin_required',message:'SUPER_ADMIN_REQUIRED'};
+  if(['error_log_summary','list_error_logs','resolve_error_log','resolve_all_error_logs','activity_overview','activity_user','whatsapp_subscribers','whatsapp_set','site_controls','site_control_set'].includes(action)&&profile.role!=='super_admin')throw {status:403,code:'super_admin_required',message:'SUPER_ADMIN_REQUIRED'};
   if(profile.role==='super_admin' || profile.staff_permissions==null)return;
   const permissions={
     ping:'view',account_balances:'view',balance_dashboard:'view',balance_lookup_order:'view',
@@ -1122,6 +1122,35 @@ const actions = {
       throw { status: 500, code: 'db_error', message: error.message };
     }
     if (data?.changed) await audit(ctx.user.id, enabled ? 'whatsapp_enable' : 'whatsapp_disable', user_id, null);
+    return data;
+  },
+
+  // ── pause switches: the whole site or one section (ex_site_controls) ──
+  async site_controls(_payload, _ctx) {
+    const [controls, log] = await Promise.all([
+      db.from('ex_site_controls').select('key,paused,message,updated_at,updated_by'),
+      db.from('ex_site_control_log').select('key,paused,message,changed_by,changed_at').order('changed_at', { ascending: false }).limit(30)
+    ]);
+    if (controls.error) throw { status: 500, code: 'db_error', message: controls.error.message };
+    const rows = controls.data || [], history = log.error ? [] : (log.data || []);
+    const ids = [...new Set([...rows.map(r => r.updated_by), ...history.map(r => r.changed_by)].filter(Boolean))];
+    const names = {};
+    if (ids.length) {
+      const { data } = await db.from('ex_profiles').select('id,full_name,email').in('id', ids);
+      (data || []).forEach(p => { names[p.id] = p.full_name || p.email || null; });
+    }
+    return {
+      controls: rows.map(r => ({ ...r, updated_by_name: names[r.updated_by] || null })),
+      log: history.map(r => ({ ...r, changed_by_name: names[r.changed_by] || null }))
+    };
+  },
+  async site_control_set({ key, paused, message } = {}, ctx) {
+    const KEYS = ['site', 'exchange', 'balance', 'support', 'verify', 'signup', 'login', 'account'];
+    if (!KEYS.includes(key) || typeof paused !== 'boolean') throw { status: 400, code: 'bad_input', message: 'key and paused are required' };
+    const text = message == null ? null : String(message).trim().slice(0, 300) || null;
+    const { data, error } = await db.rpc('ex_admin_site_control_set', { p_key: key, p_paused: paused, p_message: text, p_admin: ctx.user.id });
+    if (error) throw { status: 500, code: 'db_error', message: error.message };
+    await audit(ctx.user.id, paused ? 'site_pause' : 'site_resume', null, { key, message: text });
     return data;
   },
 

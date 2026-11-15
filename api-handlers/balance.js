@@ -1,6 +1,6 @@
 // Authenticated self-service balance queries and manually reviewed payout requests.
 // No service-role credentials ever reach the client.
-import { json, readJson, rpc, serviceFetch, withSecurity } from './_lib/security.js';
+import { json, readJson, rpc, serviceFetch, withSecurity, sectionPaused, pausedBody } from './_lib/security.js';
 
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const STATUS = { disabled:'Payout requests are not enabled yet' };
@@ -50,6 +50,8 @@ export default withSecurity(async(req,res,{user,context})=>{
     }catch(e){return json(res,409,{error:e.message||'Payout could not be cancelled'});}
   }
   if(action!=='request_payout')return json(res,422,{error:'Unknown balance action'});
+  const paused=await sectionPaused(['balance']);
+  if(paused)return json(res,423,pausedBody(paused));
   const key=String(body.request_key||'');
   const amount=Number(body.amount_iqd);
   const wallet=String(body.destination_wallet||'').trim().slice(0,40);

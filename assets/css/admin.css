@@ -792,3 +792,123 @@ body{height:100% !important;min-height:0 !important;max-height:100% !important;
 .wa-toggle.on{background:rgba(22,163,74,.1);color:var(--gr);border:1px solid rgba(22,163,74,.2)}
 .wa-toggle:disabled{opacity:.5;cursor:not-allowed}
 @media(max-width:700px){.act-detail-grid{grid-template-columns:1fr 1fr}}
+
+/* ── v52 fee by amount («لێبڕین بەپێی بڕ») and routes grouped by wallet ──
+   Values are the panel theme's own (measured): card r18, 1px #e8edf3, soft
+   shadow, 19px inside; section title 16/500 blue; fields 50 high r12;
+   main button #303946 r12; chips r11. */
+.ft-card,.rl-grp{background:#fff;border:1px solid #e8edf3;border-radius:18px;box-shadow:0 5px 22px rgba(20,39,69,.035)}
+.ft-card{padding:19px;margin-bottom:15px}
+.ft-card h3{margin:0 0 16px;font-size:16px;font-weight:500;color:#1685fa}
+.ft-rows{display:flex;flex-direction:column;gap:10px;max-width:620px}
+.ft-row{display:grid;grid-template-columns:64px minmax(0,1fr) 150px 38px;gap:10px;align-items:center}
+.ft-row.last .ft-k-above{grid-column:1 / 3}
+.ft-k{font-size:14px;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ft-in{direction:ltr;display:flex;align-items:center;gap:8px;height:50px;padding:0 14px;background:#fff;border:1px solid #e0e7f0;border-radius:12px;cursor:text;transition:border-color .15s,box-shadow .15s}
+.ft-in:focus-within{border-color:#1685fa;box-shadow:0 0 0 3px rgba(22,133,250,.12)}
+.ft-in input{flex:1;min-width:0;width:100%;height:100%;padding:0;margin:0;border:0!important;outline:0!important;box-shadow:none!important;background:transparent!important;font-family:'Inter','R',sans-serif;font-size:15px;color:#171d28;text-align:left}
+.ft-in span{flex-shrink:0;font-size:13px;color:#8994a5}
+.ft-del,.ft-del-ph{width:38px;height:38px}
+.ft-del{display:flex;align-items:center;justify-content:center;border:1px solid #dce3eb;border-radius:11px;background:#fff;color:#8994a5;cursor:pointer;font-size:14px}
+.ft-del:hover{border-color:rgba(220,38,38,.3);color:var(--rd);background:rgba(220,38,38,.05)}
+.ft-under{display:flex;align-items:center;gap:12px 20px;flex-wrap:wrap;margin-top:12px}
+.ft-add{height:38px}
+.ft-ex{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;font-size:12.5px;color:#64748b}
+.ft-ex:empty{display:none}
+.ft-ex small{font-size:12px;color:#8994a5}
+.ft-ex bdi{color:#171d28;font-family:'Inter','R',sans-serif}
+.ft-err{margin-top:8px;font-size:12.5px;color:#c2414b;line-height:1.6}
+.ft-err:empty{display:none}
+.ft-pick-h{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:20px 0 4px;padding-top:16px;border-top:1px solid #edf1f5}
+.ft-pick-h h4{margin:0;font-size:14.5px;font-weight:500;color:#171d28}
+.ft-all,.ft-grp-h{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:13.5px;color:#334155}
+.ft-all input,.ft-grp-h input{width:17px;height:17px;margin:0;accent-color:#1685fa;cursor:pointer;flex-shrink:0}
+.ft-groups{display:flex;flex-direction:column}
+.ft-grp{padding:12px 0;border-bottom:1px solid #edf1f5}
+.ft-grp:last-child{border-bottom:0}
+.ft-grp-h b{font-weight:500;color:#171d28}
+.ft-grp-h small{font-family:'Inter',sans-serif;font-size:11.5px;color:#8994a5}
+.ft-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.ft-chip{position:relative;display:inline-flex;align-items:center;gap:7px;min-height:36px;padding:6px 12px;border:1px solid #dce3eb;border-radius:11px;background:#fff;cursor:pointer;font-size:13px;color:#334155;transition:background .15s,border-color .15s}
+.ft-chip input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.ft-chip small{font-family:'Inter','R',sans-serif;font-size:11.5px;color:#8994a5}
+.ft-chip.off{color:#8994a5}
+.ft-chip.has small{color:#1685fa}
+.ft-chip:hover{border-color:#cbd5df}
+.ft-chip:has(input:checked){background:#eef6ff;border-color:#1685fa;color:#0b5ed7}
+.ft-chip:has(input:focus-visible){outline:2px solid #1685fa;outline-offset:2px}
+.ft-none{padding:14px 0;font-size:13px;color:#8994a5}
+.ft-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;padding-top:16px;border-top:1px solid #edf1f5}
+.ft-save{height:50px;padding:0 22px;border:1px solid #303946;border-radius:12px;background:#303946;color:#fff;font-family:'R',sans-serif;font-size:14px;cursor:pointer}
+.ft-save:disabled{opacity:.45;cursor:not-allowed}
+.ft-clear{height:50px;padding:0 16px}
+.ft-modal{margin-top:6px}
+.ft-modal .ft-switch{border-top:1px solid #edf1f5}
+.ft-modal .ft-box{padding:4px 0 6px}
+.ft-modal .ft-row{grid-template-columns:44px minmax(0,1fr) 108px 38px}
+.ft-modal .ft-under{flex-direction:column;align-items:stretch}
+.ft-modal .ft-add{align-self:flex-start}
+.rl-hdr{margin-top:4px}
+.rl-wrap{min-height:60px}
+.rl-groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:15px;align-items:start}
+.rl-grp{overflow:hidden}
+.rl-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:15px 19px;border-bottom:1px solid #edf1f5}
+.rl-h b{font-size:15px;font-weight:500;color:#171d28}
+.rl-h small{font-size:12px;color:#8994a5}
+.rl-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:12px;padding:12px 19px;border-bottom:1px solid #f1f4f8}
+.rl-row:last-child{border-bottom:0}
+.rl-row.off .rl-main b{color:#8994a5}
+.rl-main{min-width:0;display:flex;flex-direction:column;gap:3px}
+.rl-main b{font-size:14px;font-weight:500;color:#171d28}
+.rl-fee{font-size:13px;color:#475569}
+.rl-fee.steps{font-family:'R',sans-serif;color:#1685fa}
+.rl-act{display:flex;gap:6px}
+.rl-act .act-btn{width:36px;height:36px;justify-content:center;padding:0}
+@media(max-width:700px){
+  .ft-card{padding:16px}
+  .ft-row{grid-template-columns:34px minmax(0,1fr) 92px 38px;gap:8px}
+  .ft-k{font-size:13px}
+  .ft-in{padding:0 10px;gap:5px}
+  .ft-under{flex-direction:column;align-items:stretch}
+  .ft-add{align-self:flex-start}
+  .ft-save{flex:1}
+  .rl-groups{grid-template-columns:1fr}
+  .rl-h{padding:14px 16px}
+  .rl-row{padding:12px 16px;gap:10px}
+}
+/* RTL switch: the knob starts on the right and moves left when on (it used to slide out of the track) */
+.mswitch .track::before{left:auto;right:3px}
+
+/* ── v52 pause switches (#pgPause) — same card values as the rates page ── */
+.ps-card{background:#fff;border:1px solid #e8edf3;border-radius:18px;box-shadow:0 5px 22px rgba(20,39,69,.035);padding:6px 19px;margin-bottom:15px}
+.ps-card h3{margin:0;padding:15px 0 6px;font-size:16px;font-weight:500;color:#1685fa}
+.ps-site{padding:4px 19px;transition:background .2s,border-color .2s}
+.ps-site.is-off{background:#fff8eb;border-color:#f6dba6}
+.ps-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid #f1f4f8}
+.ps-row:last-child{border-bottom:0}
+.ps-main{min-width:0;display:flex;flex-direction:column;gap:3px}
+.ps-main b{font-size:14.5px;font-weight:500;color:#171d28}
+.ps-main small{font-size:12.5px;color:#8994a5;line-height:1.6}
+.ps-site .ps-main b{font-size:15.5px}
+.ps-status{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;margin-top:3px}
+.ps-state{font-size:12.5px}
+.ps-state.on{color:#15803d}
+.ps-state.off{color:#b45309}
+.ps-msg{font-size:12.5px;color:#475569;overflow-wrap:anywhere}
+.ps-link{border:0;background:none;padding:0;font-family:'R',sans-serif;font-size:12.5px;color:#1685fa;cursor:pointer}
+.ps-link:hover{text-decoration:underline}
+.ps-row .mswitch input:disabled+.track{opacity:.5;cursor:wait}
+.ps-log-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:11px 0;border-bottom:1px solid #f1f4f8;font-size:13px;color:#334155}
+.ps-log-row:last-child{border-bottom:0}
+.ps-log-row b{font-weight:500;color:#171d28}
+.ps-log-row small{flex-shrink:0;font-size:12px;color:#8994a5}
+.ps-empty{padding:12px 0 16px;font-size:13px;color:#8994a5}
+.ps-text{min-height:96px;resize:vertical;line-height:1.7}
+.ps-count{margin-top:6px;font-size:11.5px;color:#8994a5;text-align:left}
+.ps-modal-btns{display:flex;gap:10px;margin-top:6px}
+.ps-modal-btns .modal-btn{flex:1}
+#moSitePause .modal-btn.ps-stop,#moSitePause .modal-btn.ps-stop:hover{background:#dc2626!important;border-color:#dc2626!important;color:#fff!important}
+@media(max-width:700px){
+  .ps-card{padding:4px 16px}
+  .ps-log-row{flex-direction:column;gap:3px}
+}

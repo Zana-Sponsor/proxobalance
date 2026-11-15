@@ -2180,9 +2180,12 @@ let _ratesAdminChannel=null;
 async function loadRates(){
   document.getElementById('ratesTableWrap').innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
   try{
+    // wallet names and order for the grouped list (once)
+    const wallets = !allWallets.length && typeof loadWalletsAdmin==='function' ? loadWalletsAdmin(true).catch(()=>{}) : null;
     const {data,error} = await sb.from('ex_rates').select('*').order('from_method').order('to_method');
     if(error) throw error;
     allRates = data||[];
+    if(wallets) await wallets;
     renderRates();
   }catch(e){
     document.getElementById('ratesTableWrap').innerHTML=`<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>هەڵە: ${esc(e.message)}</p></div>`;
@@ -2211,23 +2214,34 @@ function buildToMethodKeys(){
   return [...set];
 }
 function rateTypeLabel(t){ return t==='fee_percent' ? 'حمولە %' : t==='fee_fixed' ? 'حمولەی جێگیر' : 'مەزراپ'; }
+// Routes grouped by the wallet they leave from: destination, fee (or the
+// amount steps), on/off, edit, delete.
+function rateFeeText(r){
+  const b=pairBracketsOfRow(r);
+  return b ? feeStepsTextOf(b) : (typeof rateFeeLabel==='function' ? rateFeeLabel(r) : fmtPairValue(r.rate_type,r.rate_value));
+}
+function feeStepsTextOf(b){
+  return typeof feeStepsText==='function' ? feeStepsText(b) : pairTierText({brackets:b});
+}
 function renderRates(){
-  if(!allRates.length){ document.getElementById('ratesTableWrap').innerHTML='<div class="empty"><i class="fas fa-percent"></i><p>هیچ ڕێگایەک زیاد نەکراوە</p></div>'; return; }
-  document.getElementById('ratesTableWrap').innerHTML = `<table><thead><tr><th>لە</th><th>بۆ</th><th>جۆر</th><th>بەها</th><th>چالاک</th><th>کردار</th></tr></thead><tbody>
-    ${filteredAdminRates().map(r=>`<tr>
-      <td>${methodPill(r.from_method)}</td>
-      <td>${methodPill(r.to_method)}</td>
-      <td style="font-size:12px">${rateTypeLabel(r.rate_type)}</td>
-      <td style="font-family:'Inter';font-weight:800;direction:ltr;text-align:right">${r.rate_type==='multiplier' && Number(r.rate_value)<1
-        ? `×${esc(r.rate_value)} <span style="font-family:'R';font-size:10.5px;font-weight:700;color:var(--mt2)">(${esc(fmtPairValue(r.rate_type,r.rate_value))})</span>`
-        : esc(fmtPairValue(r.rate_type,r.rate_value))}${pairTierOf(r)?`<div class="rate-tier-line"><i class="fas fa-layer-group"></i> ${esc(pairTierText(pairTierOf(r)))}</div>`:''}</td>
-      <td><label class="mswitch"><input type="checkbox" ${r.is_active?'checked':''} onchange="toggleRateActive('${r.id}',this.checked)"><span class="track"></span></label></td>
-      <td><div class="act-grp">
-        <div class="act-btn dark" onclick='openRateModal(${safeAttr(r)})'><i class="fas fa-pen"></i></div>
-        <div class="act-btn rd" onclick="deleteRate('${r.id}')"><i class="fas fa-trash"></i></div>
-      </div></td>
-    </tr>`).join('')}
-  </tbody></table>`;
+  const wrap=document.getElementById('ratesTableWrap');
+  if(!wrap) return;
+  if(typeof renderFeeTierCard==='function') renderFeeTierCard();
+  if(!allRates.length){ wrap.innerHTML='<div class="empty"><i class="fas fa-percent"></i><p>هیچ ڕێگایەک زیاد نەکراوە</p></div>'; return; }
+  const list=typeof filteredAdminRates==='function'?filteredAdminRates():allRates;
+  if(!list.length){ wrap.innerHTML='<div class="empty"><p>هیچ ڕێگایەک نەدۆزرایەوە</p></div>'; return; }
+  const groups=typeof groupRatesByWallet==='function'?groupRatesByWallet(list):[[null,list]];
+  wrap.innerHTML='<div class="rl-groups">'+groups.map(([from,rows])=>`<section class="rl-grp">
+    ${from!==null?`<header class="rl-h"><b>${esc(walletLabelFor(from)||'—')}</b><small>${rows.length} ڕێگا</small></header>`:''}
+    ${rows.map(r=>{const steps=pairBracketsOfRow(r);return `<div class="rl-row${r.is_active?'':' off'}">
+      <div class="rl-main"><b>${esc(walletLabelFor(r.to_method)||'—')}</b><span class="rl-fee${steps?' steps':''}">${esc(rateFeeText(r))}</span></div>
+      <label class="mswitch" title="${r.is_active?'چالاکە':'ناچالاکە'}"><input type="checkbox" aria-label="چالاک" ${r.is_active?'checked':''} onchange="toggleRateActive('${r.id}',this.checked)"><span class="track"></span></label>
+      <div class="rl-act">
+        <button type="button" class="act-btn dark" aria-label="دەستکاری" title="دەستکاری" onclick='openRateModal(${safeAttr(r)})'><i class="fas fa-pen"></i></button>
+        <button type="button" class="act-btn rd" aria-label="سڕینەوە" title="سڕینەوە" onclick="deleteRate('${r.id}')"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>`;}).join('')}
+  </section>`).join('')+'</div>';
 }
 async function toggleRateActive(id, val){
   const {error} = await sb.from('ex_rates').update({is_active:val}).eq('id',id);
@@ -2265,6 +2279,7 @@ async function openRateModal(rate){
     document.getElementById('rateValue').value='';
     document.getElementById('rateActive').checked=true;
   }
+  if(typeof ftModalOpen==='function') ftModalOpen(rate||null);
   updateRateValueHint();updateAdminRatePreview();
   openMo('moRate');
 }
@@ -2285,9 +2300,10 @@ async function saveRate(){
  const btn=document.getElementById('rateSaveBtn');if(btn.disabled)return;btn.disabled=true;
  try{
   const row={from_method:from,to_method:to,rate_type,rate_value,is_active};
-  // A tier only works with a % fee or a multiplier up to 1; switch it off instead of failing the save.
   const prevRate=id?allRates.find(r=>String(r.id)===String(id)):null;
-  if(prevRate&&(prevRate.fee_tier_enabled||prevRate.fee_brackets)&&!(rate_type==='fee_percent'||(rate_type==='multiplier'&&rate_value<=1))){row.fee_tier_enabled=false;row.fee_brackets=null;}
+  // amount steps (exchange-fee-tiers.js); a route that cannot take steps has them switched off instead of failing the save
+  if(typeof ftModalPatch==='function') Object.assign(row,ftModalPatch(prevRate));
+  else if(prevRate&&(prevRate.fee_tier_enabled||prevRate.fee_brackets)&&!(rate_type==='fee_percent'||(rate_type==='multiplier'&&rate_value<=1))){row.fee_tier_enabled=false;row.fee_brackets=null;}
   const query=id?sb.from('ex_rates').update(row).eq('id',id):sb.from('ex_rates').insert(row);
   const {data,error}=await query.select('*').single();if(error)throw error;
   if(!data?.id)throw new Error('پاشەکەوتکردن پشتڕاست نەکرایەوە');

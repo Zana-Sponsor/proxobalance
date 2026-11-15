@@ -1,0 +1,45 @@
+/* Admin pause switches, customer side (assets/js/site-pause.js).
+   The notice is the site's own calm notice (identity banner / account
+   notices, "waiting" tone): radius 16, padding 14, 1px line, title 14.5/600,
+   text 14/400, no icon. The whole-site screen uses the sign-in screen's
+   background, ink and main button (48 high, radius 12, 15/400). */
+html body .svc-note {
+  --sv-bg: #fff6e3; --sv-line: #f6dba6; --sv-title: #1f2d44; --sv-text: #5f6f86;
+  display: block; margin: 0 0 14px; padding: 14px;
+  border: 1px solid var(--sv-line); border-radius: 16px; background: var(--sv-bg);
+  font-family: Rabar, Arial, sans-serif; text-align: right;
+}
+html[data-theme="dark"] body .svc-note { --sv-bg: #3c2b07; --sv-line: #674c16; --sv-title: #e8edf6; --sv-text: #acb6c3; }
+html body .svc-note b { display: block; margin: 0 0 3px; color: var(--sv-title); font-size: 14.5px; font-weight: 600; line-height: 1.6; }
+html body .svc-note p { margin: 0; color: var(--sv-text); font-size: 14px; font-weight: 400; line-height: 1.75; overflow-wrap: anywhere; }
+/* on the sign-in card the notice sits above the step's own title */
+html body #authWrap .auth-view > .svc-note,
+html body #authWrap #forgotStep > .svc-note { margin: 0 0 16px; }
+
+/* a paused screen keeps its header and the notice; a paused form hides only the form
+   (the repeated ids outrank the screens' own "display" rules, which use #mainApp#mainApp #page…) */
+html body #mainApp#mainApp#mainApp#mainApp .page.svc-paused > :not(.pfx-bar):not(.page-head):not(.svc-note) { display: none !important; }
+html body #mainApp#mainApp#mainApp#mainApp #pageSupport.svc-paused-form > .support-form-card { display: none !important; }
+
+/* the whole site */
+html.svc-site-on, html.svc-site-on body { overflow: hidden !important; }
+.svc-site {
+  --sv-page: #fafafa; --sv-ink: #1f2d44; --sv-text: #5f6f86; --sv-btn: #0265ff; --sv-btn-press: #0052d6;
+  position: fixed; inset: 0; z-index: 2147483000;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px 16px calc(24px + env(safe-area-inset-bottom));
+  background: var(--sv-page); color: var(--sv-ink);
+  font-family: Rabar, Arial, sans-serif; direction: rtl; text-align: center;
+}
+html[data-theme="dark"] .svc-site { --sv-page: #0b1220; --sv-ink: #e8edf6; --sv-text: #acb6c3; --sv-btn: #3b8cff; --sv-btn-press: #2563eb; }
+.svc-site-box { width: 100%; max-width: 360px; display: flex; flex-direction: column; align-items: center; }
+.svc-site-logo { display: block; height: 28px; width: auto; margin: 0 0 28px; }
+.svc-site h1 { margin: 0 0 8px; font-size: 19px; font-weight: 600; line-height: 1.6; color: var(--sv-ink); }
+.svc-site p { margin: 0 0 24px; font-size: 14.5px; font-weight: 400; line-height: 1.8; color: var(--sv-text); overflow-wrap: anywhere; }
+.svc-site-btn {
+  width: 100%; height: 48px; padding: 0 16px; border: 0; border-radius: 12px;
+  background: var(--sv-btn); color: #fff; font-family: inherit; font-size: 15px; font-weight: 400; cursor: pointer;
+}
+.svc-site-btn:active { background: var(--sv-btn-press); }
+.svc-site-btn:disabled { opacity: .55; cursor: default; }
+.svc-site-btn:focus-visible { outline: 2px solid var(--sv-btn); outline-offset: 3px; }

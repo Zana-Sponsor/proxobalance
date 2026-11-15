@@ -12,7 +12,7 @@ function staffCan(permission){
 }
 function staffFullAdmin(){return isSuperAdmin()||adminStaffPermissions==null;}
 function staffPageAllowed(page){
- if(['otp','activity','security','errors','audit'].includes(page))return isSuperAdmin();
+ if(['otp','activity','security','errors','audit','pause'].includes(page))return isSuperAdmin();
  if(staffFullAdmin())return true;
  const permission={dashboard:'view',orders:'view',accounts:'view',statistics:'view',profit:'view',
   balance:'view',contracts:'view',whatsapp:'view',wallets:'manage_fees',rates:'manage_fees'}[page];
@@ -32,7 +32,7 @@ function applyStaffUI(){
   abortProcessingPayout:'refunds',claimBalancePayout:'approve_orders',reviewBalancePayout:'approve_orders',
   startBalancePayout:'approve_orders',completeBalancePayout:'approve_orders',
   openWalletModal:'manage_fees',openWalletBadge:'manage_fees',saveWallet:'manage_fees',deleteWallet:'manage_fees',
-  openRateModal:'manage_fees',saveRate:'manage_fees',deleteRate:'manage_fees',
+  openRateModal:'manage_fees',saveRate:'manage_fees',deleteRate:'manage_fees',saveFeeTiers:'manage_fees',clearFeeTiers:'manage_fees',
   toggleBan:'super',openSetPasswordModal:'super',openCreateUserModal:'super',saveOrderNote:'approve_orders',
   sendNotification:'full',resolveBalanceRisk:'full'
  };

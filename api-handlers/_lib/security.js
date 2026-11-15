@@ -501,3 +501,47 @@ export function withSecurity(handler, {
 
 export const config = { SUPABASE_URL };
 
+
+// ── Admin pause switches (table ex_site_controls, set from the panel) ──
+// "site" stops every customer action; the others stop one section.
+// Read at most every 10 seconds per server instance. If the switches cannot
+// be read the site stays open: a pause is an admin convenience, not a lock.
+export const SECTION_TITLES = {
+  site: 'ماڵپەڕەکە بۆ ماوەیەک ڕاگیراوە',
+  exchange: 'ئاڵوگۆڕ بۆ ماوەیەک ڕاگیراوە',
+  balance: 'باڵانس بۆ ماوەیەک ڕاگیراوە',
+  support: 'پشتگیری بۆ ماوەیەک ڕاگیراوە',
+  verify: 'پشتڕاستکردنەوەی ناسنامە بۆ ماوەیەک ڕاگیراوە',
+  signup: 'دروستکردنی هەژماری نوێ بۆ ماوەیەک ڕاگیراوە',
+  login: 'چوونەژوورەوە بۆ ماوەیەک ڕاگیراوە',
+  account: 'گۆڕینی زانیاری هەژمار بۆ ماوەیەک ڕاگیراوە'
+};
+const PAUSE_TTL_MS = 10 * 1000;
+let pauseCache = { at: 0, map: null };
+
+export async function sectionPaused(keys = []) {
+  const now = Date.now();
+  if (!pauseCache.map || now - pauseCache.at > PAUSE_TTL_MS) {
+    const map = {};
+    try {
+      const rows = await serviceFetch('/rest/v1/ex_site_controls?paused=eq.true&select=key,paused,message');
+      (Array.isArray(rows) ? rows : []).forEach((row) => {
+        if (row && row.paused === true && Object.hasOwn(SECTION_TITLES, row.key)) map[row.key] = { message: row.message || null };
+      });
+    } catch { /* stay open */ }
+    pauseCache = { at: now, map };
+  }
+  for (const key of ['site', ...keys]) {
+    if (pauseCache.map[key]) return { section: key, message: pauseCache.map[key].message };
+  }
+  return null;
+}
+
+// 423 body the customer app understands: { code, section, title, message, error }
+export function pausedBody(paused) {
+  const title = SECTION_TITLES[paused.section] || SECTION_TITLES.site;
+  const message = paused.message || null;
+  return { code: 'SECTION_PAUSED', section: paused.section, title, message, error: message ? `${title}. ${message}` : title };
+}
+
+export function resetSectionPauseCache() { pauseCache = { at: 0, map: null }; }

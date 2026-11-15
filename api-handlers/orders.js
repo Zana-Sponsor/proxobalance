@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { payoutPlan } from './_lib/payout-rounding.js';
 import {
-  json, readJson, rpc, serviceFetch, stealth404, withSecurity, config
+  json, readJson, rpc, serviceFetch, stealth404, withSecurity, config, sectionPaused, pausedBody
 } from './_lib/security.js';
 
 const CARRIER_SENDER_METHODS = new Set(['Asiacell', 'Korek']);
@@ -214,6 +214,9 @@ export default withSecurity(async (req, res, { context, user }) => {
   const amount = Number(retryOrder?.amount ?? body.amount);
   const phone = oneLine(retryOrder?.phone || body.phone, 32).replace(/\s+/g, '');
   const balanceSource = fromMethod === 'AccountBalance';
+  // admin pause: new requests stop (paying from the balance also stops with "balance")
+  const paused = await sectionPaused(balanceSource ? ['exchange', 'balance'] : ['exchange']);
+  if (paused) return json(res, 423, pausedBody(paused));
   const carrierSender = CARRIER_SENDER_METHODS.has(fromMethod);
   const senderPhone = oneLine(retryOrder?.sender_phone || body.sender_phone, 32).replace(/[^0-9]/g, '');
   const receiptUrl = cleanReceiptUrl(retryOrder?.receipt_url || body.receipt_url);

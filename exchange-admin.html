@@ -11,7 +11,7 @@
 <!-- Firebase — announcement banner control only (same project as exchange.html) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<link rel="stylesheet" href="assets/css/admin.css?v=13">
+<link rel="stylesheet" href="assets/css/admin.css?v=14">
 <link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/exchange-insights.css?v=2">
 <link rel="stylesheet" href="assets/css/exchange-features.css?v=4">
@@ -77,6 +77,7 @@
     <div class="sb-section">ڕێکخستن</div>
     <div class="sb-item" onclick="goPage('wallets')"><i class="fas fa-wallet" style="color:#16a34a"></i> واڵێتەکان</div>
     <div class="sb-item" onclick="goPage('rates')"><i class="fas fa-percent" style="color:#f59e0b"></i> نرخ و کرێ</div>
+    <div class="sb-item" onclick="goPage('pause')"><i class="fas fa-power-off" style="color:#dc2626"></i> ڕاگرتنی بەشەکان <span class="sb-badge rd" id="sbPaused" style="display:none">0</span></div>
     <div class="sb-item" onclick="goPage('contracts')"><i class="fas fa-file-signature" style="color:#1685fa"></i> گرێبەست</div>
     <div class="sb-section">پەیوەندی</div>
     <div class="sb-item" onclick="goPage('notifications')"><i class="fas fa-bell" style="color:#7c3aed"></i> ئاگادارییەکان</div>
@@ -493,17 +494,38 @@
 
     <!-- ══ RATES & FEES ══ -->
     <div class="pg" id="pgRates">
-      <div class="sec-hdr">
-        <h3>نرخی گۆڕینەوە و کرێ</h3>
+      <section class="ft-card" id="feeTierCard" aria-labelledby="ftTitle">
+        <h3 id="ftTitle">لێبڕین بەپێی بڕ</h3>
+        <div id="ftRows-card"></div>
+        <div class="ft-pick-h">
+          <h4>بۆ ئەم ڕێگایانە</h4>
+          <label class="ft-all"><input type="checkbox" id="ftAll"><span>هەموو ڕێگاکان</span></label>
+        </div>
+        <div class="ft-groups" id="ftGroups"><div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div></div>
+        <div class="ft-foot">
+          <button type="button" class="ft-save" id="ftSave" onclick="saveFeeTiers()" disabled>پاشەکەوتکردن</button>
+          <button type="button" class="act-btn rd ft-clear" id="ftClear" onclick="clearFeeTiers()" hidden>لابردنی لێبڕینی بەپێی بڕ</button>
+        </div>
+      </section>
+      <div class="sec-hdr rl-hdr">
+        <h3>ڕێگاکان</h3>
         <div class="act-btn dark" onclick="openRateModal(null)"><i class="fas fa-plus"></i> زیادکردنی ڕێگا</div>
       </div>
       <div class="admin-rate-toolbar"><input id="adminRateSearch" class="minp" type="search" aria-label="گەڕان بە ناوی جزدان" placeholder="گەڕان بە ناوی جزدان..." oninput="filterAdminRates()"><select id="adminRateState" class="msel" aria-label="دۆخی ڕێگا" onchange="filterAdminRates()"><option value="all">هەموو ڕێگاکان</option><option value="active">چالاکەکان</option><option value="inactive">ناچالاکەکان</option></select></div>
-      <section class="ex-sheet"><div class="ex-head"><div><h3>دەستکاری خێرای نرخ</h3><p>نرخی هەر ڕێگایەک بە جیا دەستکاری بکە؛ پاشەکەوتکردن بە هەمان سیستەمی ئێستا دەکرێت.</p></div><div class="ex-logo">Proxo</div></div><div class="ex-rates" id="exRatesQuick"><div class="ex-note">نرخەکان بار دەکرێن...</div></div></section>
-      <div class="tbl-wrap">
-        <details class="admin-rate-details"><summary>بینینی خشتەی وردەکاری ڕێگاکان</summary><div class="tbl-scroll" id="ratesTableWrap">
-          <div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
-        </div></details>
-      </div>
+      <div class="rl-wrap" id="ratesTableWrap"><div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div></div>
+    </div>
+
+    <!-- ══ PAUSE SWITCHES (ex_site_controls; /api/admin site_controls, super admin) ══ -->
+    <div class="pg" id="pgPause">
+      <section class="ps-card ps-site" id="psSite"><div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div></section>
+      <section class="ps-card">
+        <h3>بەشەکان</h3>
+        <div id="psSections"></div>
+      </section>
+      <section class="ps-card">
+        <h3>دوایین گۆڕانکارییەکان</h3>
+        <div id="psLog"></div>
+      </section>
     </div>
 
     <!-- ══ NOTIFICATIONS ══ -->
@@ -891,11 +913,11 @@
     <div class="modal-row">
       <div>
         <label class="modal-lbl">لە</label>
-        <select class="msel" id="rateFrom"></select>
+        <select class="msel" id="rateFrom" onchange="updateAdminRatePreview()"></select>
       </div>
       <div>
         <label class="modal-lbl">بۆ</label>
-        <select class="msel" id="rateTo"></select>
+        <select class="msel" id="rateTo" onchange="updateAdminRatePreview()"></select>
       </div>
     </div>
     <label class="modal-lbl">جۆری نرخ</label>
@@ -906,7 +928,7 @@
     </select>
     <label class="modal-lbl">بەها</label>
     <input class="minp" type="number" step="0.0001" id="rateValue" dir="ltr" placeholder="0.00" oninput="updateAdminRatePreview()">
-    <div class="fee-toggle-note" id="rateValueHint"></div><section class="rate-example"><label class="modal-lbl" for="adminRateExample">نموونەی بڕی ناردن</label><input class="minp" type="number" id="adminRateExample" value="100000" min="1" dir="ltr" oninput="updateAdminRatePreview()"><output id="adminRatePreview" dir="ltr"></output><p>ئەمە نموونەی ئەم ڕێگایەیە؛ حمولەی جزدانەکانی تر ناگۆڕێت.</p></section>
+    <div class="fee-toggle-note" id="rateValueHint"></div><div class="ft-modal" id="rateTierWrap" hidden></div><section class="rate-example"><label class="modal-lbl" for="adminRateExample">نموونەی بڕی ناردن</label><input class="minp" type="number" id="adminRateExample" value="100000" min="1" dir="ltr" oninput="updateAdminRatePreview()"><output id="adminRatePreview" dir="ltr"></output><p>ئەمە نموونەی ئەم ڕێگایەیە؛ حمولەی جزدانەکانی تر ناگۆڕێت.</p></section>
     <div class="mswitch-row">
       <span>چالاکە (بەکاردەهێنرێت لە ئەپدا)</span>
       <label class="mswitch"><input type="checkbox" id="rateActive" checked><span class="track"></span></label>
@@ -1211,6 +1233,22 @@
 </div>
 
 <!-- ══ GENERIC CONFIRM ══ -->
+<div class="overlay" id="moSitePause">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-hdr">
+      <h3 id="psModalTitle">ڕاگرتن</h3>
+      <div class="modal-close" onclick="closeMo('moSitePause')"><i class="fas fa-xmark"></i></div>
+    </div>
+    <label class="modal-lbl" for="psMessage">پەیام بۆ کڕیار <small style="font-weight:400">(ئارەزوومەندانە)</small></label>
+    <textarea class="minp mta ps-text" id="psMessage" maxlength="300" rows="3" oninput="countSitePause(this)"></textarea>
+    <div class="ps-count" id="psCount" dir="ltr">0/300</div>
+    <div class="ps-modal-btns">
+      <button type="button" class="modal-btn dark" onclick="closeMo('moSitePause')">پاشگەزبوونەوە</button>
+      <button type="button" class="modal-btn ps-stop" id="psSaveBtn" onclick="saveSitePause()">ڕاگرتن</button>
+    </div>
+  </div>
+</div>
+
 <div class="overlay" id="moConfirm">
   <div class="modal" style="max-width:360px;text-align:center">
     <div style="width:60px;height:60px;border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:24px" id="confirmIco"></div>
@@ -1338,16 +1376,16 @@
   </div>
   <script src="assets/js/exchange-payout-rounding.js?v=1"></script>
   <script src="assets/js/exchange-live.js?v=1"></script>
-<script src="assets/js/admin.js?v=36"></script>
+<script src="assets/js/admin.js?v=37"></script>
 <script src="assets/js/receipt-access.js?v=1"></script>
 <script src="assets/js/admin-contracts.js?v=2"></script>
-  <script src="assets/js/exchange-staff.js?v=10"></script>
+  <script src="assets/js/exchange-staff.js?v=11"></script>
   <script src="assets/js/exchange-balance-admin.js?v=9"></script>
   <script src="assets/js/exchange-balance-manual.js?v=2"></script>
   <script src="assets/js/exchange-order-manual.js?v=2"></script>
   <script src="assets/js/exchange-refund-report.js?v=3"></script>
   <script src="assets/js/exchange-insights.js?v=7"></script>
   <script src="assets/js/exchange-profit.js?v=5"></script><script src="assets/js/exchange-whatsapp-admin.js?v=3"></script><script src="assets/js/exchange-activity-admin.js?v=1"></script>
-<script src="assets/js/exchange-admin-workspace.js?v=2"></script><script src="assets/js/track.js?v=3"></script>
+<script src="assets/js/exchange-admin-workspace.js?v=3"></script><script src="assets/js/exchange-fee-tiers.js?v=1"></script><script src="assets/js/exchange-site-pause-admin.js?v=1"></script><script src="assets/js/track.js?v=3"></script>
 </body>
 </html>

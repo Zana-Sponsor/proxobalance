@@ -19,13 +19,14 @@ jobs:
                grep -q 'receipt-access.js?v=1' current-index.html &&
                grep -q 'auth-phone.css?v=2' current-index.html &&
                grep -q 'auth-otp.css?v=1' current-index.html &&
+               grep -q 'site-pause.js?v=1' current-index.html &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin' -o current-admin.html &&
-               grep -q 'admin.js?v=36' current-admin.html; then
+               grep -q 'admin.js?v=37' current-admin.html; then
               exit 0
             fi
             sleep 6
           done
-          echo 'FAIL: the v51 customer and admin bundles were not published within the deployment window.'
+          echo 'FAIL: the v52 customer and admin bundles were not published within the deployment window.'
           exit 1
       - name: Verify the live customer page and admin panel
         shell: bash
@@ -76,9 +77,11 @@ jobs:
           done
           curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/exchange-admin" -o exchange-admin.html
           grep -q 'receipt-access.js?v=1' exchange-admin.html
-          grep -q 'exchange-staff.js?v=10' exchange-admin.html
+          grep -q 'exchange-staff.js?v=11' exchange-admin.html
+          grep -q 'exchange-fee-tiers.js?v=1' exchange-admin.html
+          grep -q 'id="pgPause"' exchange-admin.html
           if grep -q 'id="pgRewards"' exchange-admin.html; then echo 'FAIL: the rewards admin page is still published.'; exit 1; fi
-          echo "PASS: v51 customer app and admin panel are live."
+          echo "PASS: v52 customer app and admin panel are live."
       - name: Verify APIs refuse anonymous callers and leak nothing
         shell: bash
         run: |

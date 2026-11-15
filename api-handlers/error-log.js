@@ -29,7 +29,8 @@ export default withSecurity(async (req, res, { context, user }) => {
   const message = oneLine(body.message, 2000);
   if (!operation || !message) return json(res, 422, { error: 'operation and message are required' });
   const code = oneLine(body.code, 120);
-  if (NOISE.test(message) || NOISE.test(code)) return json(res, 202, { ok: true, ignored: true });
+  // a section the admin paused answered as intended — not an error
+  if (NOISE.test(message) || NOISE.test(code) || code === 'SECTION_PAUSED') return json(res, 202, { ok: true, ignored: true });
   const network = NETWORK.test(message) || NETWORK.test(code);
   // 4xx: the request was refused for a reason the customer can fix (receipt already used, bad input)
   const refused = Number(body.status) >= 400 && Number(body.status) < 500 || /RECEIPT_ALREADY_USED|already used/i.test(code + ' ' + message);

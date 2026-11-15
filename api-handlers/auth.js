@@ -30,7 +30,7 @@
 // only way to a session is through this file.
 // ═════════════════════════════════════════════════════════════════
 import { randomBytes } from 'node:crypto';
-import { json, readJson, recordAppError, rpc, serviceFetch, withSecurity, config } from './_lib/security.js';
+import { json, readJson, recordAppError, rpc, serviceFetch, withSecurity, config, sectionPaused, pausedBody } from './_lib/security.js';
 
 const SUPABASE_URL = config.SUPABASE_URL;
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -561,10 +561,20 @@ const actions = {
   }
 };
 
+// which admin pause switch stops each action
+const ACTION_SECTION = {
+  signup_start: 'signup', signup_finish: 'signup',
+  login_start: 'login', login_finish: 'login', reset_start: 'login', reset_verify: 'login', reset_finish: 'login',
+  verify_password: 'account', phone_change_start: 'account', phone_change_finish: 'account',
+  email_change_start: 'account', email_change_finish: 'account', password_change: 'account'
+};
+
 export default withSecurity(async (req, res, ctx) => {
   const body = await readJson(req, 8 * 1024);
   const action = Object.hasOwn(actions, body?.action) ? actions[body.action] : null;
   if (!action) return json(res, 400, { error: 'Unknown action', code: 'UNKNOWN_ACTION' });
+  const paused = await sectionPaused([ACTION_SECTION[body.action]].filter(Boolean));
+  if (paused) return json(res, 423, pausedBody(paused));
   try {
     return json(res, 200, await action(body, { ...ctx, req }));
   } catch (error) {

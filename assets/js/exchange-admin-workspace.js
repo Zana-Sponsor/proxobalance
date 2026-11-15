@@ -17,15 +17,15 @@ function filteredAdminRates(){
 function methodLabel(key){return allWallets.find(w=>w.key===key)?.name||METHOD_META[key]?.label||key;}
 function filterAdminRates(){renderRates();if(typeof exRenderRateCards==='function')exRenderRateCards();}
 function updateAdminRatePreview(){
+ if(typeof ftModalRefresh==='function')ftModalRefresh();
  const el=document.getElementById('adminRatePreview');if(!el)return;
  const value=Number(document.getElementById('rateValue').value),type=document.getElementById('rateType').value;
  const amount=Number(document.getElementById('adminRateExample').value);
  if(!Number.isFinite(value)||value<0||!Number.isFinite(amount)||amount<=0){el.textContent='بەهای دروست بنووسە';return;}
- // A saved amount tier decides the percentage for this example amount.
- const saved=allRates.find(r=>String(r.id)===String(document.getElementById('rateId')?.value||''));
- const tier=saved&&typeof pairTierOf==='function'?pairTierOf(saved):null;
+ // The amount steps in the editor decide the percentage for this example amount (the whole amount takes the first step it fits in).
+ const steps=typeof ftModalBrackets==='function'?ftModalBrackets():null;
  let eff=value;
- if(tier&&type===saved.rate_type){const pct=amount<=tier.limit?tier.low:tier.high;eff=type==='fee_percent'?pct:type==='multiplier'?Number((1-pct/100).toFixed(10)):value;}
+ if(steps&&(type==='fee_percent'||type==='multiplier')){const pct=steps.find(x=>x.up_to==null||amount<=x.up_to).percent;eff=type==='fee_percent'?pct:Number((1-pct/100).toFixed(10));}
  const receive=type==='fee_percent'?amount*(1-eff/100):type==='fee_fixed'?amount-eff:amount*eff;
  el.textContent=methodLabel(document.getElementById('rateFrom').value)+' → '+methodLabel(document.getElementById('rateTo').value)+' : '+formatNum(amount)+' → '+formatNum(receive);
 }
