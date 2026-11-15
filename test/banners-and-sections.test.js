@@ -120,7 +120,7 @@ test('panel: banners page instead of the old text banner; pictures become small 
 });
 
 test('v54: a change in the panel reaches open apps at once, without sending any content', () => {
-  const live = read('supabase/migrations/20261116000000_live_banners_and_switches.sql');
+  const live = read('supabase/migrations/20261115233351_live_banners_and_switches.sql');
   assert.match(live, /key\s+text primary key check \(key in \('banners', 'site_controls'\)\),\n  version\s+bigint not null default 0,/);
   assert.match(live, /revoke all on public\.ex_live_versions from anon, authenticated;\ngrant select on public\.ex_live_versions to authenticated;/);
   assert.match(live, /after insert or update or delete on public\.ex_banners\s+for each statement execute function public\.ex_live_bump\('banners'\);/);
