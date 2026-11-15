@@ -85,3 +85,22 @@ test('v47: every profile screen starts with the same toolbar (back right, center
   assert.match(css, /body #mainApp \.pfx-bar \{ margin-bottom: 14px !important; \}/);
   assert.match(html, /\/assets\/css\/profile-screens\.css\?v=1/);
 });
+
+test('v48: the code screens offer "send again" only after the code expired, and the confirm button never stays busy', () => {
+  const css = readFileSync(new URL('../assets/css/auth-otp.css', import.meta.url), 'utf8');
+  for (const p of ['otp', 'fp']) {
+    // the button starts hidden with the real `hidden` attribute (CSS can no longer show it early)
+    assert.match(html, new RegExp(`id="${p}ResendBtn" onclick="${p === 'otp' ? 'resendOtp' : 'fpResendOtp'}\\(\\)" hidden>دووبارە ناردنەوە</button>`));
+    assert.match(html, new RegExp(`<span class="otp-wait" id="${p}TimerWrap">دووبارە ناردنەوە لە <b id="${p}TimerVal" dir="ltr">`));
+  }
+  assert.match(css, /:is\(\.otp-wait, \.otp-again-btn\)\[hidden\] \{ display: none !important; \}/);
+  assert.match(app, /if\(!btn\|\|btn\.disabled\|\|btn\.hidden\) return;\s+\/\/ only after the code expired/);
+  assert.match(app, /function startOtpTimer\(seconds\)\{ clearInterval\(_otpTimer\); otpVerifyIdle\('otpVerifyBtn'\);/);
+  assert.match(app, /function fpStartTimer\(sec\)\{ clearInterval\(_fpTimer\); otpVerifyIdle\('fpVerifyBtn'\);/);
+  assert.doesNotMatch(app, /ICON\.check\+' دڵنیاکردنەوە'/);
+  assert.match(app, /if\(alreadySent\) showOtpMsg\('کۆدی پێشوو هێشتا کاردەکات','ok'\)/);
+  // no explanations under the auth titles
+  assert.doesNotMatch(html, /بەخێربێیتەوە\. بۆ بەردەوامبوون|زانیارییەکانت بنووسە بۆ|بۆ وەرگرتنی کۆد\./);
+  assert.match(html, /id="authName">/);
+  assert.match(html, /\/assets\/css\/auth-otp\.css\?v=1/);
+});

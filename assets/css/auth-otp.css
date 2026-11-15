@@ -1,0 +1,79 @@
+/* ═════════════════════════════════════════════════════════════════
+   Verification-code screens (sign-in, sign-up, forgot password)
+
+     [icon]  کۆدی دڵنیایی
+             کۆدەکە لە واتسئاپ نێردرا بۆ
+             0750•••4567
+     [ ][ ][ ][ ][ ][ ]          six boxes, left to right
+     error (only when there is one)
+     [      پشتڕاستکردنەوە      ]
+     دووبارە ناردنەوە لە 4:59    → becomes a button only after the code expired
+
+   Uses the auth tokens (--au-*) from auth-balance.css: light and dark both work.
+   ═════════════════════════════════════════════════════════════════ */
+
+/* where the code went: the target on its own line, left to right */
+html body #authWrap#authWrap .otp-sent { margin: 6px 0 0 !important; }
+html body #authWrap#authWrap .otp-sent b {
+  display: block;
+  margin-top: 2px;
+  color: var(--au-ink);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.6;
+  letter-spacing: .02em;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* six boxes */
+html body #authWrap#authWrap :is(#otpStep, #fpStepB) .otp-inputs { margin: 24px 0 0 !important; }
+
+/* one message line, right under the boxes */
+html body #authWrap#authWrap :is(#otpStep, #fpStepB) .amsg { margin: 12px 0 0 !important; }
+
+/* confirm */
+html body #authWrap#authWrap .otp-confirm { margin-top: 16px !important; }
+
+/* "send again": a countdown while the code is valid, a button once it expired */
+html body #authWrap#authWrap .otp-again {
+  min-height: 40px;
+  margin: 12px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+html body #authWrap#authWrap .otp-wait {
+  color: var(--au-muted);
+  font-family: Rabar, Arial, sans-serif;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+html body #authWrap#authWrap .otp-wait b {
+  color: var(--au-ink);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  unicode-bidi: isolate;
+}
+html body #authWrap#authWrap .otp-again-btn {
+  height: 40px;
+  margin: 0;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--au-accent-soft);
+  color: var(--au-accent);
+  font-family: Rabar, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+html body #authWrap#authWrap .otp-again-btn:active { transform: scale(.97); }
+html body #authWrap#authWrap .otp-again-btn:disabled { opacity: .6; cursor: progress; }
+html body #authWrap#authWrap .otp-again-btn:focus-visible { outline: 2px solid var(--au-accent); outline-offset: 2px; }
+html body #authWrap#authWrap :is(.otp-wait, .otp-again-btn)[hidden] { display: none !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  html body #authWrap#authWrap .otp-again-btn:active { transform: none; }
+}

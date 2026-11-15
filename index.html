@@ -127,6 +127,7 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
 <link rel="stylesheet" href="/assets/css/whatsapp-notify.css?v=1">
 <link rel="stylesheet" href="/assets/css/auth-balance.css?v=6">
 <link rel="stylesheet" href="/assets/css/auth-phone.css?v=2">
+<link rel="stylesheet" href="/assets/css/auth-otp.css?v=1">
 <link rel="stylesheet" href="/assets/css/app-dark.css?v=5">
 <link rel="stylesheet" href="/assets/css/app-icons.css?v=2">
 <link rel="stylesheet" href="/assets/css/support-case.css?v=1">
@@ -455,7 +456,6 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
             <div class="auth-step-icon"><span class="icn icn-lg icon--solar icon--solar--key-linear" aria-hidden="true"></span></div>
             <h3>چوونەژوورەوە</h3>
           </div>
-          <p>بەخێربێیتەوە. بۆ بەردەوامبوون بچۆ ژوورەوە.</p>
         </div>
         <div class="auth-method" role="tablist" aria-label="شێوازی چوونەژوورەوە">
           <button type="button" role="tab" id="authTabPhone" class="is-on" aria-selected="true" aria-controls="authPhoneField" onclick="setLoginMethod('phone')">ژمارەی مۆبایل</button>
@@ -477,7 +477,7 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
         </div>
         <label class="auth-field-label" for="authPass">وشەی نهێنی</label>
         <div class="pass-wrap field">
-          <input class="input" type="password" autocomplete="current-password" aria-label="وشەی نهێنی" id="authPass" placeholder="وشەی نهێنییەکەت بنووسە" dir="ltr">
+          <input class="input" type="password" autocomplete="current-password" aria-label="وشەی نهێنی" id="authPass" dir="ltr">
           <button type="button" class="pass-eye" onclick="togglePass('authPass',this)" aria-label="پیشاندانی وشەی نهێنی" aria-pressed="false"><span class="pass-eye-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path><circle cx="12" cy="12" r="2.7"></circle></svg></span></button>
         </div>
         <div id="forgotLinkWrap" class="auth-forgot-wrap auth-row-between">
@@ -502,12 +502,11 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
             <div class="auth-step-icon"><span class="icn icn-lg icon--solar icon--solar--user-linear" aria-hidden="true"></span></div>
             <h3>دروستکردنی هەژمار</h3>
           </div>
-          <p>زانیارییەکانت بنووسە بۆ دروستکردنی هەژمارێکی نوێ.</p>
         </div>
         <label class="auth-field-label" for="authName">ناوی تەواو</label>
         <div class="input-wrap">
           <span class="input-ico"><span class="icn icn-sm icon--solar icon--solar--user-linear" aria-hidden="true"></span></span>
-          <input class="input" type="text" autocomplete="name" aria-label="ناوی تەواو" id="authName" placeholder="بۆ نموونە: زانا ئەحمەد">
+          <input class="input" type="text" autocomplete="name" aria-label="ناوی تەواو" id="authName">
         </div>
         <label class="auth-field-label" for="signupPhone">ژمارەی مۆبایل</label>
         <div class="phone-wrap">
@@ -521,7 +520,7 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
         </div>
         <label class="auth-field-label" for="signupConfirmPass">دووبارە وشەی نهێنی</label>
         <div class="pass-wrap field">
-          <input class="input" type="password" autocomplete="new-password" aria-label="دووبارە وشەی نهێنی" id="signupConfirmPass" placeholder="هەمان وشەی نهێنی بنووسەرەوە" dir="ltr">
+          <input class="input" type="password" autocomplete="new-password" aria-label="دووبارە وشەی نهێنی" id="signupConfirmPass" dir="ltr">
           <button type="button" class="pass-eye" onclick="togglePass('signupConfirmPass',this)" aria-label="پیشاندانی وشەی نهێنی" aria-pressed="false"><span class="pass-eye-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path><circle cx="12" cy="12" r="2.7"></circle></svg></span></button>
         </div>
         <label class="auth-remember auth-remember-block"><input type="checkbox" id="signupRemember"><span>ئەم ئامێرەم لەبیربێت</span></label>
@@ -541,11 +540,11 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
         <div class="auth-step-label">
           <div class="auth-step-heading">
             <div class="auth-step-icon"><span class="icn icn-lg icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span></div>
-            <h3>کۆدی دڵنیاکردنەوە</h3>
+            <h3>کۆدی دڵنیایی</h3>
           </div>
-          <p id="otpEmailLbl">کۆدی 6 ژمارە نێردرا</p>
+          <p id="otpEmailLbl" class="otp-sent">کۆدەکە نێردرا</p>
         </div>
-        <div class="otp-inputs">
+        <div class="otp-inputs" dir="ltr">
           <input class="otp-digit" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" id="otp1" aria-label="ژمارەی یەکەمی کۆد" oninput="otpMove(this,null,'otp2')" onpaste="pasteOtpCode(event,'otp')" onkeydown="otpBack(event,this,null)">
           <input class="otp-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="1" id="otp2" aria-label="ژمارەی دووەمی کۆد" oninput="otpMove(this,'otp1','otp3')" onpaste="pasteOtpCode(event,'otp')" onkeydown="otpBack(event,this,'otp1')">
           <input class="otp-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="1" id="otp3" aria-label="ژمارەی سێیەمی کۆد" oninput="otpMove(this,'otp2','otp4')" onpaste="pasteOtpCode(event,'otp')" onkeydown="otpBack(event,this,'otp2')">
@@ -553,19 +552,11 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
           <input class="otp-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="1" id="otp5" aria-label="ژمارەی پێنجەمی کۆد" oninput="otpMove(this,'otp4','otp6')" onpaste="pasteOtpCode(event,'otp')" onkeydown="otpBack(event,this,'otp4')">
           <input class="otp-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="1" id="otp6" aria-label="ژمارەی شەشەمی کۆد" oninput="otpMove(this,'otp5',null)" onpaste="pasteOtpCode(event,'otp')" onkeydown="otpBack(event,this,'otp5')">
         </div>
-        <div class="otp-timer" id="otpTimerWrap">ماوەی ئەم کۆدە: <span id="otpTimerVal">10:00</span></div>
-        <button type="button" class="otp-resend" id="otpResendBtn" onclick="resendOtp()">
-          <span class="icn icn-sm icon--solar icon--solar--refresh-linear" aria-hidden="true"></span>
-          کۆدی نوێ بنێرە
-        </button>
-        <button class="btn btn-primary btn-block" id="otpVerifyBtn" onclick="verifyOtp()" style="margin-top:14px">
-          <span class="icn icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>
-          دڵنیاکردنەوە
-        </button>
         <div class="amsg" id="otpMsg"></div>
-        <div class="auth-step-back" onclick="cancelOtp()">
-          <span class="icn icn-sm icon--solar icon--solar--arrow-right-linear" aria-hidden="true"></span>
-          گەڕانەوە
+        <button class="btn btn-primary btn-block otp-confirm" id="otpVerifyBtn" onclick="verifyOtp()">پشتڕاستکردنەوە</button>
+        <div class="otp-again">
+          <span class="otp-wait" id="otpTimerWrap">دووبارە ناردنەوە لە <b id="otpTimerVal" dir="ltr">5:00</b></span>
+          <button type="button" class="otp-again-btn" id="otpResendBtn" onclick="resendOtp()" hidden>دووبارە ناردنەوە</button>
         </div>
       </div>
 
@@ -577,7 +568,6 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
               <div class="auth-step-icon"><span class="icn icn-lg icon--solar icon--solar--key-linear" aria-hidden="true"></span></div>
               <h3>گەڕاندنەوەی هەژمار</h3>
             </div>
-            <p>ژمارەکەت یان ئیمەیڵەکەت بنووسە بۆ وەرگرتنی کۆد.</p>
           </div>
           <div class="auth-method" role="tablist" aria-label="شێوازی گەڕاندنەوە">
             <button type="button" role="tab" id="fpTabPhone" class="is-on" aria-selected="true" aria-controls="fpPhoneField" onclick="setForgotMethod('phone')">ژمارەی مۆبایل</button>
@@ -602,20 +592,16 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
             ناردنی کۆد
           </button>
           <div class="amsg" id="fpMsgA"></div>
-          <div class="auth-step-back" onclick="cancelForgotStep()">
-            <span class="icn icn-sm icon--solar icon--solar--arrow-right-linear" aria-hidden="true"></span>
-            گەڕانەوە
-          </div>
         </div>
         <div id="fpStepB" style="display:none">
           <div class="auth-step-label">
             <div class="auth-step-heading">
               <div class="auth-step-icon"><span class="icn icn-lg icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span></div>
-              <h3>کۆدی دڵنیاکردنەوە</h3>
+              <h3>کۆدی دڵنیایی</h3>
             </div>
-            <p id="fpOtpLbl">کۆدی 6 ژمارە نێردرا</p>
+            <p id="fpOtpLbl" class="otp-sent">کۆدەکە نێردرا</p>
           </div>
-          <div class="otp-inputs">
+          <div class="otp-inputs" dir="ltr">
             <input class="otp-digit" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" id="fp1" aria-label="ژمارەی یەکەمی کۆد" oninput="fpOtpMove(this,null,'fp2')" onpaste="pasteOtpCode(event,'fp')" onkeydown="fpOtpBack(event,this,null)">
             <input class="otp-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="1" id="fp2" aria-label="ژمارەی دووەمی کۆد" oninput="fpOtpMove(this,'fp1','fp3')" onpaste="pasteOtpCode(event,'fp')" onkeydown="fpOtpBack(event,this,'fp1')">
             <input class="otp-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="1" id="fp3" aria-label="ژمارەی سێیەمی کۆد" oninput="fpOtpMove(this,'fp2','fp4')" onpaste="pasteOtpCode(event,'fp')" onkeydown="fpOtpBack(event,this,'fp2')">
@@ -623,19 +609,11 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
             <input class="otp-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="1" id="fp5" aria-label="ژمارەی پێنجەمی کۆد" oninput="fpOtpMove(this,'fp4','fp6')" onpaste="pasteOtpCode(event,'fp')" onkeydown="fpOtpBack(event,this,'fp4')">
             <input class="otp-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="1" id="fp6" aria-label="ژمارەی شەشەمی کۆد" oninput="fpOtpMove(this,'fp5',null)" onpaste="pasteOtpCode(event,'fp')" onkeydown="fpOtpBack(event,this,'fp5')">
           </div>
-          <div class="otp-timer" id="fpTimerWrap">ماوەی ئەم کۆدە: <span id="fpTimerVal">10:00</span></div>
-          <button type="button" class="otp-resend" id="fpResendBtn" onclick="fpResendOtp()">
-            <span class="icn icn-sm icon--solar icon--solar--refresh-linear" aria-hidden="true"></span>
-            کۆدی نوێ بنێرە
-          </button>
           <div class="amsg" id="fpMsgB"></div>
-          <button class="btn btn-primary btn-block" id="fpVerifyBtn" onclick="doForgotVerifyOtp()" style="margin-top:14px">
-            <span class="icn icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span>
-            دڵنیاکردنەوە
-          </button>
-          <div class="auth-step-back" onclick="fpBackToA()">
-            <span class="icn icn-sm icon--solar icon--solar--arrow-right-linear" aria-hidden="true"></span>
-            گەڕانەوە
+          <button class="btn btn-primary btn-block otp-confirm" id="fpVerifyBtn" onclick="doForgotVerifyOtp()">پشتڕاستکردنەوە</button>
+          <div class="otp-again">
+            <span class="otp-wait" id="fpTimerWrap">دووبارە ناردنەوە لە <b id="fpTimerVal" dir="ltr">5:00</b></span>
+            <button type="button" class="otp-again-btn" id="fpResendBtn" onclick="fpResendOtp()" hidden>دووبارە ناردنەوە</button>
           </div>
         </div>
         <div id="fpStepC" style="display:none">
@@ -644,7 +622,6 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
               <div class="auth-step-icon success"><span class="icn icn-lg icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span></div>
               <h3>ناسنامەت دڵنیاکرایەوە</h3>
             </div>
-            <p>وشەی نهێنیی نوێت بنووسە</p>
           </div>
           <label class="auth-field-label" for="fpNewPass">وشەی نهێنیی نوێ</label>
           <div class="pass-wrap field">
@@ -653,7 +630,7 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
           </div>
           <label class="auth-field-label" for="fpConfirmPass">دووبارە وشەی نهێنیی نوێ</label>
           <div class="pass-wrap field">
-            <input class="input" type="password" id="fpConfirmPass" placeholder="هەمان وشەی نهێنی بنووسەرەوە" dir="ltr">
+            <input class="input" type="password" id="fpConfirmPass" dir="ltr">
             <button type="button" class="pass-eye" onclick="togglePass('fpConfirmPass',this)" aria-label="پیشاندانی وشەی نهێنی" aria-pressed="false"><span class="pass-eye-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path><circle cx="12" cy="12" r="2.7"></circle></svg></span></button>
           </div>
           <div class="amsg" id="fpMsgC"></div>
@@ -1804,7 +1781,7 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
 <script src="/assets/js/exchange-live.js?v=1"></script>
 <script src="/assets/js/proxo-toast.js?v=1"></script>
 <script src="/assets/js/skeletons.js?v=2"></script>
-<script src="/assets/js/app.js?v=101"></script>
+<script src="/assets/js/app.js?v=102"></script>
 <script src="/assets/js/receipt-access.js?v=1"></script>
 <script src="/assets/js/whatsapp-notify.js?v=2"></script>
 <script src="/assets/js/proxo-ui-v2.js?v=4"></script>

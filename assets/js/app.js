@@ -1084,7 +1084,7 @@ async function submitLogin(){
     }
     _authFlow={kind:'login',identifier,password,remember,channel:r.channel,target:r.target};
     _otpPurpose='login';
-    showOtpStep(r.target,r.channel,r.expires_at);
+    showOtpStep(r.target,r.channel,r.expires_at,r.already_sent);
   }catch(e){ showAmsg(kuErr(e?.message)||'هەڵەیەک ڕووی دا','err'); }
   finally{ restoreAuthButton('authBtn'); _authSubmitting=false; }
 }
@@ -1109,7 +1109,7 @@ async function submitSignup(){
     if(!r.ok){ showAmsg(pxAuthError(r),'err'); return; }
     _authFlow={kind:'signup',phone,name,password,remember,channel:r.channel,target:r.target};
     _otpPurpose='signup';
-    showOtpStep(r.target,r.channel,r.expires_at);
+    showOtpStep(r.target,r.channel,r.expires_at,r.already_sent);
   }catch(e){ showAmsg(kuErr(e?.message)||'هەڵەی تۆڕ، دووبارە هەوڵ بدەرەوە','err'); }
   finally{ _authSignupChecking=false; restoreAuthButton('signupSubmitBtn'); }
 }
@@ -1120,27 +1120,45 @@ function pxSecondsLeft(iso,fallback){
   const t=Date.parse(iso||''); if(!Number.isFinite(t)) return fallback;
   return Math.max(0,Math.ceil((t-Date.now())/1000));
 }
-function showOtpStep(target,channel,expiresAt){
+function showOtpStep(target,channel,expiresAt,alreadySent){
   blurAuthInput();
   _otpEmail=String(target||'');
   setAuthRoute(_otpPurpose==='signup'?'signup/otp':'login/otp',true);
-  const lbl=document.getElementById('otpEmailLbl');
-  if(lbl){ lbl.textContent=channel==='whatsapp'?'کۆدی 6 ژمارە بۆ واتسئاپی ':'کۆدی 6 ژمارە بۆ ئیمەیڵی '; const b=document.createElement('bdi'); b.dir='ltr'; b.textContent=_otpEmail; lbl.append(b,' نێردرا'); }
+  otpSentLabel('otpEmailLbl',channel,_otpEmail);
   ['otp1','otp2','otp3','otp4','otp5','otp6'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
   document.getElementById('otpMsg').style.display='none';
-  document.getElementById('otpResendBtn').style.display='none';
-  document.getElementById('otpTimerWrap').style.color='';
   startOtpTimer(pxSecondsLeft(expiresAt,channel==='whatsapp'?300:600));
+  if(alreadySent) showOtpMsg('کۆدی پێشوو هێشتا کاردەکات','ok');
+}
+// "The code was sent to" + the masked number / address on its own line.
+function otpSentLabel(id,channel,target){
+  const lbl=document.getElementById(id); if(!lbl) return;
+  lbl.textContent=channel==='whatsapp'?'کۆدەکە لە واتسئاپ نێردرا بۆ':'کۆدەکە نێردرا بۆ';
+  const b=document.createElement('b'); b.dir='ltr'; b.textContent=String(target||''); lbl.appendChild(b);
+}
+// Under a code: a countdown while it is valid; the "send again" button only once it expired.
+function otpAgainState(prefix,state){            // prefix 'otp' | 'fp'; state 'wait' | 'ready' | 'off'
+  const wait=document.getElementById(prefix+'TimerWrap'), btn=document.getElementById(prefix+'ResendBtn');
+  if(wait) wait.hidden=state!=='wait';
+  if(btn){ btn.hidden=state!=='ready'; btn.disabled=false; }
+}
+function otpCountdown(prefix,seconds){
+  const until=Date.now()+Math.max(0,seconds||0)*1000;
+  const val=document.getElementById(prefix+'TimerVal');
+  let id=null;
+  const tick=()=>{
+    const left=Math.ceil((until-Date.now())/1000);
+    if(left<=0){ if(id) clearInterval(id); otpAgainState(prefix,'ready'); return false; }
+    if(val) val.textContent=Math.floor(left/60)+':'+String(left%60).padStart(2,'0');
+    otpAgainState(prefix,'wait'); return true;
+  };
+  if(!tick()) return null;
+  id=setInterval(tick,1000); return id;
 }
 function cancelOtp(){ clearInterval(_otpTimer); const target=_otpPurpose==='signup'?'signup':'login'; _otpPendingData=null; _authFlow=null; authBackTo(target); }
-function startOtpTimer(seconds){
-  clearInterval(_otpTimer); let remaining=seconds;
-  function tick(){
-    if(remaining<=0){ clearInterval(_otpTimer); document.getElementById('otpTimerVal').textContent='0:00'; document.getElementById('otpTimerWrap').style.color='var(--err)'; document.getElementById('otpResendBtn').style.display='flex'; return; }
-    const m=Math.floor(remaining/60),s=remaining%60; const el=document.getElementById('otpTimerVal'); if(el) el.textContent=m+':'+(s<10?'0':'')+s; remaining--;
-  }
-  tick(); _otpTimer=setInterval(tick,1000);
-}
+// A fresh code: the confirm button is ready again (never left on "checking…").
+function otpVerifyIdle(id){ const b=document.getElementById(id); if(b){ b.disabled=false; b.textContent='پشتڕاستکردنەوە'; } }
+function startOtpTimer(seconds){ clearInterval(_otpTimer); otpVerifyIdle('otpVerifyBtn'); _otpTimer=otpCountdown('otp',seconds); }
 function normalizeOtpDigits(value){
   return String(value||'').replace(/[٠-٩]/g,ch=>String(ch.charCodeAt(0)-1632))
     .replace(/[۰-۹]/g,ch=>String(ch.charCodeAt(0)-1776)).replace(/[^0-9]/g,'').slice(0,6);
@@ -1196,7 +1214,7 @@ async function verifyOtp(){
   if(_otpVerifying||!_authFlow) return;
   _otpVerifying=true;
   const btn=document.getElementById('otpVerifyBtn');
-  const unlock=()=>{ if(btn){ btn.disabled=false; btn.innerHTML=ICON.check+' دڵنیاکردنەوە'; } };
+  const unlock=()=>{ if(btn){ btn.disabled=false; btn.innerHTML='پشتڕاستکردنەوە'; } };
   try{
     if(window.ProxoAccess && !await ProxoAccess.check()) return;
     const code=['otp1','otp2','otp3','otp4','otp5','otp6'].map(id=>document.getElementById(id)?.value||'').join('');
@@ -1208,10 +1226,10 @@ async function verifyOtp(){
       : await pxAuthApi('login_finish',{identifier:f.identifier,password:f.password,code,remember:f.remember});
     if(!r.ok){
       showOtpMsg(pxAuthError(r),'err');
-      if(r.code==='LOCKED'||r.status===423){ clearInterval(_otpTimer); document.getElementById('otpResendBtn').style.display='none'; if(btn) btn.disabled=true; return; }
+      if(r.code==='LOCKED'||r.status===423){ clearInterval(_otpTimer); otpAgainState('otp','off'); if(btn) btn.disabled=true; return; }
       ['otp1','otp2','otp3','otp4','otp5','otp6'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
       document.getElementById('otp1')?.focus();
-      if(r.code==='CODE_EXPIRED') document.getElementById('otpResendBtn').style.display='flex';
+      if(r.code==='CODE_EXPIRED'){ clearInterval(_otpTimer); otpAgainState('otp','ready'); }
       unlock(); return;
     }
     clearInterval(_otpTimer);
@@ -1232,9 +1250,8 @@ let _otpResending=false;
 async function resendOtp(){
   if(_otpResending||!_authFlow) return;
   const btn=document.getElementById('otpResendBtn');
-  if(!btn||btn.disabled||getComputedStyle(btn).display==='none') return;
-  _otpResending=true; btn.disabled=true; btn.style.display='none';
-  document.getElementById('otpTimerWrap').style.color='';
+  if(!btn||btn.disabled||btn.hidden) return;        // only after the code expired
+  _otpResending=true; btn.disabled=true;
   showOtpMsg('ناردن...','ok');
   try{
     const f=_authFlow;
@@ -1245,8 +1262,8 @@ async function resendOtp(){
       showOtpMsg(r.already_sent?'کۆدی پێشوو هێشتا کاردەکات':'کۆدی نوێ نێردرا','ok');
       ['otp1','otp2','otp3','otp4','otp5','otp6'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
       startOtpTimer(pxSecondsLeft(r.expires_at,r.channel==='whatsapp'?300:600));
-    } else { showOtpMsg(pxAuthError(r),'err'); if(!(r.code==='LOCKED'||r.status===423)) btn.style.display='flex'; }
-  }catch(e){ showOtpMsg(kuErr(e?.message)||'هەڵەی ناردنی کۆد','err'); btn.style.display='flex'; }
+    } else { showOtpMsg(pxAuthError(r),'err'); otpAgainState('otp',(r.code==='LOCKED'||r.status===423)?'off':'ready'); }
+  }catch(e){ showOtpMsg(kuErr(e?.message)||'هەڵەی ناردنی کۆد','err'); otpAgainState('otp','ready'); }
   finally{ _otpResending=false; btn.disabled=false; }
 }
 
@@ -1295,14 +1312,7 @@ function syncAuthHeaderBack(){
   syncAuthHeaderBack();
 })();
 function fpShowMsg(step,t,c){ const el=document.getElementById('fpMsg'+step); el.textContent=t; el.className='amsg '+c; el.style.display='block'; }
-function fpStartTimer(sec){
-  clearInterval(_fpTimer); let rem=sec;
-  function tick(){
-    if(rem<=0){ clearInterval(_fpTimer); document.getElementById('fpTimerVal').textContent='0:00'; document.getElementById('fpTimerWrap').style.color='var(--err)'; document.getElementById('fpResendBtn').style.display='flex'; return; }
-    const m=Math.floor(rem/60),s=rem%60; const el=document.getElementById('fpTimerVal'); if(el) el.textContent=m+':'+(s<10?'0':'')+s; rem--;
-  }
-  tick(); _fpTimer=setInterval(tick,1000);
-}
+function fpStartTimer(sec){ clearInterval(_fpTimer); otpVerifyIdle('fpVerifyBtn'); _fpTimer=otpCountdown('fp',sec); }
 function fpOtpMove(el,prevId,nextId){
   otpMove(el,prevId,nextId);
 }
@@ -1312,16 +1322,16 @@ let _fpResending=false, _fpSending=false, _fpVerifying=false, _fpSaving=false;
 async function fpResendOtp(){
   if(_fpResending) return;
   const btn=document.getElementById('fpResendBtn');
-  if(!btn||btn.disabled||getComputedStyle(btn).display==='none') return;
+  if(!btn||btn.disabled||btn.hidden) return;        // only after the code expired
   // number or e-mail: both go through /api/auth, for every account
-  _fpResending=true; btn.disabled=true; btn.style.display='none';
-  document.getElementById('fpTimerWrap').style.color='';
+  _fpResending=true; btn.disabled=true;
   fpShowMsg('B','ناردن...','ok');
   try{
     const r=await pxAuthApi('reset_start',{identifier:_fpPhone||_fpEmail});
     if(r.ok){ fpShowMsg('B',r.already_sent?'کۆدی پێشوو هێشتا کاردەکات':'کۆدی نوێ نێردرا','ok'); ['fp1','fp2','fp3','fp4','fp5','fp6'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; }); fpStartTimer(pxSecondsLeft(r.expires_at,_fpPhone?300:600)); }
-    else { fpShowMsg('B',pxAuthError(r),'err'); if(r.status!==423) btn.style.display='flex'; }
-  }finally{ _fpResending=false; btn.disabled=false; }
+    else { fpShowMsg('B',pxAuthError(r),'err'); otpAgainState('fp',r.status===423?'off':'ready'); }
+  }catch(e){ fpShowMsg('B',kuErr(e?.message)||'هەڵەی ناردنی کۆد','err'); otpAgainState('fp','ready'); }
+  finally{ _fpResending=false; btn.disabled=false; }
 }
 
 async function doForgotSendOtp(){
@@ -1342,14 +1352,13 @@ async function doForgotSendOtp(){
       const r=await pxAuthApi('reset_start',{phone});
       if(!r.ok){ fpShowMsg('A',pxAuthError(r),'err'); return; }
       _fpPhone=phone; _fpEmail=''; _fpGrant=''; _fpVerified=false;
-      const lbl=document.getElementById('fpOtpLbl'); lbl.textContent='کۆدی 6 ژمارە بۆ واتسئاپی '; const b=document.createElement('bdi'); b.dir='ltr'; b.textContent=r.target||''; lbl.append(b,' نێردرا');
+      otpSentLabel('fpOtpLbl','whatsapp',r.target||'');
       ['fp1','fp2','fp3','fp4','fp5','fp6'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
       document.getElementById('fpMsgB').style.display='none';
-      document.getElementById('fpResendBtn').style.display='none';
-      document.getElementById('fpTimerWrap').style.color='';
       blurAuthInput();
       setAuthRoute('forgetpassword/otp',true);
       fpStartTimer(pxSecondsLeft(r.expires_at,300));
+      if(r.already_sent) fpShowMsg('B','کۆدی پێشوو هێشتا کاردەکات','ok');
       return;
     }
     // e-mail: any account with this verified Gmail address (also number accounts)
@@ -1357,14 +1366,13 @@ async function doForgotSendOtp(){
     const r=await pxAuthApi('reset_start',{identifier:email});
     if(!r.ok){ fpShowMsg('A',pxAuthError(r),'err'); return; }
     _fpPhone=''; _fpEmail=email; _fpGrant=''; _fpVerified=false;
-    const lbl=document.getElementById('fpOtpLbl'); lbl.textContent='کۆدی 6 ژمارە بۆ '; const eb=document.createElement('bdi'); eb.dir='ltr'; eb.textContent=r.target||email; lbl.append(eb,' نێردرا');
+    otpSentLabel('fpOtpLbl','email',r.target||email);
     ['fp1','fp2','fp3','fp4','fp5','fp6'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
     document.getElementById('fpMsgB').style.display='none';
-    document.getElementById('fpResendBtn').style.display='none';
-    document.getElementById('fpTimerWrap').style.color='';
     blurAuthInput();
     setAuthRoute('forgetpassword/otp',true);
     fpStartTimer(pxSecondsLeft(r.expires_at,600));
+    if(r.already_sent) fpShowMsg('B','کۆدی پێشوو هێشتا کاردەکات','ok');
   }catch(e){
     fpShowMsg('A',e.message||'هەڵەی پشکنین','err');
   }finally{
@@ -1385,21 +1393,21 @@ async function doForgotVerifyOtp(){
       const r=await pxAuthApi('reset_verify',{identifier:_fpPhone||_fpEmail,code});
       if(!r.ok){
         fpShowMsg('B',pxAuthError(r),'err');
-        if(r.status===423){ clearInterval(_fpTimer); document.getElementById('fpResendBtn').style.display='none'; return; }
+        if(r.status===423){ clearInterval(_fpTimer); otpAgainState('fp','off'); return; }
         ['fp1','fp2','fp3','fp4','fp5','fp6'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
-        if(r.code==='CODE_EXPIRED') document.getElementById('fpResendBtn').style.display='flex';
-        btn.disabled=false; btn.innerHTML=ICON.check+' دڵنیاکردنەوە'; return;
+        if(r.code==='CODE_EXPIRED'){ clearInterval(_fpTimer); otpAgainState('fp','ready'); }
+        btn.disabled=false; btn.innerHTML='پشتڕاستکردنەوە'; return;
       }
       clearInterval(_fpTimer); blurAuthInput();
       _fpVerified=true; _fpGrant=r.grant||'';
       setAuthRoute('newpassword',true);
       document.getElementById('fpNewPass').value=''; document.getElementById('fpConfirmPass').value='';
       document.getElementById('fpMsgC').style.display='none';
-      btn.disabled=false; btn.innerHTML=ICON.check+' دڵنیاکردنەوە';
+      btn.disabled=false; btn.innerHTML='پشتڕاستکردنەوە';
     }
   }catch(e){
     fpShowMsg('B',kuErr(e?.message)||'هەڵەی دڵنیاکردنەوە','err');
-    if(btn){ btn.disabled=false; btn.innerHTML=ICON.check+' دڵنیاکردنەوە'; }
+    if(btn){ btn.disabled=false; btn.innerHTML='پشتڕاستکردنەوە'; }
   }finally{ _fpVerifying=false; }
 }
 
