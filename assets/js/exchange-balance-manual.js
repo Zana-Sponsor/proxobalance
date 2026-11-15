@@ -40,7 +40,7 @@
     var f=fields();
     if(!f.amount_iqd||f.amount_iqd<1||f.amount_iqd>MAX_OP)return 'بڕەکە دەبێت لە 1 بۆ '+MAX_OP.toLocaleString('en-US')+' دینار بێت.';
     if(mode==='deduct'&&f.amount_iqd>Number(acct.available_iqd||0))return 'باڵانسی ئەم هەژمارە بەشی ئەم بڕە ناکات ('+money(acct.available_iqd)+').';
-    if(f.note.length<5)return 'هۆکارەکە بنووسە (لانی کەم ٥ پیت).';
+    if(f.note.length<5)return 'هۆکارەکە بنووسە (لانی کەم 5 پیت).';
     return '';
   }
   function syncSubmit(){
@@ -95,7 +95,7 @@
 
   async function search(){
     var q=$('bmSearch').value.trim(),box=$('bmResults');
-    if(q.length<2){box.innerHTML='<div class="bm-hint">لانی کەم ٢ پیت بنووسە.</div>';return;}
+    if(q.length<2){box.innerHTML='<div class="bm-hint">لانی کەم 2 پیت بنووسە.</div>';return;}
     var seq=++searchSeq;
     box.innerHTML='<div class="bm-hint">گەڕان...</div>';
     try{

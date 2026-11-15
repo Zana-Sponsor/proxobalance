@@ -352,7 +352,7 @@ function _notifColor(type){
   if(k==='upd') return 'var(--info)';
   return 'var(--secondary)';
 }
-// "٥ خولەک لەمەوپێش" — short, human, and much easier to scan than a full date
+// "5 خولەک لەمەوپێش" — short, human, and much easier to scan than a full date
 function timeAgo(iso){
   const t=new Date(iso).getTime(); if(!t) return '';
   const s=Math.max(1, Math.floor((Date.now()-t)/1000));
@@ -1004,7 +1004,7 @@ function pxAuthError(r){
   if(r.code==='LOCKED'||r.status===423){
     let when='';
     try{ if(r.locked_until) when=' تا '+new Date(r.locked_until).toLocaleString('en-GB',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit'}); }catch(_){}
-    return 'بەهۆی ٣ هەوڵی هەڵە، ئەم هەژمارە بۆ ٢٤ کاتژمێر بلۆک کراوە'+when+'.';
+    return 'بەهۆی 3 هەوڵی هەڵە، ئەم هەژمارە بۆ 24 کاتژمێر بلۆک کراوە'+when+'.';
   }
   let text=r.error||'هەڵەیەک ڕووی دا، دووبارە هەوڵ بدەرەوە';
   if(Number.isInteger(r.attempts_left)&&r.attempts_left>0) text+=' ('+r.attempts_left+' هەوڵ ماوە)';
@@ -1017,6 +1017,37 @@ async function pxSignedIn(r,identifier,remember){
   return data.user;
 }
 let _authFlow=null;
+// ── Login / reset: "number" or "Gmail" option; the number field shows 🇮🇶 +964 ──
+const PX_GMAIL_RE=/^[a-z0-9._%+-]+@gmail\.com$/i;
+function pxIsGmail(value){ return PX_GMAIL_RE.test(String(value||'').trim()); }
+function pxPhoneInput(el){
+  if(!el) return;
+  let d=String(el.value||'').replace(/[٠-٩]/g,ch=>String(ch.charCodeAt(0)-1632)).replace(/[۰-۹]/g,ch=>String(ch.charCodeAt(0)-1776)).replace(/\D/g,'');
+  if(d.startsWith('00964')) d=d.slice(5); else if(d.startsWith('964')) d=d.slice(3);
+  d=d.slice(0,d.startsWith('0')?11:10);
+  if(el.value!==d) el.value=d;
+}
+function pxSetMethod(prefix,method){
+  const phone=method!=='email';
+  const tabs={phone:document.getElementById(prefix+'TabPhone'),email:document.getElementById(prefix+'TabEmail')};
+  const fields={phone:document.getElementById(prefix+'PhoneField'),email:document.getElementById(prefix+'EmailField')};
+  if(tabs.phone){ tabs.phone.classList.toggle('is-on',phone); tabs.phone.setAttribute('aria-selected',String(phone)); }
+  if(tabs.email){ tabs.email.classList.toggle('is-on',!phone); tabs.email.setAttribute('aria-selected',String(!phone)); }
+  if(fields.phone) fields.phone.hidden=!phone;
+  if(fields.email) fields.email.hidden=phone;
+  return phone?'phone':'email';
+}
+let _loginMethod='phone', _forgotMethod='phone';
+function setLoginMethod(method){
+  _loginMethod=pxSetMethod('auth',method);
+  try{ localStorage.setItem('px_login_method',_loginMethod); }catch(_){}
+  const msg=document.getElementById('authMsg'); if(msg) msg.style.display='none';
+}
+function setForgotMethod(method){
+  _forgotMethod=pxSetMethod('fp',method);
+  const msg=document.getElementById('fpMsgA'); if(msg) msg.style.display='none';
+}
+try{ if(localStorage.getItem('px_login_method')==='email') document.addEventListener('DOMContentLoaded',()=>setLoginMethod('email')); }catch(_){}
 // E-mail for e-mail accounts; the 07… number for number accounts (their Auth address is internal).
 function pxAccountLabel(){
   const email=String(curUser?.email||'');
@@ -1026,12 +1057,19 @@ function pxAccountLabel(){
 
 async function submitLogin(){
   if(_authSubmitting||_authStepBusy) return;
-  const identifier=document.getElementById('authEmail').value.trim();
   const password=document.getElementById('authPass').value;
   const remember=!!document.getElementById('authRemember')?.checked;
-  if(!identifier){ showAmsg('ژمارەی مۆبایل یان ئیمەیڵەکەت بنووسە','err'); return; }
-  if(identifier.includes('@')){ if(!_authEmailOk(identifier)){ showAmsg('فۆرماتی ئیمەیڵ هەڵەیە','err'); return; } }
-  else if(!pxIraqiPhone(identifier)){ showAmsg('تەنها ژمارەی مۆبایلی عێراقی قبوڵ دەکرێت (07XX XXX XXXX)','err'); return; }
+  let identifier;
+  if(_loginMethod==='email'){
+    identifier=document.getElementById('authEmail').value.trim().toLowerCase();
+    if(!identifier){ showAmsg('ئیمەیڵەکەت بنووسە','err'); return; }
+    if(!pxIsGmail(identifier)){ showAmsg('ئیمەیڵەکە دروست نییە','err'); return; }
+  } else {
+    const raw=document.getElementById('authPhone').value.trim();
+    if(!raw){ showAmsg('ژمارەی مۆبایلەکەت بنووسە','err'); return; }
+    identifier=pxIraqiPhone(raw);
+    if(!identifier){ showAmsg('ژمارەی مۆبایلەکە دروست نییە','err'); return; }
+  }
   if(!password){ showAmsg('وشەی نهێنی بنووسە','err'); return; }
   _authSubmitting=true; _authIsNewUser=false;
   const btn=document.getElementById('authBtn'); if(btn){btn.disabled=true;btn.innerHTML=ICON.spin+' پشکنین...';}
@@ -1046,7 +1084,7 @@ async function submitLogin(){
     }
     _authFlow={kind:'login',identifier,password,remember,channel:r.channel,target:r.target};
     _otpPurpose='login';
-    showOtpStep(r.target,r.channel);
+    showOtpStep(r.target,r.channel,r.expires_at);
   }catch(e){ showAmsg(kuErr(e?.message)||'هەڵەیەک ڕووی دا','err'); }
   finally{ restoreAuthButton('authBtn'); _authSubmitting=false; }
 }
@@ -1059,8 +1097,8 @@ async function submitSignup(){
   const remember=!!document.getElementById('signupRemember')?.checked;
   if(name.length<3){showAmsg('ناوی تەواوت بنووسە','err');return;}
   const phone=pxIraqiPhone(phoneRaw);
-  if(!phone){showAmsg('تەنها ژمارەی مۆبایلی عێراقی قبوڵ دەکرێت (07XX XXX XXXX)','err');return;}
-  if(password.length<8){showAmsg('وشەی نهێنی دەبێت کەمترین ٨ پیت بێت','err');return;}
+  if(!phone){showAmsg('ژمارەی مۆبایلەکە دروست نییە','err');return;}
+  if(password.length<8){showAmsg('وشەی نهێنی دەبێت کەمترین 8 پیت بێت','err');return;}
   if(password!==confirm){showAmsg('وشە نهێنییەکان یەکسان نین','err');return;}
   _authSignupChecking=true; _authIsNewUser=true;
   const btn=document.getElementById('signupSubmitBtn'); if(btn){btn.disabled=true;btn.innerHTML=ICON.spin+' کۆد دەنێردرێت...';}
@@ -1071,23 +1109,28 @@ async function submitSignup(){
     if(!r.ok){ showAmsg(pxAuthError(r),'err'); return; }
     _authFlow={kind:'signup',phone,name,password,remember,channel:r.channel,target:r.target};
     _otpPurpose='signup';
-    showOtpStep(r.target,r.channel);
+    showOtpStep(r.target,r.channel,r.expires_at);
   }catch(e){ showAmsg(kuErr(e?.message)||'هەڵەی تۆڕ، دووبارە هەوڵ بدەرەوە','err'); }
   finally{ _authSignupChecking=false; restoreAuthButton('signupSubmitBtn'); }
 }
 
 // ══ OTP STEP ══
-function showOtpStep(target,channel){
+// Seconds until a code expires (the server sends expires_at); fallback for older servers.
+function pxSecondsLeft(iso,fallback){
+  const t=Date.parse(iso||''); if(!Number.isFinite(t)) return fallback;
+  return Math.max(0,Math.ceil((t-Date.now())/1000));
+}
+function showOtpStep(target,channel,expiresAt){
   blurAuthInput();
   _otpEmail=String(target||'');
   setAuthRoute(_otpPurpose==='signup'?'signup/otp':'login/otp',true);
   const lbl=document.getElementById('otpEmailLbl');
-  if(lbl){ lbl.textContent=channel==='whatsapp'?'کۆدی ٦ ژمارە بۆ واتسئاپی ':'کۆدی ٦ ژمارە بۆ ئیمەیڵی '; const b=document.createElement('bdi'); b.dir='ltr'; b.textContent=_otpEmail; lbl.append(b,' نێردرا'); }
+  if(lbl){ lbl.textContent=channel==='whatsapp'?'کۆدی 6 ژمارە بۆ واتسئاپی ':'کۆدی 6 ژمارە بۆ ئیمەیڵی '; const b=document.createElement('bdi'); b.dir='ltr'; b.textContent=_otpEmail; lbl.append(b,' نێردرا'); }
   ['otp1','otp2','otp3','otp4','otp5','otp6'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
   document.getElementById('otpMsg').style.display='none';
   document.getElementById('otpResendBtn').style.display='none';
   document.getElementById('otpTimerWrap').style.color='';
-  startOtpTimer(channel==='whatsapp'?300:600);
+  startOtpTimer(pxSecondsLeft(expiresAt,channel==='whatsapp'?300:600));
 }
 function cancelOtp(){ clearInterval(_otpTimer); const target=_otpPurpose==='signup'?'signup':'login'; _otpPendingData=null; _authFlow=null; authBackTo(target); }
 function startOtpTimer(seconds){
@@ -1199,9 +1242,9 @@ async function resendOtp(){
       ? await pxAuthApi('signup_start',{phone:f.phone,name:f.name,password:f.password})
       : await pxAuthApi('login_start',{identifier:f.identifier,password:f.password});
     if(r.ok&&r.otp_required){
-      showOtpMsg('کۆدی نوێ نێردرا','ok');
+      showOtpMsg(r.already_sent?'کۆدی پێشوو هێشتا کاردەکات':'کۆدی نوێ نێردرا','ok');
       ['otp1','otp2','otp3','otp4','otp5','otp6'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
-      startOtpTimer(r.channel==='whatsapp'?300:600);
+      startOtpTimer(pxSecondsLeft(r.expires_at,r.channel==='whatsapp'?300:600));
     } else { showOtpMsg(pxAuthError(r),'err'); if(!(r.code==='LOCKED'||r.status===423)) btn.style.display='flex'; }
   }catch(e){ showOtpMsg(kuErr(e?.message)||'هەڵەی ناردنی کۆد','err'); btn.style.display='flex'; }
   finally{ _otpResending=false; btn.disabled=false; }
@@ -1214,7 +1257,9 @@ let _fpTimer=null, _fpEmail='', _fpVerified=false, _fpCode='', _fpPhone='', _fpG
 function showForgotStep(){
   blurAuthInput();
   setAuthRoute('forgetpassword',true);
+  setForgotMethod(_loginMethod);
   document.getElementById('forgotEmail').value=_fpEmail||document.getElementById('authEmail')?.value.trim()||'';
+  document.getElementById('forgotPhone').value=document.getElementById('authPhone')?.value.trim()||'';
   document.getElementById('fpMsgA').style.display='none';
 }
 function cancelForgotStep(){ clearInterval(_fpTimer); _fpVerified=false; _fpCode=''; _fpEmail=''; _fpPhone=''; _fpGrant=''; authBackTo('login'); }
@@ -1268,37 +1313,26 @@ async function fpResendOtp(){
   if(_fpResending) return;
   const btn=document.getElementById('fpResendBtn');
   if(!btn||btn.disabled||getComputedStyle(btn).display==='none') return;
-  if(_fpPhone){
-    _fpResending=true; btn.disabled=true; btn.style.display='none';
-    document.getElementById('fpTimerWrap').style.color='';
-    fpShowMsg('B','ناردن...','ok');
-    try{
-      const r=await pxAuthApi('reset_start',{phone:_fpPhone});
-      if(r.ok){ fpShowMsg('B','کۆدی نوێ نێردرا','ok'); ['fp1','fp2','fp3','fp4','fp5','fp6'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; }); fpStartTimer(300); }
-      else { fpShowMsg('B',pxAuthError(r),'err'); if(r.status!==423) btn.style.display='flex'; }
-    }finally{ _fpResending=false; btn.disabled=false; }
-    return;
-  }
-  const chk=otpRateCheck(_fpEmail);
-  if(!chk.ok){ fpShowMsg('B','تکایە '+chk.remaining+' خولەکی تر هەوڵ بدەرەوە','err'); startBanCountdown(_fpEmail,'fpMsgB','fpResendBtn'); return; }
+  // number or e-mail: both go through /api/auth, for every account
   _fpResending=true; btn.disabled=true; btn.style.display='none';
   document.getElementById('fpTimerWrap').style.color='';
   fpShowMsg('B','ناردن...','ok');
   try{
-    const result=await requestOtp(_fpEmail,'reset_password');
-    if(result.success){ fpShowMsg('B','کۆدی نوێ نێردرا','ok'); ['fp1','fp2','fp3','fp4','fp5','fp6'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; }); fpStartTimer(600); }
-    else { fpShowMsg('B',result.message||'هەڵەی ناردن','err'); btn.style.display='flex'; }
-  }catch(e){ fpShowMsg('B',kuErr(e?.message)||'هەڵەی ناردن','err'); btn.style.display='flex'; }
-  finally{ _fpResending=false; btn.disabled=false; }
+    const r=await pxAuthApi('reset_start',{identifier:_fpPhone||_fpEmail});
+    if(r.ok){ fpShowMsg('B',r.already_sent?'کۆدی پێشوو هێشتا کاردەکات':'کۆدی نوێ نێردرا','ok'); ['fp1','fp2','fp3','fp4','fp5','fp6'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; }); fpStartTimer(pxSecondsLeft(r.expires_at,_fpPhone?300:600)); }
+    else { fpShowMsg('B',pxAuthError(r),'err'); if(r.status!==423) btn.style.display='flex'; }
+  }finally{ _fpResending=false; btn.disabled=false; }
 }
 
 async function doForgotSendOtp(){
   if(_fpSending) return;
-  const email=document.getElementById('forgotEmail').value.trim();
-  if(!email){ fpShowMsg('A','ژمارەی مۆبایل یان ئیمەیڵەکەت بنووسە','err'); return; }
-  const phone=email.includes('@')?null:pxIraqiPhone(email);
-  if(!email.includes('@')&&!phone){ fpShowMsg('A','تەنها ژمارەی مۆبایلی عێراقی قبوڵ دەکرێت (07XX XXX XXXX)','err'); return; }
-  if(email.includes('@')&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ fpShowMsg('A','فۆرماتی ئیمەیل هەڵەیە','err'); return; }
+  const byPhone=_forgotMethod!=='email';
+  const email=byPhone?'':document.getElementById('forgotEmail').value.trim().toLowerCase();
+  const phone=byPhone?pxIraqiPhone(document.getElementById('forgotPhone').value):null;
+  if(byPhone&&!document.getElementById('forgotPhone').value.trim()){ fpShowMsg('A','ژمارەی مۆبایلەکەت بنووسە','err'); return; }
+  if(byPhone&&!phone){ fpShowMsg('A','ژمارەی مۆبایلەکە دروست نییە','err'); return; }
+  if(!byPhone&&!email){ fpShowMsg('A','ئیمەیڵەکەت بنووسە','err'); return; }
+  if(!byPhone&&!pxIsGmail(email)){ fpShowMsg('A','ئیمەیڵەکە دروست نییە','err'); return; }
   const btn=document.getElementById('forgotSendBtn');
   if(!btn||btn.disabled) return;
   _fpSending=true;
@@ -1308,32 +1342,29 @@ async function doForgotSendOtp(){
       const r=await pxAuthApi('reset_start',{phone});
       if(!r.ok){ fpShowMsg('A',pxAuthError(r),'err'); return; }
       _fpPhone=phone; _fpEmail=''; _fpGrant=''; _fpVerified=false;
-      const lbl=document.getElementById('fpOtpLbl'); lbl.textContent='کۆدی ٦ ژمارە بۆ واتسئاپی '; const b=document.createElement('bdi'); b.dir='ltr'; b.textContent=r.target||''; lbl.append(b,' نێردرا');
+      const lbl=document.getElementById('fpOtpLbl'); lbl.textContent='کۆدی 6 ژمارە بۆ واتسئاپی '; const b=document.createElement('bdi'); b.dir='ltr'; b.textContent=r.target||''; lbl.append(b,' نێردرا');
       ['fp1','fp2','fp3','fp4','fp5','fp6'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
       document.getElementById('fpMsgB').style.display='none';
       document.getElementById('fpResendBtn').style.display='none';
       document.getElementById('fpTimerWrap').style.color='';
       blurAuthInput();
       setAuthRoute('forgetpassword/otp',true);
-      fpStartTimer(300);
+      fpStartTimer(pxSecondsLeft(r.expires_at,300));
       return;
     }
-    _fpPhone='';
-    const {data:exists,error}=await sb.rpc('ex_email_exists',{p_email:email});
-    if(error) throw new Error('هەڵەی پشکنین، دووبارە هەوڵ بدەرەوە');
-    if(!exists){ fpShowMsg('A','ئەم ئیمەیلە تۆمارنەکراوە','err'); return; }
+    // e-mail: any account with this verified Gmail address (also number accounts)
     btn.innerHTML=ICON.spin+' دەنێردرێت...';
-    const result=await requestOtp(email,'reset_password');
-    if(!result.success){ fpShowMsg('A',result.message||'هەڵەی ناردنی کۆد','err'); return; }
-    _fpEmail=email; _fpVerified=false;
-    document.getElementById('fpOtpLbl').textContent='کۆدی ٦ ژمارە بۆ '+email+' نێردرا';
+    const r=await pxAuthApi('reset_start',{identifier:email});
+    if(!r.ok){ fpShowMsg('A',pxAuthError(r),'err'); return; }
+    _fpPhone=''; _fpEmail=email; _fpGrant=''; _fpVerified=false;
+    const lbl=document.getElementById('fpOtpLbl'); lbl.textContent='کۆدی 6 ژمارە بۆ '; const eb=document.createElement('bdi'); eb.dir='ltr'; eb.textContent=r.target||email; lbl.append(eb,' نێردرا');
     ['fp1','fp2','fp3','fp4','fp5','fp6'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
     document.getElementById('fpMsgB').style.display='none';
     document.getElementById('fpResendBtn').style.display='none';
     document.getElementById('fpTimerWrap').style.color='';
     blurAuthInput();
     setAuthRoute('forgetpassword/otp',true);
-    fpStartTimer(600);
+    fpStartTimer(pxSecondsLeft(r.expires_at,600));
   }catch(e){
     fpShowMsg('A',e.message||'هەڵەی پشکنین','err');
   }finally{
@@ -1349,9 +1380,9 @@ async function doForgotVerifyOtp(){
   try{
     const code=['fp1','fp2','fp3','fp4','fp5','fp6'].map(id=>document.getElementById(id)?.value||'').join('');
     if(code.length<6){ fpShowMsg('B','کۆدەکە تەواو بنووسە','err'); return; }
-    if(_fpPhone){
+    {
       btn.disabled=true; btn.innerHTML=ICON.spin+' پشکنین...';
-      const r=await pxAuthApi('reset_verify',{phone:_fpPhone,code});
+      const r=await pxAuthApi('reset_verify',{identifier:_fpPhone||_fpEmail,code});
       if(!r.ok){
         fpShowMsg('B',pxAuthError(r),'err');
         if(r.status===423){ clearInterval(_fpTimer); document.getElementById('fpResendBtn').style.display='none'; return; }
@@ -1365,26 +1396,7 @@ async function doForgotVerifyOtp(){
       document.getElementById('fpNewPass').value=''; document.getElementById('fpConfirmPass').value='';
       document.getElementById('fpMsgC').style.display='none';
       btn.disabled=false; btn.innerHTML=ICON.check+' دڵنیاکردنەوە';
-      return;
     }
-    const rlChk=otpRateCheck(_fpEmail);
-    if(!rlChk.ok){ fpShowMsg('B','قفڵکراوە — تکایە '+rlChk.remaining+' خولەکی تر هەوڵ بدەرەوە','err'); startBanCountdown(_fpEmail,'fpMsgB','fpResendBtn'); return; }
-    btn.disabled=true; btn.innerHTML=ICON.spin+' پشکنین...';
-    const result=await verifyOtpCode(_fpEmail,code,'reset_password');
-    if(!result.success){
-      const rl=otpRateRecord(_fpEmail);
-      if(rl && !rl.ok){ fpShowMsg('B','زۆر جار هەوڵت دا — تکایە '+rl.remaining+' خولەکی تر هەوڵ بدەرەوە','err'); startBanCountdown(_fpEmail,'fpMsgB','fpResendBtn'); }
-      else fpShowMsg('B',result.message||'کۆدی هەڵە','err');
-      btn.disabled=false; btn.innerHTML=ICON.check+' دڵنیاکردنەوە'; return;
-    }
-    clearInterval(_fpTimer);
-    blurAuthInput();
-    _fpVerified=true;
-    _fpCode=code;   // the server only accepts the reset together with this verified code
-    setAuthRoute('newpassword',true);
-    document.getElementById('fpNewPass').value=''; document.getElementById('fpConfirmPass').value='';
-    document.getElementById('fpMsgC').style.display='none';
-    btn.disabled=false; btn.innerHTML=ICON.check+' دڵنیاکردنەوە';
   }catch(e){
     fpShowMsg('B',kuErr(e?.message)||'هەڵەی دڵنیاکردنەوە','err');
     if(btn){ btn.disabled=false; btn.innerHTML=ICON.check+' دڵنیاکردنەوە'; }
@@ -1396,42 +1408,20 @@ async function doForgotSavePass(){
   _fpSaving=true;
   try{
     const np=document.getElementById('fpNewPass').value, cp=document.getElementById('fpConfirmPass').value;
-    if(!np||np.length<8){ fpShowMsg('C','وشەی نهێنی دەبێت کەمترین ٨ پیت بێت','err'); return; }
+    if(!np||np.length<8){ fpShowMsg('C','وشەی نهێنی دەبێت کەمترین 8 پیت بێت','err'); return; }
     if(np!==cp){ fpShowMsg('C','وشەی نهێنیەکان یەکسان نین','err'); return; }
     const btn=document.getElementById('fpSaveBtn'); if(!btn||btn.disabled) return;
     btn.disabled=true; btn.innerHTML=ICON.spin+' گۆڕین...';
     try{
-      if(_fpPhone){
-        const r=await pxAuthApi('reset_finish',{phone:_fpPhone,grant:_fpGrant,password:np});
-        if(!r.ok){ fpShowMsg('C',pxAuthError(r),'err'); return; }
-        fpShowMsg('C','وشەی نهێنیەکە گۆڕدرا، چوونەژوورەوە...','ok');
-        const user=await pxSignedIn(r,_fpPhone,false);
-        clearInterval(_fpTimer); _fpVerified=false; _fpGrant=''; _fpPhone='';
-        document.getElementById('forgotStep').style.display='none';
-        window.trackEvent?.('login');
-        await startApp(user);
-        return;
-      }
-      const {data:rData,error:rErr}=await sb.rpc('reset_user_password',{ user_email:_fpEmail, new_pass:np, p_code:_fpCode });
-      if(rErr){ fpShowMsg('C',rErr.message||'هەڵەی گۆڕینی پاسۆرد','err'); return; }
-      if(rData && rData.success===false){ fpShowMsg('C',rData.message||'هەڵەیەک ڕووی دا','err'); return; }
+      const id=_fpPhone||_fpEmail;
+      const r=await pxAuthApi('reset_finish',{identifier:id,grant:_fpGrant,password:np});
+      if(!r.ok){ fpShowMsg('C',pxAuthError(r),'err'); return; }
       fpShowMsg('C','وشەی نهێنیەکە گۆڕدرا، چوونەژوورەوە...','ok');
-      try{ await sb.auth.signOut(); }catch(_){}
-      await new Promise(r=>setTimeout(r,900));
-      const {data:ld,error:le}=await sb.auth.signInWithPassword({email:_fpEmail,password:np});
-      if(!le && ld?.user){
-        document.getElementById('forgotStep').style.display='none';
-        await startApp(ld.user);
-      } else {
-        const resetEmail=_fpEmail;
-        clearInterval(_fpTimer); _fpVerified=false; _fpCode='';
-        setAuthRoute('login',false,true);
-        _authEmail=resetEmail; _authIsNewUser=false;
-        document.getElementById('authEmail').value=_fpEmail;
-        document.getElementById('authPass').value=np;
-        document.getElementById('authBtnTxt').textContent='چوونەژوورەوە';
-        setTimeout(()=>showAmsg('وشەی نهێنیەکەت گۆڕدرا — کلیک لە چوونەژوورەوە بکە','ok'),100);
-      }
+      const user=await pxSignedIn(r,id,false);
+      clearInterval(_fpTimer); _fpVerified=false; _fpGrant=''; _fpPhone=''; _fpEmail=''; _fpCode='';
+      document.getElementById('forgotStep').style.display='none';
+      window.trackEvent?.('login');
+      await startApp(user);
     }catch(e){ fpShowMsg('C',kuErr(e.message)||'هەڵەی تۆڕ','err'); }
     finally{ btn.disabled=false; btn.innerHTML=ICON.lock+' پاشەکەوتکردن'; }
   }finally{ _fpSaving=false; }
@@ -1441,7 +1431,7 @@ function kuErr(msg){
   const m={
     'Invalid login credentials':'ئیمەیل یان وشەی نهێنی هەڵەیە',
     'User already registered':'ئەم ئیمەیلە پێشتر تۆمارکراوە',
-    'Password should be at least 6 characters':'وشەی نهێنی دەبێت کەمترین ٦ پیت بێت',
+    'Password should be at least 6 characters':'وشەی نهێنی دەبێت کەمترین 6 پیت بێت',
     'Unable to validate email address: invalid format':'فۆرماتی ئیمەیل هەڵەیە',
     'Too many requests':'زۆر جار هەوڵت دا، کەمێک چاوەڕوان بە',
     'Network request failed':'کێشەی تۆڕ، دووبارە هەوڵ بدەرەوە',
@@ -1453,12 +1443,12 @@ function kuErr(msg){
     'ORDER_NETWORK_ERROR':'داواکارییەکە نەگەیشتە سێرڤەر؛ پەیوەندییەکەت بپشکنە و دووبارە هەوڵ بدەرەوە',
     'Email rate limit exceeded':'زۆر جار ئیمەیل نێردرا، کەمێک چاوەڕوان بە',
     'Auth session missing':'تکایە دووبارە بچۆ ژوورەوە',
-    'PROFILE_UPDATE_COOLDOWN':'ناو و ژمارەی مۆبایل تا تەواوبوونی ٧ ڕۆژەکە قوفڵن',
+    'PROFILE_UPDATE_COOLDOWN':'ناو و ژمارەی مۆبایل تا تەواوبوونی 7 ڕۆژەکە قوفڵن',
     'PROFILE_NAME_LOCKED_BY_KYC':'ناوەکەت بە ناسنامە پشتڕاستکراوەتەوە و ناتوانرێت بگۆڕدرێت',
     'KYC_REQUIRED_FOR_EXCHANGE':'پێش ئەنجامدانی ئاڵوگۆڕ، پێویستە ناسنامەکەت پشتڕاست بکرێتەوە.',
     'SENDER_PHONE_REQUIRED':'ژمارەی نێرەر بۆ Korek و Asiacell پێویستە',
-    'SENDER_PHONE_INVALID':'ژمارەی نێرەر دەبێت بە 07 دەست پێبکات و ١١ ژمارە بێت',
-    'Invalid sender number':'ژمارەی نێرەر دەبێت بە 07 دەست پێبکات و ١١ ژمارە بێت',
+    'SENDER_PHONE_INVALID':'ژمارەی نێرەر دەبێت بە 07 دەست پێبکات و 11 ژمارە بێت',
+    'Invalid sender number':'ژمارەی نێرەر دەبێت بە 07 دەست پێبکات و 11 ژمارە بێت',
   };
   if(m[msg]) return m[msg];
   if(/requested file could not be read|notreadableerror|permission problems.*reference to a file/i.test(String(msg||''))) return m.FILE_READ_PERMISSION;
@@ -2005,7 +1995,7 @@ function _validateOrderFields(){
   const carrierSender=needsSenderPhone(from);
   let ok=true;
   if(carrierSender && !/^07\d{9}$/.test(senderPhone)){
-    setFieldError('userSenderPhone','ژمارەی نێرەر دەبێت بە 07 دەست پێبکات و ١١ ژمارە بێت');
+    setFieldError('userSenderPhone','ژمارەی نێرەر دەبێت بە 07 دەست پێبکات و 11 ژمارە بێت');
     ok=false;
   }else if(from!=='AccountBalance' && !carrierSender && (!profileName || normalizePersonName(senderName)!==normalizePersonName(profileName))){
     setFieldError('userSenderName','ناوی خاوەنی هەژماری نێرەر دەبێت لەگەڵ ناوی پڕۆفایلی Proxo یەکسان بێت');
@@ -2025,7 +2015,7 @@ function _validateOrderFields(){
     setFieldError('amt','بڕەکە دەبێت دیناری تەواو بێت و لە باڵانسی بەردەست زیاتر نەبێت');ok=false;
   }
   if(from!=='AccountBalance' && !file){ setFieldError('fileInput','وێنەی پسووڵەی پارەدان زیاد بکە'); ok=false; }
-  else if(from!=='AccountBalance' && file?.size>10*1024*1024){ setFieldError('fileInput','قەبارەی وێنەکە دەبێت لە ١٠ MB کەمتر بێت'); ok=false; }
+  else if(from!=='AccountBalance' && file?.size>10*1024*1024){ setFieldError('fileInput','قەبارەی وێنەکە دەبێت لە 10 MB کەمتر بێت'); ok=false; }
   if(from===to){ showToast('لە هەمان واڵێت وەرناگیرێت — ڕێگایەکی جیاواز هەڵبژێرە بۆ وەرگرتن','warning','هەمان واڵێت هەڵبژێردراوە'); ok=false; }
   if(getWalletInfo(from).locked){ showToast('ئەم شێوازە لەئێستادا بەردەست نییە بۆ ناردن','error','بەردەست نییە'); ok=false; }
   if(getWalletInfo(to).locked){ showToast('ئەم شێوازە لەئێستادا بەردەست نییە بۆ وەرگرتن','error','بەردەست نییە'); ok=false; }
@@ -2484,7 +2474,7 @@ function fbFlatHTML(order,cfg){
   if(f){
     const r=Math.max(0,Math.min(5,Number(f.rating)||0));
     return '<section class="tf-sec tf-fb is-done">'+head
-      + '<div class="fb-stars tf-stars is-readonly" role="img" aria-label="'+r+' لە ٥ ئەستێرە">'
+      + '<div class="fb-stars tf-stars is-readonly" role="img" aria-label="'+r+' لە 5 ئەستێرە">'
       + Array.from({length:5},(_,i)=>'<span class="fb-star tf-star'+(i<r?' selected':'')+'" aria-hidden="true">'+FB_STAR+'</span>').join('')+'</div>'
       + (f.comment?'<p class="tf-fb-comment">'+escHtml(f.comment)+'</p>':'')
       + '</section>';
@@ -2579,7 +2569,7 @@ async function submitSummaryFeedback(){
   if(!_summaryFeedbackDraftRating){if(error)error.textContent='تکایە ژمارەی ئەستێرە دیاری بکە.';return;}
   if(!curUser?.id){if(error)error.textContent='بۆ ناردنی هەڵسەنگاندن بچۆ ژوورەوە.';return;}
   const comment=(document.getElementById('summaryFeedbackComment')?.value||'').trim();
-  if(comment.length>1000){if(error)error.textContent='تێبینی نابێت لە ١٠٠٠ پیت زیاتر بێت.';return;}
+  if(comment.length>1000){if(error)error.textContent='تێبینی نابێت لە 1000 پیت زیاتر بێت.';return;}
   if(button){button.disabled=true;button.textContent='دەنێردرێت...';}
   try{
     const {data,error:insertError}=await sb.from('ex_order_feedback').insert({order_id:order.id,user_id:curUser.id,rating:_summaryFeedbackDraftRating,comment}).select('order_id,rating,comment,created_at').single();
@@ -2765,7 +2755,7 @@ async function submitOrderFeedback(orderId){
   if(!_feedbackDraftRating){if(errorEl)errorEl.textContent='تکایە ژمارەی ئەستێرە دیاری بکە.';return;}
   if(!curUser?.id){if(errorEl)errorEl.textContent='بۆ ناردنی هەڵسەنگاندن بچۆ ژوورەوە.';return;}
   const comment=(document.getElementById('orderFeedbackComment')?.value||'').trim();
-  if(comment.length>1000){if(errorEl)errorEl.textContent='تێبینی نابێت لە ١٠٠٠ پیت زیاتر بێت.';return;}
+  if(comment.length>1000){if(errorEl)errorEl.textContent='تێبینی نابێت لە 1000 پیت زیاتر بێت.';return;}
   if(errorEl)errorEl.textContent='';
   if(button){ button.disabled=true; if(fromSheet){ button.classList.add('is-loading'); button.setAttribute('aria-busy','true'); } else button.textContent='دەنێردرێت...'; }
   try{
@@ -3129,7 +3119,7 @@ async function submitOrderCorrection(){
     setFieldError('orderCorrectionPhone','ژمارەی وەرگر دروست نییە'); valid=false;
   }
   if(needsSenderPhone(order.from_method) && !/^07\d{9}$/.test(senderPhone)){
-    setFieldError('orderCorrectionSenderPhone','ژمارەی نێرەر دەبێت بە 07 دەست پێبکات و ١١ ژمارە بێت'); valid=false;
+    setFieldError('orderCorrectionSenderPhone','ژمارەی نێرەر دەبێت بە 07 دەست پێبکات و 11 ژمارە بێت'); valid=false;
   }
   if(responseText.length<5){ setFieldError('orderCorrectionResponse','تکایە بنووسە چی ڕاستکرایەوە'); valid=false; }
   if(!valid) return;
@@ -3442,7 +3432,7 @@ Object.assign(ICON, {
 //   'hash' → www.domain.com/#/profile. Works on ANY static host with no
 //            server config at all. Switch to this if you cannot add rewrites.
 const ROUTE_MODE = 'path';
-const ROUTES = { home:'pageDash', exchange:'pageHome', transactions:'pageTx', changes:'pageChanges', rules:'pageRules', profile:'pageProfile', support:'pageSupport', verify:'pageVerify', balance:'pageBalance', 'delete-account':'pageDeleteAccount', summary:'pageSummary' };
+const ROUTES = { home:'pageDash', exchange:'pageHome', transactions:'pageTx', changes:'pageChanges', rules:'pageRules', profile:'pageProfile', support:'pageSupport', verify:'pageVerify', balance:'pageBalance', 'delete-account':'pageDeleteAccount', 'account-name':'pageAccountName', 'change-phone':'pageChangePhone', 'change-email':'pageChangeEmail', 'change-password':'pageChangePassword', summary:'pageSummary' };
 const ROUTE_TITLES = {
   home:'Proxo — ئاڵوگۆڕی دراو',
   exchange:'ئاڵوگۆڕی نوێ — Proxo',
@@ -3454,7 +3444,11 @@ const ROUTE_TITLES = {
   verify:'پشتڕاستکردنەوەی ناسنامە — Proxo',
   balance:'مێژووی مامەڵەکان — Proxo',
   summary:'پوختەی مامەڵە — Proxo',
-  'delete-account':'سڕینەوەی هەژمار — Proxo'
+  'delete-account':'سڕینەوەی هەژمار — Proxo',
+  'account-name':'ناوی هەژمار — Proxo',
+  'change-phone':'ژمارەی مۆبایل — Proxo',
+  'change-email':'ئیمەیڵ — Proxo',
+  'change-password':'وشەی نهێنی — Proxo'
 };
 // Everything before the route segment, so the app works at the domain root
 // (/profile) and inside a sub-folder (/exchange/profile) with no edits.
@@ -3519,10 +3513,14 @@ function navigate(route, push){
   if(route==='verify')     { renderVerifyPage(); loadKycStatus(true); }
   if(route==='support')      loadSupportCases();
   if(route==='delete-account') loadAccountDeletionInfo();
+  if(route==='account-name')    openAccountNameScreen();
+  if(route==='change-phone')    openChangePhoneScreen();
+  if(route==='change-email')    openChangeEmailScreen();
+  if(route==='change-password') openPasswordScreen();
 }
 // Which bottom-bar tab a screen belongs to. The new-order screen (/exchange) opens from the dashboard.
 function navRouteOf(route){
-  if(['changes','support','verify','balance','delete-account'].includes(route)) return 'profile';
+  if(['changes','support','verify','balance','delete-account','account-name','change-phone','change-email','change-password'].includes(route)) return 'profile';
   if(route==='summary') return 'transactions';
   if(route==='exchange') return 'home';
   return route;
@@ -3574,6 +3572,10 @@ function resetSection(route){
   else if(route==='support') resetSupportForm();
   else if(route==='balance') pxBalHistReset();
   else if(route==='delete-account') daxReset();
+  else if(route==='account-name') anReset();
+  else if(route==='change-phone') cpReset();
+  else if(route==='change-email') ceReset();
+  else if(route==='change-password') pwReset();
 }
 
 let _refreshing=false;
@@ -3661,11 +3663,11 @@ function bhDateTime(iso){
 function renderBalHist(){
   const list=document.getElementById('bhList'), more=document.getElementById('bhMore'); if(!list) return;
   if(_bhError && !_bhRows.length){
-    list.innerHTML='<div class="bh-state"><b>نەتوانرا مێژووەکە بار بکرێت</b><span>پەیوەندی ئینتەرنێتەکەت بپشکنە و دووبارە هەوڵبدەرەوە.</span><button type="button" onclick="pxBalHistLoad(true)">دووبارە هەوڵبدەرەوە</button></div>';
+    list.innerHTML='<div class="bh-state"><b>نەتوانرا مێژووەکە بار بکرێت</b><button type="button" onclick="pxBalHistLoad(true)">دووبارە هەوڵبدەرەوە</button></div>';
   }else if(_bhBusy && !_bhRows.length){
     list.innerHTML=window.PXS?PXS.balHist(3):'<div class="bh-skel"></div><div class="bh-skel"></div><div class="bh-skel"></div>';
   }else if(!_bhRows.length){
-    list.innerHTML='<div class="bh-state"><b>هێشتا هیچ مامەڵەیەک نییە</b><span>کاتێک باڵانس بۆ هەژمارەکەت زیاد بکرێت یان بگەڕێندرێتەوە، لێرە دەردەکەوێت.</span></div>';
+    list.innerHTML='<div class="bh-state"><b>هێشتا هیچ مامەڵەیەک نییە</b></div>';
   }else{
     list.innerHTML=_bhRows.map(r=>{
       const k=r.kind==='refund'?'refund':'added';
@@ -3826,7 +3828,7 @@ function renderRatesNow(rows){
     .filter(r=>!getWalletInfo(r.from_method).locked && !getWalletInfo(r.to_method).locked)
     .sort((a,b)=> (pos(a.from_method)-pos(b.from_method)) || (pos(a.to_method)-pos(b.to_method)));
 
-  if(!list.length){ el.innerHTML='<div class="empty-state">هیچ ڕێگایەکی کراوە نییە لە ئێستادا</div>'; return; }
+  if(!list.length){ el.innerHTML='<div class="pfs-empty"><b>هیچ ڕێگایەکی کراوە نییە</b></div>'; return; }
 
   el.innerHTML = list.map(function(r){
     const isUsdt = r.from_method==='USDT';
@@ -3858,7 +3860,7 @@ async function loadChangeLog(force){
   if(window.PXS){
     el.innerHTML=PXS.changeItems(3);
     const now=document.getElementById('ratesNow'); if(now && !now.querySelector('.rate-card:not(.is-skel)')) now.innerHTML=PXS.rateCards(3);
-  }else el.innerHTML='<div class="empty-state">بارکردن...</div>';
+  }else el.innerHTML='<div class="pfs-empty"><b>بارکردن...</b></div>';
   try{
     const res = await Promise.all([
       sb.from('ex_change_log').select('*').order('created_at',{ascending:false}).limit(60),
@@ -3869,13 +3871,13 @@ async function loadChangeLog(force){
     renderChangeLog((res[0] && res[0].data) || []);
   }catch(e){
     const now=document.getElementById('ratesNow'); if(now && now.querySelector('.is-skel')) now.innerHTML='';
-    el.innerHTML='<div class="empty-state">نەتوانرا گۆڕانکارییەکان باربکرێن</div>';
+    el.innerHTML='<div class="pfs-empty"><b>نەتوانرا گۆڕانکارییەکان باربکرێن</b></div>';
   }
 }
 
 function renderChangeLog(rows){
   const el=document.getElementById('changesList'); if(!el) return;
-  if(!rows.length){ el.innerHTML='<div class="empty-state">هێشتا هیچ گۆڕانکارییەک تۆمار نەکراوە</div>'; return; }
+  if(!rows.length){ el.innerHTML='<div class="pfs-empty"><b>هێشتا هیچ گۆڕانکارییەک نییە</b></div>'; return; }
   let html='', lastDay='';
   rows.forEach(function(r){
     const dk=dayKey(r.created_at);
@@ -3914,43 +3916,454 @@ function renderChangeLog(rows){
 function initialOf(s){ const t=(s||'').trim(); return t ? t.charAt(0).toUpperCase() : '؟'; }
 function normalizePersonName(s){ return String(s||'').trim().replace(/\s+/g,' ').toLocaleLowerCase(); }
 
-const PROFILE_CHANGE_COOLDOWN_MS=7*24*60*60*1000;
-
-function profileChangeAvailableAt(){
-  if(!curProfile || curProfile.is_admin || !curProfile.identity_updated_at) return null;
-  const at=new Date(curProfile.identity_updated_at).getTime()+PROFILE_CHANGE_COOLDOWN_MS;
-  return Number.isFinite(at) ? at : null;
-}
-
 function syncSenderIdentity(){
   const el=document.getElementById('userSenderName');
   if(el) el.value=(curProfile&&curProfile.full_name)||'';
 }
 
-function updateProfileCooldownUI(){
-  const nameEl=document.getElementById('pfName');
-  const phoneEl=document.getElementById('pfPhone');
-  const btn=document.getElementById('pfSaveBtn');
-  const hint=document.getElementById('pfCooldownHint');
-  const txt=document.getElementById('pfCooldownText');
-  const availableAt=profileChangeAvailableAt();
-  const locked=!!availableAt && availableAt>Date.now();
-
-  const nameLocked=kycNameLocked();
-  if(nameEl){ nameEl.disabled=locked; nameEl.readOnly=nameLocked; nameEl.classList.toggle('is-locked',nameLocked); }
-  if(phoneEl) phoneEl.disabled=locked;
-  const kycHint=document.getElementById('pfNameKycHint');
-  if(kycHint) kycHint.hidden=!nameLocked;
-  if(btn) btn.disabled=locked;
-  if(hint) hint.classList.toggle('warn',locked);
-  if(txt){
-    txt.textContent=locked
-      ? 'دەتوانیت لە '+new Date(availableAt).toLocaleString('ku-IQ')+' دووبارە ناو یان ژمارەکەت بگۆڕیت.'
-      : (nameLocked
-          ? 'ئێستا دەتوانیت ژمارەکەت نوێ بکەیتەوە؛ دوای پاشەکەوتکردن بۆ ٧ ڕۆژ قوفڵ دەبێت.'
-          : 'ئێستا دەتوانیت ناو و ژمارەکەت نوێ بکەیتەوە؛ دوای پاشەکەوتکردن بۆ ٧ ڕۆژ قوفڵ دەبێت.');
+// ══════════════════════════════════════════════════════════════
+// ═══ ACCOUNT — name, mobile number and password, each on its own screen
+// ═══   /account-name     once every 30 days; fixed after identity verification
+// ═══   /change-phone     WhatsApp code to the NEW number; once every 30 days;
+// ═══                     a verified number belongs to one account only
+// ═══   /change-password  current password; other devices are signed out
+// ═══ The database and /api/auth enforce every rule; these screens explain them.
+// ══════════════════════════════════════════════════════════════
+const ACCOUNT_CHANGE_DAYS=30, DAY_MS=24*60*60*1000;
+// When the next change is allowed (ms), or null when it is allowed now.
+function acxNextChange(stamp){
+  if(!stamp) return null;
+  const at=new Date(stamp).getTime()+ACCOUNT_CHANGE_DAYS*DAY_MS;
+  return Number.isFinite(at) && at>Date.now() ? at : null;
+}
+function acxDay(ms){ return String(kycFmtDate(new Date(ms).toISOString())); }
+function acxDaysLeft(ms){ return Math.max(1, Math.ceil((ms-Date.now())/DAY_MS)); }
+const ACX_ICON={
+  lock:'<svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+  wait:'<svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  info:'<svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>'
+};
+// A calm notice instead of an error: why it can't be done now, and when it can.
+// Every text here is our own copy (no user input).
+function acxNote(id, opts){
+  const el=document.getElementById(id); if(!el) return;
+  if(!opts){ el.hidden=true; el.innerHTML=''; el.removeAttribute('data-tone'); return; }
+  let meter='';
+  if(opts.until){
+    const left=acxDaysLeft(opts.until);
+    const pct=Math.min(100,Math.max(4,Math.round(100*(ACCOUNT_CHANGE_DAYS-left)/ACCOUNT_CHANGE_DAYS)));
+    meter='<div class="acx-meter" role="img" aria-label="'+String(left)+' ڕۆژی ماوە"><span style="width:'+pct+'%"></span></div>'
+         +'<small class="acx-meter-txt">'+String(left)+' ڕۆژی ماوە</small>';
   }
-  return locked;
+  el.dataset.tone=opts.tone;
+  el.innerHTML='<span class="acx-note-ico">'+ACX_ICON[opts.tone]+'</span><div class="acx-note-body"><b>'+opts.title+'</b><p>'+opts.text+'</p>'+meter+'</div>';
+  el.hidden=false;
+}
+function acxErr(id,text){ const el=document.getElementById(id); if(el) el.textContent=text||''; }
+function acxBusy(id,on){
+  const b=document.getElementById(id); if(!b) return;
+  b.classList.toggle('is-loading',!!on); if(on) b.disabled=true;
+}
+function acxEye(btn){
+  const input=btn && btn.parentElement && btn.parentElement.querySelector('input'); if(!input) return;
+  const show=input.type==='password';
+  input.type=show?'text':'password';
+  btn.classList.toggle('is-on',show);
+  btn.setAttribute('aria-label',show?'شاردنەوەی وشەی نهێنی':'پیشاندانی وشەی نهێنی');
+}
+async function refreshProfileRow(){
+  if(!sb || !curUser) return;
+  try{
+    const {data}=await sb.from('ex_profiles').select('*').eq('id',curUser.id).maybeSingle();
+    if(data){ curProfile=Object.assign({},curProfile||{},data); applyProfileToUI(); renderAccountMenu(); }
+  }catch(_){}
+}
+function accountPhoneVerified(){ return !!(curProfile && curProfile.phone && curProfile.phone_verified_at); }
+function accountEmailVerified(){ return !!(curProfile && curProfile.email && curProfile.email_verified_at); }
+
+// ── profile menu rows ─────────────────────────────────────────
+function renderAccountMenu(){
+  const n=document.getElementById('pfMenuName');
+  if(n) n.textContent=(curProfile && curProfile.full_name) || '—';
+  const p=document.getElementById('pfMenuPhone');
+  if(p){
+    p.textContent='';
+    const phone=curProfile && curProfile.phone;
+    if(phone){
+      const num=document.createElement('span'); num.dir='ltr'; num.textContent=phone; p.appendChild(num);
+      const tag=document.createElement('span');
+      tag.className=accountPhoneVerified()?'acx-ok':'acx-warn';
+      tag.textContent=accountPhoneVerified()?'پشتڕاستکراوە':'پشتڕاست نەکراوەتەوە';
+      p.appendChild(document.createTextNode(' ')); p.appendChild(tag);
+    }else{
+      p.textContent='—';
+    }
+  }
+  const m=document.getElementById('pfMenuEmail');
+  if(m){
+    m.textContent='';
+    const email=curProfile && curProfile.email;
+    if(email){
+      const addr=document.createElement('span'); addr.dir='ltr'; addr.textContent=email; m.appendChild(addr);
+      const tag=document.createElement('span');
+      tag.className=accountEmailVerified()?'acx-ok':'acx-warn';
+      tag.textContent=accountEmailVerified()?'پشتڕاستکراوە':'پشتڕاست نەکراوەتەوە';
+      m.appendChild(document.createTextNode(' ')); m.appendChild(tag);
+    }else{
+      m.textContent='—';
+    }
+  }
+}
+// Kept for older call sites (sign-in, KYC refresh, leaving the profile).
+function fillProfileForm(){ applyProfileToUI(); renderAccountMenu(); }
+function updateProfileCooldownUI(){
+  renderAccountMenu();
+  if(_route==='account-name') renderAccountNameScreen();
+  if(_route==='change-phone') renderChangePhoneScreen();
+  if(_route==='change-email') renderChangeEmailScreen();
+}
+
+// ── /account-name ─────────────────────────────────────────────
+let _anBusy=false;
+function anReset(){
+  const i=document.getElementById('anInput'); if(i) i.value='';
+  acxErr('anErr','');
+}
+function openAccountNameScreen(){
+  anReset();
+  renderAccountNameScreen();
+  Promise.all([refreshProfileRow(), curUser ? loadKycStatus(true) : null])
+    .then(()=>{ if(_route==='account-name') renderAccountNameScreen(); }).catch(()=>{});
+}
+function renderAccountNameScreen(){
+  const cur=document.getElementById('anCurrent');
+  if(cur) cur.textContent=(curProfile && curProfile.full_name) || '—';
+  let note=null;
+  if(kycNameLocked()){
+    note={tone:'lock', title:'ناتوانیت ناوی هەژمار بگۆڕیت',
+          text:'ناوەکەت بە ناسنامە پشتڕاستکراوەتەوە، بۆیە جێگیر کراوە و هەمیشە وەک ناوی ناو بەڵگەنامەکەت دەمێنێتەوە.'};
+  }else{
+    const at=(curProfile && !curProfile.is_admin) ? acxNextChange(curProfile.name_changed_at) : null;
+    if(at) note={tone:'wait', title:'ئێستا ناتوانیت ناوی هەژمار بگۆڕیت',
+                 text:'ناو هەر 30 ڕۆژ جارێک دەگۆڕدرێت. لە '+acxDay(at)+' دەتوانیت دووبارە بیگۆڕیت.', until:at};
+  }
+  acxNote('anNote',note);
+  const form=document.getElementById('anForm'); if(form) form.hidden=!!note;
+  anSync(true);
+}
+function anSync(keepError){
+  const v=String(document.getElementById('anInput')?.value||'').trim().replace(/\s+/g,' ');
+  const ok=v.length>=3 && v.length<=80 && normalizePersonName(v)!==normalizePersonName(curProfile?.full_name);
+  const b=document.getElementById('anBtn'); if(b) b.disabled=!ok || _anBusy;
+  if(!keepError) acxErr('anErr','');
+}
+async function submitAccountName(ev){
+  if(ev) ev.preventDefault();
+  if(_anBusy || !curUser) return;
+  const name=String(document.getElementById('anInput').value||'').trim().replace(/\s+/g,' ');
+  if(name.length<3 || name.length>80) return acxErr('anErr','ناو دەبێت لە نێوان 3 بۆ 80 پیت بێت');
+  if(normalizePersonName(name)===normalizePersonName(curProfile?.full_name)) return acxErr('anErr','ئەمە هەمان ناوی ئێستای هەژمارەکەتە');
+  _anBusy=true; acxBusy('anBtn',true);
+  try{
+    const {data,error}=await sb.from('ex_profiles').update({full_name:name}).eq('id',curUser.id).select().single();
+    if(error) throw error;
+    curProfile=Object.assign({},curProfile||{},data||{});
+    if(!curProfile.name_changed_at) curProfile.name_changed_at=new Date().toISOString();
+    applyProfileToUI(); renderAccountMenu();
+    anReset();
+    showToast('ناوی هەژمار گۆڕدرا','success','گۆڕدرا');
+    navigate('profile');
+  }catch(e){
+    const msg=String((e && (e.message||e.details))||'');
+    if(msg.includes('PROFILE_NAME_COOLDOWN')){
+      const until=Date.parse(String(e.details||''));
+      if(curProfile && Number.isFinite(until)) curProfile.name_changed_at=new Date(until-ACCOUNT_CHANGE_DAYS*DAY_MS).toISOString();
+      else await refreshProfileRow();
+      renderAccountNameScreen();                       // the calm notice, not an error
+    }else if(msg.includes('PROFILE_NAME_LOCKED_BY_KYC')){
+      await loadKycStatus(true);
+      if(_kyc && _kyc.data) _kyc.data.name_locked=true;
+      renderAccountNameScreen();
+    }else if(msg.includes('PROFILE_NAME_INVALID')){
+      acxErr('anErr','ناو دەبێت لە نێوان 3 بۆ 80 پیت بێت');
+    }else{
+      acxErr('anErr','نەتوانرا ناوەکە بگۆڕدرێت. دووبارە هەوڵ بدەرەوە.');
+    }
+  }finally{
+    _anBusy=false; acxBusy('anBtn',false); anSync(true);
+  }
+}
+
+// ── /change-phone ─────────────────────────────────────────────
+const _cp={phone:null,password:'',busy:false,timer:null,resendAt:0};
+function cpShowStep(step){
+  const s1=document.getElementById('cpStep1'), s2=document.getElementById('cpStep2');
+  if(s1) s1.hidden=step!==1;
+  if(s2) s2.hidden=step!==2;
+}
+function cpReset(){
+  ['cpPhone','cpPass','cpCode'].forEach(id=>{ const el=document.getElementById(id); if(el){ el.value=''; if(id==='cpPass') el.type='password'; } });
+  document.querySelectorAll('#pageChangePhone .acx-eye').forEach(b=>b.classList.remove('is-on'));
+  acxErr('cpErr',''); acxErr('cpCodeErr','');
+  _cp.phone=null; _cp.password=''; _cp.busy=false;
+  clearInterval(_cp.timer); _cp.timer=null;
+  cpShowStep(1);
+}
+function openChangePhoneScreen(){
+  cpReset();
+  renderChangePhoneScreen();
+  refreshProfileRow().then(()=>{ if(_route==='change-phone') renderChangePhoneScreen(); });
+}
+function renderChangePhoneScreen(){
+  const phone=curProfile && curProfile.phone, verified=accountPhoneVerified();
+  const cur=document.getElementById('cpCurrent'); if(cur) cur.textContent=phone || 'هیچ ژمارەیەک نییە';
+  const tag=document.getElementById('cpTag');
+  if(tag){
+    tag.hidden=!phone;
+    tag.dataset.tone=verified?'ok':'warn';
+    tag.textContent=verified?'پشتڕاستکراوە':'پشتڕاست نەکراوەتەوە';
+  }
+  const label=document.querySelector('label[for="cpPhone"]');
+  if(label) label.textContent=verified?'ژمارەی نوێ':'ژمارەی مۆبایل';
+  const at=acxNextChange(curProfile && curProfile.phone_changed_at);
+  if(at){
+    acxNote('cpNote',{tone:'wait', title:'ئێستا ناتوانیت ژمارەی مۆبایل بگۆڕیت',
+      text:'ژمارەی مۆبایل هەر 30 ڕۆژ جارێک دەگۆڕدرێت. لە '+acxDay(at)+' دەتوانیت دووبارە بیگۆڕیت.', until:at});
+    cpShowStep(0);
+    return;
+  }
+  acxNote('cpNote', null);
+  if(!_cp.phone) cpShowStep(1);
+  const input=document.getElementById('cpPhone');
+  if(input && !input.value && phone && !verified) input.value=phone;     // their saved number, ready to verify
+  cpSync(true);
+}
+function cpSync(keepError){
+  const send=document.getElementById('cpSendBtn');
+  if(send) send.disabled=_cp.busy || !pxIraqiPhone(document.getElementById('cpPhone')?.value) || !document.getElementById('cpPass')?.value;
+  const verify=document.getElementById('cpVerifyBtn');
+  if(verify) verify.disabled=_cp.busy || String(document.getElementById('cpCode')?.value||'').length!==6;
+  if(!keepError){ acxErr('cpErr',''); acxErr('cpCodeErr',''); }
+}
+function acxClock(sec){ const m=Math.floor(sec/60), s=sec%60; return String(m+':'+(s<10?'0':'')+s); }
+function cpStartResend(seconds){
+  clearInterval(_cp.timer);
+  _cp.resendAt=Date.now()+seconds*1000;
+  const tick=()=>{
+    const b=document.getElementById('cpResend'); if(!b) return;
+    const left=Math.ceil((_cp.resendAt-Date.now())/1000);
+    if(left<=0){ clearInterval(_cp.timer); _cp.timer=null; b.disabled=false; b.textContent='دووبارە ناردنەوە'; return; }
+    b.disabled=true; b.textContent='دووبارە ناردنەوە ('+acxClock(left)+')';
+  };
+  tick(); _cp.timer=setInterval(tick,1000);
+}
+// Cool-down → the calm notice; anything else → the message under the field.
+function cpFail(r, errId){
+  if(r.code==='PHONE_COOLDOWN'){
+    const until=Date.parse(r.available_at||'');
+    if(curProfile && Number.isFinite(until)) curProfile.phone_changed_at=new Date(until-ACCOUNT_CHANGE_DAYS*DAY_MS).toISOString();
+    cpReset(); renderChangePhoneScreen(); return;
+  }
+  acxErr(errId, pxAuthError(r));
+}
+async function cpSend(ev){
+  if(ev) ev.preventDefault();
+  if(_cp.busy) return;
+  const phone=pxIraqiPhone(document.getElementById('cpPhone').value);
+  const password=document.getElementById('cpPass').value;
+  if(!phone) return acxErr('cpErr','ژمارەی مۆبایلەکە دروست نییە');
+  if(!password) return acxErr('cpErr','وشەی نهێنیی ئێستات بنووسە');
+  _cp.busy=true; acxBusy('cpSendBtn',true);
+  const r=await pxAuthApi('phone_change_start',{phone,password},true);
+  _cp.busy=false; acxBusy('cpSendBtn',false); cpSync(true);
+  if(!r.ok) return cpFail(r,'cpErr');
+  _cp.phone=phone; _cp.password=password;
+  const target=document.getElementById('cpTarget'); if(target) target.textContent='0'+phone.slice(4);
+  const code=document.getElementById('cpCode'); if(code) code.value='';
+  cpShowStep(2); cpStartResend(pxSecondsLeft(r.expires_at,300)); cpSync();
+  setTimeout(()=>{ try{ code && code.focus({preventScroll:true}); }catch(_){} },60);
+}
+async function cpResend(){
+  if(_cp.busy || !_cp.phone || Date.now()<_cp.resendAt) return;
+  _cp.busy=true;
+  const r=await pxAuthApi('phone_change_start',{phone:_cp.phone,password:_cp.password},true);
+  _cp.busy=false; cpSync(true);
+  if(!r.ok) return cpFail(r,'cpCodeErr');
+  cpStartResend(pxSecondsLeft(r.expires_at,300));
+  showToast(r.already_sent?'کۆدی پێشوو هێشتا کاردەکات':'کۆدی نوێ نێردرا','success');
+}
+function cpBack(){
+  const keep=_cp.phone;
+  clearInterval(_cp.timer); _cp.timer=null; _cp.phone=null; _cp.password='';
+  acxErr('cpCodeErr','');
+  const input=document.getElementById('cpPhone'); if(input && keep) input.value='0'+keep.slice(4);
+  cpShowStep(1); cpSync();
+}
+async function cpVerify(ev){
+  if(ev) ev.preventDefault();
+  if(_cp.busy || !_cp.phone) return;
+  const code=String(document.getElementById('cpCode').value||'');
+  if(code.length!==6) return acxErr('cpCodeErr','کۆدە 6 ژمارەییەکە بنووسە');
+  _cp.busy=true; acxBusy('cpVerifyBtn',true);
+  const r=await pxAuthApi('phone_change_finish',{phone:_cp.phone,code},true);
+  _cp.busy=false; acxBusy('cpVerifyBtn',false); cpSync(true);
+  if(!r.ok) return cpFail(r,'cpCodeErr');
+  const oldPhone=curProfile && curProfile.phone;
+  curProfile=Object.assign({},curProfile||{},{phone:r.phone, phone_verified_at:new Date().toISOString(), phone_changed_at:r.changed_at||new Date().toISOString()});
+  if(r.sign_in_changed){
+    // a number account now signs in with the new number: keep this device remembered
+    try{
+      const all=JSON.parse(localStorage.getItem(PX_DEVICE_STORE)||'{}');
+      const from=oldPhone && pxIraqiPhone(oldPhone), to=pxIraqiPhone(r.phone);
+      if(from && to && all[from]){ all[to]=all[from]; delete all[from]; localStorage.setItem(PX_DEVICE_STORE,JSON.stringify(all)); }
+    }catch(_){}
+    try{ const {data}=await sb.auth.refreshSession(); if(data?.user) curUser=data.user; }catch(_){}
+  }
+  applyProfileToUI(); renderAccountMenu();
+  if(typeof loadWhatsappSettings==='function') loadWhatsappSettings();
+  cpReset();
+  showToast(r.sign_in_changed?'ژمارەی مۆبایل گۆڕدرا':'ژمارەی مۆبایل پشتڕاستکرایەوە','success','پشتڕاستکرایەوە');
+  navigate('profile');
+}
+
+// ── /change-email ─────────────────────────────────────────────
+// A verified Gmail address next to the number: sign in (and reset the password)
+// with either one, so a lost SIM never locks anyone out. Code by e-mail (n8n).
+const _ce={email:null,password:'',busy:false,timer:null,resendAt:0};
+function ceShowStep(step){
+  const s1=document.getElementById('ceStep1'), s2=document.getElementById('ceStep2');
+  if(s1) s1.hidden=step!==1;
+  if(s2) s2.hidden=step!==2;
+}
+function ceReset(){
+  ['ceEmail','cePass','ceCode'].forEach(id=>{ const el=document.getElementById(id); if(el){ el.value=''; if(id==='cePass') el.type='password'; } });
+  document.querySelectorAll('#pageChangeEmail .acx-eye').forEach(b=>b.classList.remove('is-on'));
+  acxErr('ceErr',''); acxErr('ceCodeErr','');
+  _ce.email=null; _ce.password=''; _ce.busy=false;
+  clearInterval(_ce.timer); _ce.timer=null;
+  ceShowStep(1);
+}
+function openChangeEmailScreen(){
+  ceReset();
+  renderChangeEmailScreen();
+  refreshProfileRow().then(()=>{ if(_route==='change-email') renderChangeEmailScreen(); });
+}
+function renderChangeEmailScreen(){
+  const email=curProfile && curProfile.email;
+  const box=document.getElementById('ceCurrentBox'); if(box) box.hidden=!email;
+  const cur=document.getElementById('ceCurrent'); if(cur) cur.textContent=email||'—';
+  const label=document.querySelector('label[for="ceEmail"]');
+  if(label) label.textContent=email?'ئیمەیڵی نوێ':'ئیمەیڵ';
+  if(!_ce.email) ceShowStep(1);
+  ceSync(true);
+}
+function ceSync(keepError){
+  const send=document.getElementById('ceSendBtn');
+  if(send) send.disabled=_ce.busy || !pxIsGmail(document.getElementById('ceEmail')?.value) || !document.getElementById('cePass')?.value;
+  const verify=document.getElementById('ceVerifyBtn');
+  if(verify) verify.disabled=_ce.busy || String(document.getElementById('ceCode')?.value||'').length!==6;
+  if(!keepError){ acxErr('ceErr',''); acxErr('ceCodeErr',''); }
+}
+function ceStartResend(seconds){
+  clearInterval(_ce.timer);
+  _ce.resendAt=Date.now()+seconds*1000;
+  const tick=()=>{
+    const b=document.getElementById('ceResend'); if(!b) return;
+    const left=Math.ceil((_ce.resendAt-Date.now())/1000);
+    if(left<=0){ clearInterval(_ce.timer); _ce.timer=null; b.disabled=false; b.textContent='دووبارە ناردنەوە'; return; }
+    b.disabled=true; b.textContent='دووبارە ناردنەوە ('+acxClock(left)+')';
+  };
+  tick(); _ce.timer=setInterval(tick,1000);
+}
+async function ceSend(ev){
+  if(ev) ev.preventDefault();
+  if(_ce.busy) return;
+  const email=String(document.getElementById('ceEmail').value||'').trim().toLowerCase();
+  const password=document.getElementById('cePass').value;
+  if(!pxIsGmail(email)) return acxErr('ceErr','ئیمەیڵەکە دروست نییە');
+  if(!password) return acxErr('ceErr','وشەی نهێنیی ئێستات بنووسە');
+  _ce.busy=true; acxBusy('ceSendBtn',true);
+  const r=await pxAuthApi('email_change_start',{email,password},true);
+  _ce.busy=false; acxBusy('ceSendBtn',false); ceSync(true);
+  if(!r.ok) return acxErr('ceErr',pxAuthError(r));
+  _ce.email=email; _ce.password=password;
+  const code=document.getElementById('ceCode'); if(code) code.value='';
+  ceShowStep(2); ceStartResend(pxSecondsLeft(r.expires_at,600)); ceSync();
+  setTimeout(()=>{ try{ code && code.focus({preventScroll:true}); }catch(_){} },60);
+}
+async function ceResend(){
+  if(_ce.busy || !_ce.email || Date.now()<_ce.resendAt) return;
+  _ce.busy=true;
+  const r=await pxAuthApi('email_change_start',{email:_ce.email,password:_ce.password},true);
+  _ce.busy=false; ceSync(true);
+  if(!r.ok) return acxErr('ceCodeErr',pxAuthError(r));
+  ceStartResend(pxSecondsLeft(r.expires_at,600));
+  showToast(r.already_sent?'کۆدی پێشوو هێشتا کاردەکات':'کۆدی نوێ نێردرا','success');
+}
+function ceBack(){
+  const keep=_ce.email;
+  clearInterval(_ce.timer); _ce.timer=null; _ce.email=null; _ce.password='';
+  acxErr('ceCodeErr','');
+  const input=document.getElementById('ceEmail'); if(input && keep) input.value=keep;
+  ceShowStep(1); ceSync();
+}
+async function ceVerify(ev){
+  if(ev) ev.preventDefault();
+  if(_ce.busy || !_ce.email) return;
+  const code=String(document.getElementById('ceCode').value||'');
+  if(code.length!==6) return acxErr('ceCodeErr','کۆدە 6 ژمارەییەکە بنووسە');
+  _ce.busy=true; acxBusy('ceVerifyBtn',true);
+  const r=await pxAuthApi('email_change_finish',{email:_ce.email,code},true);
+  _ce.busy=false; acxBusy('ceVerifyBtn',false); ceSync(true);
+  if(!r.ok) return acxErr('ceCodeErr',pxAuthError(r));
+  const oldEmail=curProfile && curProfile.email;
+  curProfile=Object.assign({},curProfile||{},{email:r.email, email_verified_at:new Date().toISOString()});
+  if(r.sign_in_changed){
+    // an e-mail account now signs in with the new address: keep this device remembered
+    try{
+      const all=JSON.parse(localStorage.getItem(PX_DEVICE_STORE)||'{}');
+      const from=String(oldEmail||'').toLowerCase(), to=String(r.email||'').toLowerCase();
+      if(from && to && all[from]){ all[to]=all[from]; delete all[from]; localStorage.setItem(PX_DEVICE_STORE,JSON.stringify(all)); }
+    }catch(_){}
+    try{ const {data}=await sb.auth.refreshSession(); if(data?.user) curUser=data.user; }catch(_){}
+  }
+  applyProfileToUI(); renderAccountMenu();
+  ceReset();
+  showToast(r.sign_in_changed?'ئیمەیڵ گۆڕدرا':'ئیمەیڵ زیاد کرا','success','پشتڕاستکرایەوە');
+  navigate('profile');
+}
+
+// ── /change-password ──────────────────────────────────────────
+let _pwBusy=false;
+function pwReset(){
+  ['pwCurrent','pwNew','pwNew2'].forEach(id=>{ const el=document.getElementById(id); if(el){ el.value=''; el.type='password'; } });
+  document.querySelectorAll('#pageChangePassword .acx-eye').forEach(b=>b.classList.remove('is-on'));
+  acxErr('pwErr','');
+}
+function openPasswordScreen(){ pwReset(); pwSync(); }
+function pwSync(keepError){
+  const cur=document.getElementById('pwCurrent')?.value||'', nw=document.getElementById('pwNew')?.value||'', nw2=document.getElementById('pwNew2')?.value||'';
+  const b=document.getElementById('pwBtn'); if(b) b.disabled=_pwBusy || !cur || nw.length<8 || !nw2;
+  if(!keepError) acxErr('pwErr','');
+}
+async function submitPasswordChange(ev){
+  if(ev) ev.preventDefault();
+  if(_pwBusy || !curUser) return;
+  const current=document.getElementById('pwCurrent').value, password=document.getElementById('pwNew').value, again=document.getElementById('pwNew2').value;
+  if(!current) return acxErr('pwErr','وشەی نهێنیی ئێستات بنووسە');
+  if(password.length<8) return acxErr('pwErr','وشەی نهێنیی نوێ دەبێت لانیکەم 8 پیت بێت');
+  if(password!==again) return acxErr('pwErr','دوو وشە نهێنییە نوێیەکە وەک یەک نین');
+  if(password===current) return acxErr('pwErr','وشەی نهێنیی نوێ دەبێت جیاواز بێت لە وشەی نهێنیی ئێستا');
+  _pwBusy=true; acxBusy('pwBtn',true);
+  const r=await pxAuthApi('password_change',{current,password},true);
+  if(r.ok && r.session){
+    try{ await sb.auth.setSession({access_token:r.session.access_token,refresh_token:r.session.refresh_token}); }catch(_){}
+  }
+  _pwBusy=false; acxBusy('pwBtn',false); pwSync(true);
+  if(!r.ok) return acxErr('pwErr',pxAuthError(r));
+  pwReset();
+  showToast('وشەی نهێنی گۆڕدرا','success','گۆڕدرا');
+  navigate('profile');
 }
 
 function applyProfileToUI(){
@@ -4004,7 +4417,7 @@ const UN_RE=/^[a-z][a-z0-9_]{2,19}$/;
 const UN_RESERVED=/^(admin|support|staff|proxo|root|system|moderator|official)/;
 const UN_ERRORS={
   USERNAME_ALREADY_CHANGED:'ناوی بەکارهێنەرەکەت پێشتر گۆڕدراوە و جارێکی تر ناگۆڕدرێت.',
-  USERNAME_INVALID:'ناوەکە دروست نییە. ٣ بۆ ٢٠ پیت، بە پیتی ئینگلیزی دەست پێ بکات و تەنها a-z، 0-9 و _ بێت.',
+  USERNAME_INVALID:'ناوەکە دروست نییە. 3 بۆ 20 پیت، بە پیتی ئینگلیزی دەست پێ بکات و تەنها a-z، 0-9 و _ بێت.',
   USERNAME_RESERVED:'ئەم ناوە پارێزراوە؛ ناوێکی تر هەڵبژێرە.',
   USERNAME_UNCHANGED:'ئەمە هەمان ناوی ئێستای تۆیە.',
   USERNAME_TAKEN:'ئەم ناوە پێشتر بەکارهێنراوە؛ ناوێکی تر تاقی بکەرەوە.',
@@ -4086,83 +4499,6 @@ async function submitUsernameChange(ev){
   }
 }
 
-function fillProfileForm(){
-  const n=document.getElementById('pfName'); if(n) n.value=(curProfile && curProfile.full_name)||'';
-  const p=document.getElementById('pfPhone'); if(p) p.value=(curProfile && curProfile.phone)||'';
-  applyProfileToUI();
-  updateProfileCooldownUI();
-}
-
-async function saveProfile(){
-  const nameEl=document.getElementById('pfName'), phoneEl=document.getElementById('pfPhone');
-  const nameLocked=kycNameLocked();
-  // A verified name cannot change: keep the stored one (the database enforces it too).
-  if(nameLocked) nameEl.value=(curProfile && curProfile.full_name)||nameEl.value;
-  const name=(nameEl.value||'').trim(), phone=(phoneEl.value||'').trim();
-  clearFieldError('pfName'); clearFieldError('pfPhone');
-
-  if(updateProfileCooldownUI()){
-    showToast('هێشتا ٧ ڕۆژەکە تەواو نەبووە؛ کاتی ڕێگەپێدراو لە خوارەوە نیشان دراوە','warning');
-    return;
-  }
-
-  if(normalizePersonName(name)===normalizePersonName(curProfile?.full_name)
-     && phone===String(curProfile?.phone||'')){
-    showToast('هیچ گۆڕانکارییەک نەکراوە','warning');
-    return;
-  }
-
-  let ok=true;
-  if(name.length<3){ setFieldError('pfName','ناو دەبێت لانیکەم ٣ پیت بێت'); ok=false; }
-  if(phone && !/^07\d{9}$/.test(phone)){ setFieldError('pfPhone','ژمارە دەبێت بە 07 دەست پێبکات و ١١ ژمارە بێت'); ok=false; }
-  if(!ok) return;
-
-  const btn=document.getElementById('pfSaveBtn');
-  btn.disabled=true; btn.innerHTML=ICON.spin+' پاشەکەوتکردن...';
-  try{
-    const {data,error}=await sb.from('ex_profiles')
-      .update(nameLocked ? { phone: phone || null } : { full_name:name, phone: phone || null })
-      .eq('id', curUser.id).select().single();
-    if(error) throw error;
-    curProfile=Object.assign({},curProfile||{},data||{});
-    // Lock immediately even if an API/schema cache returns the row without the
-    // newly added timestamp column. The database remains the source of truth.
-    if(!curProfile.identity_updated_at) curProfile.identity_updated_at=new Date().toISOString();
-    applyProfileToUI();
-    updateProfileCooldownUI();
-    showToast('زانیارییەکانت نوێکرانەوە؛ دوای ٧ ڕۆژ دەتوانیت دووبارە بیانگۆڕیت','success');
-    const orderPhone=document.getElementById('userPhone');
-    if(orderPhone && !orderPhone.value && phone) orderPhone.value=phone;
-  }catch(e){
-    const msg=(e&&e.message)||'';
-    if(msg.includes('PROFILE_UPDATE_COOLDOWN')){
-      // A long-lived tab may still hold the profile from before the last save.
-      // Refresh it so both inputs become locked immediately and stay locked.
-      try{
-        const {data:fresh}=await sb.from('ex_profiles').select('*').eq('id',curUser.id).maybeSingle();
-        if(fresh){ curProfile=fresh; fillProfileForm(); }
-      }catch(_){}
-      const availableAt=profileChangeAvailableAt();
-      showToast(availableAt
-        ? 'ناو و ژمارەکەت قوفڵن؛ لە '+new Date(availableAt).toLocaleString('ku-IQ')+' دووبارە دەکرێنەوە'
-        : 'ناو و ژمارەی مۆبایل تا تەواوبوونی ٧ ڕۆژەکە قوفڵن','error');
-    }else if(msg.includes('PROFILE_NAME_LOCKED_BY_KYC')){
-      if(curProfile) nameEl.value=curProfile.full_name||'';
-      await loadKycStatus(true);
-      setFieldError('pfName','ناوەکەت بە ناسنامە پشتڕاستکراوەتەوە و ناتوانرێت بگۆڕدرێت');
-      showToast('ناوەکەت بە ناسنامە پشتڕاستکراوەتەوە و ناتوانرێت بگۆڕدرێت','error');
-    }else if(msg.includes('PROFILE_NAME_INVALID')){
-      showToast('ناو دەبێت لانیکەم ٣ پیت بێت','error');
-    }else if(msg.includes('PROFILE_PHONE_INVALID')){
-      showToast('ژمارەی مۆبایلەکە دروست نییە','error');
-    }else{
-      showToast(msg||'نەتوانرا پاشەکەوت بکرێت','error');
-    }
-  }finally{
-    btn.innerHTML='پاشەکەوتکردن';
-    updateProfileCooldownUI();
-  }
-}
 
 // ═══ CUSTOMER SUPPORT CASES ═══════════════════════════════════
 // Images live in a private bucket. The user's JWT and Storage RLS restrict
@@ -4320,9 +4656,9 @@ async function submitSupportCase(){
   const orderCode=(document.getElementById('supportOrderCode')?.value||'').trim().toUpperCase();
   const description=(document.getElementById('supportDescription')?.value||'').trim();
   clearFieldError('supportDescription'); clearFieldError('supportImage');
-  if(description.length<10){ setFieldError('supportDescription','تکایە کێشەکە بە لانیکەم ١٠ پیت ڕوون بکەرەوە'); return; }
+  if(description.length<10){ setFieldError('supportDescription','تکایە کێشەکە بە لانیکەم 10 پیت ڕوون بکەرەوە'); return; }
   if(orderCode && !/^P[A-Z0-9]{11}$/.test(orderCode)){
-    showToast('ئایدی مامەڵە دەبێت بە P دەست پێبکات و ١٢ پیت بێت','error');
+    showToast('ئایدی مامەڵە دەبێت بە P دەست پێبکات و 12 پیت بێت','error');
     return;
   }
 
@@ -4474,11 +4810,11 @@ const KYC_ERRORS = {
   KYC_ALREADY_PENDING:'داواکارییەکی تۆ پێشتر نێردراوە و لە ژێر پشکنینە',
   KYC_ALREADY_APPROVED:'ناسنامەکەت پێشتر پشتڕاستکراوەتەوە',
   KYC_DUPLICATE_SUBMISSION:'ئەم داواکارییە پێشتر نێردراوە',
-  KYC_RATE_LIMIT:'لە ٢٤ کاتژمێردا زۆر داواکاریت ناردووە؛ تکایە دواتر هەوڵبدەوە',
+  KYC_RATE_LIMIT:'لە 24 کاتژمێردا زۆر داواکاریت ناردووە؛ تکایە دواتر هەوڵبدەوە',
   KYC_DOCUMENT_TYPE_INVALID:'جۆری بەڵگەنامە هەڵبژێرە',
   KYC_NAME_INVALID:'ناوی تەواو بە لانیکەم دوو بەش و بەبێ ژمارە یان هێما بنووسە',
   KYC_DOB_INVALID:'بەرواری لەدایکبوون دروست نییە',
-  KYC_NUMBER_INVALID:'ژمارەی بەڵگەنامە دەبێت ٤ بۆ ٣٠ پیت/ژمارەی ئینگلیزی بێت',
+  KYC_NUMBER_INVALID:'ژمارەی بەڵگەنامە دەبێت 4 بۆ 30 پیت/ژمارەی ئینگلیزی بێت',
   KYC_FRONT_PATH_INVALID:'وێنەی ڕووی پێشەوە دروست نییە؛ دووبارە هەڵیبژێرە',
   KYC_BACK_PATH_INVALID:'وێنەی ڕووی دواوە دروست نییە؛ دووبارە هەڵیبژێرە',
   KYC_BACK_REQUIRED:'وێنەی ڕووی دواوەی بەڵگەنامە پێویستە',
@@ -4585,8 +4921,6 @@ async function loadKycStatus(silent){
       if(curProfile && typeof data?.account_name==='string' && curProfile.full_name!==data.account_name){
         curProfile.full_name=data.account_name;
         applyProfileToUI();
-        const pfName=document.getElementById('pfName');
-        if(pfName && document.activeElement!==pfName) pfName.value=data.account_name;
       }
       updateProfileCooldownUI();
     }catch(e){
@@ -5188,7 +5522,7 @@ function kycValidate(){
   if(!dob) fail('kycDob','بەرواری لەدایکبوون دیاری بکە');
   else if(!kycIsRealDate(dob) || dob<'1900-01-01' || dob>kycToday()) fail('kycDob','بەرواری لەدایکبوون دروست نییە');
   const num=(document.getElementById('kycNumber').value||'').trim();
-  if(!/^[A-Z0-9-]{4,30}$/.test(num)) fail('kycNumber','ژمارەی بەڵگەنامە دەبێت ٤ بۆ ٣٠ پیت/ژمارەی ئینگلیزی بێت');
+  if(!/^[A-Z0-9-]{4,30}$/.test(num)) fail('kycNumber','ژمارەی بەڵگەنامە دەبێت 4 بۆ 30 پیت/ژمارەی ئینگلیزی بێت');
   if(!_kycImages.front?.prepared && !_kycImages.front?.promise) fail('kycFront','وێنەی ڕووی پێشەوە پێویستە','kycFrontBox');
   if(_kycDocType && KYC_DOC_TYPES[_kycDocType].needsBack && !_kycImages.back?.prepared && !_kycImages.back?.promise)
     fail('kycBack','وێنەی ڕووی دواوە پێویستە','kycBackBox');
@@ -5340,7 +5674,7 @@ function validatePhoneLive(){
   if(!good && ((to==='QiCard' && v.length>6) || v.length>=11)){
     setFieldError('userPhone', to==='QiCard'
       ? 'ژمارەی کارتەکە دروست نییە'
-      : 'ژمارە دەبێت بە 07 دەست پێبکات و ١١ ژمارە بێت');
+      : 'ژمارە دەبێت بە 07 دەست پێبکات و 11 ژمارە بێت');
     if(grp) grp.classList.add('has-error');
   }
 }
@@ -5670,7 +6004,7 @@ async function submitAccountDeletion(){
     const {data,error}=await sb.rpc('ex_account_deletion_request',{p_reason:null});
     if(error) throw error;
     const when=daxDate(data?.scheduled_for);
-    try{ sessionStorage.setItem('px_auth_notice','داواکارییەکەت وەرگیرا. هەژمارەکەت'+(when?' لە '+when:' دوای ٧ ڕۆژ')+' دەسڕدرێتەوە. بۆ هەڵوەشاندنەوە، تەنها بچۆرەوە ژوورەوە.'); }catch(_){}
+    try{ sessionStorage.setItem('px_auth_notice','داواکارییەکەت وەرگیرا. هەژمارەکەت'+(when?' لە '+when:' دوای 7 ڕۆژ')+' دەسڕدرێتەوە. بۆ هەڵوەشاندنەوە، تەنها بچۆرەوە ژوورەوە.'); }catch(_){}
     try{ await sb.auth.signOut({scope:'local'}); }catch(_){}
     try{ location.replace(BASE_PATH+'login'); }catch(_){ location.reload(); }
   }catch(e){

@@ -106,7 +106,7 @@ function balanceRefundReportCard(row,index){
   const money=value=>esc(balanceRefundReportMoney(value));
   const metric=(label,value,credit=false)=>'<div'+(credit?' class="balance-refund-pdf-credit"':'')+'><span>'+esc(label)+'</span><strong>'+money(value)+'</strong></div>';
   const explanation=row.automatic?(row.sent===0?
-    'بڕی پاش لێبڕین لە ١٬٠٠٠ دینار کەمترە؛ ناردنی دەرەکی نییە و هەمووی بۆ باڵانسی هەژمار گەڕێندراوەتەوە.':
+    'بڕی پاش لێبڕین لە 1٬000 دینار کەمترە؛ ناردنی دەرەکی نییە و هەمووی بۆ باڵانسی هەژمار گەڕێندراوەتەوە.':
     'بڕی ناردن بۆ هەزاری تەواو دیاری کراوە و پاشماوەکە لە کاتی پەسەندکردندا بە ئۆتۆماتیکی بۆ باڵانسی هەژمار گەڕێندراوەتەوە.'):
     row.kind==='shortfall'?
     'نێردراو هەژمارکراوە: بڕی پاش لێبڕین − کۆی گەڕاوەکان تا ئەم تۆمارە.':

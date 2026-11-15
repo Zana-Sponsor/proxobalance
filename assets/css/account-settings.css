@@ -1,0 +1,147 @@
+/* ═════════════════════════════════════════════════════════════════
+   Account screens: /account-name, /change-phone, /change-password
+   (.acx-page) and the "account" rows in the profile menu.
+   Same family as the delete-account screen: one card per idea, one
+   blue action. A rule that blocks a change is a calm notice with the
+   date it opens again — never a red error.
+     type   12 · 13 · 14 · 16 · 18 (Rabar)     space 8 · 12 · 16 · 20 · 24
+     radius 12 (controls) · 16 (cards)
+   ═════════════════════════════════════════════════════════════════ */
+html body #mainApp#mainApp .acx-page {
+  --ax-card: #ffffff; --ax-soft: #f5f7fa; --ax-line: #e7ebf1;
+  --ax-ink: #0f172a; --ax-text: #334155; --ax-muted: #6b7a90;
+  --ax-accent: #0265ff; --ax-accent-press: #0052d6; --ax-accent-soft: #eaf2ff; --ax-accent-line: #cfe0ff;
+  --ax-warn: #8a5300; --ax-warn-soft: #fff6e5; --ax-warn-line: #f3dcae; --ax-warn-fill: #e59a1a;
+  --ax-ok: #0f7b4a; --ax-ok-soft: #e8f7ef;
+  --ax-danger: #d92d20;
+  --ax-font: Rabar, Arial, sans-serif;
+}
+html[data-theme="dark"] body #mainApp#mainApp .acx-page {
+  --ax-card: #131c2e; --ax-soft: #0f1828; --ax-line: #25324a;
+  --ax-ink: #e8edf6; --ax-text: #c4cee0; --ax-muted: #98a6bd;
+  --ax-accent: #3b8cff; --ax-accent-press: #2a78ea; --ax-accent-soft: #14233d; --ax-accent-line: #24406b;
+  --ax-warn: #f7c66b; --ax-warn-soft: #2a2213; --ax-warn-line: #4a3a1c; --ax-warn-fill: #f0a83a;
+  --ax-ok: #4fd18b; --ax-ok-soft: #12291e;
+  --ax-danger: #f97066;
+}
+
+html body #mainApp#mainApp .acx-page .acx { display: flex; flex-direction: column; gap: 20px; font-family: var(--ax-font); color: var(--ax-ink); }
+
+/* header: back · title */
+html body #mainApp#mainApp .acx-page .acx-bar { display: grid; grid-template-columns: 40px 1fr 40px; align-items: center; gap: 8px; }
+html body #mainApp#mainApp .acx-page .acx-bar h2 { margin: 0; text-align: center; color: var(--ax-ink); font-size: 16px; font-weight: 700; line-height: 1.5; }
+html body #mainApp#mainApp .acx-page .acx-back {
+  width: 40px; height: 40px; display: grid; place-items: center; padding: 0; margin: 0;
+  border: 1px solid var(--ax-line); border-radius: 12px; background: var(--ax-card); color: var(--ax-text); cursor: pointer;
+}
+html body #mainApp#mainApp .acx-page .pxi { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* what the account has now */
+html body #mainApp#mainApp .acx-page .acx-current {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; padding: 14px 16px;
+  border: 1px solid var(--ax-line); border-radius: 16px; background: var(--ax-card);
+}
+html body #mainApp#mainApp .acx-page .acx-current[hidden] { display: none; }
+html body #mainApp#mainApp .acx-page .acx-current > span { flex: 1 0 100%; color: var(--ax-muted); font-size: 12.5px; line-height: 1.6; }
+html body #mainApp#mainApp .acx-page .acx-current b { color: var(--ax-ink); font-size: 18px; font-weight: 700; line-height: 1.5; overflow-wrap: anywhere; }
+html body #mainApp#mainApp .acx-page .acx-tag {
+  display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 999px;
+  font-style: normal; font-size: 12px; font-weight: 600; line-height: 1;
+}
+html body #mainApp#mainApp .acx-page .acx-tag[hidden] { display: none; }
+html body #mainApp#mainApp .acx-page .acx-tag[data-tone="ok"] { background: var(--ax-ok-soft); color: var(--ax-ok); }
+html body #mainApp#mainApp .acx-page .acx-tag[data-tone="warn"] { background: var(--ax-warn-soft); color: var(--ax-warn); }
+
+/* the calm notice: why not now, and when */
+html body #mainApp#mainApp .acx-page .acx-note {
+  display: flex; align-items: flex-start; gap: 12px; padding: 16px;
+  border: 1px solid var(--ax-accent-line); border-radius: 16px; background: var(--ax-accent-soft);
+}
+html body #mainApp#mainApp .acx-page .acx-note[hidden] { display: none; }
+html body #mainApp#mainApp .acx-page .acx-note[data-tone="wait"] { border-color: var(--ax-warn-line); background: var(--ax-warn-soft); }
+html body #mainApp#mainApp .acx-page .acx-note-ico {
+  flex: 0 0 40px; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px;
+  background: var(--ax-card); color: var(--ax-accent);
+}
+html body #mainApp#mainApp .acx-page .acx-note[data-tone="wait"] .acx-note-ico { color: var(--ax-warn); }
+html body #mainApp#mainApp .acx-page .acx-note-body { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+html body #mainApp#mainApp .acx-page .acx-note-body b { color: var(--ax-ink); font-size: 15px; font-weight: 700; line-height: 1.6; }
+html body #mainApp#mainApp .acx-page .acx-note-body p { margin: 0; color: var(--ax-text); font-size: 13.5px; line-height: 1.8; }
+html body #mainApp#mainApp .acx-page .acx-meter { height: 6px; margin-top: 8px; border-radius: 999px; background: var(--ax-card); overflow: hidden; }
+html body #mainApp#mainApp .acx-page .acx-meter span { display: block; height: 100%; border-radius: inherit; background: var(--ax-warn-fill); }
+html body #mainApp#mainApp .acx-page .acx-meter-txt { color: var(--ax-warn); font-size: 12px; font-weight: 600; line-height: 1.6; }
+
+/* forms */
+html body #mainApp#mainApp .acx-page .acx-form { display: flex; flex-direction: column; gap: 8px; }
+html body #mainApp#mainApp .acx-page .acx-form[hidden] { display: none; }
+html body #mainApp#mainApp .acx-page .acx-form label { margin-top: 4px; color: var(--ax-text); font-size: 13px; font-weight: 600; line-height: 1.6; }
+html body #mainApp#mainApp .acx-page .acx-input {
+  width: 100%; height: 50px; margin: 0; padding: 0 14px; box-sizing: border-box;
+  border: 1px solid var(--ax-line) !important; border-radius: 12px !important; background: var(--ax-card) !important; box-shadow: none !important;
+  color: var(--ax-ink) !important; font-family: var(--ax-font); font-size: 16px !important;
+}
+html body #mainApp#mainApp .acx-page .acx-input[dir="ltr"] { text-align: left; }
+html body #mainApp#mainApp .acx-page .acx-input:focus { outline: 0; border-color: var(--ax-accent) !important; box-shadow: 0 0 0 3px var(--ax-accent-soft) !important; }
+html body #mainApp#mainApp .acx-page .acx-input::placeholder { color: var(--ax-muted); opacity: .8; }
+
+/* 🇮🇶 +964 in front of the number */
+html body #mainApp#mainApp .acx-page .acx-phone { position: relative; direction: ltr; }
+html body #mainApp#mainApp .acx-page .acx-phone .acx-input { padding-left: 98px; letter-spacing: .02em; }
+html body #mainApp#mainApp .acx-page .acx-cc {
+  position: absolute; inset: 1px auto 1px 1px; width: 86px; display: flex; align-items: center; justify-content: center; gap: 6px;
+  border-right: 1px solid var(--ax-line); border-radius: 11px 0 0 11px; background: var(--ax-soft); color: var(--ax-ink); pointer-events: none;
+}
+html body #mainApp#mainApp .acx-page .acx-cc b { font-size: 15px; font-weight: 600; line-height: 1; }
+html body #mainApp#mainApp .acx-page .iq-flag { width: 24px; height: 16px; flex: 0 0 24px; border-radius: 3px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .12); }
+html body #mainApp#mainApp .acx-page .acx-phone:focus-within .acx-cc { border-right-color: var(--ax-accent); }
+
+/* password with show / hide */
+html body #mainApp#mainApp .acx-page .acx-pass { position: relative; direction: ltr; }
+html body #mainApp#mainApp .acx-page .acx-pass .acx-input { padding-right: 50px; }
+html body #mainApp#mainApp .acx-page .acx-eye {
+  position: absolute; top: 5px; right: 5px; width: 40px; height: 40px; display: grid; place-items: center; padding: 0; margin: 0;
+  border: 0; border-radius: 10px; background: transparent; color: var(--ax-muted); cursor: pointer;
+}
+html body #mainApp#mainApp .acx-page .acx-eye.is-on { color: var(--ax-accent); }
+
+html body #mainApp#mainApp .acx-page .acx-code { height: 56px; text-align: center !important; font-size: 24px !important; font-weight: 700; letter-spacing: .5em; padding-left: calc(14px + .5em); }
+html body #mainApp#mainApp .acx-page .acx-sent { margin: 0 0 4px; color: var(--ax-text); font-size: 14px; line-height: 1.8; }
+html body #mainApp#mainApp .acx-page .acx-sent b { color: var(--ax-ink); }
+
+html body #mainApp#mainApp .acx-page .acx-err { margin: 0; color: var(--ax-danger); font-size: 13px; line-height: 1.6; }
+html body #mainApp#mainApp .acx-page .acx-err:empty { display: none; }
+html body #mainApp#mainApp .acx-page .acx-hint { margin: 0; color: var(--ax-muted); font-size: 12.5px; line-height: 1.8; }
+
+html body #mainApp#mainApp .acx-page .acx-btn {
+  position: relative; width: 100%; height: 52px; margin: 8px 0 0; padding: 0 16px; display: flex; align-items: center; justify-content: center; gap: 8px;
+  border: 0; border-radius: 14px; background: var(--ax-accent); color: #fff;
+  font-family: var(--ax-font); font-size: 16px; font-weight: 600; cursor: pointer;
+  transition: transform .12s ease, background-color .15s ease, opacity .15s ease;
+}
+html body #mainApp#mainApp .acx-page .acx-btn:not(:disabled):active { transform: scale(.98); background: var(--ax-accent-press); }
+html body #mainApp#mainApp .acx-page .acx-btn:disabled:not(.is-loading) { background: var(--ax-soft); color: var(--ax-muted); box-shadow: inset 0 0 0 1px var(--ax-line); cursor: default; }
+html body #mainApp#mainApp .acx-page .acx-btn.is-loading { cursor: progress; opacity: .9; }
+html body #mainApp#mainApp .acx-page .acx-spin { display: none; width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .35); border-top-color: #fff; animation: acxSpin .7s linear infinite; }
+html body #mainApp#mainApp .acx-page .acx-btn.is-loading .acx-spin { display: block; }
+@keyframes acxSpin { to { transform: rotate(360deg); } }
+
+html body #mainApp#mainApp .acx-page .acx-row { display: flex; justify-content: space-between; gap: 12px; margin-top: 4px; }
+html body #mainApp#mainApp .acx-page .acx-link {
+  height: 40px; padding: 0 4px; margin: 0; border: 0; background: transparent; color: var(--ax-accent);
+  font-family: var(--ax-font); font-size: 14px; font-weight: 600; cursor: pointer;
+}
+html body #mainApp#mainApp .acx-page .acx-link:disabled { color: var(--ax-muted); cursor: default; }
+
+html body #mainApp#mainApp .acx-page :is(.acx-back, .acx-eye, .acx-link, .acx-btn):focus-visible { outline: 2px solid var(--ax-accent); outline-offset: 2px; }
+
+/* profile menu: verified / not verified next to the number */
+html body #mainApp#mainApp #pageProfile .acx-menu .pfx-item-txt small { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 6px; }
+html body #mainApp#mainApp #pageProfile .acx-menu :is(.acx-ok, .acx-warn) { display: inline-flex; align-items: center; height: 20px; padding: 0 8px; border-radius: 999px; font-size: 11px; font-weight: 600; line-height: 1; }
+html body #mainApp#mainApp #pageProfile .acx-menu .acx-ok { background: #e8f7ef; color: #0f7b4a; }
+html body #mainApp#mainApp #pageProfile .acx-menu .acx-warn { background: #fff6e5; color: #8a5300; }
+html[data-theme="dark"] body #mainApp#mainApp #pageProfile .acx-menu .acx-ok { background: #12291e; color: #4fd18b; }
+html[data-theme="dark"] body #mainApp#mainApp #pageProfile .acx-menu .acx-warn { background: #2a2213; color: #f7c66b; }
+
+@media (prefers-reduced-motion: reduce) {
+  html body #mainApp#mainApp .acx-page :is(.acx-btn, .acx-spin) { transition: none !important; animation: none !important; }
+}

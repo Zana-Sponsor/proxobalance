@@ -930,7 +930,7 @@ function renderEvents(){
 
 // ── actions ──────────────────────────────────────────────────
 function openBanModal(ip='', reason=''){
-  const v=prompt('IP بۆ بلۆککردن (١.٢.٣.٤ یان ١.٢.٣.٠/٢٤):', ip);
+  const v=prompt('IP بۆ بلۆککردن (1.2.3.4 یان 1.2.3.0/24):', ip);
   if(!v) return;
   const why=prompt('هۆکاری بلۆککردن:', reason||'دەستی لەلایەن ئادمین');
   if(why===null) return;
@@ -1273,7 +1273,7 @@ async function loadAdminOrderFeedback(orderId){
     if(error)throw error;
     if(!data){panel.innerHTML='<h4>هەڵسەنگاندنی کڕیار</h4><p>هێشتا هەڵسەنگاندنی بۆ ئەم داواکارییە تۆمار نەکراوە.</p>';return;}
     const stars=Array.from({length:5},(_,index)=>`<span class="${index<Number(data.rating)?'filled':''}" aria-hidden="true">★</span>`).join('');
-    panel.innerHTML=`<h4>هەڵسەنگاندنی کڕیار</h4><div class="feedback-stars" aria-label="${Number(data.rating)} لە ٥ ئەستێرە">${stars}</div>${data.comment?`<p class="feedback-comment">${esc(data.comment)}</p>`:'<p>تەنها ئەستێرە هەڵبژێردراوە.</p>'}<small>${data.created_at?esc(fmtDateTime(data.created_at)):''}</small>`;
+    panel.innerHTML=`<h4>هەڵسەنگاندنی کڕیار</h4><div class="feedback-stars" aria-label="${Number(data.rating)} لە 5 ئەستێرە">${stars}</div>${data.comment?`<p class="feedback-comment">${esc(data.comment)}</p>`:'<p>تەنها ئەستێرە هەڵبژێردراوە.</p>'}<small>${data.created_at?esc(fmtDateTime(data.created_at)):''}</small>`;
   }catch(error){panel.innerHTML='<h4>هەڵسەنگاندنی کڕیار</h4><p>نەتوانرا هەڵسەنگاندن باربکرێت.</p>';}
 }
 
@@ -1757,6 +1757,10 @@ function ensureAccountInfoModal(){
   o.addEventListener('click', e=>{ if(e.target===o) closeMo('moAccountInfo'); });
 }
 
+function contactCell(value, verified){
+  if(!value) return '—';
+  return esc(value)+(verified?' <span style="color:var(--gr);font-size:11px">✓ پشتڕاستکراوە</span>':' <span style="color:var(--mt);font-size:11px">پشتڕاست نەکراوە</span>');
+}
 async function openAccountInfo(id){
   const a=allAccounts.find(x=>x.id===id);
   if(!a){ showToast('هەژمارەکە نەدۆزرایەوە','rd'); return; }
@@ -1768,9 +1772,9 @@ async function openAccountInfo(id){
     <div class="ai-sec">زانیاری بنەڕەتی</div>
     <div class="detail-row"><div class="lbl">ناوی تەواو</div><div class="val" dir="rtl">${esc(a.full_name||'—')}</div></div>
     <div class="detail-row"><div class="lbl">ناوی بەکارهێنەر</div><div class="val">${a.username?'@'+esc(a.username):'—'}</div></div>
-    <div class="detail-row"><div class="lbl">ئیمەیل</div><div class="val">${esc(a.email||'—')}</div></div>
+    <div class="detail-row"><div class="lbl">ئیمەیل</div><div class="val">${contactCell(a.email, !!a.email_verified_at)}</div></div>
     <div class="detail-row"><div class="lbl">ڕۆڵ</div><div class="val" dir="rtl">${a.role==='super_admin'?'سوپەر ئادمین':a.role==='admin'?'ئادمین':'بەکارهێنەر'}</div></div>
-    <div class="detail-row"><div class="lbl">ژمارەی مۆبایل</div><div class="val">${esc(a.phone||'—')}</div></div>
+    <div class="detail-row"><div class="lbl">ژمارەی مۆبایل</div><div class="val">${contactCell(a.phone, !!a.phone_verified_at)}</div></div>
     <div class="detail-row"><div class="lbl">باری هەژمار</div><div class="val" dir="rtl">${accBadges(a)}</div></div>
     <div class="detail-row"><div class="lbl">بەرواری تۆمارکردن</div><div class="val">${fmtDate(a.created_at)}</div></div>
     <div class="detail-row"><div class="lbl">کاتی تۆمارکردن</div><div class="val">${fmtTime(a.created_at)||'—'}</div></div>
@@ -1845,7 +1849,8 @@ async function openAccountInfo(id){
 }
 function accountAdminActionsHTML(a){
   if(typeof isSuperAdmin!=='function' || !isSuperAdmin()) return '';
-  return `<div class="act-btn dark" onclick="openSetPasswordModal('${a.id}','${esc(a.email||'').replace(/'/g,"\\'")}')"><i class="fas fa-key"></i> گۆڕینی وشەی نهێنی</div>
+  return `<div class="act-btn cy" onclick="openContactModal('${a.id}')"><i class="fas fa-address-card"></i> ئیمەیڵ و ژمارە</div>
+    <div class="act-btn dark" onclick="openSetPasswordModal('${a.id}','${esc(a.email||'').replace(/'/g,"\\'")}')"><i class="fas fa-key"></i> گۆڕینی وشەی نهێنی</div>
     <div class="act-btn ${a.is_banned?'gr':'rd'}" onclick="toggleBan('${a.id}',${a.is_banned})"><i class="fas fa-${a.is_banned?'user-check':'user-slash'}"></i> ${a.is_banned?'لابردنی بۆیکۆت':'بۆیکۆتکردن'}</div>
     <div class="act-btn cy" onclick="openKycRequestById('${a.id}')"><i class="fas fa-id-card"></i> پشتڕاستکردنەوە</div>
     ${roleButtonHTML(a)}`;
@@ -1902,7 +1907,7 @@ const ADMIN_FN_ERRORS = {
   forbidden:             'ئەم هەژمارە مافی ئادمینی نییە',
   profile_lookup_failed: 'نەتوانرا پرۆفایلی ئادمین بخوێندرێتەوە',
   user_not_found:        'ئەم بەکارهێنەرە لە سیستەمدا نەدۆزرایەوە',
-  password_too_short:    'وشەی نهێنی دەبێت لانیکەم ٨ پیت/ژمارە بێت',
+  password_too_short:    'وشەی نهێنی دەبێت لانیکەم 8 پیت/ژمارە بێت',
   update_failed:         'سێرڤەر نەیتوانی وشەی نهێنی نوێ بکاتەوە',
   create_failed:         'دروستکردنی هەژمار سەرکەوتوو نەبوو',
   missing_env:           'کلیلی service-role لە سێرڤەردا دانەنراوە',
@@ -1930,7 +1935,7 @@ async function callAdminFn(fnName, payload){
       signal: ctrl.signal
     });
   }catch(e){
-    if(e.name === 'AbortError') throw new Error('سێرڤەر وەڵامی نەدایەوە (٢٥ چرکە) — دووبارە هەوڵبدەوە');
+    if(e.name === 'AbortError') throw new Error('سێرڤەر وەڵامی نەدایەوە (25 چرکە) — دووبارە هەوڵبدەوە');
     throw new Error('نەگەیشتە سێرڤەر — ئینتەرنێت یان CORS بلۆکی کردووە ['+fnName+']');
   }finally{ clearTimeout(timer); }
 
@@ -1962,6 +1967,56 @@ function openSetPasswordModal(userId, email){
   setSpVisibility(false);
   openMo('moSetPassword');
 }
+// ── account e-mail / number ─────────────────────────────────
+function openContactModal(userId){
+  if(!isSuperAdmin()){ showToast('تەنها سوپەر ئادمین دەتوانێت ئیمەیڵ و ژمارە بگۆڕێت','rd'); return; }
+  const a=allAccounts.find(x=>x.id===userId);
+  if(!a){ showToast('هەژمارەکە نەدۆزرایەوە','rd'); return; }
+  document.getElementById('ctUserId').value=userId;
+  document.getElementById('ctUserLabel').textContent=a.full_name||a.username||'—';
+  document.getElementById('ctCurEmail').innerHTML=contactCell(a.email, !!a.email_verified_at);
+  document.getElementById('ctCurPhone').innerHTML=contactCell(a.phone, !!a.phone_verified_at);
+  document.getElementById('ctEmail').value='';
+  document.getElementById('ctPhone').value='';
+  document.getElementById('ctErr').style.display='none';
+  openMo('moContact');
+}
+function contactLocalPhone(raw){
+  let d=String(raw||'').replace(/[٠-٩]/g,c=>String(c.charCodeAt(0)-1632)).replace(/[۰-۹]/g,c=>String(c.charCodeAt(0)-1776)).replace(/\D/g,'');
+  if(d.startsWith('00964')) d=d.slice(5); else if(d.startsWith('964')) d=d.slice(3);
+  if(d && !d.startsWith('0')) d='0'+d;
+  return d;
+}
+async function submitContact(){
+  const errEl=document.getElementById('ctErr');
+  const fail=t=>{ errEl.textContent=t; errEl.style.display='block'; };
+  errEl.style.display='none';
+  if(!isSuperAdmin()) return fail('تەنها سوپەر ئادمین دەتوانێت ئیمەیڵ و ژمارە بگۆڕێت');
+  const userId=document.getElementById('ctUserId').value;
+  const email=document.getElementById('ctEmail').value.trim().toLowerCase();
+  const phone=contactLocalPhone(document.getElementById('ctPhone').value);
+  if(!email && !phone) return fail('ئیمەیڵ یان ژمارەیەکی نوێ بنووسە');
+  if(email && !/^[a-z0-9._%+-]+@gmail\.com$/.test(email)) return fail('ئیمەیڵەکە دروست نییە');
+  if(phone && !/^07[3-9]\d{8}$/.test(phone)) return fail('ژمارەی مۆبایلەکە دروست نییە');
+  const btn=document.getElementById('ctSaveBtn');
+  btn.disabled=true; btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i>';
+  try{
+    const data=await adminApiRequest('account_contact_update',{user_id:userId,email:email||null,phone:phone||null});
+    const a=allAccounts.find(x=>x.id===userId);
+    if(a){
+      const now=new Date().toISOString();
+      if(email){ a.email=data.email||email; a.email_verified_at=now; }
+      if(phone){ a.phone=data.phone||phone; a.phone_verified_at=now; }
+    }
+    closeMo('moContact');
+    showToast('✅ زانیارییەکانی پەیوەندی گۆڕدران','gr');
+    if(typeof filterAccounts==='function') filterAccounts();
+  }catch(e){
+    fail(e && e.code ? e.message : adminDbMessage(e));     // the server already explains in Kurdish
+  }finally{
+    btn.disabled=false; btn.innerHTML='<i class="fas fa-check"></i> پاشەکەوتکردن';
+  }
+}
 function setSpVisibility(show){
   ['spNewPass','spNewPass2'].forEach(id=>{ document.getElementById(id).type = show ? 'text' : 'password'; });
   document.getElementById('spEyeIco').className = show ? 'fas fa-eye-slash' : 'fas fa-eye';
@@ -1978,20 +2033,19 @@ async function submitSetPassword(){
   const pass = document.getElementById('spNewPass').value;
   const pass2 = document.getElementById('spNewPass2').value;
   if(!userId){ errEl.textContent='بەکارهێنەر دیاری نەکراوە — پەنجەرەکە دابخە و دووبارە هەوڵبدەوە'; errEl.style.display='block'; return; }
-  if(pass.length < 8){ errEl.textContent='وشەی نهێنی دەبێت لانیکەم ٨ پیت/ژمارە بێت'; errEl.style.display='block'; return; }
+  if(pass.length < 8){ errEl.textContent='وشەی نهێنی دەبێت لانیکەم 8 پیت/ژمارە بێت'; errEl.style.display='block'; return; }
   if(pass !== pass2){ errEl.textContent='وشەکانی نهێنی وەک یەک نین'; errEl.style.display='block'; return; }
   const btn = document.getElementById('spSaveBtn');
   btn.disabled = true; btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
   try{
-    const data = await callAdminFn('admin-set-password', { target_user_id:userId, new_password:pass });
+    // /api/admin sets it where this account keeps it (number accounts: their own hash,
+    // e-mail accounts: Supabase Auth) and signs the customer out on every device.
+    await adminApiRequest('account_set_password', { user_id:userId, password:pass });
     closeMo('moSetPassword');
-    let msg = '✅ وشەی نهێنی گۆڕدرا';
-    if(data.sessions_revoked > 0) msg += ' — '+data.sessions_revoked+' ئامێری چوونەژوورەوە بڕدرایەوە';
-    showToast(msg,'gr');
-    if(data.warning) console.warn('admin-set-password warning:', data.warning);
+    showToast('✅ وشەی نهێنی گۆڕدرا — بەکارهێنەر لە هەموو ئامێرەکان چووە دەرەوە','gr');
   }catch(e){
-    errEl.textContent = e.message; errEl.style.display='block';
-    console.error('admin-set-password failed:', e);
+    errEl.textContent = e && e.code ? e.message : adminDbMessage(e); errEl.style.display='block';
+    console.error('account_set_password failed:', e);
   }finally{
     btn.disabled=false; btn.innerHTML='<i class="fas fa-check"></i> پاشەکەوتکردن';
   }
@@ -2021,7 +2075,7 @@ async function submitCreateUser(){
   const password = document.getElementById('cuPass').value;
   const is_admin = document.getElementById('cuIsAdmin').checked;
   if(!email || !email.includes('@')){ errEl.textContent='ئیمەیلێکی دروست بنووسە'; errEl.style.display='block'; return; }
-  if(password.length < 8){ errEl.textContent='وشەی نهێنی دەبێت لانیکەم ٨ پیت/ژمارە بێت'; errEl.style.display='block'; return; }
+  if(password.length < 8){ errEl.textContent='وشەی نهێنی دەبێت لانیکەم 8 پیت/ژمارە بێت'; errEl.style.display='block'; return; }
   const btn = document.getElementById('cuSaveBtn');
   btn.disabled = true; btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
   try{
@@ -2774,7 +2828,7 @@ function renderBroadcasts(){
       <td style="font-size:12px;color:var(--mt2);max-width:240px">${esc(b.message)}</td>
       <td style="font-size:12px">${b.delivered_count}</td>
       <td style="font-size:12px">${b.read_count}</td>
-      <td>${b.pending_count>0?`<span class="badge banned">${b.pending_count}</span>`:'<span class="badge active">٠</span>'}</td>
+      <td>${b.pending_count>0?`<span class="badge banned">${b.pending_count}</span>`:'<span class="badge active">0</span>'}</td>
       <td><label class="mswitch"><input type="checkbox" ${b.deliver_to_new?'checked':''} onchange="toggleBroadcastNew('${b.id}',this.checked)"><span class="track"></span></label></td>
       <td style="font-size:11px;color:var(--mt)">${new Date(b.created_at).toLocaleString('ku')}</td>
       <td><div class="act-grp">
@@ -3112,8 +3166,8 @@ const KYC_ADMIN_ERRORS = {
   KYC_REQUEST_EXISTS:'ئەم بەکارهێنەرە پێشتر داواکارییەکی چالاکی هەیە',
   KYC_REQUEST_NOT_FOUND:'داواکارییەکە نەدۆزرایەوە',
   KYC_REQUEST_NOT_ACTIVE:'ئەم داواکارییە چیتر چالاک نییە',
-  KYC_REASON_TOO_LONG:'دەق نابێت لە ٥٠٠ پیت زیاتر بێت',
-  KYC_REASON_REQUIRED:'بۆ ڕەتکردنەوە هۆکار پێویستە (لانیکەم ٣ پیت)',
+  KYC_REASON_TOO_LONG:'دەق نابێت لە 500 پیت زیاتر بێت',
+  KYC_REASON_REQUIRED:'بۆ ڕەتکردنەوە هۆکار پێویستە (لانیکەم 3 پیت)',
   KYC_NOT_FOUND:'داواکارییەکە نەدۆزرایەوە',
   KYC_ALREADY_REVIEWED:'ئەم داواکارییە پێشتر لەلایەن ئادمینێکی ترەوە بڕیاری لەسەر دراوە',
   KYC_SELF_REVIEW_FORBIDDEN:'ناتوانیت پشتڕاستکردنەوەی ناسنامەی خۆت پەسەند یان ڕەت بکەیتەوە',

@@ -237,7 +237,8 @@ async function audit(adminId, action, targetUserId, detail) {
 
 // Fresh database profile rights, never browser/JWT user_metadata claims.
 export function assertStaffAction(profile,action){
-  if(action==='set_ban' && profile.role!=='super_admin')throw {status:403,code:'super_admin_required',message:'SUPER_ADMIN_REQUIRED'};
+  // account mutations are super-admin only (ordinary admins get read-only account controls)
+  if(['set_ban','account_set_password','account_contact_update'].includes(action) && profile.role!=='super_admin')throw {status:403,code:'super_admin_required',message:'SUPER_ADMIN_REQUIRED'};
   if(['error_log_summary','list_error_logs','resolve_error_log','resolve_all_error_logs'].includes(action)&&profile.role!=='super_admin')throw {status:403,code:'super_admin_required',message:'SUPER_ADMIN_REQUIRED'};
   if(profile.role==='super_admin' || profile.staff_permissions==null)return;
   const permissions={
@@ -325,8 +326,84 @@ function orderAdminError(error){
   return {status:500,code:'order_admin_failed',message:'کردارەکە ئەنجام نەدرا؛ دووبارە هەوڵ بدەرەوە'};
 }
 
+// ── account e-mail / number (admin) ─────────────────────────────
+const PHONE_SIGN_IN_DOMAIN='@phone.proxobalance.app';
+function adminLocalPhone(value){
+  let d=String(value??'').replace(/[٠-٩]/g,ch=>String(ch.charCodeAt(0)-0x0660)).replace(/[۰-۹]/g,ch=>String(ch.charCodeAt(0)-0x06F0)).replace(/\D/g,'');
+  if(d.startsWith('00964'))d=d.slice(5); else if(d.startsWith('964'))d=d.slice(3);
+  return d.startsWith('0')?d:'0'+d;
+}
+const CONTACT_ERRORS={
+  no_account:[404,'account_not_found','ئەم هەژمارە نەدۆزرایەوە'],
+  nothing:[400,'no_changes','ئیمەیڵ یان ژمارەیەکی نوێ بنووسە'],
+  email_invalid:[400,'email_invalid','ئیمەیڵەکە دروست نییە'],
+  email_taken:[409,'email_taken','ئەم ئیمەیڵە بە هەژمارێکی ترەوە بەستراوە'],
+  phone_invalid:[400,'phone_invalid','ژمارەی مۆبایلەکە دروست نییە'],
+  phone_taken:[409,'phone_taken','ئەم ژمارەیە بە هەژمارێکی ترەوە بەستراوە'],
+  taken:[409,'contact_taken','ئەم ئیمەیڵ یان ژمارەیە بە هەژمارێکی ترەوە بەستراوە']
+};
+function contactError(reason){
+  const e=CONTACT_ERRORS[reason]||[500,'contact_update_failed','گۆڕانکارییەکە ئەنجام نەدرا؛ دووبارە هەوڵ بدەرەوە'];
+  return {status:e[0],code:e[1],message:e[2]};
+}
+
 // ── actions ──────────────────────────────────────────────────
 const actions = {
+  // Change a customer's e-mail and/or number (lost SIM, typo, new address). Counts as verified.
+  // The sign-in follows: number accounts sign in with their number, e-mail accounts with their address.
+  async account_contact_update({user_id,email,phone},ctx){
+    if(typeof user_id!=='string'||!UUID.test(user_id))
+      throw {status:400,code:'invalid_user',message:'هەژمارەکە دروست نییە'};
+    const newEmail=String(email??'').trim().toLowerCase()||null;
+    const newPhone=String(phone??'').trim()?adminLocalPhone(phone):null;
+    const {data:check,error:checkError}=await db.rpc('ex_account_contact_check',{p_user:user_id,p_email:newEmail,p_phone:newPhone});
+    if(checkError)throw contactError('');
+    if(!check?.ok)throw contactError(check?.reason);
+    const {data:authData,error:authError}=await db.auth.admin.getUserById(user_id);
+    if(authError||!authData?.user)throw contactError('no_account');
+    const authEmail=String(authData.user.email||'').toLowerCase();
+    const moveTo=authEmail.endsWith(PHONE_SIGN_IN_DOMAIN)
+      ? (newPhone?`p964${newPhone.slice(1)}${PHONE_SIGN_IN_DOMAIN}`:null)
+      : newEmail;
+    const moving=!!moveTo&&moveTo!==authEmail;
+    if(moving){
+      const {error}=await db.auth.admin.updateUserById(user_id,{email:moveTo,email_confirm:true});
+      if(error)throw {status:502,code:'auth_update_failed',message:'چوونەژوورەوەی هەژمارەکە نەگۆڕدرا؛ دووبارە هەوڵ بدەرەوە'};
+    }
+    const {data,error}=await db.rpc('ex_account_contact_admin_set',{p_user:user_id,p_email:newEmail,p_phone:newPhone});
+    if(error){
+      if(moving){ try{ await db.auth.admin.updateUserById(user_id,{email:authEmail,email_confirm:true}); }catch{} }
+      const m=/CONTACT_([A-Z_]+)/.exec(String(error.message||''));
+      throw contactError(m?m[1].toLowerCase():'');
+    }
+    const detail={};
+    if(newEmail)detail.email={from:check.old_email||null,to:newEmail};
+    if(newPhone)detail.phone={from:check.old_phone||null,to:newPhone};
+    await audit(ctx.user.id,'account_contact_update',user_id,JSON.stringify(detail));
+    return {email:data?.email||null,phone:data?.phone||null,sign_in_moved:moving};
+  },
+
+  // Super admin sets a new password. Number accounts keep theirs in ex_auth_passwords,
+  // e-mail accounts in Supabase Auth; every device of the customer is signed out.
+  async account_set_password({user_id,password},ctx){
+    if(typeof user_id!=='string'||!UUID.test(user_id))
+      throw {status:400,code:'invalid_user',message:'هەژمارەکە دروست نییە'};
+    const pass=String(password??'');
+    if(pass.length<8||pass.length>72)throw {status:400,code:'invalid_password',message:'وشەی نهێنی دەبێت لە 8 بۆ 72 پیت بێت'};
+    const {data:own,error:ownError}=await db.from('ex_auth_passwords').select('user_id').eq('user_id',user_id).maybeSingle();
+    if(ownError)throw {status:500,code:'db_error',message:ownError.message};
+    if(own){
+      const {error}=await db.rpc('ex_auth_password_set',{p_user:user_id,p_password:pass});
+      if(error)throw {status:500,code:'db_error',message:error.message};
+    }else{
+      const {error}=await db.auth.admin.updateUserById(user_id,{password:pass});
+      if(error)throw {status:502,code:'auth_update_failed',message:'وشەی نهێنی نەگۆڕدرا؛ دووبارە هەوڵ بدەرەوە'};
+    }
+    await db.rpc('ex_auth_sign_out_everywhere',{p_user:user_id});
+    await audit(ctx.user.id,'set_password',user_id,null);
+    return {ok:true,signed_out:true};
+  },
+
   // Manual order control (status / edit / delete). Silent by design: nothing is sent to the
   // customer unless the admin explicitly asks for it on a status change.
   async order_set_status({order_id,status,reason,clear_reason,notify},ctx){

@@ -6,7 +6,7 @@
   var $=function(id){return document.getElementById(id)};
   var LABEL={add:'زیادکردنی باڵانس',refund:'گەڕاندنەوەی باڵانس',deduct:'کەمکردنەوەی باڵانس'};
   var KIND={admin_credit:'زیادکردنی باڵانس',admin_refund:'گەڕاندنەوەی باڵانس (بەڕێوەبەر)',admin_debit:'کەمکردنەوەی باڵانس',verified_refund:'گەڕاندنەوەی مامەڵە',shortfall_refund:'گەڕاندنەوەی پاشماوە',order_debit:'بەکارهێنان بۆ مامەڵە',payout_hold:'پارەی ناردن (ڕاگیراو)',payout_cancel:'هەڵوەشاندنەوەی ناردن',payout_paid:'ناردن'};
-  var ERR={ADMIN_REQUIRED:'تەنها بەڕێوەبەر دەتوانێت ئەم کردارە بکات.',ACCOUNT_NOT_FOUND:'ئەم هەژمارە نەدۆزرایەوە.',AMOUNT_INVALID:'بڕەکە دەبێت لە ١ بۆ ١٠,٠٠٠,٠٠٠ دینار بێت.',NOTE_REQUIRED:'هۆکار پێویستە و دەبێت لانی کەم ٥ پیت بێت.',ORDER_NOT_FOUND:'ئەم کۆدی مامەڵەیە بۆ ئەم هەژمارە نەدۆزرایەوە.',INSUFFICIENT_BALANCE:'باڵانسی ئەم هەژمارە بەشی ئەم بڕە ناکات.',DAILY_LIMIT_EXCEEDED:'سنووری ڕۆژانەی کردارەکانی باڵانس تەواو بووە (٥٠,٠٠٠,٠٠٠ دینار).',REQUEST_KEY_REUSED:'ئەم کردارە پێشتر تۆمار کراوە. لاپەڕەکە نوێ بکەرەوە.',MODE_INVALID:'جۆری کردار هەڵەیە.',AUTH_REQUIRED:'تکایە دووبارە بچۆ ژوورەوە.'};
+  var ERR={ADMIN_REQUIRED:'تەنها بەڕێوەبەر دەتوانێت ئەم کردارە بکات.',ACCOUNT_NOT_FOUND:'ئەم هەژمارە نەدۆزرایەوە.',AMOUNT_INVALID:'بڕەکە دەبێت لە 1 بۆ 10,000,000 دینار بێت.',NOTE_REQUIRED:'هۆکار پێویستە و دەبێت لانی کەم 5 پیت بێت.',ORDER_NOT_FOUND:'ئەم کۆدی مامەڵەیە بۆ ئەم هەژمارە نەدۆزرایەوە.',INSUFFICIENT_BALANCE:'باڵانسی ئەم هەژمارە بەشی ئەم بڕە ناکات.',DAILY_LIMIT_EXCEEDED:'سنووری ڕۆژانەی کردارەکانی باڵانس تەواو بووە (50,000,000 دینار).',REQUEST_KEY_REUSED:'ئەم کردارە پێشتر تۆمار کراوە. لاپەڕەکە نوێ بکەرەوە.',MODE_INVALID:'جۆری کردار هەڵەیە.',AUTH_REQUIRED:'تکایە دووبارە بچۆ ژوورەوە.'};
   var cur=null, mode='add', pending=null, busy=false;
 
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
@@ -32,7 +32,7 @@
   async function search(){
     var q=$('q').value.trim();
     var box=$('results');
-    if(q.length<2){box.innerHTML='<div class="empty">لانی کەم ٢ پیت بنووسە.</div>';return}
+    if(q.length<2){box.innerHTML='<div class="empty">لانی کەم 2 پیت بنووسە.</div>';return}
     box.innerHTML='<div class="empty">دەگەڕێت...</div>';
     var r=await sb.rpc('ex_admin_find_accounts',{p_query:q});
     if(r.error){box.innerHTML='<div class="err">'+esc(errText(r.error))+'</div>';return}

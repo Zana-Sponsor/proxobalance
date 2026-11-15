@@ -304,13 +304,13 @@ html[data-theme="dark"] .pxt-info {
   --c-bg: #061a38 !important;
 }
 html[data-theme="dark"] .pxt-title {
-  color: #aabbd7 !important;
+  color: #e8edf6 !important;
 }
 html[data-theme="dark"] .pxt-msg {
-  color: #acb5c3 !important;
+  color: #c4cee0 !important;
 }
 html[data-theme="dark"] .pxt.no-title .pxt-msg {
-  color: #aabbd7 !important;
+  color: #e8edf6 !important;
 }
 html[data-theme="dark"] .pxt-n {
   background: #151e2a !important;

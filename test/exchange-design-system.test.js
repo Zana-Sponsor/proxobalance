@@ -8,7 +8,7 @@ const shellCss=read('assets/css/proxo-ui-v2.css');
 
 test('Customer design contract is loaded after every legacy stylesheet',()=>{
   const sheets=[...html.matchAll(/<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"/g)].map(m=>m[1]);
-  const legacyIndex=sheets.indexOf('/assets/css/proxo-dark.css?v=7');
+  const legacyIndex=sheets.indexOf('/assets/css/proxo-dark.css?v=8');
   const designIndex=sheets.indexOf('/assets/css/proxo-design-system.css?v=4');
   assert(legacyIndex>=0 && designIndex>legacyIndex);
   assert(!read('exchange-admin.html').includes('proxo-design-system.css'));
@@ -60,15 +60,15 @@ test('Design layer leaves hidden/route mechanics untouched and provides accessib
 
 test('Production smoke waits for the changed customer version and verifies its design contract',()=>{
   const workflow=read('.github/workflows/exchange-production-smoke.yml');
-  assert(workflow.includes('app.js?v=95'));
+  assert(workflow.includes('app.js?v=101'));
   assert(workflow.includes('receipt-access.js?v=1'));
-  assert(workflow.includes('auth-phone.css?v=1'));
+  assert(workflow.includes('auth-phone.css?v=2'));
   assert(workflow.includes('/assets/js/exchange-pricing.js?v=1'));
-  assert(html.includes('/assets/js/app.js?v=95'));
-  assert(html.includes('/assets/css/proxo-ui-v2.css?v=15'));
+  assert(html.includes('/assets/js/app.js?v=101'));
+  assert(html.includes('/assets/css/proxo-ui-v2.css?v=16'));
   assert(html.includes('/assets/js/proxo-ui-v2.js?v=4'));
   assert(html.includes('/assets/js/proxo-toast.js?v=1'));
-  assert(html.indexOf('proxo-toast.js?v=1') < html.indexOf('app.js?v=95'));
+  assert(html.indexOf('proxo-toast.js?v=1') < html.indexOf('app.js?v=101'));
   assert(shellCss.includes('.pxt-stack'));
   assert(shellCss.includes('.pxn-pill'));
   assert(shellCss.includes('.field-error.show'));
@@ -83,7 +83,12 @@ test('Production smoke waits for the changed customer version and verifies its d
   assert(html.includes('id="savedRecipientsShortcut"'));
   assert(shellCss.includes('.xc-step-head .xc-saved-recipients-btn'));
   assert(shellCss.includes('#usernameSheet .sheet-body'));
-  assert(html.includes('proxo-dark.css?v=7'));
+  assert(html.includes('proxo-dark.css?v=8'));
+  for(const route of ['account-name','change-phone','change-password','change-email'])
+    assert(html.includes(`data-route="${route}"`));
+  assert(html.includes('account-settings.css?v=2'));
+  assert(html.includes('profile-screens.css?v=1'));
+  assert(html.includes('whatsapp-notify.js?v=2'));
   assert(html.includes('id="savedRecipientsShortcut"'));
   assert(html.includes('بەبێ بەڵگەی ناردن داواکارییەکە ڕەت دەکرێتەوە.'));
   assert(html.includes('id="pageBalance" data-route="balance"'));
@@ -96,7 +101,7 @@ test('Production smoke waits for the changed customer version and verifies its d
   assert(app.includes("sb.rpc('ex_my_balance_activity'"));
   assert(app.includes('escHtml(sub)'));
   const balanceAdmin=read('exchange-admin-balance.html');
-  for(const marker of ['id="gate"','id="app"','/assets/js/exchange-admin-balance.js?v=1'])assert(balanceAdmin.includes(marker));
+  for(const marker of ['id="gate"','id="app"','/assets/js/exchange-admin-balance.js?v=2'])assert(balanceAdmin.includes(marker));
   assert(!/<script>\s*[\s\S]*?<\/script>/.test(balanceAdmin));
   const balanceAdminJs=read('assets/js/exchange-admin-balance.js');
   for(const marker of ['ex_admin_find_accounts','ex_admin_adjust_balance','ex_admin_balance_history','pending.key'])assert(balanceAdminJs.includes(marker));

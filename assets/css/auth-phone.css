@@ -31,3 +31,32 @@ html body #authWrap#authWrap .auth-hint { margin: 6px 2px 0; color: var(--au-mut
 html body #authWrap#authWrap .input-wrap:has(#authEmail) .input-ico::before { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%228%22%20r%3D%224%22%2F%3E%3Cpath%20d%3D%22M4%2021a8%208%200%200%201%2016%200%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%228%22%20r%3D%224%22%2F%3E%3Cpath%20d%3D%22M4%2021a8%208%200%200%201%2016%200%22%2F%3E%3C%2Fsvg%3E"); }
 html body #authWrap#authWrap .input-wrap:has(#forgotEmail) .input-ico::before { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%228%22%20r%3D%224%22%2F%3E%3Cpath%20d%3D%22M4%2021a8%208%200%200%201%2016%200%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%228%22%20r%3D%224%22%2F%3E%3Cpath%20d%3D%22M4%2021a8%208%200%200%201%2016%200%22%2F%3E%3C%2Fsvg%3E"); }
 html body #authWrap#authWrap .input-wrap:has(#signupPhone) .input-ico::before { -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%226%22%20y%3D%222.5%22%20width%3D%2212%22%20height%3D%2219%22%20rx%3D%223%22%2F%3E%3Cpath%20d%3D%22M10.5%2018h3%22%2F%3E%3C%2Fsvg%3E"); mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%226%22%20y%3D%222.5%22%20width%3D%2212%22%20height%3D%2219%22%20rx%3D%223%22%2F%3E%3Cpath%20d%3D%22M10.5%2018h3%22%2F%3E%3C%2Fsvg%3E"); }
+
+/* ── «ژمارەی مۆبایل / ئیمەیڵ»: two options above the field ── */
+html body #authWrap#authWrap .auth-method {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin: 0 0 16px; padding: 4px;
+  border-radius: 12px; background: var(--au-field); border: 1px solid var(--au-field-line);
+}
+html body #authWrap#authWrap .auth-method button {
+  height: 40px; margin: 0; padding: 0 8px; border: 0; border-radius: 9px; background: transparent;
+  color: var(--au-muted); font-family: Rabar, Arial, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;
+  transition: background-color .15s ease, color .15s ease, box-shadow .15s ease; -webkit-tap-highlight-color: transparent;
+}
+html body #authWrap#authWrap .auth-method button.is-on {
+  background: var(--au-card); color: var(--au-ink); box-shadow: 0 1px 2px rgba(15, 23, 42, .08), 0 0 0 1px var(--au-line);
+}
+html[data-theme="dark"] body #authWrap#authWrap .auth-method button.is-on { box-shadow: 0 0 0 1px var(--au-line); }
+html body #authWrap#authWrap .auth-method button:focus-visible { outline: 2px solid var(--au-accent); outline-offset: 1px; }
+html body #authWrap#authWrap [role="tabpanel"][hidden] { display: none !important; }
+
+/* ── number field: 🇮🇶 +964 on the left, the number after it (always left-to-right) ── */
+html body #authWrap#authWrap .phone-wrap { position: relative; margin: 0; direction: ltr; }
+html body #authWrap#authWrap .phone-wrap .input { padding: 0 14px 0 98px !important; text-align: left !important; letter-spacing: .02em; }
+html body #authWrap#authWrap .phone-cc {
+  position: absolute; left: 1px; top: 1px; bottom: 1px; width: 86px; display: flex; align-items: center; justify-content: center; gap: 7px;
+  border-right: 1px solid var(--au-field-line); border-radius: 11px 0 0 11px; color: var(--au-ink); pointer-events: none;
+}
+html body #authWrap#authWrap .phone-cc b { font-family: Rabar, Arial, sans-serif; font-size: 15px; font-weight: 600; line-height: 1; }
+html body #authWrap#authWrap .iq-flag { width: 24px; height: 16px; flex: 0 0 24px; border-radius: 3px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .12); }
+html body #authWrap#authWrap .phone-wrap:focus-within .phone-cc { border-right-color: var(--au-accent); }
+@media (prefers-reduced-motion: reduce) { html body #authWrap#authWrap .auth-method button { transition: none; } }

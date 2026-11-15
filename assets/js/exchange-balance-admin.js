@@ -487,7 +487,7 @@ async function startBalancePayout(id){
 async function abortProcessingPayout(id){
   const p=(_balanceAdminData?.payouts||[]).find(x=>x.id===id&&x.status==='processing');
   if(!p)return;
-  const reason=prompt('هۆکاری شکستی ناردن بنووسە (لانیکەم ١٠ پیت):');
+  const reason=prompt('هۆکاری شکستی ناردن بنووسە (لانیکەم 10 پیت):');
   if(!reason||reason.trim().length<10)return;
   const bank_reference=prompt('ژمارەی پشتڕاستکردنەوەی بانک کە پارە نەگەیشتووە:');
   if(!bank_reference||bank_reference.trim().length<6)return;
