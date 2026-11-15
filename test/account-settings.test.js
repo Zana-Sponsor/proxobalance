@@ -104,3 +104,60 @@ test('v48: the code screens offer "send again" only after the code expired, and 
   assert.match(html, /id="authName">/);
   assert.match(html, /\/assets\/css\/auth-otp\.css\?v=1/);
 });
+
+test('v49: account screens use the site\'s measured card, label, field and button values', () => {
+  const css = readFileSync(new URL('../assets/css/account-settings.css', import.meta.url), 'utf8');
+  const del = readFileSync(new URL('../assets/css/account-delete.css', import.meta.url), 'utf8');
+  // card = profile menu / identity section / exchange card
+  assert.match(css, /:is\(\.acx-current, \.acx-form\) \{\s*margin: 0; padding: 18px 16px;[^}]*border-radius: 20px;[^}]*box-shadow: var\(--ax-shadow\);/);
+  assert.match(css, /--ax-shadow: 0 1px 2px rgba\(20, 35, 60, \.04\), 0 12px 28px -18px rgba\(20, 35, 60, \.18\);/);
+  // label = exchange .field-label, 6px above the field, 14px between fields
+  assert.match(css, /\.acx-form label \{\s*margin: 0 0 6px; padding: 0 2px; color: var\(--ax-label\);\s*font-family: var\(--ax-font\); font-size: 12px; font-weight: 400;/);
+  assert.match(css, /:is\(\.acx-input, \.acx-phone, \.acx-pass\) \+ label \{ margin-top: 14px; \}/);
+  // field = exchange .input (48 high, radius 14, soft fill, 4px focus ring, no outline)
+  assert.match(css, /\.acx-input \{\s*width: 100%; height: 48px;[^}]*border-radius: 14px !important; background: var\(--ax-field\) !important;/);
+  assert.match(css, /\.acx-input:is\(:focus, :focus-visible\) \{\s*outline: 0 !important;[^}]*box-shadow: 0 0 0 4px var\(--ax-ring\) !important;/);
+  // button = exchange send button; disabled = the same colour at 55%
+  assert.match(css, /\.acx-btn \{[^}]*height: 52px; margin: 20px 0 0;[^}]*border-radius: 14px;[^}]*font-size: 15px; font-weight: 400;/);
+  assert.match(css, /\.acx-btn:disabled \{ opacity: \.55;/);
+  // the delete-account form follows the same values
+  assert.match(del, /\.dax-form \{[^}]*padding: 18px 16px;[^}]*border-radius: 20px;[^}]*box-shadow: var\(--dx-shadow\);/);
+  assert.match(del, /#daxPass \{[^}]*height: 48px;[^}]*border-radius: 14px !important;/);
+  assert.match(del, /\.dax-btn:disabled \{ opacity: \.55;/);
+  // one wording everywhere
+  assert.match(html, /<label for="cePass">وشەی نهێنیی ئێستا<\/label>/);
+  assert.match(html, /<label for="pwNew2">دووبارە وشەی نهێنیی نوێ<\/label>/);
+  assert.match(html, /<label for="daxPass">وشەی نهێنیی ئێستا<\/label>/);
+  assert.match(html, /<div class="acx-sent"><span>کۆدەکە نێردرا بۆ<\/span><b dir="ltr" id="ceTarget"><\/b>/);
+  assert.match(app, /b\.textContent='دووبارە ناردنەوە لە '\+acxClock\(left\);/);
+  assert.match(html, /account-settings\.css\?v=4/);
+  assert.match(html, /account-delete\.css\?v=3/);
+});
+
+test('v50: identity verification rebuilt on the same values; six code boxes in the profile; no decorative icons', () => {
+  const kv = readFileSync(new URL('../assets/css/kyc-screen.css', import.meta.url), 'utf8');
+  const css = readFileSync(new URL('../assets/css/account-settings.css', import.meta.url), 'utf8');
+  const start = html.indexOf('id="kycBanner"');   // after the toolbar (its back arrow is the one functional icon)
+  const verify = html.slice(start, html.indexOf('<!-- ══════════════ PAGE: CUSTOMER SUPPORT', start));
+  // fresh classes only: none of the old layered kyc-* layout classes, no stepper, no tips, no icons
+  assert.doesNotMatch(verify, /class="kyc-|kycStep1|icon--solar|<svg/);
+  for (const id of ['kycFormCard', 'kycSecType', 'kycSecInfo', 'kycSecImages', 'kycName', 'kycDob', 'kycNumber', 'kycNumberLabel', 'kycFrontCamera', 'kycFrontGallery', 'kycBackBox', 'kycConsent', 'kycSubmitBtn', 'kycProgress', 'kycSuccess', 'kycFormError'])
+    assert.match(verify, new RegExp(`id="${id}"`), id);
+  assert.match(kv, /\.kv-card \{[^}]*padding: 18px 16px;[^}]*border-radius: 20px;[^}]*box-shadow: var\(--kv-shadow\);/);
+  assert.match(kv, /\.kv-h \{ margin: 0 0 14px;[^}]*font-size: 14px; font-weight: 600;/);
+  assert.match(kv, /\.kv-label \{[^}]*margin: 14px 0 6px;[^}]*font-size: 12px; font-weight: 400;/);
+  assert.match(kv, /\.kv-input \{[^}]*height: 48px;[^}]*border-radius: 14px !important;/);
+  assert.match(kv, /\.kv-btn:disabled \{ opacity: \.55( !important)?;/);
+  assert.match(app, /document\.querySelectorAll\('\.kv-doc'\)/);
+  assert.match(app, /e\.target\.closest\('label\.kv-src, label\.kv-mini'\)/);
+  assert.match(html, /\/assets\/css\/kyc-screen\.css\?v=1/);
+  // the profile code step = the sign-in code screen: six boxes, value kept in the hidden field
+  for (const p of ['cp', 'ce']) {
+    assert.match(html, new RegExp(`<div class="acx-otp" dir="ltr" role="group" aria-label="کۆدی دڵنیایی" data-code="${p}Code" data-sync="${p}Sync">(<input class="acx-digit"[^>]*>){6}</div>\\s*<input type="hidden" id="${p}Code">`));
+  }
+  assert.match(css, /\.acx-digit \{\s*width: calc\(\(100% - 40px\) \/ 6\); max-width: 52px;[^}]*height: 56px;[^}]*border-radius: 12px !important;[^}]*font-size: 22px !important;/);
+  assert.match(app, /if\(acxCodeRead\(id\)\.length===6\)\{ const f=host\.closest\('form'\); if\(f && typeof f\.requestSubmit==='function'\) f\.requestSubmit\(\); \}/);
+  // notices and the delete screen carry no decorative icons
+  assert.doesNotMatch(app, /ACX_ICON|acx-note-ico/);
+  assert.doesNotMatch(html, /dax-hero-ico|dax-li-ico/);
+});

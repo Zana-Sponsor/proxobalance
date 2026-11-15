@@ -421,16 +421,79 @@ let _errorFilter='unresolved';
 let _errorPoll=null;
 let _lastErrorCount=null;
 
-function errorSourceLabel(source){ return source==='server'?'سێرڤەر':'ماڵپەڕی بەکارهێنەر'; }
+// What each row means, in plain words. operation / code come from the API
+// (auth.js, admin.js, notify-order.js), the database (WhatsApp worker) and
+// the customer app (reportAppError).
+const ERROR_TITLES={
+  whatsapp_code:'کۆدی دڵنیایی بە واتسئاپ نەنێردرا',
+  email_code:'کۆدی دڵنیایی بە ئیمەیڵ نەنێردرا',
+  whatsapp_notification:'ئاگاداری واتسئاپی داواکاری نەگەیشتە کڕیار',
+  whatsapp_queue:'نامەکانی واتسئاپ لە نۆبەدا ماونەتەوە (n8n نایاننێرێت)',
+  telegram_notify:'ئاگاداری داواکاری نوێ بۆ تێلێگرام نەنێردرا',
+  auth_session:'چوونەژوورەوە لە سێرڤەردا سەرکەوتوو نەبوو',
+  auth_signup:'دروستکردنی هەژمار سەرکەوتوو نەبوو',
+  auth_phone_change:'گۆڕینی ژمارەی مۆبایل سەرکەوتوو نەبوو',
+  auth_email_change:'گۆڕینی ئیمەیڵ سەرکەوتوو نەبوو',
+  auth_password_change:'گۆڕینی وشەی نهێنی سەرکەوتوو نەبوو',
+  auth_server:'هەڵەی سێرڤەری چوونەژوورەوە',
+  order_submission:'ناردنی داواکاری سەرنەکەوت',
+  order_correction:'ڕاستکردنەوەی داواکاری سەرنەکەوت',
+  kyc_submit:'ناردنی ناسنامە سەرنەکەوت',
+  kyc_status:'بارکردنی دۆخی ناسنامە سەرنەکەوت',
+  support_case_submission:'ناردنی کەیسی پشتگیری سەرنەکەوت',
+  support_cases_load:'بارکردنی کەیسەکانی پشتگیری سەرنەکەوت',
+  client_runtime:'هەڵەی JavaScript لە وێبگەڕی کڕیار'
+};
+const ERROR_WHEN_CODE={WHATSAPP_NOT_CONFIGURED:'ناردنی کۆدی واتسئاپ ڕێکنەخراوە (کلیلی Wevlix نییە)'};
+const ERROR_ACTIONS={signup_start:'خۆتۆمارکردن',login_start:'چوونەژوورەوە',reset_start:'وشەی نهێنیی لەبیرچوو',phone_change_start:'گۆڕینی ژمارە',email_change_start:'گۆڕینی ئیمەیڵ',signup_finish:'خۆتۆمارکردن',login_finish:'چوونەژوورەوە'};
+const ERROR_CATEGORIES={all:'هەموو',codes:'کۆدی دڵنیایی',whatsapp:'واتسئاپ و تێلێگرام',requests:'ناردنی داواکاری',server:'سێرڤەر',client:'وێبگەڕ'};
+function errorCategory(row){
+  const op=String(row.operation||'');
+  if(/^(whatsapp_code|email_code|auth_)/.test(op)) return 'codes';
+  if(row.source==='whatsapp'||/^(whatsapp_|telegram_)/.test(op)) return 'whatsapp';
+  if(/^(order_|kyc_submit|support_case_submission)/.test(op)||/\/api\/(orders|support-cases)/.test(op)) return 'requests';
+  if(row.source==='server') return 'server';
+  return 'client';
+}
+function errorTitle(row){
+  const op=String(row.operation||'');
+  if(ERROR_WHEN_CODE[row.error_code]) return ERROR_WHEN_CODE[row.error_code];
+  if(ERROR_TITLES[op]) return ERROR_TITLES[op];
+  if(op.startsWith('admin:')) return 'هەڵەی پانێڵ: '+op.slice(6);
+  if(row.source==='server') return 'هەڵەی سێرڤەر: '+op;
+  return op||'هەڵە';
+}
+function errorSourceLabel(source){ return source==='server'?'سێرڤەر':source==='whatsapp'?'واتسئاپ (n8n)':'وێبگەڕی کڕیار'; }
 function errorSeverityLabel(severity){ return severity==='critical'?'گرنگ':severity==='warning'?'ئاگاداری':'هەڵە'; }
-function errorWhen(value){ return value?new Date(value).toLocaleString('ku-IQ'):'—'; }
-function errorMetaText(meta){
-  if(!meta || typeof meta!=='object') return '—';
+function errorWhen(value){ return value?fmtDateTime(value):'—'; }
+// Wevlix / n8n answers arrive as JSON text: show the readable part
+function errorReason(row){
+  const raw=String(row.message||'');
+  try{
+    const j=JSON.parse(raw);
+    const details=Array.isArray(j.details)?j.details.map(d=>(d.field?d.field+': ':'')+(d.constraints||[]).join(', ')).join(' · '):'';
+    return [j.code,j.message,j.error,details].filter(v=>typeof v==='string'&&v).join(' — ')||raw;
+  }catch(_){ return raw; }
+}
+function errorMetaText(row){
+  const meta=row.metadata&&typeof row.metadata==='object'?row.metadata:{};
   const parts=[];
+  if(meta.action&&ERROR_ACTIONS[meta.action]) parts.push(ERROR_ACTIONS[meta.action]);
+  if(meta.target) parts.push('بۆ '+meta.target);
+  if(meta.provider_status) parts.push('وەڵامی دابینکەر: '+meta.provider_status);
+  if(meta.order_code) parts.push('داواکاری '+meta.order_code);
+  if(meta.attempts) parts.push(meta.attempts+' هەوڵ');
+  if(meta.waiting) parts.push(meta.waiting+' نامە چاوەڕێن');
   if(meta.stage) parts.push('قۆناغ: '+meta.stage);
-  if(meta.from_method || meta.to_method) parts.push((meta.from_method||'—')+' ← '+(meta.to_method||'—'));
+  if(meta.from_method||meta.to_method) parts.push((meta.from_method||'—')+' ← '+(meta.to_method||'—'));
   if(meta.online===false) parts.push('ئۆفلاین');
-  return parts.length?parts.join(' · '):'—';
+  if(row.http_status) parts.push('HTTP '+row.http_status);
+  return parts.join(' · ');
+}
+function errorWho(row){
+  if(row.user_name||row.user_email||row.user_phone) return {name:row.user_name||row.user_email||'—',sub:[row.user_phone,row.user_name?row.user_email:null].filter(Boolean).join(' · ')};
+  const target=row.metadata?.target;
+  return {name:target?'بێ هەژمار':'—',sub:target||''};
 }
 
 async function loadErrorLogSummary(notify=true){
@@ -482,46 +545,65 @@ function setErrorLogFilter(filter,el){
   if(el) el.classList.add('on');
   loadErrorLogs();
 }
+let _errorCat='all', _errorWarnings=false;
+function setErrorCategory(cat,el){
+  _errorCat=cat;
+  document.querySelectorAll('[data-errc]').forEach(x=>x.classList.toggle('on',x===el));
+  renderErrorLogs();
+}
+function toggleErrorWarnings(el){
+  _errorWarnings=!_errorWarnings;
+  if(el) el.classList.toggle('on',_errorWarnings);
+  renderErrorLogs();
+}
 
 function renderErrorLogs(){
   const wrap=document.getElementById('errorLogsWrap');
   if(!wrap) return;
   const search=(document.getElementById('errorSearch')?.value||'').trim().toLowerCase();
-  const rows=_errorLogs.filter(row=>{
+  const counts={all:0};
+  const visible=_errorLogs.filter(row=>_errorWarnings||row.severity!=='warning');
+  visible.forEach(row=>{ const c=errorCategory(row); counts[c]=(counts[c]||0)+1; counts.all++; });
+  document.querySelectorAll('[data-errc]').forEach(el=>{
+    const n=counts[el.dataset.errc]||0;
+    el.textContent=ERROR_CATEGORIES[el.dataset.errc]+(n?' ('+formatNum(n)+')':'');
+  });
+  const rows=visible.filter(row=>{
+    if(_errorCat!=='all' && errorCategory(row)!==_errorCat) return false;
     if(!search) return true;
-    return [row.message,row.error_code,row.operation,row.user_email,row.ip_address,row.path,row.browser,row.os]
+    return [errorTitle(row),row.message,row.error_code,row.operation,row.user_email,row.user_name,row.user_phone,row.ip_address,row.path,row.browser,row.os,row.metadata?.target,row.metadata?.order_code]
       .some(value=>String(value||'').toLowerCase().includes(search));
   });
   if(!rows.length){
-    wrap.innerHTML='<div class="empty"><i class="fas fa-circle-check"></i><p>هیچ لۆگێک نییە</p></div>';
+    wrap.innerHTML='<div class="empty"><i class="fas fa-circle-check"></i><p>هیچ هەڵەیەک نییە</p></div>';
     return;
   }
+  const badge=row=>`<span class="badge ${row.resolved_at?'approved':row.severity==='critical'?'banned':row.severity==='warning'?'pending':'rejected'}">${row.resolved_at?'چارەسەرکرا':esc(errorSeverityLabel(row.severity))}</span>`;
+  const reason=row=>{ const r=errorReason(row); return r&&r!==errorTitle(row)?r:''; };
 
   const table=`<table class="data-table error-log-table"><thead><tr>
-    <th>کات / سەرچاوە</th><th>هەڵە</th><th>بەکارهێنەر / IP</th><th>ئامێر</th><th>دۆخ</th><th></th>
-  </tr></thead><tbody>${rows.map(row=>`<tr>
+    <th>کات</th><th>چی ڕوویدا</th><th>بەکارهێنەر</th><th>ئامێر</th><th>دۆخ</th><th></th>
+  </tr></thead><tbody>${rows.map(row=>{ const who=errorWho(row), r=reason(row), meta=errorMetaText(row); return `<tr>
     <td><b>${esc(errorWhen(row.last_seen))}</b><small>${esc(errorSourceLabel(row.source))}</small></td>
-    <td class="error-message-cell"><b>${esc(row.message)}</b><small>${esc(row.operation)}${row.error_code?' · '+esc(row.error_code):''}${row.http_status?' · HTTP '+esc(row.http_status):''}</small><small>${esc(errorMetaText(row.metadata))}</small></td>
-    <td><b>${esc(row.user_email||'بێ هەژمار')}</b><small class="mono-ltr">${esc(row.ip_address||'—')}</small></td>
-    <td><b>${esc(row.browser||'—')}</b><small>${esc(row.os||'—')} · ${esc(row.device||'—')}</small></td>
-    <td><span class="badge ${row.resolved_at?'approved':row.severity==='critical'?'banned':'rejected'}">${row.resolved_at?'چارەسەرکرا':esc(errorSeverityLabel(row.severity))}</span><small>${formatNum(row.occurrences||1)} جار</small></td>
+    <td class="error-message-cell"><b>${esc(errorTitle(row))}</b>${r?`<small class="error-reason">${esc(r)}</small>`:''}${meta?`<small>${esc(meta)}</small>`:''}</td>
+    <td><b>${esc(who.name)}</b>${who.sub?`<small class="mono-ltr">${esc(who.sub)}</small>`:''}</td>
+    <td><b>${esc(row.browser||'—')}</b><small>${esc(row.os||'—')}${row.device?' · '+esc(row.device):''}</small></td>
+    <td>${badge(row)}<small>${formatNum(row.occurrences||1)} جار${row.occurrences>1?' · یەکەم: '+esc(errorWhen(row.first_seen)):''}</small></td>
     <td>${row.resolved_at?'':`<button class="mini-action success" onclick="resolveErrorLog('${esc(row.id)}')"><i class="fas fa-check"></i> چارەسەرکرا</button>`}</td>
-  </tr>`).join('')}</tbody></table>`;
+  </tr>`; }).join('')}</tbody></table>`;
 
-  const cards=`<div class="error-log-cards">${rows.map(row=>`<article class="error-log-card ${row.resolved_at?'resolved':row.severity==='critical'?'critical':''}">
-    <div class="error-log-card-head"><span class="badge ${row.resolved_at?'approved':row.severity==='critical'?'banned':'rejected'}">${row.resolved_at?'چارەسەرکرا':esc(errorSeverityLabel(row.severity))}</span><time>${esc(errorWhen(row.last_seen))}</time></div>
-    <h4>${esc(row.message)}</h4>
-    <div class="error-log-code">${esc(row.operation)}${row.error_code?' · '+esc(row.error_code):''}${row.http_status?' · HTTP '+esc(row.http_status):''}</div>
+  const cards=`<div class="error-log-cards">${rows.map(row=>{ const who=errorWho(row), r=reason(row), meta=errorMetaText(row); return `<article class="error-log-card ${row.resolved_at?'resolved':row.severity==='critical'?'critical':row.severity==='warning'?'warning':''}">
+    <div class="error-log-card-head">${badge(row)}<span>${esc(errorWhen(row.last_seen))}</span></div>
+    <h4>${esc(errorTitle(row))}</h4>
+    ${r?`<div class="error-log-code">${esc(r)}</div>`:''}
     <div class="error-log-facts">
+      <span><i class="fas fa-user"></i>${esc(who.name)}${who.sub?' · '+esc(who.sub):''}</span>
+      ${meta?`<span><i class="fas fa-circle-info"></i>${esc(meta)}</span>`:''}
       <span><i class="fas fa-globe"></i>${esc(errorSourceLabel(row.source))}</span>
-      <span><i class="fas fa-user"></i>${esc(row.user_email||'بێ هەژمار')}</span>
-      <span class="mono-ltr"><i class="fas fa-network-wired"></i>${esc(row.ip_address||'—')}</span>
-      <span><i class="fas fa-display"></i>${esc(row.browser||'—')} · ${esc(row.os||'—')}</span>
-      <span><i class="fas fa-layer-group"></i>${esc(errorMetaText(row.metadata))}</span>
       <span><i class="fas fa-rotate"></i>${formatNum(row.occurrences||1)} جار</span>
     </div>
     ${row.resolved_at?'':`<button class="alert-btn safe" onclick="resolveErrorLog('${esc(row.id)}')"><i class="fas fa-check"></i> دیاریکردن وەک چارەسەرکراو</button>`}
-  </article>`).join('')}</div>`;
+  </article>`; }).join('')}</div>`;
   wrap.innerHTML=table+cards;
 }
 

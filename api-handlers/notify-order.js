@@ -50,7 +50,16 @@ async function signedReceiptUrl(address) {
   }
 }
 
-export default withSecurity(async (req, res, { user }) => {
+// Delivery failures go to the admin error log. Loaded on first use so this
+// file still runs on its own (the tests load it as a plain script).
+async function logTelegramFailure(context, options) {
+  try {
+    const { recordAppError } = await import('./_lib/security.js');
+    await recordAppError(context, options);
+  } catch { /* logging must never change the answer */ }
+}
+
+export default withSecurity(async (req, res, { user, context }) => {
   if (!process.env.TELEGRAM_BOT_TOKEN || !process.env.TELEGRAM_CHAT_ID) {
     return json(res, 202, { ok: true, delivered: false, reason: 'not_configured' });
   }
@@ -132,6 +141,12 @@ export default withSecurity(async (req, res, { user }) => {
   });
 
   if (!sent.ok) {
+    // the team did not hear about this order: worth a line in the error log
+    await logTelegramFailure(context, {
+      source: 'server', severity: 'error', operation: 'telegram_notify', code: 'TELEGRAM_FAILED', status: 502,
+      message: sent.description || 'Telegram did not accept the message', user,
+      metadata: { order_code: String(order.order_code || '').slice(0, 40) }
+    });
     return json(res, 502, { error: 'Notification delivery failed', detail: sent.description });
   }
   return json(res, 200, { ok: true, delivered: true, with_photo: false });

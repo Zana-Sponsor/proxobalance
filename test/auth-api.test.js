@@ -124,7 +124,9 @@ function backend() {
       if (body.password) user.password = body.password;
       return reply(200, { id: user.id, email: user.email });
     }
+    if (u.startsWith('https://api.wevlix.com/') && db.wevlixDown) return reply(400, { success: false, code: 'RECIPIENT_NOT_ON_WHATSAPP', message: 'The number is not a WhatsApp account' });
     if (u.startsWith('https://api.wevlix.com/')) { db.sent.push(body); return reply(200, { success: true, data: { messageId: 'm1' } }); }
+    if (u.includes('webhook/otp_exchange') && db.n8nDown) return reply(500, { success: false, message: 'SMTP connection refused' });
     if (u.includes('webhook/otp_exchange')) { db.emailCodes.push({ email: body.email, code: '777777' }); return reply(200, { success: true }); }
     if (u.includes('/auth/v1/admin/users')) {
       const id = 'u' + (db.users.size + 1); db.users.set(id, { id, email: body.email, password: body.password, meta: body.user_metadata });
@@ -137,7 +139,7 @@ function backend() {
       return user ? reply(200, session(user)) : reply(400, { error: 'invalid_grant' });
     }
     if (u.includes('/auth/v1/logout')) return reply(204);
-    if (u.includes('rpc/ex_record_app_error') || u.includes('ex_error_logs')) { db.lastError = body; return reply(200, null); }
+    if (u.includes('rpc/ex_record_app_error') || u.includes('ex_error_logs')) { if (options.method === 'POST') (db.errorRows = db.errorRows || []).push(body); db.lastError = body; return reply(200, null); }
     throw new Error('unexpected fetch ' + u);
   };
   async function call(payload, headers = {}) {
@@ -370,4 +372,44 @@ test('a new code only after the previous one expired (WhatsApp and e-mail)', asy
   const calls = db.emailCodes.length;
   const login = await call({ action: 'login_start', identifier: 'seven@gmail.com', password: 'emailpass7' });
   assert.equal(login.already_sent, true); assert.equal(login.expires_at, db.liveEmail); assert.equal(db.emailCodes.length, calls);
+});
+
+test('v51: a code that could not be sent is written to the admin error log, with the provider answer and whose account it was', async () => {
+  const { db, call } = backend();
+  const start = await call({ action: 'signup_start', phone: '0750 123 4567', name: 'Zana Ahmed', password: 'longpassword' });
+  const code = db.sent[0].components[0].parameters[0].text;
+  await call({ action: 'signup_finish', phone: '07501234567', name: 'Zana Ahmed', password: 'longpassword', code });
+  assert.equal(start.status, 200);
+  db.codes.forEach(c => { c.used = true; });                 // no live code: a new one has to be sent
+  db.wevlixDown = true;
+  const login = await call({ action: 'login_start', identifier: '07501234567', password: 'longpassword' });
+  assert.equal(login.status, 502);
+  assert.equal(login.code, 'WHATSAPP_FAILED');
+  const row = db.errorRows.at(-1);
+  assert.equal(row.source, 'server');
+  assert.equal(row.operation, 'whatsapp_code');
+  assert.equal(row.error_code, 'WHATSAPP_FAILED');
+  assert.match(row.message, /RECIPIENT_NOT_ON_WHATSAPP — The number is not a WhatsApp account/);
+  assert.equal(row.user_id, [...db.users.values()][0].id);   // the account that asked
+  assert.equal(row.metadata.action, 'login_start');
+  assert.equal(row.metadata.purpose, 'login');
+  assert.equal(row.metadata.target, '0750•••4567');           // never the full number
+  assert.equal(row.metadata.provider_status, '400');
+  assert.doesNotMatch(JSON.stringify(row), /07501234567|\+9647501234567|longpassword/);
+
+  // the e-mail code: n8n refuses
+  db.n8nDown = true;
+  const reset = await call({ action: 'reset_start', identifier: 'someone@gmail.com' });
+  assert.equal(reset.status, 404);                            // unknown address: not a failure, nothing logged
+  const before = db.errorRows.length;
+  const signup = await call({ action: 'email_change_start', email: 'new@gmail.com', password: 'longpassword' }, { authorization: 'Bearer at1' });
+  assert.equal(signup.status, 502, JSON.stringify(signup));
+  {
+    const r = db.errorRows.at(-1);
+    assert.equal(db.errorRows.length, before + 1);
+    assert.equal(r.operation, 'email_code');
+    assert.equal(r.error_code, 'EMAIL_FAILED');
+    assert.match(r.message, /SMTP connection refused/);
+    assert.equal(r.metadata.target, 'n•••@gmail.com');
+  }
 });

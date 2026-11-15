@@ -1,0 +1,214 @@
+/* ═════════════════════════════════════════════════════════════════
+   Identity verification (#pageVerify, route "/verify") — v50
+
+   Rebuilt on the same measured values as the account screens
+   (account-settings.css) and the rest of the site:
+
+     ┌ toolbar ─────────────────────────────┐
+     status box            radius 16 · padding 14 · title 14.5/600 · text 14/400
+                           14
+     ┌ card ────────────────────────────────┐ radius 20 · padding 18/16 · shadow
+     │ title 14/600                          │
+     │ 14                                    │
+     │ label 12/400 · 6 · field 48 / r14     │ 14 between fields
+     └───────────────────────────────────────┘
+                           14  (between cards)
+     [ button 52 / r14 / 15px ]
+
+   No decorative icons: a choice is a row with a radio, a photo is a box
+   with its title and two text buttons (camera / gallery).
+   ═════════════════════════════════════════════════════════════════ */
+html body #mainApp#mainApp #pageVerify {
+  --kv-card: #ffffff; --kv-line: #e8ecf3;
+  --kv-shadow: 0 1px 2px rgba(20, 35, 60, .04), 0 12px 28px -18px rgba(20, 35, 60, .18);
+  --kv-field: #f8fafd; --kv-field-line: #e8ecf3; --kv-field-focus: #ffffff; --kv-field-ink: #1f2d44; --kv-field-weight: 400;
+  --kv-ink: #0f172a; --kv-title: #1f2d44; --kv-text: #5f6f86; --kv-label: #64748b; --kv-ph: #94a3b8;
+  --kv-accent: #0265ff; --kv-accent-soft: #eff4fe; --kv-ring: rgba(2, 101, 255, .1);
+  --kv-btn: #0265ff; --kv-btn-press: #0052d6; --kv-btn-shadow: none;
+  --kv-chip: #f1f5fa; --kv-chip-ink: #3a4962;
+  --kv-radio: #cbd5e1;
+  --kv-err: #c2414b; --kv-err-soft: #fff0f0; --kv-err-line: #f5c6c6; --kv-err-ink: #a11d1d;
+  --kv-ok-ink: #146c35; --kv-warn-ink: #8a5300;
+  --kv-font: Rabar, Arial, sans-serif;
+}
+html[data-theme="dark"] body #mainApp#mainApp #pageVerify {
+  --kv-card: #131c2e; --kv-line: #25324a;
+  --kv-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 12px 28px -18px rgba(0, 0, 0, .6);
+  --kv-field: #0e1725; --kv-field-line: #25324a; --kv-field-focus: #131c2e; --kv-field-ink: #e8edf6; --kv-field-weight: 500;
+  --kv-ink: #e8edf6; --kv-title: #e8edf6; --kv-text: #acb6c3; --kv-label: #a3b1c7; --kv-ph: #a3b1c7;
+  --kv-accent: #3b8cff; --kv-accent-soft: #10223d; --kv-ring: rgba(2, 101, 255, .1);
+  --kv-btn: #2563eb; --kv-btn-press: #1d4fd8; --kv-btn-shadow: 0 10px 22px -12px rgba(37, 99, 235, .7);
+  --kv-chip: #121c29; --kv-chip-ink: #c4cee0;
+  --kv-radio: #3a4a66;
+  --kv-err-soft: #320606; --kv-err-line: #4d1616; --kv-err-ink: #e78888;
+  --kv-ok-ink: #83e5a8; --kv-warn-ink: #fbbf65;
+}
+
+html body #mainApp#mainApp #pageVerify :is(.kv-status, .kv, .kv-done) { font-family: var(--kv-font); color: var(--kv-ink); }
+html body #mainApp#mainApp #pageVerify :is(.kv-status, .kv, .kv-done, .kv-upload, .kv-preview, .kv-drop, .kv-progress, .kv-form-error, .kv-note-line)[hidden] { display: none !important; }
+
+/* ── status: same box as the account notices, coloured by state ── */
+html body #mainApp#mainApp #pageVerify .kv-status {
+  --st-bg: var(--kv-accent-soft); --st-line: rgba(2, 101, 255, .35);
+  display: block; margin: 0 0 14px; padding: 14px;
+  border: 1px solid var(--st-line); border-radius: 16px; background: var(--st-bg);
+}
+html body #mainApp#mainApp #pageVerify .kv-status[data-state="required"] { --st-bg: #fff6e3; --st-line: #f6dba6; }
+html body #mainApp#mainApp #pageVerify .kv-status[data-state="pending"]  { --st-bg: #eef4ff; --st-line: #c6d8fb; }
+html body #mainApp#mainApp #pageVerify .kv-status[data-state="approved"] { --st-bg: #ecf8f1; --st-line: #c2e8d1; }
+html body #mainApp#mainApp #pageVerify .kv-status:is([data-state="rejected"], [data-state="error"]) { --st-bg: #fff0f0; --st-line: #f5c6c6; }
+html body #mainApp#mainApp #pageVerify .kv-status[data-state="loading"] { --st-bg: var(--kv-card); --st-line: var(--kv-line); }
+html[data-theme="dark"] body #mainApp#mainApp #pageVerify .kv-status { --st-bg: #0e1725; --st-line: #25324a; }
+html[data-theme="dark"] body #mainApp#mainApp #pageVerify .kv-status[data-state="required"] { --st-bg: #3c2b07; --st-line: #674c16; }
+html[data-theme="dark"] body #mainApp#mainApp #pageVerify .kv-status[data-state="pending"]  { --st-bg: #061634; --st-line: #0e2550; }
+html[data-theme="dark"] body #mainApp#mainApp #pageVerify .kv-status[data-state="approved"] { --st-bg: #142c1e; --st-line: #244d34; }
+html[data-theme="dark"] body #mainApp#mainApp #pageVerify .kv-status:is([data-state="rejected"], [data-state="error"]) { --st-bg: #320606; --st-line: #4d1616; }
+html[data-theme="dark"] body #mainApp#mainApp #pageVerify .kv-status[data-state="loading"] { --st-bg: var(--kv-card); --st-line: var(--kv-line); }
+html body #mainApp#mainApp #pageVerify .kv-status > div { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+html body #mainApp#mainApp #pageVerify .kv-status b { color: var(--kv-title); font-size: 14.5px; font-weight: 600; line-height: 1.6; }
+html body #mainApp#mainApp #pageVerify .kv-status p { margin: 0; color: var(--kv-text); font-size: 14px; font-weight: 400; line-height: 1.75; overflow-wrap: anywhere; white-space: pre-wrap; }
+html body #mainApp#mainApp #pageVerify .kv-status p strong { color: var(--kv-title); font-weight: 600; }
+html body #mainApp#mainApp #pageVerify .kv-status .kv-mini { align-self: flex-start; margin-top: 8px; }
+
+/* ── cards ── */
+html body #mainApp#mainApp #pageVerify .kv { display: flex; flex-direction: column; gap: 14px; }
+html body #mainApp#mainApp #pageVerify .kv-card {
+  display: flex; flex-direction: column; margin: 0; padding: 18px 16px; box-sizing: border-box;
+  border: 1px solid var(--kv-line); border-radius: 20px; background: var(--kv-card); box-shadow: var(--kv-shadow);
+}
+html body #mainApp#mainApp #pageVerify .kv-h { margin: 0 0 14px; padding: 0 2px; color: var(--kv-ink); font-family: var(--kv-font); font-size: 14px; font-weight: 600; line-height: 1.6; }
+html body #mainApp#mainApp #pageVerify .kv-sec[data-locked="true"] { opacity: .5; pointer-events: none; }
+
+/* ── document type: two rows with a radio ── */
+html body #mainApp#mainApp #pageVerify .kv-docs { display: grid; gap: 8px; }
+html body #mainApp#mainApp #pageVerify .kv-doc {
+  width: 100%; height: 48px; margin: 0; padding: 0 14px; box-sizing: border-box;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  border: 1px solid var(--kv-field-line); border-radius: 14px; background: var(--kv-field); color: var(--kv-field-ink);
+  font-family: var(--kv-font); text-align: right; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+html body #mainApp#mainApp #pageVerify .kv-doc b { font-size: 14px; font-weight: 400; line-height: 1.6; }
+html body #mainApp#mainApp #pageVerify .kv-radio {
+  flex: 0 0 20px; width: 20px; height: 20px; box-sizing: border-box; border-radius: 50%;
+  border: 2px solid var(--kv-radio); background: var(--kv-card);
+}
+html body #mainApp#mainApp #pageVerify .kv-doc.on { border-color: var(--kv-accent); background: var(--kv-accent-soft); }
+html body #mainApp#mainApp #pageVerify .kv-doc.on b { color: var(--kv-accent); }
+html body #mainApp#mainApp #pageVerify .kv-doc.on .kv-radio { border: 6px solid var(--kv-accent); background: #fff; }
+html body #mainApp#mainApp #pageVerify .kv-doc:disabled { opacity: .55; cursor: default; }
+
+/* ── fields: label 6px above, 14px between ── */
+html body #mainApp#mainApp #pageVerify .kv-label {
+  display: block; margin: 14px 0 6px; padding: 0 2px; color: var(--kv-label);
+  font-family: var(--kv-font); font-size: 12px; font-weight: 400; line-height: 1.6;
+}
+html body #mainApp#mainApp #pageVerify .kv-h + .kv-label { margin-top: 0; }
+html body #mainApp#mainApp #pageVerify .kv-input {
+  display: block; width: 100%; height: 48px; min-height: 48px; margin: 0; padding: 0 12px; box-sizing: border-box;
+  border: 1px solid var(--kv-field-line) !important; border-radius: 14px !important; background: var(--kv-field) !important; box-shadow: none !important;
+  color: var(--kv-field-ink) !important; font-family: var(--kv-font); font-size: 16px !important; font-weight: var(--kv-field-weight); line-height: 46px;
+  -webkit-appearance: none; appearance: none;
+  transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+}
+html body #mainApp#mainApp #pageVerify .kv-input[dir="ltr"] { text-align: left; }
+html body #mainApp#mainApp #pageVerify .kv-input::placeholder { color: var(--kv-ph); opacity: 1; }
+html body #mainApp#mainApp #pageVerify .kv-input::-webkit-date-and-time-value { text-align: left; }
+html body #mainApp#mainApp #pageVerify .kv-input:is(:focus, :focus-visible) {
+  outline: 0 !important; border-color: var(--kv-accent) !important; background: var(--kv-field-focus) !important; box-shadow: 0 0 0 4px var(--kv-ring) !important;
+}
+html body #mainApp#mainApp #pageVerify .kv-input.has-error { border-color: var(--kv-err) !important; }
+html[data-theme="dark"] body #mainApp#mainApp #pageVerify .kv-input[type="date"] { color-scheme: dark; }
+
+/* errors (setFieldError adds .show; its small icon is not used here) */
+html body #mainApp#mainApp #pageVerify .kv-err { display: none; margin: 6px 0 0; padding: 0 2px; color: var(--kv-err); font-family: var(--kv-font); font-size: 12px; font-weight: 400; line-height: 1.7; }
+html body #mainApp#mainApp #pageVerify .kv-err.show { display: block; }
+html body #mainApp#mainApp #pageVerify .kv-err .fe-ico { display: none !important; }
+
+/* name differs from the account name */
+html body #mainApp#mainApp #pageVerify .kv-note-line { margin: 6px 0 0; padding: 0 2px; color: var(--kv-warn-ink); font-size: 12px; font-weight: 400; line-height: 1.7; }
+html body #mainApp#mainApp #pageVerify .kv-note-line.ok { color: var(--kv-ok-ink); }
+
+/* ── photos: one box per side, title + camera / gallery ── */
+html body #mainApp#mainApp #pageVerify .kv-uploads { display: grid; gap: 14px; }
+html body #mainApp#mainApp #pageVerify .kv-upload { min-width: 0; }
+html body #mainApp#mainApp #pageVerify .kv-drop {
+  display: flex; flex-direction: column; gap: 2px; padding: 14px; box-sizing: border-box;
+  border: 1px solid var(--kv-field-line); border-radius: 14px; background: var(--kv-field);
+}
+html body #mainApp#mainApp #pageVerify .kv-drop > b { color: var(--kv-ink); font-size: 13.5px; font-weight: 600; line-height: 1.7; }
+html body #mainApp#mainApp #pageVerify .kv-drop > small { color: var(--kv-label); font-size: 11.5px; font-weight: 400; line-height: 1.75; }
+html body #mainApp#mainApp #pageVerify .kv-drop > small:empty { display: none; }
+html body #mainApp#mainApp #pageVerify .kv-srcs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+html body #mainApp#mainApp #pageVerify .kv-src {
+  height: 40px; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 12px;
+  background: var(--kv-chip); color: var(--kv-chip-ink); font-family: var(--kv-font); font-size: 13px; font-weight: 400; cursor: pointer;
+  -webkit-tap-highlight-color: transparent; user-select: none;
+}
+html body #mainApp#mainApp #pageVerify .kv-src.is-main { background: var(--kv-accent-soft); color: var(--kv-accent); }
+html body #mainApp#mainApp #pageVerify .kv-upload.busy .kv-drop { opacity: .7; pointer-events: none; }
+html body #mainApp#mainApp #pageVerify .kv-preview { overflow: hidden; border: 1px solid var(--kv-field-line); border-radius: 14px; background: var(--kv-field); }
+html body #mainApp#mainApp #pageVerify .kv-preview img { display: block; width: 100%; max-height: 220px; object-fit: contain; background: var(--kv-card); }
+html body #mainApp#mainApp #pageVerify .kv-preview-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--kv-field-line); }
+html body #mainApp#mainApp #pageVerify .kv-preview-meta { min-width: 0; color: var(--kv-label); font-size: 11.5px; line-height: 1.6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html body #mainApp#mainApp #pageVerify .kv-preview-actions { display: flex; gap: 6px; flex: 0 0 auto; }
+html body #mainApp#mainApp #pageVerify .kv-mini {
+  height: 32px; margin: 0; padding: 0 12px; display: inline-flex; align-items: center; justify-content: center;
+  border: 0; border-radius: 10px; background: var(--kv-chip); color: var(--kv-chip-ink);
+  font-family: var(--kv-font); font-size: 13px; font-weight: 400; cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+html body #mainApp#mainApp #pageVerify .kv-mini.is-danger { background: var(--kv-err-soft); color: var(--kv-err-ink); }
+html body #mainApp#mainApp #pageVerify .kv-mini[disabled] { opacity: .55; pointer-events: none; }
+
+/* ── confirmation ── */
+html body #mainApp#mainApp #pageVerify .kv-privacy { margin: 0 0 12px; padding: 0 2px; color: var(--kv-label); font-size: 12px; font-weight: 400; line-height: 1.7; }
+html body #mainApp#mainApp #pageVerify .kv-check { display: flex; align-items: center; gap: 10px; margin: 0; cursor: pointer; }
+html body #mainApp#mainApp #pageVerify .kv-check input {
+  flex: 0 0 20px; width: 20px !important; height: 20px !important; min-width: 20px; min-height: 0 !important; max-height: 20px;
+  margin: 0 !important; padding: 0 !important; box-sizing: border-box; cursor: pointer;
+  -webkit-appearance: none; appearance: none; border: 2px solid var(--kv-radio) !important; border-radius: 6px !important; box-shadow: none !important;
+  background: var(--kv-card) center / 14px 14px no-repeat !important;
+}
+html body #mainApp#mainApp #pageVerify .kv-check input:checked {
+  border-color: var(--kv-accent) !important; background-color: var(--kv-accent) !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12 5 5 9-10'/%3E%3C/svg%3E") !important;
+}
+html body #mainApp#mainApp #pageVerify .kv-check span { color: var(--kv-field-ink); font-size: 14px; font-weight: 400; line-height: 1.7; }
+
+html body #mainApp#mainApp #pageVerify .kv-form-error {
+  padding: 14px; border: 1px solid var(--kv-err-line); border-radius: 16px; background: var(--kv-err-soft);
+  color: var(--kv-err-ink); font-size: 14px; line-height: 1.75;
+}
+
+/* ── the action ── */
+html body #mainApp#mainApp #pageVerify .kv-btn {
+  position: relative; width: 100% !important; height: 52px !important; min-height: 52px !important; margin: 6px 0 0 !important; padding: 0 14px !important;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  border: 0 !important; border-radius: 14px !important; background: var(--kv-btn) !important; color: #fff !important; box-shadow: var(--kv-btn-shadow) !important;
+  font-family: var(--kv-font) !important; font-size: 15px !important; font-weight: 400 !important; line-height: 1.6 !important; cursor: pointer;
+  transition: transform .12s ease, background-color .15s ease, opacity .15s ease;
+}
+html body #mainApp#mainApp #pageVerify .kv-btn:not(:disabled):active { transform: scale(.98); background: var(--kv-btn-press) !important; }
+html body #mainApp#mainApp #pageVerify .kv-btn:not(:disabled):hover { background: var(--kv-btn) !important; }
+html body #mainApp#mainApp #pageVerify .kv-btn:disabled { opacity: .55 !important; cursor: default; }
+html body #mainApp#mainApp #pageVerify .kv-btn svg { width: 18px; height: 18px; }
+html body #mainApp#mainApp #pageVerify .kv-progress { display: flex; flex-direction: column; gap: 6px; }
+html body #mainApp#mainApp #pageVerify .kv-progress-track { height: 6px; overflow: hidden; border-radius: 999px; background: var(--kv-line); }
+html body #mainApp#mainApp #pageVerify .kv-progress-track span { display: block; width: 0; height: 100%; border-radius: inherit; background: var(--kv-accent); transition: width .3s ease; }
+html body #mainApp#mainApp #pageVerify .kv-progress small { color: var(--kv-label); font-size: 12px; line-height: 1.6; text-align: center; }
+
+/* ── sent ── */
+html body #mainApp#mainApp #pageVerify .kv-done b { color: var(--kv-title); font-size: 14.5px; font-weight: 600; line-height: 1.6; }
+html body #mainApp#mainApp #pageVerify .kv-done p { margin: 3px 0 0; color: var(--kv-text); font-size: 14px; line-height: 1.75; }
+html body #mainApp#mainApp #pageVerify .kv-done .kv-btn { margin-top: 20px !important; }
+
+html body #mainApp#mainApp #pageVerify :is(.kv-doc, .kv-src, .kv-mini, .kv-btn, .kv-check input):focus { outline: 0 !important; }
+html body #mainApp#mainApp #pageVerify :is(.kv-doc, .kv-src, .kv-mini, .kv-btn, .kv-check input):focus-visible { outline: 2px solid var(--kv-accent) !important; outline-offset: 2px !important; }
+
+@media (min-width: 560px) {
+  html body #mainApp#mainApp #pageVerify .kv-uploads { grid-template-columns: 1fr 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html body #mainApp#mainApp #pageVerify :is(.kv-doc, .kv-input, .kv-btn, .kv-progress-track span) { transition: none !important; }
+  html body #mainApp#mainApp #pageVerify .kv-btn:active { transform: none !important; }
+}

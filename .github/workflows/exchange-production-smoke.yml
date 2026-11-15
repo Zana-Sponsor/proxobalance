@@ -15,17 +15,17 @@ jobs:
           set -euo pipefail
           for attempt in $(seq 1 30); do
             if curl -fLsS --max-time 15 'https://www.proxobalance.app/' -o current-index.html &&
-               grep -q 'app.js?v=102' current-index.html &&
+               grep -q 'app.js?v=104' current-index.html &&
                grep -q 'receipt-access.js?v=1' current-index.html &&
                grep -q 'auth-phone.css?v=2' current-index.html &&
                grep -q 'auth-otp.css?v=1' current-index.html &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin' -o current-admin.html &&
-               grep -q 'admin.js?v=35' current-admin.html; then
+               grep -q 'admin.js?v=36' current-admin.html; then
               exit 0
             fi
             sleep 6
           done
-          echo 'FAIL: the v48 customer and admin bundles were not published within the deployment window.'
+          echo 'FAIL: the v51 customer and admin bundles were not published within the deployment window.'
           exit 1
       - name: Verify the live customer page and admin panel
         shell: bash
@@ -43,7 +43,10 @@ jobs:
           grep -q 'id="pageChangePhone" data-route="change-phone"' index.html
           grep -q 'id="pageChangePassword" data-route="change-password"' index.html
           grep -q 'id="pageChangeEmail" data-route="change-email"' index.html
-          grep -q '/assets/css/account-settings.css?v=2' index.html
+          grep -q '/assets/css/account-settings.css?v=4' index.html
+          grep -q '/assets/css/account-delete.css?v=3' index.html
+          grep -q '/assets/css/kyc-screen.css?v=1' index.html
+          grep -q '/assets/js/activity-tracker.js?v=1' index.html
           grep -q '/assets/js/whatsapp-notify.js?v=2' index.html
           grep -q '/assets/css/profile-screens.css?v=1' index.html
           grep -q 'id="pageDash"' index.html
@@ -55,7 +58,7 @@ jobs:
           for bad in 'id="pfPhone"' 'id="waPhone"' 'id="signupEmail"' 'id="welcomeReward"' 'id="rewardBanner"' 'id="bdDiscountRow"' 'pxn-fab' 'exchange-reward-pricing'; do
             if grep -q "$bad" index.html; then echo "FAIL: $bad is still published."; exit 1; fi
           done
-          curl -fLsS --max-time 25 "$root/assets/js/app.js?v=102" -o app.js
+          curl -fLsS --max-time 25 "$root/assets/js/app.js?v=104" -o app.js
           grep -q 'function submitAccountDeletion' app.js
           grep -q "pxAuthApi('login_start'" app.js
           grep -q "pxAuthApi('phone_change_start'" app.js
@@ -75,7 +78,7 @@ jobs:
           grep -q 'receipt-access.js?v=1' exchange-admin.html
           grep -q 'exchange-staff.js?v=10' exchange-admin.html
           if grep -q 'id="pgRewards"' exchange-admin.html; then echo 'FAIL: the rewards admin page is still published.'; exit 1; fi
-          echo "PASS: v48 customer app and admin panel are live."
+          echo "PASS: v51 customer app and admin panel are live."
       - name: Verify APIs refuse anonymous callers and leak nothing
         shell: bash
         run: |

@@ -3946,11 +3946,6 @@ function acxNextChange(stamp){
 }
 function acxDay(ms){ return String(kycFmtDate(new Date(ms).toISOString())); }
 function acxDaysLeft(ms){ return Math.max(1, Math.ceil((ms-Date.now())/DAY_MS)); }
-const ACX_ICON={
-  lock:'<svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
-  wait:'<svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
-  info:'<svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>'
-};
 // A calm notice instead of an error: why it can't be done now, and when it can.
 // Every text here is our own copy (no user input).
 function acxNote(id, opts){
@@ -3964,7 +3959,7 @@ function acxNote(id, opts){
          +'<small class="acx-meter-txt">'+String(left)+' ڕۆژی ماوە</small>';
   }
   el.dataset.tone=opts.tone;
-  el.innerHTML='<span class="acx-note-ico">'+ACX_ICON[opts.tone]+'</span><div class="acx-note-body"><b>'+opts.title+'</b><p>'+opts.text+'</p>'+meter+'</div>';
+  el.innerHTML='<div class="acx-note-body"><b>'+opts.title+'</b><p>'+opts.text+'</p>'+meter+'</div>';
   el.hidden=false;
 }
 function acxErr(id,text){ const el=document.getElementById(id); if(el) el.textContent=text||''; }
@@ -3978,6 +3973,50 @@ function acxEye(btn){
   input.type=show?'text':'password';
   btn.classList.toggle('is-on',show);
   btn.setAttribute('aria-label',show?'شاردنەوەی وشەی نهێنی':'پیشاندانی وشەی نهێنی');
+}
+// Six code boxes, the same as the sign-in code screen. The hidden #cpCode /
+// #ceCode keeps the whole code, so the rest of the flow reads one value.
+function acxCodeBoxes(id){ const host=document.querySelector('.acx-otp[data-code="'+id+'"]'); return host?[...host.querySelectorAll('.acx-digit')]:[]; }
+function acxDigits(v){ return String(v||'').replace(/[٠-٩]/g,c=>String(c.charCodeAt(0)-1632)).replace(/[۰-۹]/g,c=>String(c.charCodeAt(0)-1776)).replace(/\D/g,''); }
+function acxCodeRead(id){ const v=acxCodeBoxes(id).map(b=>b.value||'').join(''); const h=document.getElementById(id); if(h) h.value=v; return v; }
+function acxCodeSet(id,digits){
+  const d=acxDigits(digits).slice(0,6);
+  acxCodeBoxes(id).forEach((b,i)=>{ b.value=d[i]||''; });
+  const h=document.getElementById(id); if(h) h.value=d;
+  return d;
+}
+function acxCodeFocus(id,index){ const b=acxCodeBoxes(id); const el=b[Math.max(0,Math.min(b.length-1,index||0))]; try{ el && el.focus({preventScroll:true}); }catch(_){} }
+function acxCodeChanged(host,id){
+  const sync=host.dataset.sync; if(sync && typeof window[sync]==='function') window[sync]();
+  if(acxCodeRead(id).length===6){ const f=host.closest('form'); if(f && typeof f.requestSubmit==='function') f.requestSubmit(); }
+}
+function acxCodeInput(el){
+  const host=el.closest('.acx-otp'); if(!host) return;
+  const id=host.dataset.code, boxes=acxCodeBoxes(id), i=boxes.indexOf(el);
+  const d=acxDigits(el.value);
+  if(d.length>1){                                   // pasted or filled by the phone
+    const code=acxCodeSet(id, boxes.slice(0,i).map(b=>b.value||'').join('')+d);
+    acxCodeFocus(id, code.length);
+  }else{
+    el.value=d;
+    if(d) acxCodeFocus(id, i+1);
+  }
+  acxCodeChanged(host,id);
+}
+function acxCodeKey(e,el){
+  if(e.key!=='Backspace' || el.value) return;
+  const host=el.closest('.acx-otp'); if(!host) return;
+  const id=host.dataset.code, boxes=acxCodeBoxes(id), i=boxes.indexOf(el);
+  if(i>0){ e.preventDefault(); boxes[i-1].value=''; acxCodeFocus(id,i-1); acxCodeChanged(host,id); }
+}
+function acxCodePaste(e,el){
+  const d=acxDigits(e.clipboardData && e.clipboardData.getData('text'));
+  if(!d) return;
+  e.preventDefault();
+  const host=el.closest('.acx-otp'); if(!host) return;
+  const id=host.dataset.code, code=acxCodeSet(id,d);
+  acxCodeFocus(id, code.length);
+  acxCodeChanged(host,id);
 }
 async function refreshProfileRow(){
   if(!sb || !curUser) return;
@@ -4110,7 +4149,8 @@ function cpShowStep(step){
   if(s2) s2.hidden=step!==2;
 }
 function cpReset(){
-  ['cpPhone','cpPass','cpCode'].forEach(id=>{ const el=document.getElementById(id); if(el){ el.value=''; if(id==='cpPass') el.type='password'; } });
+  ['cpPhone','cpPass'].forEach(id=>{ const el=document.getElementById(id); if(el){ el.value=''; if(id==='cpPass') el.type='password'; } });
+  acxCodeSet('cpCode','');
   document.querySelectorAll('#pageChangePhone .acx-eye').forEach(b=>b.classList.remove('is-on'));
   acxErr('cpErr',''); acxErr('cpCodeErr','');
   _cp.phone=null; _cp.password=''; _cp.busy=false;
@@ -4161,7 +4201,7 @@ function cpStartResend(seconds){
     const b=document.getElementById('cpResend'); if(!b) return;
     const left=Math.ceil((_cp.resendAt-Date.now())/1000);
     if(left<=0){ clearInterval(_cp.timer); _cp.timer=null; b.disabled=false; b.textContent='دووبارە ناردنەوە'; return; }
-    b.disabled=true; b.textContent='دووبارە ناردنەوە ('+acxClock(left)+')';
+    b.disabled=true; b.textContent='دووبارە ناردنەوە لە '+acxClock(left);
   };
   tick(); _cp.timer=setInterval(tick,1000);
 }
@@ -4187,9 +4227,9 @@ async function cpSend(ev){
   if(!r.ok) return cpFail(r,'cpErr');
   _cp.phone=phone; _cp.password=password;
   const target=document.getElementById('cpTarget'); if(target) target.textContent='0'+phone.slice(4);
-  const code=document.getElementById('cpCode'); if(code) code.value='';
+  acxCodeSet('cpCode','');
   cpShowStep(2); cpStartResend(pxSecondsLeft(r.expires_at,300)); cpSync();
-  setTimeout(()=>{ try{ code && code.focus({preventScroll:true}); }catch(_){} },60);
+  setTimeout(()=>acxCodeFocus('cpCode',0),60);
 }
 async function cpResend(){
   if(_cp.busy || !_cp.phone || Date.now()<_cp.resendAt) return;
@@ -4244,7 +4284,8 @@ function ceShowStep(step){
   if(s2) s2.hidden=step!==2;
 }
 function ceReset(){
-  ['ceEmail','cePass','ceCode'].forEach(id=>{ const el=document.getElementById(id); if(el){ el.value=''; if(id==='cePass') el.type='password'; } });
+  ['ceEmail','cePass'].forEach(id=>{ const el=document.getElementById(id); if(el){ el.value=''; if(id==='cePass') el.type='password'; } });
+  acxCodeSet('ceCode','');
   document.querySelectorAll('#pageChangeEmail .acx-eye').forEach(b=>b.classList.remove('is-on'));
   acxErr('ceErr',''); acxErr('ceCodeErr','');
   _ce.email=null; _ce.password=''; _ce.busy=false;
@@ -4279,7 +4320,7 @@ function ceStartResend(seconds){
     const b=document.getElementById('ceResend'); if(!b) return;
     const left=Math.ceil((_ce.resendAt-Date.now())/1000);
     if(left<=0){ clearInterval(_ce.timer); _ce.timer=null; b.disabled=false; b.textContent='دووبارە ناردنەوە'; return; }
-    b.disabled=true; b.textContent='دووبارە ناردنەوە ('+acxClock(left)+')';
+    b.disabled=true; b.textContent='دووبارە ناردنەوە لە '+acxClock(left);
   };
   tick(); _ce.timer=setInterval(tick,1000);
 }
@@ -4295,9 +4336,10 @@ async function ceSend(ev){
   _ce.busy=false; acxBusy('ceSendBtn',false); ceSync(true);
   if(!r.ok) return acxErr('ceErr',pxAuthError(r));
   _ce.email=email; _ce.password=password;
-  const code=document.getElementById('ceCode'); if(code) code.value='';
+  const target=document.getElementById('ceTarget'); if(target) target.textContent=email;
+  acxCodeSet('ceCode','');
   ceShowStep(2); ceStartResend(pxSecondsLeft(r.expires_at,600)); ceSync();
-  setTimeout(()=>{ try{ code && code.focus({preventScroll:true}); }catch(_){} },60);
+  setTimeout(()=>acxCodeFocus('ceCode',0),60);
 }
 async function ceResend(){
   if(_ce.busy || !_ce.email || Date.now()<_ce.resendAt) return;
@@ -5055,29 +5097,28 @@ function renderVerifyPage(){
   if(status==='none' && !KYC_SELF_START_ENABLED) canSubmit=false;
 
   if(status==='loading'){
-    banner.innerHTML=window.PXS?PXS.kycBanner():`${kycIco('loading')}<div><b>بارکردنی دۆخی ناسنامە...</b></div>`;
+    banner.innerHTML=window.PXS?`<div aria-hidden="true"><b>${PXS.bar(168,12)}</b><p>${PXS.bar('92%',10)}</p></div>`:'<div><b>بارکردنی دۆخی ناسنامە...</b></div>';
     form.hidden=true; return;
   }
   if(status==='error'){
-    banner.innerHTML=`${kycIco('error')}<div><b>نەتوانرا دۆخی ناسنامە باربکرێت</b><p>پەیوەندییەکەت بپشکنە.</p>
-      <button type="button" class="kyc-mini-btn" onclick="loadKycStatus()">دووبارە هەوڵدانەوە</button></div>`;
+    banner.innerHTML=`<div><b>نەتوانرا دۆخی ناسنامە باربکرێت</b><p>پەیوەندییەکەت بپشکنە.</p>
+      <button type="button" class="kv-mini" onclick="loadKycStatus()">دووبارە هەوڵدانەوە</button></div>`;
     form.hidden=true; return;
   }
   if(status==='pending'){
-    banner.innerHTML=`${kycIco('pending')}<div><b>داواکارییەکەت نێردرا و لە ژێر پشکنینە</b>
+    banner.innerHTML=`<div><b>داواکارییەکەت نێردرا و لە ژێر پشکنینە</b>
       <p>${escHtml(KYC_DOC_TYPES[v?.document_type]?.label||'')} — ${escHtml(kycFmtDate(v?.submitted_at,true))}</p></div>`;
   }else if(status==='approved'){
-    banner.innerHTML=`${kycIco('approved')}<div><b>ناسنامە پشتڕاستکراوەتەوە</b>
+    banner.innerHTML=`<div><b>ناسنامە پشتڕاستکراوەتەوە</b>
       <p>پێویست بە هیچ کارێکی تر ناکات. بەرواری پشتڕاستکردنەوە: ${escHtml(kycFmtDate(v?.reviewed_at))}</p></div>`;
   }else if(status==='required'){
-    banner.innerHTML=`${kycIco('required')}<div><b>پشتڕاستکردنەوەی ناسنامە پێویستە</b>
+    banner.innerHTML=`<div><b>پشتڕاستکردنەوەی ناسنامە پێویستە</b>
       <p>${escHtml(req?.reason||'تکایە بۆ بەردەوامبوون لە بەکارهێنانی خزمەتگوزارییەکان ناسنامەکەت پشتڕاست بکەرەوە.')}</p></div>`;
   }else if(status==='rejected'){
-    banner.innerHTML=`${kycIco('rejected')}<div><b>پێویستی بە دووبارە ناردنەوە هەیە</b>
+    banner.innerHTML=`<div><b>پێویستی بە دووبارە ناردنەوە هەیە</b>
       <p><strong>هۆکار:</strong> ${escHtml(v?.rejection_reason||'—')}</p></div>`;
   }else{
-    banner.innerHTML=`${kycIco('none')}<div><b>پشتڕاست نەکراوەتەوە</b>
-      <p>سێ هەنگاوی کورت: جۆری بەڵگەنامە، زانیارییەکان، وێنەکان.</p></div>`;
+    banner.innerHTML=`<div><b>پشتڕاست نەکراوەتەوە</b></div>`;
   }
   form.hidden=!canSubmit;
   if(canSubmit){
@@ -5116,7 +5157,7 @@ function kycSelectDoc(type, silent){
   if(!KYC_DOC_TYPES[type]) return;
   _kycDocType=type;
   const cfg=KYC_DOC_TYPES[type];
-  document.querySelectorAll('.kyc-doc').forEach(b=>{
+  document.querySelectorAll('.kv-doc').forEach(b=>{
     const on=b.dataset.doc===type;
     b.classList.toggle('on',on);
     b.setAttribute('aria-checked',on?'true':'false');
@@ -5397,7 +5438,7 @@ function kycSideEls(side){
   };
 }
 
-const KYC_PICK_HINT='وێنەیەکی ڕوون بگرە یان لە گەلەری هەڵیبژێرە';
+const KYC_PICK_HINT='';   // the box shows only its title until a photo is being checked
 function kycRemoveImage(side){
   _kycImageTokens[side]++;
   const cur=_kycImages[side];
@@ -5466,7 +5507,7 @@ function kycOnImage(side, input){
 // natively on iOS and Android); make them work from the keyboard too.
 document.addEventListener('keydown', e=>{
   if(e.key!=='Enter' && e.key!==' ') return;
-  const l=e.target && e.target.closest ? e.target.closest('label.kyc-src-btn, label.kyc-mini-btn') : null;
+  const l=e.target && e.target.closest ? e.target.closest('label.kv-src, label.kv-mini') : null;
   if(!l) return;
   e.preventDefault();
   l.click();
@@ -5515,7 +5556,7 @@ function kycShowFormError(msg){
   if(!box) return;
   if(!msg){ box.hidden=true; box.textContent=''; return; }
   box.hidden=false;
-  box.innerHTML=ICON.warn+'<span>'+escHtml(msg)+'</span>';
+  box.textContent=msg;
 }
 
 function kycValidate(){
@@ -5551,7 +5592,7 @@ async function submitKyc(){
   const btnHtml=btn.innerHTML;
   _kycSubmitting=true;
   btn.disabled=true; btn.innerHTML=ICON.spin+' ناردن...';
-  document.querySelectorAll('#kycFormCard input, #kycFormCard .kyc-doc, #kycFormCard .kyc-mini-btn').forEach(el=>el.setAttribute('disabled',''));
+  document.querySelectorAll('#kycFormCard input, #kycFormCard .kv-doc, #kycFormCard .kv-mini').forEach(el=>el.setAttribute('disabled',''));
   let stage='session';
   try{
     kycSetProgress(5,'پشتڕاستکردنەوەی چوونەژوورەوە...');
@@ -5635,7 +5676,7 @@ function kycResetForm(){
   ['kycName','kycDob','kycNumber'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
   const c=document.getElementById('kycConsent'); if(c) c.checked=false;
   _kycDocType=null;
-  document.querySelectorAll('.kyc-doc').forEach(b=>{ b.classList.remove('on'); b.setAttribute('aria-checked','false'); });
+  document.querySelectorAll('.kv-doc').forEach(b=>{ b.classList.remove('on'); b.setAttribute('aria-checked','false'); });
   kycShowFormError(null);
   kycUpdateSteps();
 }

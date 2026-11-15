@@ -133,10 +133,11 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
 <link rel="stylesheet" href="/assets/css/support-case.css?v=1">
 <link rel="stylesheet" href="/assets/css/skeletons.css?v=2">
 <link rel="stylesheet" href="/assets/css/dashboard.css?v=7">
-<link rel="stylesheet" href="/assets/css/account-delete.css?v=1">
-<link rel="stylesheet" href="/assets/css/account-settings.css?v=2">
+<link rel="stylesheet" href="/assets/css/account-delete.css?v=3">
+<link rel="stylesheet" href="/assets/css/account-settings.css?v=4">
 <link rel="stylesheet" href="/assets/css/profile-screens.css?v=1">
 <link rel="stylesheet" href="/assets/css/feedback-sheet.css?v=3">
+<link rel="stylesheet" href="/assets/css/kyc-screen.css?v=1">
 </head>
 
 <body>
@@ -1358,26 +1359,21 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
     </div>
     <div class="dax">
       <div class="dax-hero">
-        <span class="dax-hero-ico" aria-hidden="true"><svg class="pxi" viewBox="0 0 24 24" focusable="false"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></span>
         <h3>هەژمارەکەت دوای 7 ڕۆژ دەسڕدرێتەوە</h3>
         <p>ئەگەر لەم ماوەیەدا بچیتەوە ژوورەوە، هەژمارەکەت چالاک دەبێتەوە و هیچ شتێکت لەدەست ناچێت.</p>
       </div>
 
       <ul class="dax-list">
-        <li><span class="dax-li-ico" aria-hidden="true"><svg class="pxi" viewBox="0 0 24 24" focusable="false"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg></span>
-          <div><b>دەستبەجێ دەچیتە دەرەوە</b><small>لە هەموو ئامێرەکانت.</small></div></li>
-        <li><span class="dax-li-ico" aria-hidden="true"><svg class="pxi" viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
-          <div><b>7 ڕۆژ کاتت هەیە</b><small>بۆ هەڵوەشاندنەوە، تەنها بچۆرەوە ژوورەوە.</small></div></li>
-        <li><span class="dax-li-ico" aria-hidden="true"><svg class="pxi" viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 12.5-6.6"/><path d="m17 17 4 4"/><path d="m21 17-4 4"/></svg></span>
-          <div><b>زانیارییە کەسییەکانت دەسڕدرێنەوە</b><small>ناو، ئیمەیل، ژمارەی مۆبایل، وەرگرە پاشەکەوتکراوەکان و ئاگادارییەکان.</small></div></li>
-        <li><span class="dax-li-ico" aria-hidden="true"><svg class="pxi" viewBox="0 0 24 24" focusable="false"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h4"/></svg></span>
-          <div><b>تۆماری مامەڵەکان هەڵدەگیرێن</b><small>بەپێی یاسا، بەبێ ناو و زانیاریی پەیوەندی.</small></div></li>
+        <li><div><b>دەستبەجێ دەچیتە دەرەوە</b><small>لە هەموو ئامێرەکانت.</small></div></li>
+        <li><div><b>7 ڕۆژ کاتت هەیە</b><small>بۆ هەڵوەشاندنەوە، تەنها بچۆرەوە ژوورەوە.</small></div></li>
+        <li><div><b>زانیارییە کەسییەکانت دەسڕدرێنەوە</b><small>ناو، ئیمەیل، ژمارەی مۆبایل، وەرگرە پاشەکەوتکراوەکان و ئاگادارییەکان.</small></div></li>
+        <li><div><b>تۆماری مامەڵەکان هەڵدەگیرێن</b><small>بەپێی یاسا، بەبێ ناو و زانیاریی پەیوەندی.</small></div></li>
       </ul>
 
       <div class="dax-block" id="daxBlock" role="status" hidden></div>
 
       <div class="dax-form">
-        <label for="daxPass">بۆ دڵنیابوون، وشەی نهێنییەکەت بنووسە</label>
+        <label for="daxPass">وشەی نهێنیی ئێستا</label>
         <input type="password" id="daxPass" autocomplete="current-password" dir="ltr" oninput="daxSync()" onkeydown="if(event.key==='Enter')submitAccountDeletion()">
         <p class="dax-err" id="daxErr" role="alert"></p>
         <button type="button" class="dax-btn" id="daxBtn" onclick="submitAccountDeletion()" disabled><span class="dax-spin" aria-hidden="true"></span><span>سڕینەوەی هەژمار</span></button>
@@ -1424,15 +1420,12 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
         <button type="submit" class="acx-btn" id="cpSendBtn" disabled><span class="acx-spin" aria-hidden="true"></span><span>ناردنی کۆد</span></button>
       </form>
       <form class="acx-form" id="cpStep2" onsubmit="cpVerify(event)" novalidate hidden>
-        <p class="acx-sent">کۆدەکەمان بۆ واتسئاپی <b dir="ltr" id="cpTarget"></b> نارد.</p>
-        <label for="cpCode">کۆدی دڵنیایی</label>
-        <input class="acx-input acx-code" id="cpCode" type="text" dir="ltr" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="••••••" oninput="this.value=this.value.replace(/[٠-٩]/g,c=>String(c.charCodeAt(0)-1632)).replace(/\D/g,'').slice(0,6);cpSync()">
+        <div class="acx-sent"><span>کۆدەکە لە واتسئاپ نێردرا بۆ</span><b dir="ltr" id="cpTarget"></b><button type="button" class="acx-edit" onclick="cpBack()">گۆڕینی ژمارە</button></div>
+        <div class="acx-otp" dir="ltr" role="group" aria-label="کۆدی دڵنیایی" data-code="cpCode" data-sync="cpSync"><input class="acx-digit" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" aria-label="ژمارەی 1ی کۆد" oninput="acxCodeInput(this)" onkeydown="acxCodeKey(event,this)" onpaste="acxCodePaste(event,this)"><input class="acx-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="6" aria-label="ژمارەی 2ی کۆد" oninput="acxCodeInput(this)" onkeydown="acxCodeKey(event,this)" onpaste="acxCodePaste(event,this)"><input class="acx-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="6" aria-label="ژمارەی 3ی کۆد" oninput="acxCodeInput(this)" onkeydown="acxCodeKey(event,this)" onpaste="acxCodePaste(event,this)"><input class="acx-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="6" aria-label="ژمارەی 4ی کۆد" oninput="acxCodeInput(this)" onkeydown="acxCodeKey(event,this)" onpaste="acxCodePaste(event,this)"><input class="acx-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="6" aria-label="ژمارەی 5ی کۆد" oninput="acxCodeInput(this)" onkeydown="acxCodeKey(event,this)" onpaste="acxCodePaste(event,this)"><input class="acx-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="6" aria-label="ژمارەی 6ی کۆد" oninput="acxCodeInput(this)" onkeydown="acxCodeKey(event,this)" onpaste="acxCodePaste(event,this)"></div>
+        <input type="hidden" id="cpCode">
         <p class="acx-err" id="cpCodeErr" role="alert"></p>
         <button type="submit" class="acx-btn" id="cpVerifyBtn" disabled><span class="acx-spin" aria-hidden="true"></span><span>پشتڕاستکردنەوە</span></button>
-        <div class="acx-row">
-          <button type="button" class="acx-link" id="cpResend" onclick="cpResend()" disabled>دووبارە ناردنەوە</button>
-          <button type="button" class="acx-link" onclick="cpBack()">گۆڕینی ژمارە</button>
-        </div>
+        <div class="acx-again"><button type="button" class="acx-link" id="cpResend" onclick="cpResend()" disabled>دووبارە ناردنەوە</button></div>
       </form>
     </div>
   </section>
@@ -1449,20 +1442,18 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
       <form class="acx-form" id="ceStep1" onsubmit="ceSend(event)" novalidate>
         <label for="ceEmail">ئیمەیڵ</label>
         <input class="acx-input" id="ceEmail" type="email" dir="ltr" inputmode="email" autocomplete="email" maxlength="120" oninput="ceSync()">
-        <label for="cePass">وشەی نهێنی</label>
+        <label for="cePass">وشەی نهێنیی ئێستا</label>
         <div class="acx-pass"><input class="acx-input" id="cePass" type="password" dir="ltr" autocomplete="current-password" oninput="ceSync()"><button type="button" class="acx-eye" onclick="acxEye(this)" aria-label="پیشاندانی وشەی نهێنی"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"/><circle cx="12" cy="12" r="3"/></svg></button></div>
         <p class="acx-err" id="ceErr" role="alert"></p>
         <button type="submit" class="acx-btn" id="ceSendBtn" disabled><span class="acx-spin" aria-hidden="true"></span><span>ناردنی کۆد</span></button>
       </form>
       <form class="acx-form" id="ceStep2" onsubmit="ceVerify(event)" novalidate hidden>
-        <label for="ceCode">کۆدی دڵنیایی</label>
-        <input class="acx-input acx-code" id="ceCode" type="text" dir="ltr" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="••••••" oninput="this.value=this.value.replace(/[٠-٩]/g,c=>String(c.charCodeAt(0)-1632)).replace(/\D/g,'').slice(0,6);ceSync()">
+        <div class="acx-sent"><span>کۆدەکە نێردرا بۆ</span><b dir="ltr" id="ceTarget"></b><button type="button" class="acx-edit" onclick="ceBack()">گۆڕینی ئیمەیڵ</button></div>
+        <div class="acx-otp" dir="ltr" role="group" aria-label="کۆدی دڵنیایی" data-code="ceCode" data-sync="ceSync"><input class="acx-digit" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" aria-label="ژمارەی 1ی کۆد" oninput="acxCodeInput(this)" onkeydown="acxCodeKey(event,this)" onpaste="acxCodePaste(event,this)"><input class="acx-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="6" aria-label="ژمارەی 2ی کۆد" oninput="acxCodeInput(this)" onkeydown="acxCodeKey(event,this)" onpaste="acxCodePaste(event,this)"><input class="acx-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="6" aria-label="ژمارەی 3ی کۆد" oninput="acxCodeInput(this)" onkeydown="acxCodeKey(event,this)" onpaste="acxCodePaste(event,this)"><input class="acx-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="6" aria-label="ژمارەی 4ی کۆد" oninput="acxCodeInput(this)" onkeydown="acxCodeKey(event,this)" onpaste="acxCodePaste(event,this)"><input class="acx-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="6" aria-label="ژمارەی 5ی کۆد" oninput="acxCodeInput(this)" onkeydown="acxCodeKey(event,this)" onpaste="acxCodePaste(event,this)"><input class="acx-digit" type="text" inputmode="numeric" autocomplete="off" maxlength="6" aria-label="ژمارەی 6ی کۆد" oninput="acxCodeInput(this)" onkeydown="acxCodeKey(event,this)" onpaste="acxCodePaste(event,this)"></div>
+        <input type="hidden" id="ceCode">
         <p class="acx-err" id="ceCodeErr" role="alert"></p>
         <button type="submit" class="acx-btn" id="ceVerifyBtn" disabled><span class="acx-spin" aria-hidden="true"></span><span>پشتڕاستکردنەوە</span></button>
-        <div class="acx-row">
-          <button type="button" class="acx-link" id="ceResend" onclick="ceResend()" disabled>دووبارە ناردنەوە</button>
-          <button type="button" class="acx-link" onclick="ceBack()">گۆڕینی ئیمەیڵ</button>
-        </div>
+        <div class="acx-again"><button type="button" class="acx-link" id="ceResend" onclick="ceResend()" disabled>دووبارە ناردنەوە</button></div>
       </form>
     </div>
   </section>
@@ -1480,7 +1471,7 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
         <div class="acx-pass"><input class="acx-input" id="pwCurrent" type="password" dir="ltr" autocomplete="current-password" oninput="pwSync()"><button type="button" class="acx-eye" onclick="acxEye(this)" aria-label="پیشاندانی وشەی نهێنی"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"/><circle cx="12" cy="12" r="3"/></svg></button></div>
         <label for="pwNew">وشەی نهێنیی نوێ</label>
         <div class="acx-pass"><input class="acx-input" id="pwNew" type="password" dir="ltr" autocomplete="new-password" oninput="pwSync()"><button type="button" class="acx-eye" onclick="acxEye(this)" aria-label="پیشاندانی وشەی نهێنی"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"/><circle cx="12" cy="12" r="3"/></svg></button></div>
-        <label for="pwNew2">دووبارەکردنەوەی وشەی نهێنیی نوێ</label>
+        <label for="pwNew2">دووبارە وشەی نهێنیی نوێ</label>
         <div class="acx-pass"><input class="acx-input" id="pwNew2" type="password" dir="ltr" autocomplete="new-password" oninput="pwSync()"><button type="button" class="acx-eye" onclick="acxEye(this)" aria-label="پیشاندانی وشەی نهێنی"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"/><circle cx="12" cy="12" r="3"/></svg></button></div>
         <p class="acx-err" id="pwErr" role="alert"></p>
         <button type="submit" class="acx-btn" id="pwBtn" disabled><span class="acx-spin" aria-hidden="true"></span><span>گۆڕینی وشەی نهێنی</span></button>
@@ -1496,149 +1487,112 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
       <span aria-hidden="true"></span>
     </div>
 
-    <div class="kyc-banner" id="kycBanner" data-state="loading">
-      <span class="kyc-ico" data-tone="idle"><svg class="kyc-shield" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="ks-bg" d="M12 2.6 4.6 5.6v5.5c0 4.5 3 8.3 7.4 10.3 4.4-2 7.4-5.8 7.4-10.3V5.6L12 2.6z"/><path class="ks-glyph" d="M9.2 12h5.6"/></svg></span>
+    <div class="kv-status" id="kycBanner" data-state="loading" role="status">
       <div><b>بارکردنی دۆخی ناسنامە...</b></div>
     </div>
 
-    <div class="kyc-form-card kf" id="kycFormCard" hidden>
-      <ol class="kyc-steps" aria-hidden="true">
-        <li id="kycStep1" class="on"><span>1</span>جۆری بەڵگەنامە</li>
-        <li id="kycStep2"><span>2</span>زانیاری</li>
-        <li id="kycStep3"><span>3</span>وێنەکان</li>
-      </ol>
-
-      <section class="kyc-sec" id="kycSecType">
-        <div class="kyc-sec-title"><span class="kyc-num">1</span><div><b>جۆری بەڵگەنامە هەڵبژێرە</b><small>تەنها بەڵگەنامەی فەرمی و کاراوە قبوڵ دەکرێت</small></div></div>
-        <div class="kyc-doc-grid" role="radiogroup" aria-label="جۆری بەڵگەنامە">
-          <button type="button" class="kyc-doc" data-doc="national_id" role="radio" aria-checked="false" onclick="kycSelectDoc('national_id')">
-            <span class="kyc-doc-ico"><span class="icn icon--solar icon--solar--user-id-linear" aria-hidden="true"></span></span>
-            <span class="kyc-doc-txt"><b>کارتی نیشتیمانی</b><small>کارتی نیشتیمانی یەکگرتووی عێراق</small></span>
-            <span class="kyc-doc-check"><span class="icn icn-sm icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span></span>
-          </button>
-          <button type="button" class="kyc-doc" data-doc="driving_license" role="radio" aria-checked="false" onclick="kycSelectDoc('driving_license')">
-            <span class="kyc-doc-ico"><span class="icn icon--solar icon--solar--card-linear" aria-hidden="true"></span></span>
-            <span class="kyc-doc-txt"><b>مۆڵەتی شوفێری</b><small>مۆڵەتی شوفێریی عێراق یان هەرێمی کوردستان</small></span>
-            <span class="kyc-doc-check"><span class="icn icn-sm icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span></span>
-          </button>
+    <div class="kv" id="kycFormCard" hidden>
+      <section class="kv-card kv-sec" id="kycSecType">
+        <h3 class="kv-h">جۆری بەڵگەنامە</h3>
+        <div class="kv-docs" role="radiogroup" aria-label="جۆری بەڵگەنامە">
+          <button type="button" class="kv-doc" data-doc="national_id" role="radio" aria-checked="false" onclick="kycSelectDoc('national_id')"><b>کارتی نیشتیمانی</b><span class="kv-radio" aria-hidden="true"></span></button>
+          <button type="button" class="kv-doc" data-doc="driving_license" role="radio" aria-checked="false" onclick="kycSelectDoc('driving_license')"><b>مۆڵەتی شوفێری</b><span class="kv-radio" aria-hidden="true"></span></button>
         </div>
-        <span class="field-error" id="kycDocTypeError"></span>
+        <span class="kv-err" id="kycDocTypeError"></span>
       </section>
 
-      <section class="kyc-sec" id="kycSecInfo" data-locked="true">
-        <div class="kyc-sec-title"><span class="kyc-num">2</span><div><b>زانیارییەکانی بەڵگەنامە</b><small>وەک خۆی و بە تەواوی لەسەر بەڵگەنامەکە بینووسە</small></div></div>
-        <div class="field">
-          <span class="field-label">ناوی تەواوی یاسایی <small class="kyc-label-help">(وەک سەر بەڵگەنامەکە و ناوی هەژمارەکەت)</small></span>
-          <input type="text" class="input" id="kycName" maxlength="120" autocomplete="name" placeholder="بۆ نموونە: زانا ئەحمەد محەمەد" oninput="clearFieldError('kycName'); kycUpdateNameNote(); kycUpdateSteps()">
-          <span class="field-error" id="kycNameError"></span>
-          <p class="kyc-name-note" id="kycNameNote" hidden></p>
-        </div>
-        <div class="kyc-grid-2">
-          <div class="field">
-            <span class="field-label">بەرواری لەدایکبوون</span>
-            <input type="date" class="input" id="kycDob" dir="ltr" min="1900-01-01" onchange="clearFieldError('kycDob'); kycUpdateSteps()">
-            <span class="field-error" id="kycDobError"></span>
-          </div>
-          <div class="field">
-            <span class="field-label" id="kycNumberLabel">ژمارەی بەڵگەنامە</span>
-            <input type="text" class="input" id="kycNumber" dir="ltr" maxlength="30" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="A12345678" oninput="kycFormatNumber(this); clearFieldError('kycNumber'); kycUpdateSteps()">
-            <span class="field-error" id="kycNumberError"></span>
-          </div>
-        </div>
+      <section class="kv-card kv-sec" id="kycSecInfo" data-locked="true">
+        <h3 class="kv-h">زانیارییەکانی بەڵگەنامە</h3>
+        <label class="kv-label" for="kycName">ناوی تەواوی یاسایی</label>
+        <input type="text" class="kv-input" id="kycName" maxlength="120" autocomplete="name" oninput="clearFieldError('kycName'); kycUpdateNameNote(); kycUpdateSteps()">
+        <span class="kv-err" id="kycNameError"></span>
+        <p class="kv-note-line" id="kycNameNote" hidden></p>
+        <label class="kv-label" for="kycDob">بەرواری لەدایکبوون</label>
+        <input type="date" class="kv-input" id="kycDob" dir="ltr" min="1900-01-01" onchange="clearFieldError('kycDob'); kycUpdateSteps()">
+        <span class="kv-err" id="kycDobError"></span>
+        <label class="kv-label" for="kycNumber" id="kycNumberLabel">ژمارەی بەڵگەنامە</label>
+        <input type="text" class="kv-input" id="kycNumber" dir="ltr" maxlength="30" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="A12345678" oninput="kycFormatNumber(this); clearFieldError('kycNumber'); kycUpdateSteps()">
+        <span class="kv-err" id="kycNumberError"></span>
       </section>
 
-      <section class="kyc-sec" id="kycSecImages" data-locked="true">
-        <div class="kyc-sec-title"><span class="kyc-num">3</span><div><b>وێنەی بەڵگەنامە</b><small>وێنەیەکی ڕوون، بێ ڕووناکیی زیادە، و هەموو گۆشەکانی دیار بن</small></div></div>
-        <div class="kyc-upload-grid">
-          <div class="kyc-upload" id="kycFrontBox">
+      <section class="kv-card kv-sec" id="kycSecImages" data-locked="true">
+        <h3 class="kv-h">وێنەی بەڵگەنامە</h3>
+        <div class="kv-uploads">
+          <div class="kv-upload" id="kycFrontBox">
             <!-- Only two sources: the camera, or the photo gallery. -->
             <input type="file" id="kycFrontCamera" accept="image/*" capture="environment" hidden onchange="kycOnImage('front', this)">
             <input type="file" id="kycFrontGallery" accept="image/*" hidden onchange="kycOnImage('front', this)">
-            <div class="kyc-drop" id="kycFrontDrop">
-              <span class="kyc-drop-ico"><span class="icn icon--solar icon--solar--gallery-add-linear" aria-hidden="true"></span></span>
+            <div class="kv-drop" id="kycFrontDrop">
               <b id="kycFrontTitle">ڕووی پێشەوەی کارت</b>
-              <small id="kycFrontHint">وێنەیەکی ڕوون بگرە یان لە گەلەری هەڵیبژێرە</small>
-              <div class="kyc-src-btns">
-                <label for="kycFrontCamera" class="kyc-src-btn primary" role="button" tabindex="0"><svg class="kyc-src-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.6-2.2A1.5 1.5 0 0 1 9.8 5h4.4a1.5 1.5 0 0 1 1.2.8L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.6"/></svg><span>وێنەگرتن</span></label>
-                <label for="kycFrontGallery" class="kyc-src-btn" role="button" tabindex="0"><svg class="kyc-src-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="9.5" r="1.8"/><path d="m21 15-4.5-4.5L7 20"/></svg><span>هەڵبژاردن لە گەلەری</span></label>
+              <small id="kycFrontHint"></small>
+              <div class="kv-srcs">
+                <label for="kycFrontCamera" class="kv-src is-main" role="button" tabindex="0">کامێرا</label>
+                <label for="kycFrontGallery" class="kv-src" role="button" tabindex="0">گەلەری</label>
               </div>
             </div>
-            <div class="kyc-preview" id="kycFrontPreview" hidden>
+            <div class="kv-preview" id="kycFrontPreview" hidden>
               <img id="kycFrontImg" alt="ڕووی پێشەوەی بەڵگەنامە">
-              <div class="kyc-preview-bar">
-                <span class="kyc-preview-meta" id="kycFrontMeta"></span>
-                <span class="kyc-preview-actions">
-                  <label for="kycFrontCamera" class="kyc-mini-btn" role="button" tabindex="0"><svg class="kyc-src-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.6-2.2A1.5 1.5 0 0 1 9.8 5h4.4a1.5 1.5 0 0 1 1.2.8L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.6"/></svg>وێنەگرتن</label>
-                  <label for="kycFrontGallery" class="kyc-mini-btn" role="button" tabindex="0"><svg class="kyc-src-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="9.5" r="1.8"/><path d="m21 15-4.5-4.5L7 20"/></svg>گەلەری</label>
-                  <button type="button" class="kyc-mini-btn danger" onclick="kycRemoveImage('front')">لابردن</button>
+              <div class="kv-preview-bar">
+                <span class="kv-preview-meta" id="kycFrontMeta" dir="ltr"></span>
+                <span class="kv-preview-actions">
+                  <label for="kycFrontCamera" class="kv-mini" role="button" tabindex="0">کامێرا</label>
+                  <label for="kycFrontGallery" class="kv-mini" role="button" tabindex="0">گەلەری</label>
+                  <button type="button" class="kv-mini is-danger" onclick="kycRemoveImage('front')">لابردن</button>
                 </span>
               </div>
             </div>
-            <span class="field-error" id="kycFrontError"></span>
+            <span class="kv-err" id="kycFrontError"></span>
           </div>
-          <div class="kyc-upload" id="kycBackBox">
+          <div class="kv-upload" id="kycBackBox">
             <!-- Only two sources: the camera, or the photo gallery. -->
             <input type="file" id="kycBackCamera" accept="image/*" capture="environment" hidden onchange="kycOnImage('back', this)">
             <input type="file" id="kycBackGallery" accept="image/*" hidden onchange="kycOnImage('back', this)">
-            <div class="kyc-drop" id="kycBackDrop">
-              <span class="kyc-drop-ico"><span class="icn icon--solar icon--solar--gallery-add-linear" aria-hidden="true"></span></span>
+            <div class="kv-drop" id="kycBackDrop">
               <b id="kycBackTitle">ڕووی دواوەی کارت</b>
-              <small id="kycBackHint">وێنەیەکی ڕوون بگرە یان لە گەلەری هەڵیبژێرە</small>
-              <div class="kyc-src-btns">
-                <label for="kycBackCamera" class="kyc-src-btn primary" role="button" tabindex="0"><svg class="kyc-src-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.6-2.2A1.5 1.5 0 0 1 9.8 5h4.4a1.5 1.5 0 0 1 1.2.8L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.6"/></svg><span>وێنەگرتن</span></label>
-                <label for="kycBackGallery" class="kyc-src-btn" role="button" tabindex="0"><svg class="kyc-src-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="9.5" r="1.8"/><path d="m21 15-4.5-4.5L7 20"/></svg><span>هەڵبژاردن لە گەلەری</span></label>
+              <small id="kycBackHint"></small>
+              <div class="kv-srcs">
+                <label for="kycBackCamera" class="kv-src is-main" role="button" tabindex="0">کامێرا</label>
+                <label for="kycBackGallery" class="kv-src" role="button" tabindex="0">گەلەری</label>
               </div>
             </div>
-            <div class="kyc-preview" id="kycBackPreview" hidden>
+            <div class="kv-preview" id="kycBackPreview" hidden>
               <img id="kycBackImg" alt="ڕووی دواوەی بەڵگەنامە">
-              <div class="kyc-preview-bar">
-                <span class="kyc-preview-meta" id="kycBackMeta"></span>
-                <span class="kyc-preview-actions">
-                  <label for="kycBackCamera" class="kyc-mini-btn" role="button" tabindex="0"><svg class="kyc-src-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.6-2.2A1.5 1.5 0 0 1 9.8 5h4.4a1.5 1.5 0 0 1 1.2.8L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.6"/></svg>وێنەگرتن</label>
-                  <label for="kycBackGallery" class="kyc-mini-btn" role="button" tabindex="0"><svg class="kyc-src-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="9.5" r="1.8"/><path d="m21 15-4.5-4.5L7 20"/></svg>گەلەری</label>
-                  <button type="button" class="kyc-mini-btn danger" onclick="kycRemoveImage('back')">لابردن</button>
+              <div class="kv-preview-bar">
+                <span class="kv-preview-meta" id="kycBackMeta" dir="ltr"></span>
+                <span class="kv-preview-actions">
+                  <label for="kycBackCamera" class="kv-mini" role="button" tabindex="0">کامێرا</label>
+                  <label for="kycBackGallery" class="kv-mini" role="button" tabindex="0">گەلەری</label>
+                  <button type="button" class="kv-mini is-danger" onclick="kycRemoveImage('back')">لابردن</button>
                 </span>
               </div>
             </div>
-            <span class="field-error" id="kycBackError"></span>
+            <span class="kv-err" id="kycBackError"></span>
           </div>
         </div>
-        <ul class="kyc-tips">
-          <li>وێنەکە پێش ناردن لەسەر مۆبایلەکەت دەپشکنرێت؛ وێنەی ناڕوون یان زۆر بچووک وەرناگیرێت</li>
-          <li>بەڵگەنامەکە لەسەر ڕووێکی تەخت دابنێ و هەموو نووسینەکان خوێندراوە بن</li>
-          <li>وێنەی شاشە، کۆپی یان بەڵگەنامەی بەسەرچوو قبوڵ ناکرێت</li>
-        </ul>
       </section>
 
-      <div class="kf-confirm">
-        <div class="kyc-privacy">
-          <span class="icn icon--solar icon--solar--lock-linear" aria-hidden="true"></span>
-          <p>وێنەکان بە نهێنی لە کۆگایەکی تایبەتدا هەڵدەگیرێن. تەنها تیمی پشکنینی پڕۆکسۆ دەتوانێت بیانبینێت و هیچ بەستەرێکی گشتییان نییە.</p>
-        </div>
-        <label class="kyc-consent">
+      <section class="kv-card kv-confirm">
+        <p class="kv-privacy">وێنەکان بە نهێنی هەڵدەگیرێن و تەنها تیمی پشکنینی پڕۆکسۆ دەیانبینێت.</p>
+        <label class="kv-check">
           <input type="checkbox" id="kycConsent" onchange="clearFieldError('kycConsent')">
           <span>دڵنیام کە ئەم زانیارییانە ڕاستن و بەڵگەنامەکە هی خۆمە.</span>
         </label>
-        <span class="field-error" id="kycConsentError"></span>
-      </div>
+        <span class="kv-err" id="kycConsentError"></span>
+      </section>
 
-      <div class="kyc-form-error" id="kycFormError" role="alert" hidden></div>
+      <div class="kv-form-error" id="kycFormError" role="alert" hidden></div>
 
-      <button type="button" class="btn btn-primary btn-block kyc-submit-btn" id="kycSubmitBtn" onclick="submitKyc()">
-        <span class="icn icon--solar icon--solar--shield-check-linear" aria-hidden="true"></span>
-        ناردنی داواکاری پشتڕاستکردنەوە
-      </button>
-      <div class="kyc-progress" id="kycProgress" hidden aria-live="polite">
-        <div class="kyc-progress-track"><span id="kycProgressFill"></span></div>
+      <button type="button" class="kv-btn" id="kycSubmitBtn" onclick="submitKyc()">ناردنی داواکاری</button>
+      <div class="kv-progress" id="kycProgress" hidden aria-live="polite">
+        <div class="kv-progress-track"><span id="kycProgressFill"></span></div>
         <small id="kycProgressText">ئامادەکردن...</small>
       </div>
     </div>
 
-    <div class="kyc-success" id="kycSuccess" hidden role="status" aria-live="polite">
-      <span class="kyc-success-ico"><span class="icn icn-xl icon--solar icon--solar--check-circle-linear" aria-hidden="true"></span></span>
-      <h3>داواکارییەکەت نێردرا و لە ژێر پشکنینە</h3>
-      <p>تیمی پشکنین بەم زووانە بەڵگەنامەکەت دەپشکنێت. کاتێک بڕیار درا، ئاگادارت دەکەینەوە.</p>
-      <button type="button" class="btn btn-primary btn-block" onclick="navigate('profile')">گەڕانەوە بۆ پڕۆفایل</button>
+    <div class="kv-card kv-done" id="kycSuccess" hidden role="status" aria-live="polite">
+      <b>داواکارییەکەت نێردرا و لە ژێر پشکنینە</b>
+      <p>کاتێک بڕیار درا، ئاگادارت دەکەینەوە.</p>
+      <button type="button" class="kv-btn" onclick="navigate('profile')">گەڕانەوە بۆ پڕۆفایل</button>
     </div>
   </section>
 
@@ -1781,7 +1735,8 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
 <script src="/assets/js/exchange-live.js?v=1"></script>
 <script src="/assets/js/proxo-toast.js?v=1"></script>
 <script src="/assets/js/skeletons.js?v=2"></script>
-<script src="/assets/js/app.js?v=102"></script>
+<script src="/assets/js/app.js?v=104"></script>
+<script src="/assets/js/activity-tracker.js?v=1"></script>
 <script src="/assets/js/receipt-access.js?v=1"></script>
 <script src="/assets/js/whatsapp-notify.js?v=2"></script>
 <script src="/assets/js/proxo-ui-v2.js?v=4"></script>

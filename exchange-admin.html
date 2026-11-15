@@ -11,7 +11,7 @@
 <!-- Firebase — announcement banner control only (same project as exchange.html) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<link rel="stylesheet" href="assets/css/admin.css?v=12">
+<link rel="stylesheet" href="assets/css/admin.css?v=13">
 <link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/exchange-insights.css?v=2">
 <link rel="stylesheet" href="assets/css/exchange-features.css?v=4">
@@ -71,6 +71,7 @@
     <div class="sb-item" onclick="goPage('statistics')"><i class="fas fa-chart-column" style="color:#1685fa"></i> ئامار و ڕاپۆرت</div>
     <div class="sb-item" onclick="goPage('orders')"><i class="fas fa-money-bill-transfer"></i> ئۆردەرەکان <span class="sb-badge yw" id="sbOrdersCount" style="display:none">0</span></div>
     <div class="sb-item" onclick="goPage('accounts')"><i class="fas fa-users"></i> هەژمارەکان</div>
+    <div class="sb-item" onclick="goPage('activity')"><i class="fas fa-signal" style="color:#16a34a"></i> چالاکی بەکارهێنەران <span class="sb-badge gr" id="sbActiveNow" style="display:none">0</span></div>
     <div class="sb-item" onclick="goPage('balance')"><i class="fas fa-wallet"></i> ڕیفاوند و باڵانس</div>
     <div class="sb-item" onclick="goPage('kyc')"><i class="fas fa-id-card" style="color:#0891b2"></i> پشتڕاستکردنەوەی ناسنامە <span class="sb-badge yw" id="sbKycCount" style="display:none">0</span></div>
     <div class="sb-section">ڕێکخستن</div>
@@ -630,6 +631,22 @@
           <div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
         </div>
       </div>
+
+      <div data-super-admin-only>
+        <div class="sec-hdr wa-subs-note">
+          <h3>کێ ئاگاداری واتسئاپی چالاک کردووە</h3>
+          <div class="act-btn dark" onclick="loadWhatsappSubscribers()"><i class="fas fa-arrows-rotate"></i> نوێکردنەوە</div>
+        </div>
+        <div class="tbl-wrap">
+          <div class="tbl-filter">
+            <input class="tbl-search" id="waSubsSearch" placeholder="گەڕان بە ناو یان ژمارە..." oninput="renderWhatsappSubscribers()">
+            <div class="chip on" data-wasf="all" onclick="filterWhatsappSubscribers('all',this)">هەموو</div>
+            <div class="chip gr" data-wasf="on" onclick="filterWhatsappSubscribers('on',this)">چالاک</div>
+            <div class="chip" data-wasf="off" onclick="filterWhatsappSubscribers('off',this)">ناچالاک</div>
+          </div>
+          <div class="tbl-scroll" id="waSubsTable"><div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div></div>
+        </div>
+      </div>
     </div>
 
     <div class="pg" id="pgOtp">
@@ -668,7 +685,7 @@
 
       <div class="fee-toggle-note error-log-note">
         <i class="fas fa-circle-info" style="margin-left:4px"></i>
-        هەڵەکانی ناردنی داواکاری، بارکردنی پسووڵە، پەیوەندی تۆڕ و هەڵەکانی سێرڤەر لێرە تۆمار دەبن. زانیاری نهێنی و ژمارەی مۆبایل ناخرێنە ناو لۆگ.
+        تەنها هەڵەی ڕاستەقینە: کۆدی دڵنیایی کە نەنێردرا، ئاگاداری واتسئاپ کە نەگەیشت، داواکاری کە نەنێردرا و هەڵەی سێرڤەر. کێشەی تۆڕی خودی کڕیار وەک «ئاگاداری» جیا کراونەتەوە.
       </div>
 
       <div class="stats-grid error-log-stats">
@@ -687,9 +704,50 @@
           <div class="chip" data-errf="all" onclick="setErrorLogFilter('all',this)">هەموو</div>
           <div class="chip gr" data-errf="resolved" onclick="setErrorLogFilter('resolved',this)">چارەسەرکراو</div>
         </div>
+        <div class="tbl-filter error-cat-filter">
+          <div class="chip on" data-errc="all" onclick="setErrorCategory('all',this)">هەموو</div>
+          <div class="chip" data-errc="codes" onclick="setErrorCategory('codes',this)">کۆدی دڵنیایی</div>
+          <div class="chip" data-errc="whatsapp" onclick="setErrorCategory('whatsapp',this)">واتسئاپ و تێلێگرام</div>
+          <div class="chip" data-errc="requests" onclick="setErrorCategory('requests',this)">ناردنی داواکاری</div>
+          <div class="chip" data-errc="server" onclick="setErrorCategory('server',this)">سێرڤەر</div>
+          <div class="chip" data-errc="client" onclick="setErrorCategory('client',this)">وێبگەڕ</div>
+          <div class="chip yw error-warn-chip" onclick="toggleErrorWarnings(this)">ئاگادارییەکانیش</div>
+        </div>
         <div class="tbl-scroll" id="errorLogsWrap">
           <div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
         </div>
+      </div>
+    </div>
+
+    <!-- ══ USER ACTIVITY (ex_user_activity / ex_user_presence via /api/admin) ══ -->
+    <div class="pg" id="pgActivity">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-ico gr"><i class="fas fa-signal"></i></div><div class="stat-info"><div class="stat-val" id="actNow">—</div><div class="stat-lbl">ئێستا لەسەر ماڵپەڕن</div></div></div>
+        <div class="stat-card"><div class="stat-ico dark"><i class="fas fa-user-clock"></i></div><div class="stat-info"><div class="stat-val" id="actToday">—</div><div class="stat-lbl">چالاک ئەمڕۆ</div></div></div>
+        <div class="stat-card"><div class="stat-ico yw"><i class="fas fa-hourglass-half"></i></div><div class="stat-info"><div class="stat-val" id="actTimeToday">—</div><div class="stat-lbl">کۆی کاتی ئەمڕۆ</div></div></div>
+      </div>
+      <div class="sec-hdr">
+        <h3>بەکارهێنەران</h3>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <div class="act-days">
+            <div class="chip" data-actd="1" onclick="setActivityDays(1,this)">ئەمڕۆ</div>
+            <div class="chip on" data-actd="7" onclick="setActivityDays(7,this)">7 ڕۆژ</div>
+            <div class="chip" data-actd="30" onclick="setActivityDays(30,this)">30 ڕۆژ</div>
+          </div>
+          <div class="act-btn dark" onclick="loadActivity()"><i class="fas fa-arrows-rotate"></i> نوێکردنەوە</div>
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <div class="tbl-filter">
+          <input class="tbl-search" id="actSearch" placeholder="گەڕان بە ناو، ژمارە یان ئیمەیڵ..." oninput="renderActivity()">
+          <div class="chip on" data-actf="all" onclick="setActivityFilter('all',this)">هەموو</div>
+          <div class="chip gr" data-actf="now" onclick="setActivityFilter('now',this)">ئێستا لەسەر ماڵپەڕن</div>
+        </div>
+        <div class="tbl-scroll" id="actUsers"><div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div></div>
+      </div>
+      <div class="sec-hdr" style="margin-top:18px"><h3>بەشەکانی ماڵپەڕ</h3></div>
+      <div class="tbl-wrap">
+        <div class="tbl-scroll" id="actSections"><div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div></div>
       </div>
     </div>
 
@@ -1000,6 +1058,17 @@
   </div>
 </div>
 
+<!-- ══ ONE ACCOUNT'S ACTIVITY ══ -->
+<div class="overlay" id="moActivity">
+  <div class="modal">
+    <div class="modal-hdr">
+      <h3 id="actDetailTitle">چالاکی</h3>
+      <div class="modal-close" onclick="closeMo('moActivity')"><i class="fas fa-xmark"></i></div>
+    </div>
+    <div id="actDetailBody"><div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div></div>
+  </div>
+</div>
+
 <!-- ══ CREATE USER MODAL ══ -->
 <div class="overlay" id="moCreateUser">
   <div class="modal">
@@ -1269,7 +1338,7 @@
   </div>
   <script src="assets/js/exchange-payout-rounding.js?v=1"></script>
   <script src="assets/js/exchange-live.js?v=1"></script>
-<script src="assets/js/admin.js?v=35"></script>
+<script src="assets/js/admin.js?v=36"></script>
 <script src="assets/js/receipt-access.js?v=1"></script>
 <script src="assets/js/admin-contracts.js?v=2"></script>
   <script src="assets/js/exchange-staff.js?v=10"></script>
@@ -1278,7 +1347,7 @@
   <script src="assets/js/exchange-order-manual.js?v=2"></script>
   <script src="assets/js/exchange-refund-report.js?v=3"></script>
   <script src="assets/js/exchange-insights.js?v=7"></script>
-  <script src="assets/js/exchange-profit.js?v=5"></script><script src="assets/js/exchange-whatsapp-admin.js?v=2"></script>
+  <script src="assets/js/exchange-profit.js?v=5"></script><script src="assets/js/exchange-whatsapp-admin.js?v=3"></script><script src="assets/js/exchange-activity-admin.js?v=1"></script>
 <script src="assets/js/exchange-admin-workspace.js?v=2"></script><script src="assets/js/track.js?v=3"></script>
 </body>
 </html>

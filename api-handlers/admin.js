@@ -48,6 +48,7 @@ const STATUS_CORRECTED = 'ڕاستکراوەتەوە';
 const REVIEWABLE_ORDER_STATUSES = new Set([STATUS_PENDING, STATUS_CORRECTED]);
 const SUPPORT_STATUSES = new Set(['open', 'in_progress', 'resolved', 'closed']);
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const isUuid = value => typeof value === 'string' && UUID.test(value);
 const REFUND_REPORT_PAGE_SIZE = 100;
 const REFUND_ORDER_FIELDS = 'id,order_code,user_id,amount,total,from_method,to_method,status,balance_refunded_at,payout_iqd,payout_rounding_iqd,payout_settlement_id';
 const BAGHDAD_CALENDAR = new Intl.DateTimeFormat('en-US-u-ca-gregory-nu-latn', {
@@ -239,7 +240,7 @@ async function audit(adminId, action, targetUserId, detail) {
 export function assertStaffAction(profile,action){
   // account mutations are super-admin only (ordinary admins get read-only account controls)
   if(['set_ban','account_set_password','account_contact_update'].includes(action) && profile.role!=='super_admin')throw {status:403,code:'super_admin_required',message:'SUPER_ADMIN_REQUIRED'};
-  if(['error_log_summary','list_error_logs','resolve_error_log','resolve_all_error_logs'].includes(action)&&profile.role!=='super_admin')throw {status:403,code:'super_admin_required',message:'SUPER_ADMIN_REQUIRED'};
+  if(['error_log_summary','list_error_logs','resolve_error_log','resolve_all_error_logs','activity_overview','activity_user','whatsapp_subscribers','whatsapp_set'].includes(action)&&profile.role!=='super_admin')throw {status:403,code:'super_admin_required',message:'SUPER_ADMIN_REQUIRED'};
   if(profile.role==='super_admin' || profile.staff_permissions==null)return;
   const permissions={
     ping:'view',account_balances:'view',balance_dashboard:'view',balance_lookup_order:'view',
@@ -1078,9 +1079,10 @@ const actions = {
 
   async error_log_summary(_payload, _ctx) {
     const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    // warnings (the customer's own connection, refused requests) are not counted as errors
     const [unresolvedResult, recentResult, criticalResult] = await Promise.all([
-      db.from('ex_error_logs').select('id', { count: 'exact', head: true }).is('resolved_at', null),
-      db.from('ex_error_logs').select('id', { count: 'exact', head: true }).gte('last_seen', since),
+      db.from('ex_error_logs').select('id', { count: 'exact', head: true }).is('resolved_at', null).neq('severity', 'warning'),
+      db.from('ex_error_logs').select('id', { count: 'exact', head: true }).gte('last_seen', since).neq('severity', 'warning'),
       db.from('ex_error_logs').select('id', { count: 'exact', head: true }).is('resolved_at', null).eq('severity', 'critical')
     ]);
     const failed = [unresolvedResult, recentResult, criticalResult].find(result => result.error);
@@ -1092,6 +1094,37 @@ const actions = {
     };
   },
 
+  // ── user activity (screens and time on the site) ──────────────
+  async activity_overview({ days = 7 } = {}, _ctx) {
+    const { data, error } = await db.rpc('ex_admin_activity_overview', { p_days: Math.max(1, Math.min(90, Number(days) || 7)) });
+    if (error) throw { status: 500, code: 'db_error', message: error.message };
+    return data || {};
+  },
+  async activity_user({ user_id, days = 30 } = {}, _ctx) {
+    if (!isUuid(user_id)) throw { status: 400, code: 'bad_input', message: 'user_id is required' };
+    const { data, error } = await db.rpc('ex_admin_activity_user', { p_user: user_id, p_days: Math.max(1, Math.min(90, Number(days) || 30)) });
+    if (error) throw { status: 500, code: 'db_error', message: error.message };
+    return data || {};
+  },
+
+  // ── WhatsApp notifications: who has them, and on / off ─────────
+  async whatsapp_subscribers(_payload, _ctx) {
+    const { data, error } = await db.rpc('ex_admin_whatsapp_subscribers');
+    if (error) throw { status: 500, code: 'db_error', message: error.message };
+    return Array.isArray(data) ? data : [];
+  },
+  async whatsapp_set({ user_id, enabled } = {}, ctx) {
+    if (!isUuid(user_id) || typeof enabled !== 'boolean') throw { status: 400, code: 'bad_input', message: 'user_id and enabled are required' };
+    const { data, error } = await db.rpc('ex_admin_whatsapp_set', { p_user: user_id, p_enabled: enabled, p_admin: ctx.user.id });
+    if (error) {
+      if (/phone_not_verified/.test(error.message)) throw { status: 409, code: 'phone_not_verified', message: 'ژمارەی ئەم هەژمارە پشتڕاست نەکراوەتەوە؛ ناتوانرێت ئاگاداری واتسئاپی بۆ چالاک بکرێت' };
+      if (/not_subscribed/.test(error.message)) throw { status: 404, code: 'not_subscribed', message: 'ئەم هەژمارە ڕێکخستنی واتسئاپی نییە' };
+      throw { status: 500, code: 'db_error', message: error.message };
+    }
+    if (data?.changed) await audit(ctx.user.id, enabled ? 'whatsapp_enable' : 'whatsapp_disable', user_id, null);
+    return data;
+  },
+
   async list_error_logs({ status = 'unresolved', limit = 200 }, _ctx) {
     const safeLimit = Math.max(1, Math.min(300, Number(limit) || 200));
     const safeStatus = ['unresolved', 'resolved', 'all'].includes(status) ? status : 'unresolved';
@@ -1100,6 +1133,16 @@ const actions = {
     if (safeStatus === 'resolved') query = query.not('resolved_at', 'is', null);
     const { data, error } = await query;
     if (error) throw { status: 500, code: 'db_error', message: error.message };
+    // whose error it was: name and number next to the e-mail
+    const ids = [...new Set((data || []).map(row => row.user_id).filter(Boolean))];
+    if (ids.length) {
+      const { data: people } = await db.from('ex_profiles').select('id,full_name,phone').in('id', ids);
+      const byId = new Map((people || []).map(p => [p.id, p]));
+      for (const row of data) {
+        const p = byId.get(row.user_id);
+        if (p) { row.user_name = p.full_name || null; row.user_phone = p.phone || null; }
+      }
+    }
     return data || [];
   },
 
@@ -1123,6 +1166,16 @@ const actions = {
   }
 };
 
+// A failure inside the panel also goes to the error log. The security module
+// is loaded on first use (dynamic import), so this file still loads on its own.
+let securityLib = null;
+async function logAdminFailure(req, options) {
+  try {
+    securityLib = securityLib || await import('./_lib/security.js');
+    await securityLib.recordAppError(securityLib.requestContext(req), options);
+  } catch { /* logging must never change the answer */ }
+}
+
 // ── handler ──────────────────────────────────────────────────
 export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(204).end();
@@ -1135,10 +1188,13 @@ export default async function handler(req, res) {
     return fail(res, 500, 'Server is not configured', 'missing_env');
   }
 
+  let adminAction = '', adminUser = null;
   try {
     const ctx  = await requireAdmin(req);
+    adminUser = ctx.user;
     const body = await readBody(req);
     const name = String(body.action || '');
+    adminAction = name;
     const run  = actions[name];
 
     if (!run) return fail(res, 400, 'Unknown action: ' + name, 'unknown_action');
@@ -1149,6 +1205,14 @@ export default async function handler(req, res) {
     return ok(res, data);
 
   } catch (err) {
+    if (!err?.status || err.status >= 500) {
+      // a real failure inside the panel: it belongs in the error log too
+      await logAdminFailure(req, {
+        source: 'server', severity: 'error', operation: `admin:${adminAction || 'unknown'}`.slice(0, 100),
+        code: err?.code || null, status: err?.status || 500,
+        message: err?.message || 'Internal server error', user: adminUser
+      });
+    }
     if (err && err.status) return fail(res, err.status, err.message, err.code);
     console.error('[api/admin]', err);           // full detail stays in Vercel logs
     return fail(res, 500, 'Internal server error', 'server_error');

@@ -1,95 +1,130 @@
 /* ═════════════════════════════════════════════════════════════════
-   Account screens: /account-name, /change-phone, /change-password
-   (.acx-page) and the "account" rows in the profile menu.
-   Same family as the delete-account screen: one card per idea, one
-   blue action. A rule that blocks a change is a calm notice with the
-   date it opens again — never a red error.
-     type   12 · 13 · 14 · 16 · 18 (Rabar)     space 8 · 12 · 16 · 20 · 24
-     radius 12 (controls) · 16 (cards)
+   Account screens: /account-name, /change-phone, /change-email,
+   /change-password (.acx-page) and the "account" rows in the profile menu.
+
+   Nothing here is new design: every value is copied from a screen the
+   site already has (measured in the browser, light and dark):
+
+     card      profile menu · identity sections · exchange card
+               white, 1px #e8ecf3, radius 20, the same two-layer shadow,
+               padding 18/16, 14px between cards
+     label     exchange .field-label   12/400, #64748b, 6px above the field
+     field     exchange .input         48 high, radius 14, #f8fafd, 1px #e8ecf3,
+                                       focus: blue line + 4px ring, white
+               (text stays 16px: iOS zooms into anything smaller)
+     between   identity section        14px from one field to the next label
+     button    exchange "send" button  52 high, radius 14, 15/400,
+                                       disabled = the same blue at 55%
+               support form            20px above the button
+     error     exchange .field-error   12px, #c2414b
+     current   exchange account number label 12/400 + value 15/400 #1f2d44
+     tag       exchange .xc-badge      26 high, pill, 11.5/400
+               colours of the verified / not-verified tones (.kyc-ico)
+     notice    identity banner         radius 16, padding 14, title 14.5/600,
+                                       text 14/400 (no icon)
+     code      sign-in code screen     six boxes 52×56 / radius 12 / 22px,
+                                       "send again" = .otp-again-btn
    ═════════════════════════════════════════════════════════════════ */
 html body #mainApp#mainApp .acx-page {
-  --ax-card: #ffffff; --ax-soft: #f5f7fa; --ax-line: #e7ebf1;
-  --ax-ink: #0f172a; --ax-text: #334155; --ax-muted: #6b7a90;
-  --ax-accent: #0265ff; --ax-accent-press: #0052d6; --ax-accent-soft: #eaf2ff; --ax-accent-line: #cfe0ff;
-  --ax-warn: #8a5300; --ax-warn-soft: #fff6e5; --ax-warn-line: #f3dcae; --ax-warn-fill: #e59a1a;
-  --ax-ok: #0f7b4a; --ax-ok-soft: #e8f7ef;
-  --ax-danger: #d92d20;
+  --ax-card: #ffffff; --ax-line: #e8ecf3;
+  --ax-shadow: 0 1px 2px rgba(20, 35, 60, .04), 0 12px 28px -18px rgba(20, 35, 60, .18);
+  --ax-field: #f8fafd; --ax-field-line: #e8ecf3; --ax-field-focus: #ffffff; --ax-field-ink: #1f2d44; --ax-field-weight: 400;
+  --ax-ink: #0f172a; --ax-title: #1f2d44; --ax-text: #5f6f86; --ax-label: #64748b; --ax-ph: #94a3b8;
+  --ax-accent: #0265ff; --ax-accent-soft: #eaf6ff; --ax-ring: rgba(2, 101, 255, .1);
+  --ax-btn: #0265ff; --ax-btn-press: #0052d6; --ax-btn-shadow: none;
+  --ax-badge: #f1f5fa; --ax-badge-ink: #64748b;
+  --ax-note: #eff4fe; --ax-note-line: rgba(2, 101, 255, .35);
+  --ax-err: #c2414b;
   --ax-font: Rabar, Arial, sans-serif;
 }
 html[data-theme="dark"] body #mainApp#mainApp .acx-page {
-  --ax-card: #131c2e; --ax-soft: #0f1828; --ax-line: #25324a;
-  --ax-ink: #e8edf6; --ax-text: #c4cee0; --ax-muted: #98a6bd;
-  --ax-accent: #3b8cff; --ax-accent-press: #2a78ea; --ax-accent-soft: #14233d; --ax-accent-line: #24406b;
-  --ax-warn: #f7c66b; --ax-warn-soft: #2a2213; --ax-warn-line: #4a3a1c; --ax-warn-fill: #f0a83a;
-  --ax-ok: #4fd18b; --ax-ok-soft: #12291e;
-  --ax-danger: #f97066;
+  --ax-card: #131c2e; --ax-line: #25324a;
+  --ax-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 12px 28px -18px rgba(0, 0, 0, .6);
+  --ax-field: #0e1725; --ax-field-line: #25324a; --ax-field-focus: #131c2e; --ax-field-ink: #e8edf6; --ax-field-weight: 500;
+  --ax-ink: #e8edf6; --ax-title: #e8edf6; --ax-text: #acb6c3; --ax-label: #a3b1c7; --ax-ph: #a3b1c7;
+  --ax-accent: #3b8cff; --ax-accent-soft: #10223d; --ax-ring: rgba(2, 101, 255, .1);
+  --ax-btn: #2563eb; --ax-btn-press: #1d4fd8; --ax-btn-shadow: 0 10px 22px -12px rgba(37, 99, 235, .7);
+  --ax-badge: #121c29; --ax-badge-ink: #a3b1c7;
+  --ax-note: #0e1725; --ax-note-line: #25324a;
 }
+/* the site's verified / not-verified / waiting tones */
+html body #mainApp#mainApp .acx-page [data-tone="ok"]   { --kt: #16a34a; --kt-ink: #146c35; --kt-bg: #ecf8f1; --kt-bd: #c2e8d1; }
+html body #mainApp#mainApp .acx-page [data-tone="warn"],
+html body #mainApp#mainApp .acx-page [data-tone="wait"] { --kt: #e08a00; --kt-ink: #8a5300; --kt-bg: #fff6e3; --kt-bd: #f6dba6; }
+html body #mainApp#mainApp .acx-page :is([data-tone="lock"], [data-tone="info"]) { --kt: #2563eb; --kt-ink: #1d4fb8; --kt-bg: #eef4ff; --kt-bd: #c6d8fb; }
+html[data-theme="dark"] body #mainApp#mainApp .acx-page [data-tone="ok"]   { --kt-ink: #83e5a8; --kt-bg: #142c1e; --kt-bd: #244d34; }
+html[data-theme="dark"] body #mainApp#mainApp .acx-page [data-tone="warn"],
+html[data-theme="dark"] body #mainApp#mainApp .acx-page [data-tone="wait"] { --kt-ink: #fbbf65; --kt-bg: #3c2b07; --kt-bd: #674c16; }
+html[data-theme="dark"] body #mainApp#mainApp .acx-page :is([data-tone="lock"], [data-tone="info"]) { --kt-ink: #86a6e9; --kt-bg: #061634; --kt-bd: #0e2550; }
 
-html body #mainApp#mainApp .acx-page .acx { display: flex; flex-direction: column; gap: 20px; font-family: var(--ax-font); color: var(--ax-ink); }
-
-/* header: back · title */
-html body #mainApp#mainApp .acx-page .acx-bar { display: grid; grid-template-columns: 40px 1fr 40px; align-items: center; gap: 8px; }
-html body #mainApp#mainApp .acx-page .acx-bar h2 { margin: 0; text-align: center; color: var(--ax-ink); font-size: 16px; font-weight: 700; line-height: 1.5; }
-html body #mainApp#mainApp .acx-page .acx-back {
-  width: 40px; height: 40px; display: grid; place-items: center; padding: 0; margin: 0;
-  border: 1px solid var(--ax-line); border-radius: 12px; background: var(--ax-card); color: var(--ax-text); cursor: pointer;
-}
+html body #mainApp#mainApp .acx-page .acx { display: flex; flex-direction: column; gap: 14px; font-family: var(--ax-font); color: var(--ax-ink); }
 html body #mainApp#mainApp .acx-page .pxi { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-/* what the account has now */
+/* cards: what the account has now, and the form */
+html body #mainApp#mainApp .acx-page :is(.acx-current, .acx-form) {
+  margin: 0; padding: 18px 16px; box-sizing: border-box;
+  border: 1px solid var(--ax-line); border-radius: 20px; background: var(--ax-card); box-shadow: var(--ax-shadow);
+}
+
+/* what the account has now: label (and tag) on one line, the value under it */
 html body #mainApp#mainApp .acx-page .acx-current {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; padding: 14px 16px;
-  border: 1px solid var(--ax-line); border-radius: 16px; background: var(--ax-card);
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "label tag" "value value";
+  align-items: center; gap: 6px 8px;
 }
 html body #mainApp#mainApp .acx-page .acx-current[hidden] { display: none; }
-html body #mainApp#mainApp .acx-page .acx-current > span { flex: 1 0 100%; color: var(--ax-muted); font-size: 12.5px; line-height: 1.6; }
-html body #mainApp#mainApp .acx-page .acx-current b { color: var(--ax-ink); font-size: 18px; font-weight: 700; line-height: 1.5; overflow-wrap: anywhere; }
+html body #mainApp#mainApp .acx-page .acx-current > span { grid-area: label; padding: 0 2px; color: var(--ax-label); font-size: 12px; font-weight: 400; line-height: 1.6; }
+html body #mainApp#mainApp .acx-page .acx-current > b {
+  grid-area: value; justify-self: start; min-width: 0; padding: 0 2px;
+  color: var(--ax-field-ink); font-size: 15px; font-weight: 400; line-height: 1.7; overflow-wrap: anywhere; unicode-bidi: isolate;
+}
 html body #mainApp#mainApp .acx-page .acx-tag {
-  display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 999px;
-  font-style: normal; font-size: 12px; font-weight: 600; line-height: 1;
+  grid-area: tag; display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 999px;
+  background: var(--kt-bg, var(--ax-badge)); color: var(--kt-ink, var(--ax-badge-ink));
+  font-style: normal; font-size: 11.5px; font-weight: 400; line-height: 1; white-space: nowrap;
 }
 html body #mainApp#mainApp .acx-page .acx-tag[hidden] { display: none; }
-html body #mainApp#mainApp .acx-page .acx-tag[data-tone="ok"] { background: var(--ax-ok-soft); color: var(--ax-ok); }
-html body #mainApp#mainApp .acx-page .acx-tag[data-tone="warn"] { background: var(--ax-warn-soft); color: var(--ax-warn); }
 
-/* the calm notice: why not now, and when */
+/* the calm notice: why not now, and when (same as the identity banner) */
 html body #mainApp#mainApp .acx-page .acx-note {
-  display: flex; align-items: flex-start; gap: 12px; padding: 16px;
-  border: 1px solid var(--ax-accent-line); border-radius: 16px; background: var(--ax-accent-soft);
+  display: block; padding: 14px;
+  border: 1px solid var(--ax-note-line); border-radius: 16px; background: var(--ax-note);
 }
 html body #mainApp#mainApp .acx-page .acx-note[hidden] { display: none; }
-html body #mainApp#mainApp .acx-page .acx-note[data-tone="wait"] { border-color: var(--ax-warn-line); background: var(--ax-warn-soft); }
-html body #mainApp#mainApp .acx-page .acx-note-ico {
-  flex: 0 0 40px; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px;
-  background: var(--ax-card); color: var(--ax-accent);
-}
-html body #mainApp#mainApp .acx-page .acx-note[data-tone="wait"] .acx-note-ico { color: var(--ax-warn); }
-html body #mainApp#mainApp .acx-page .acx-note-body { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 4px; }
-html body #mainApp#mainApp .acx-page .acx-note-body b { color: var(--ax-ink); font-size: 15px; font-weight: 700; line-height: 1.6; }
-html body #mainApp#mainApp .acx-page .acx-note-body p { margin: 0; color: var(--ax-text); font-size: 13.5px; line-height: 1.8; }
-html body #mainApp#mainApp .acx-page .acx-meter { height: 6px; margin-top: 8px; border-radius: 999px; background: var(--ax-card); overflow: hidden; }
-html body #mainApp#mainApp .acx-page .acx-meter span { display: block; height: 100%; border-radius: inherit; background: var(--ax-warn-fill); }
-html body #mainApp#mainApp .acx-page .acx-meter-txt { color: var(--ax-warn); font-size: 12px; font-weight: 600; line-height: 1.6; }
+html body #mainApp#mainApp .acx-page .acx-note[data-tone="wait"] { --ax-note: #fff6e3; --ax-note-line: #f6dba6; }
+html[data-theme="dark"] body #mainApp#mainApp .acx-page .acx-note[data-tone="wait"] { --ax-note: #3c2b07; --ax-note-line: #674c16; }
+html body #mainApp#mainApp .acx-page .acx-note-body { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 3px; }
+html body #mainApp#mainApp .acx-page .acx-note-body b { color: var(--ax-title); font-size: 14.5px; font-weight: 600; line-height: 1.6; }
+html body #mainApp#mainApp .acx-page .acx-note-body p { margin: 0; color: var(--ax-text); font-size: 14px; font-weight: 400; line-height: 1.75; }
+html body #mainApp#mainApp .acx-page .acx-meter { height: 6px; margin-top: 8px; border-radius: 999px; background: var(--kt-bd); overflow: hidden; }
+html body #mainApp#mainApp .acx-page .acx-meter span { display: block; height: 100%; border-radius: inherit; background: var(--kt); }
+html body #mainApp#mainApp .acx-page .acx-meter-txt { color: var(--kt-ink); font-size: 12px; font-weight: 400; line-height: 1.6; }
 
-/* forms */
-html body #mainApp#mainApp .acx-page .acx-form { display: flex; flex-direction: column; gap: 8px; }
+/* form: label 6px above its field, 14px between fields */
+html body #mainApp#mainApp .acx-page .acx-form { display: flex; flex-direction: column; gap: 0; }
 html body #mainApp#mainApp .acx-page .acx-form[hidden] { display: none; }
-html body #mainApp#mainApp .acx-page .acx-form label { margin-top: 4px; color: var(--ax-text); font-size: 13px; font-weight: 600; line-height: 1.6; }
+html body #mainApp#mainApp .acx-page .acx-form label {
+  margin: 0 0 6px; padding: 0 2px; color: var(--ax-label);
+  font-family: var(--ax-font); font-size: 12px; font-weight: 400; line-height: 1.6;
+}
+html body #mainApp#mainApp .acx-page .acx-form :is(.acx-input, .acx-phone, .acx-pass) + label { margin-top: 14px; }
 html body #mainApp#mainApp .acx-page .acx-input {
-  width: 100%; height: 50px; margin: 0; padding: 0 14px; box-sizing: border-box;
-  border: 1px solid var(--ax-line) !important; border-radius: 12px !important; background: var(--ax-card) !important; box-shadow: none !important;
-  color: var(--ax-ink) !important; font-family: var(--ax-font); font-size: 16px !important;
+  width: 100%; height: 48px; min-height: 48px; margin: 0; padding: 0 12px; box-sizing: border-box;
+  border: 1px solid var(--ax-field-line) !important; border-radius: 14px !important; background: var(--ax-field) !important; box-shadow: none !important;
+  color: var(--ax-field-ink) !important; font-family: var(--ax-font); font-size: 16px !important; font-weight: var(--ax-field-weight);
+  transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
 }
 html body #mainApp#mainApp .acx-page .acx-input[dir="ltr"] { text-align: left; }
-html body #mainApp#mainApp .acx-page .acx-input:focus { outline: 0; border-color: var(--ax-accent) !important; box-shadow: 0 0 0 3px var(--ax-accent-soft) !important; }
-html body #mainApp#mainApp .acx-page .acx-input::placeholder { color: var(--ax-muted); opacity: .8; }
+html body #mainApp#mainApp .acx-page .acx-input:is(:focus, :focus-visible) {
+  outline: 0 !important; border-color: var(--ax-accent) !important; background: var(--ax-field-focus) !important; box-shadow: 0 0 0 4px var(--ax-ring) !important;
+}
+html body #mainApp#mainApp .acx-page .acx-input::placeholder { color: var(--ax-ph); opacity: 1; }
 
-/* 🇮🇶 +964 in front of the number */
+/* 🇮🇶 +964 in front of the number (same as the sign-in field) */
 html body #mainApp#mainApp .acx-page .acx-phone { position: relative; direction: ltr; }
 html body #mainApp#mainApp .acx-page .acx-phone .acx-input { padding-left: 98px; letter-spacing: .02em; }
 html body #mainApp#mainApp .acx-page .acx-cc {
-  position: absolute; inset: 1px auto 1px 1px; width: 86px; display: flex; align-items: center; justify-content: center; gap: 6px;
-  border-right: 1px solid var(--ax-line); border-radius: 11px 0 0 11px; background: var(--ax-soft); color: var(--ax-ink); pointer-events: none;
+  position: absolute; inset: 1px auto 1px 1px; width: 86px; display: flex; align-items: center; justify-content: center; gap: 7px;
+  border-right: 1px solid var(--ax-field-line); border-radius: 13px 0 0 13px; background: transparent; color: var(--ax-field-ink); pointer-events: none;
 }
 html body #mainApp#mainApp .acx-page .acx-cc b { font-size: 15px; font-weight: 600; line-height: 1; }
 html body #mainApp#mainApp .acx-page .iq-flag { width: 24px; height: 16px; flex: 0 0 24px; border-radius: 3px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .12); }
@@ -97,42 +132,76 @@ html body #mainApp#mainApp .acx-page .acx-phone:focus-within .acx-cc { border-ri
 
 /* password with show / hide */
 html body #mainApp#mainApp .acx-page .acx-pass { position: relative; direction: ltr; }
-html body #mainApp#mainApp .acx-page .acx-pass .acx-input { padding-right: 50px; }
+html body #mainApp#mainApp .acx-page .acx-pass .acx-input { padding-right: 48px; }
 html body #mainApp#mainApp .acx-page .acx-eye {
-  position: absolute; top: 5px; right: 5px; width: 40px; height: 40px; display: grid; place-items: center; padding: 0; margin: 0;
-  border: 0; border-radius: 10px; background: transparent; color: var(--ax-muted); cursor: pointer;
+  position: absolute; top: 4px; right: 4px; width: 40px; height: 40px; display: grid; place-items: center; padding: 0; margin: 0;
+  border: 0; border-radius: 10px; background: transparent; color: var(--ax-ph); cursor: pointer;
 }
 html body #mainApp#mainApp .acx-page .acx-eye.is-on { color: var(--ax-accent); }
 
-html body #mainApp#mainApp .acx-page .acx-code { height: 56px; text-align: center !important; font-size: 24px !important; font-weight: 700; letter-spacing: .5em; padding-left: calc(14px + .5em); }
-html body #mainApp#mainApp .acx-page .acx-sent { margin: 0 0 4px; color: var(--ax-text); font-size: 14px; line-height: 1.8; }
-html body #mainApp#mainApp .acx-page .acx-sent b { color: var(--ax-ink); }
+/* the code step = the sign-in code screen:
+   "sent to" + target (16/700) · 24 · six boxes (52×56, gap 8, radius 12, 22px) · 12 · error · 16 · button · 12 · "send again" */
+html body #mainApp#mainApp .acx-page .acx-sent {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 2px 12px; margin: 0; padding: 0 2px;
+}
+html body #mainApp#mainApp .acx-page .acx-sent > span { grid-column: 1 / -1; color: var(--ax-label); font-size: 13px; font-weight: 400; line-height: 1.9; }
+html body #mainApp#mainApp .acx-page .acx-sent > b {
+  min-width: 0; justify-self: start; color: var(--ax-ink); font-size: 16px; font-weight: 700; line-height: 1.6;
+  letter-spacing: .02em; direction: ltr; unicode-bidi: isolate; overflow-wrap: anywhere;
+}
+html body #mainApp#mainApp .acx-page .acx-edit {
+  height: 32px; margin: 0; padding: 0 12px; border: 0; border-radius: 10px; background: var(--ax-badge); color: var(--ax-badge-ink);
+  font-family: var(--ax-font); font-size: 13px; font-weight: 400; white-space: nowrap; cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+html body #mainApp#mainApp .acx-page .acx-otp { display: flex; justify-content: center; gap: 8px; margin: 24px 0 0; direction: ltr; }
+html body #mainApp#mainApp .acx-page .acx-digit {
+  width: calc((100% - 40px) / 6); max-width: 52px; min-width: 0; height: 56px; margin: 0; padding: 0; box-sizing: border-box;
+  border: 1px solid var(--ax-field-line) !important; border-radius: 12px !important; background: var(--ax-field) !important; box-shadow: none !important;
+  color: var(--ax-ink) !important; font-family: var(--ax-font); font-size: 22px !important; font-weight: 400; text-align: center; caret-color: var(--ax-accent);
+  -webkit-appearance: none; appearance: none; transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+}
+html body #mainApp#mainApp .acx-page .acx-digit:is(:focus, :focus-visible) {
+  outline: 0 !important; border-color: var(--ax-accent) !important; background: var(--ax-field-focus) !important; box-shadow: 0 0 0 4px var(--ax-ring) !important;
+}
+html body #mainApp#mainApp .acx-page .acx-otp ~ .acx-err { margin-top: 12px; text-align: center; }
+html body #mainApp#mainApp .acx-page .acx-otp ~ .acx-btn { margin-top: 16px; }
+html body #mainApp#mainApp .acx-page .acx-again { display: flex; align-items: center; justify-content: center; min-height: 40px; margin-top: 12px; }
+@media (max-width: 359px) {
+  html body #mainApp#mainApp .acx-page .acx-otp { gap: 6px; }
+  html body #mainApp#mainApp .acx-page .acx-digit { width: calc((100% - 30px) / 6); height: 52px; font-size: 20px !important; }
+}
 
-html body #mainApp#mainApp .acx-page .acx-err { margin: 0; color: var(--ax-danger); font-size: 13px; line-height: 1.6; }
+html body #mainApp#mainApp .acx-page .acx-err { margin: 6px 0 0; padding: 0 2px; color: var(--ax-err); font-size: 12px; font-weight: 400; line-height: 1.7; }
 html body #mainApp#mainApp .acx-page .acx-err:empty { display: none; }
-html body #mainApp#mainApp .acx-page .acx-hint { margin: 0; color: var(--ax-muted); font-size: 12.5px; line-height: 1.8; }
+html body #mainApp#mainApp .acx-page .acx-hint { margin: 0; color: var(--ax-label); font-size: 12px; line-height: 1.7; }
 
+/* the action */
 html body #mainApp#mainApp .acx-page .acx-btn {
-  position: relative; width: 100%; height: 52px; margin: 8px 0 0; padding: 0 16px; display: flex; align-items: center; justify-content: center; gap: 8px;
-  border: 0; border-radius: 14px; background: var(--ax-accent); color: #fff;
-  font-family: var(--ax-font); font-size: 16px; font-weight: 600; cursor: pointer;
+  position: relative; width: 100%; height: 52px; margin: 20px 0 0; padding: 0 14px; display: flex; align-items: center; justify-content: center; gap: 8px;
+  border: 0; border-radius: 14px; background: var(--ax-btn); color: #fff; box-shadow: var(--ax-btn-shadow);
+  font-family: var(--ax-font); font-size: 15px; font-weight: 400; line-height: 1.6; cursor: pointer;
   transition: transform .12s ease, background-color .15s ease, opacity .15s ease;
 }
-html body #mainApp#mainApp .acx-page .acx-btn:not(:disabled):active { transform: scale(.98); background: var(--ax-accent-press); }
-html body #mainApp#mainApp .acx-page .acx-btn:disabled:not(.is-loading) { background: var(--ax-soft); color: var(--ax-muted); box-shadow: inset 0 0 0 1px var(--ax-line); cursor: default; }
-html body #mainApp#mainApp .acx-page .acx-btn.is-loading { cursor: progress; opacity: .9; }
+html body #mainApp#mainApp .acx-page .acx-btn:not(:disabled):active { transform: scale(.98); background: var(--ax-btn-press); }
+html body #mainApp#mainApp .acx-page .acx-btn:disabled { opacity: .55; cursor: default; }
+html body #mainApp#mainApp .acx-page .acx-btn.is-loading { opacity: .9; cursor: progress; }
 html body #mainApp#mainApp .acx-page .acx-spin { display: none; width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .35); border-top-color: #fff; animation: acxSpin .7s linear infinite; }
 html body #mainApp#mainApp .acx-page .acx-btn.is-loading .acx-spin { display: block; }
 @keyframes acxSpin { to { transform: rotate(360deg); } }
 
-html body #mainApp#mainApp .acx-page .acx-row { display: flex; justify-content: space-between; gap: 12px; margin-top: 4px; }
+/* "send again": a countdown until the code expires, then a button */
 html body #mainApp#mainApp .acx-page .acx-link {
-  height: 40px; padding: 0 4px; margin: 0; border: 0; background: transparent; color: var(--ax-accent);
-  font-family: var(--ax-font); font-size: 14px; font-weight: 600; cursor: pointer;
+  height: 40px; margin: 0; padding: 0 18px; border: 0; border-radius: 12px; background: var(--ax-accent-soft); color: var(--ax-accent);
+  font-family: var(--ax-font); font-size: 14px; font-weight: 700; cursor: pointer; -webkit-tap-highlight-color: transparent;
 }
-html body #mainApp#mainApp .acx-page .acx-link:disabled { color: var(--ax-muted); cursor: default; }
+html body #mainApp#mainApp .acx-page .acx-link:active { transform: scale(.97); }
+html body #mainApp#mainApp .acx-page .acx-link:disabled {
+  padding: 0 2px; background: transparent; color: var(--ax-label); font-size: 13.5px; font-weight: 400;
+  font-variant-numeric: tabular-nums; cursor: default; transform: none;
+}
 
-html body #mainApp#mainApp .acx-page :is(.acx-back, .acx-eye, .acx-link, .acx-btn):focus-visible { outline: 2px solid var(--ax-accent); outline-offset: 2px; }
+html body #mainApp#mainApp .acx-page :is(.acx-eye, .acx-link, .acx-edit, .acx-btn):focus { outline: 0 !important; }
+html body #mainApp#mainApp .acx-page :is(.acx-eye, .acx-link, .acx-edit, .acx-btn):focus-visible { outline: 2px solid var(--ax-accent) !important; outline-offset: 2px !important; }
 
 /* profile menu: verified / not verified next to the number */
 html body #mainApp#mainApp #pageProfile .acx-menu .pfx-item-txt small { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 6px; }
@@ -143,5 +212,6 @@ html[data-theme="dark"] body #mainApp#mainApp #pageProfile .acx-menu .acx-ok { b
 html[data-theme="dark"] body #mainApp#mainApp #pageProfile .acx-menu .acx-warn { background: #2a2213; color: #f7c66b; }
 
 @media (prefers-reduced-motion: reduce) {
-  html body #mainApp#mainApp .acx-page :is(.acx-btn, .acx-spin) { transition: none !important; animation: none !important; }
+  html body #mainApp#mainApp .acx-page :is(.acx-btn, .acx-spin, .acx-input, .acx-link, .acx-digit) { transition: none !important; animation: none !important; }
+  html body #mainApp#mainApp .acx-page :is(.acx-btn, .acx-link):active { transform: none !important; }
 }

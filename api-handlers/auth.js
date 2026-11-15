@@ -30,7 +30,7 @@
 // only way to a session is through this file.
 // ═════════════════════════════════════════════════════════════════
 import { randomBytes } from 'node:crypto';
-import { json, readJson, rpc, serviceFetch, withSecurity, config } from './_lib/security.js';
+import { json, readJson, recordAppError, rpc, serviceFetch, withSecurity, config } from './_lib/security.js';
 
 const SUPABASE_URL = config.SUPABASE_URL;
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -147,8 +147,50 @@ function sessionBody(session) {
 }
 
 // ── sending codes ────────────────────────────────────────────────
+// A failure that reaches the customer is also written to the admin error
+// log (api: recordAppError) with what the provider answered — never the code,
+// never the full number or address.
+function withLog(error, log) { error.log = log; return error; }
+function providerText(result) {
+  if (!result || typeof result !== 'object') return typeof result === 'string' ? result.slice(0, 300) : '';
+  const parts = [result.code, result.error?.message || result.error, result.message, result.reason]
+    .filter(v => typeof v === 'string' && v.trim());
+  return [...new Set(parts)].join(' — ').replace(/[\r\n\t]+/g, ' ').slice(0, 300);
+}
+const FAILURE_OPERATION = {
+  SESSION_FAILED: 'auth_session', SIGNUP_FAILED: 'auth_signup', PHONE_CHANGE_FAILED: 'auth_phone_change',
+  PASSWORD_CHANGE_FAILED: 'auth_password_change', EMAIL_CHANGE_FAILED: 'auth_email_change'
+};
+async function logAuthFailure(error, body, ctx) {
+  try {
+    const log = error.log || { operation: FAILURE_OPERATION[error.code] || 'auth_server' };
+    let user = ctx.user || null;
+    if (!user && (body?.identifier || body?.phone)) {                 // sign-in / reset: whose code was it?
+      const acct = await resolveAccount(identify(body.identifier ?? body.phone)).catch(() => null);
+      if (acct?.userId) user = { id: acct.userId };
+    }
+    await recordAppError(ctx.context, {
+      source: 'server',
+      severity: error.status === 503 ? 'critical' : 'error',
+      operation: log.operation,
+      code: error.code,
+      status: error.status,
+      message: log.provider_message || error.message,
+      path: `/api/auth#${String(body?.action || '').slice(0, 40)}`,
+      user,
+      metadata: {
+        action: String(body?.action || '').slice(0, 40), purpose: log.purpose || null, target: log.target || null,
+        provider_status: log.provider_status == null ? null : String(log.provider_status)
+      }
+    });
+  } catch { /* logging must never change the answer the customer gets */ }
+}
+
 async function sendWhatsAppCode(phone, purpose, ip) {
-  if (!process.env.WEVLIX_API_KEY) throw fail(503, 'WHATSAPP_NOT_CONFIGURED', 'ناردنی کۆدی واتساپ هێشتا ڕێکنەخراوە');
+  if (!process.env.WEVLIX_API_KEY) {
+    throw withLog(fail(503, 'WHATSAPP_NOT_CONFIGURED', 'ناردنی کۆدی واتساپ هێشتا ڕێکنەخراوە'),
+      { operation: 'whatsapp_code', purpose, target: maskPhone(phone), provider_message: 'WEVLIX_API_KEY is not set' });
+  }
   let issued;
   try {
     issued = await rpc('ex_auth_code_issue', { p_phone: phone, p_purpose: purpose, p_ip: ip || null });
@@ -175,7 +217,11 @@ async function sendWhatsAppCode(phone, purpose, ip) {
   }).catch(() => null);
   const result = response ? await response.json().catch(() => null) : null;
   if (!response?.ok || result?.success === false) {
-    throw fail(502, 'WHATSAPP_FAILED', 'نەتوانرا کۆد بنێردرێت بۆ واتساپ. دڵنیابە کە ژمارەکە واتساپی هەیە');
+    throw withLog(fail(502, 'WHATSAPP_FAILED', 'نەتوانرا کۆد بنێردرێت بۆ واتساپ. دڵنیابە کە ژمارەکە واتساپی هەیە'), {
+      operation: 'whatsapp_code', purpose, target: maskPhone(phone),
+      provider_status: response ? response.status : 'no_response',
+      provider_message: providerText(result) || (response ? `HTTP ${response.status}` : 'Wevlix did not answer within 15 seconds')
+    });
   }
   return { channel: 'whatsapp', target: maskPhone(phone), expires_at: issued.expires_at || null };
 }
@@ -198,7 +244,11 @@ async function sendEmailCode(email, purpose) {
     if (/CODE_STILL_VALID/.test(String(result?.message || ''))) {
       return { channel: 'email', target: maskEmail(email), expires_at: await emailCodeExpiry(email, purpose), already_sent: true };
     }
-    throw fail(502, 'EMAIL_FAILED', 'هەڵەی ناردنی کۆد');
+    throw withLog(fail(502, 'EMAIL_FAILED', 'هەڵەی ناردنی کۆد'), {
+      operation: 'email_code', purpose, target: maskEmail(email),
+      provider_status: response ? response.status : 'no_response',
+      provider_message: providerText(result) || (response ? `HTTP ${response.status}` : 'n8n did not answer within 15 seconds')
+    });
   }
   return { channel: 'email', target: maskEmail(email), expires_at: (await emailCodeExpiry(email, purpose)) || new Date(Date.now() + 600e3).toISOString() };
 }
@@ -518,7 +568,10 @@ export default withSecurity(async (req, res, ctx) => {
   try {
     return json(res, 200, await action(body, { ...ctx, req }));
   } catch (error) {
-    if (error.code && error.status && error.status < 500 || ['WHATSAPP_FAILED', 'WHATSAPP_NOT_CONFIGURED', 'EMAIL_FAILED', 'SESSION_FAILED', 'SIGNUP_FAILED', 'PHONE_CHANGE_FAILED', 'PASSWORD_CHANGE_FAILED', 'EMAIL_CHANGE_FAILED'].includes(error.code)) {
+    const known = ['WHATSAPP_FAILED', 'WHATSAPP_NOT_CONFIGURED', 'EMAIL_FAILED', 'SESSION_FAILED', 'SIGNUP_FAILED', 'PHONE_CHANGE_FAILED', 'PASSWORD_CHANGE_FAILED', 'EMAIL_CHANGE_FAILED'].includes(error.code);
+    // these never reach the generic 5xx logger below, so they are written here
+    if (known) await logAuthFailure(error, body, ctx);
+    if (error.code && error.status && error.status < 500 || known) {
       return json(res, error.status, { error: error.message, code: error.code, ...(error.extra || {}) });
     }
     throw error;

@@ -96,7 +96,7 @@
     const wrap = document.getElementById('waAdminTable');
     if(wrap && !rows.length) wrap.innerHTML = '<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
     try{
-      await Promise.all([loadStats(), loadLog()]);
+      await Promise.all([loadStats(), loadLog(), loadSubscribers()]);
     }catch(err){
       if(wrap) wrap.innerHTML = '<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>هەڵە: ' + e(err && err.message) + '</p></div>';
     }finally{ busy = false; }
@@ -127,6 +127,76 @@
     }catch(err){
       toast(/NOT_RETRYABLE/.test(err && err.message) ? 'ئەم نامەیە پێشتر نێردراوە یان لە نۆبەدایە' : 'نەتوانرا: ' + (err && err.message), 'rd');
     }
+  };
+
+  // ── who turned WhatsApp notifications on, and on / off for them (super admin) ──
+  let subs = [], subsFilter = 'all', subsBusy = false;
+  async function loadSubscribers(){
+    if (typeof isSuperAdmin === 'function' && !isSuperAdmin()) return;
+    const wrap = document.getElementById('waSubsTable');
+    try {
+      subs = await adminApiRequest('whatsapp_subscribers');
+      renderSubscribers();
+    } catch (err) {
+      if (wrap) wrap.innerHTML = '<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>' + e(err && err.message) + '</p></div>';
+    }
+  }
+  function renderSubscribers(){
+    const wrap = document.getElementById('waSubsTable');
+    if (!wrap) return;
+    const q = (document.getElementById('waSubsSearch')?.value || '').trim().toLowerCase();
+    const rows = (subs || []).filter(r => {
+      if (subsFilter === 'on' && !r.enabled) return false;
+      if (subsFilter === 'off' && r.enabled) return false;
+      if (!q) return true;
+      return [r.full_name, r.email, r.phone, r.account_phone, displayPhone(r.phone)].some(v => String(v || '').toLowerCase().includes(q));
+    });
+    if (!rows.length) { wrap.innerHTML = '<div class="empty"><i class="fas fa-whatsapp"></i><p>هیچ کەسێک نییە</p></div>'; return; }
+    wrap.innerHTML = '<table><thead><tr><th>کڕیار</th><th>ژمارەی واتسئاپ</th><th>دۆخ</th><th>دوایین گۆڕین</th><th>نێردراو</th><th>سەرنەکەوتوو</th><th></th></tr></thead><tbody>'
+      + rows.map(r => {
+          const last = r.last_change || {};
+          const by = last.at ? (last.by_admin ? 'لەلایەن ئادمین' : 'لەلایەن کڕیار') : '';
+          const canOn = r.phone_verified;
+          const btn = r.enabled
+            ? '<button class="wa-toggle off" onclick="setWhatsappSubscriber(\'' + e(r.user_id) + '\',false)">ناچالاککردن</button>'
+            : '<button class="wa-toggle on"' + (canOn ? '' : ' disabled title="ژمارەی هەژمارەکە پشتڕاست نەکراوەتەوە"') + ' onclick="setWhatsappSubscriber(\'' + e(r.user_id) + '\',true)">چالاککردن</button>';
+          return '<tr>'
+            + '<td style="font-size:13px"><b>' + e(r.full_name || r.email || '—') + '</b>' + (r.email && r.full_name ? '<div style="font-size:11px;opacity:.7;direction:ltr;text-align:right">' + e(r.email) + '</div>' : '') + '</td>'
+            + '<td style="direction:ltr;font-size:13px;white-space:nowrap">' + e(displayPhone(r.phone)) + '</td>'
+            + '<td>' + (r.enabled ? '<span class="badge approved">چالاکە</span>' : '<span class="badge rejected">ناچالاکە</span>') + '</td>'
+            + '<td style="font-size:12px;white-space:nowrap">' + e(last.at ? dt(last.at) : dt(r.updated_at)) + (by ? '<div style="font-size:11px;opacity:.7">' + e(by) + '</div>' : '') + '</td>'
+            + '<td style="text-align:center">' + num(r.sent) + '</td>'
+            + '<td style="text-align:center">' + num(r.failed) + '</td>'
+            + '<td>' + btn + '</td>'
+            + '</tr>';
+        }).join('')
+      + '</tbody></table>';
+  }
+  window.loadWhatsappSubscribers = loadSubscribers;
+  window.renderWhatsappSubscribers = renderSubscribers;
+  window.filterWhatsappSubscribers = function(f, el){
+    subsFilter = f;
+    document.querySelectorAll('[data-wasf]').forEach(x => x.classList.toggle('on', x === el));
+    renderSubscribers();
+  };
+  window.setWhatsappSubscriber = function(userId, enabled){
+    const row = (subs || []).find(r => r.user_id === userId);
+    const who = row ? (row.full_name || displayPhone(row.phone)) : '';
+    const go = async () => {
+      if (subsBusy) return;
+      subsBusy = true;
+      try {
+        await adminApiRequest('whatsapp_set', { user_id: userId, enabled });
+        toast(enabled ? 'ئاگاداری واتسئاپ بۆ ' + who + ' چالاک کرا' : 'ئاگاداری واتسئاپ بۆ ' + who + ' ناچالاک کرا', 'gr');
+        await Promise.all([loadSubscribers(), loadStats()]);
+      } catch (err) { toast(err && err.message || 'هەڵە', 'rd'); }
+      finally { subsBusy = false; }
+    };
+    if (typeof confirm2 === 'function') {
+      confirm2(enabled ? 'چالاککردنی ئاگاداری واتسئاپ؟' : 'ناچالاککردنی ئاگاداری واتسئاپ؟',
+        (enabled ? 'نامەی پەسەندکردن و ڕەتکردنەوەی داواکاری دووبارە بۆ ' : 'ئیتر نامەی واتسئاپ بۆ ') + who + (enabled ? ' دەنێردرێت.' : ' نانێردرێت. کڕیار خۆی دەتوانێت لە پڕۆفایل دووبارە چالاکی بکاتەوە.'),
+        'fab fa-whatsapp', enabled ? '#16a34a' : '#dc2626', go);
+    } else go();
   };
 
   // register the page with the admin router

@@ -92,3 +92,21 @@ test('only super admins change contacts and set passwords, for either kind of ac
   assert.equal((await mail.request('account_set_password',{user_id:emailUser,password:'newpassword1'})).status,200);
   assert.equal(mail.calls.find(c=>c.auth).attrs.password,'newpassword1');       // e-mail account: Supabase Auth
 });
+
+test('v51: activity and WhatsApp subscribers are super-admin only; switching WhatsApp off records which admin did it',async()=>{
+  for(const action of ['activity_overview','activity_user','whatsapp_subscribers','whatsapp_set','list_error_logs']){
+    const staff=application({role:'admin'});
+    const r=await staff.request(action,{user_id:numberUser,enabled:false});
+    assert.equal(r.status,403,action);
+  }
+  const app=application();
+  const off=await app.request('whatsapp_set',{user_id:numberUser,enabled:false});
+  assert.equal(off.status,200,JSON.stringify(off.data));
+  const set=app.calls.find(c=>c.rpc==='ex_admin_whatsapp_set');
+  assert.deepEqual({...set.args},{p_user:numberUser,p_enabled:false,p_admin:adminId});
+  const bad=await app.request('whatsapp_set',{user_id:'nope',enabled:true});
+  assert.equal(bad.status,400);
+  const day=await app.request('activity_user',{user_id:numberUser,days:900});
+  assert.equal(day.status,200);
+  assert.deepEqual({...app.calls.find(c=>c.rpc==='ex_admin_activity_user').args},{p_user:numberUser,p_days:90});
+});

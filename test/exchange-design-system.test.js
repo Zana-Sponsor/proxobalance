@@ -60,17 +60,17 @@ test('Design layer leaves hidden/route mechanics untouched and provides accessib
 
 test('Production smoke waits for the changed customer version and verifies its design contract',()=>{
   const workflow=read('.github/workflows/exchange-production-smoke.yml');
-  assert(workflow.includes('app.js?v=102'));
-  assert(workflow.includes('admin.js?v=35'));
+  assert(workflow.includes('app.js?v=104'));
+  assert(workflow.includes('admin.js?v=36'));
   assert(workflow.includes('receipt-access.js?v=1'));
   assert(workflow.includes('auth-phone.css?v=2'));
   assert(workflow.includes('auth-otp.css?v=1'));
   assert(workflow.includes('/assets/js/exchange-pricing.js?v=1'));
-  assert(html.includes('/assets/js/app.js?v=102'));
+  assert(html.includes('/assets/js/app.js?v=104'));
   assert(html.includes('/assets/css/proxo-ui-v2.css?v=16'));
   assert(html.includes('/assets/js/proxo-ui-v2.js?v=4'));
   assert(html.includes('/assets/js/proxo-toast.js?v=1'));
-  assert(html.indexOf('proxo-toast.js?v=1') < html.indexOf('app.js?v=102'));
+  assert(html.indexOf('proxo-toast.js?v=1') < html.indexOf('app.js?v=104'));
   assert(shellCss.includes('.pxt-stack'));
   assert(shellCss.includes('.pxn-pill'));
   assert(shellCss.includes('.field-error.show'));
@@ -88,7 +88,7 @@ test('Production smoke waits for the changed customer version and verifies its d
   assert(html.includes('proxo-dark.css?v=8'));
   for(const route of ['account-name','change-phone','change-password','change-email'])
     assert(html.includes(`data-route="${route}"`));
-  assert(html.includes('account-settings.css?v=2'));
+  assert(html.includes('account-settings.css?v=4'));
   assert(html.includes('profile-screens.css?v=1'));
   assert(html.includes('whatsapp-notify.js?v=2'));
   assert(html.includes('id="savedRecipientsShortcut"'));
