@@ -65,7 +65,7 @@ test('admin API: a banner is checked before it is saved', () => {
   assert.doesNotMatch(adminApi, /banner_save:'|banners_list:'/);
   assert.match(adminApi, /db\.storage\.from\('banners'\)\.createSignedUploadUrl\(path\)/);
   assert.match(adminApi, /if \(previous && previous\.image_path !== saved\.image_path\) await db\.storage\.from\('banners'\)\.remove\(\[previous\.image_path\]\)/);
-  assert.match(adminApi, /const KEYS = \['site', 'home', 'exchange', 'transactions', 'correction', 'rating', 'balance', 'balance_history',/);
+  assert.match(adminApi, /const SITE_KEYS = \['site', 'home', 'exchange', 'transactions', 'correction', 'rating', 'balance', 'balance_history',/);
 });
 
 test('server: name, number, e-mail, password and delete each have their own switch; corrections have theirs', () => {

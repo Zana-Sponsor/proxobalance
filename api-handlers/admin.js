@@ -50,6 +50,11 @@ const SUPPORT_STATUSES = new Set(['open', 'in_progress', 'resolved', 'closed']);
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const isUuid = value => typeof value === 'string' && UUID.test(value);
 
+// every pause switch of the customer site (ex_site_controls.key)
+const SITE_KEYS = ['site', 'home', 'exchange', 'transactions', 'correction', 'rating', 'balance', 'balance_history',
+  'support', 'verify', 'whatsapp', 'changes', 'rules', 'profile', 'signup', 'login',
+  'name', 'phone', 'email', 'password', 'delete'];
+
 // ── banners ─────────────────────────────────────────────────────
 const BANNER_KINDS = ['slide', 'popup'];
 const BANNER_SECTIONS = ['home', 'exchange', 'transactions', 'changes', 'rules', 'profile', 'support', 'verify', 'balance'];
@@ -273,7 +278,7 @@ async function audit(adminId, action, targetUserId, detail) {
 export function assertStaffAction(profile,action){
   // account mutations are super-admin only (ordinary admins get read-only account controls)
   if(['set_ban','account_set_password','account_contact_update'].includes(action) && profile.role!=='super_admin')throw {status:403,code:'super_admin_required',message:'SUPER_ADMIN_REQUIRED'};
-  if(['error_log_summary','list_error_logs','resolve_error_log','resolve_all_error_logs','activity_overview','activity_user','whatsapp_subscribers','whatsapp_set','site_controls','site_control_set'].includes(action)&&profile.role!=='super_admin')throw {status:403,code:'super_admin_required',message:'SUPER_ADMIN_REQUIRED'};
+  if(['error_log_summary','list_error_logs','resolve_error_log','resolve_all_error_logs','activity_overview','activity_user','whatsapp_subscribers','whatsapp_set','site_controls','site_control_set','site_schedule_save','site_schedule_delete'].includes(action)&&profile.role!=='super_admin')throw {status:403,code:'super_admin_required',message:'SUPER_ADMIN_REQUIRED'};
   if(profile.role==='super_admin' || profile.staff_permissions==null)return;
   const permissions={
     ping:'view',account_balances:'view',balance_dashboard:'view',balance_lookup_order:'view',
@@ -1160,9 +1165,10 @@ const actions = {
 
   // ── pause switches: the whole site or one section (ex_site_controls) ──
   async site_controls(_payload, _ctx) {
-    const [controls, log] = await Promise.all([
-      db.from('ex_site_controls').select('key,paused,message,updated_at,updated_by'),
-      db.from('ex_site_control_log').select('key,paused,message,changed_by,changed_at').order('changed_at', { ascending: false }).limit(30)
+    const [controls, log, schedules] = await Promise.all([
+      db.from('ex_site_controls').select('*'),
+      db.from('ex_site_control_log').select('*').order('changed_at', { ascending: false }).limit(30),
+      db.from('ex_site_schedules').select('key,open_at,close_at,days,message,is_active,last_state,updated_at')
     ]);
     if (controls.error) throw { status: 500, code: 'db_error', message: controls.error.message };
     const rows = controls.data || [], history = log.error ? [] : (log.data || []);
@@ -1174,14 +1180,34 @@ const actions = {
     }
     return {
       controls: rows.map(r => ({ ...r, updated_by_name: names[r.updated_by] || null })),
-      log: history.map(r => ({ ...r, changed_by_name: names[r.changed_by] || null }))
+      log: history.map(r => ({ ...r, changed_by_name: names[r.changed_by] || null })),
+      schedules: schedules.error ? [] : (schedules.data || [])
     };
   },
+  // working hours: one per switch; opens and closes it by itself (Asia/Baghdad)
+  async site_schedule_save({ key, open_at, close_at, days, message, is_active } = {}, ctx) {
+    const TIME = /^([01]\d|2[0-3]):[0-5]\d$/;
+    if (!SITE_KEYS.includes(key) || !TIME.test(String(open_at)) || !TIME.test(String(close_at)) || open_at === close_at)
+      throw { status: 400, code: 'bad_input', message: 'کاتی کردنەوە و داخستن دیاری بکە' };
+    const dayList = [...new Set((Array.isArray(days) ? days : []).map(Number).filter(d => Number.isInteger(d) && d >= 0 && d <= 6))];
+    if (!dayList.length) throw { status: 400, code: 'bad_input', message: 'لانیکەم یەک ڕۆژ هەڵبژێرە' };
+    const text = message == null ? null : String(message).trim().slice(0, 300) || null;
+    const { data, error } = await db.rpc('ex_admin_site_schedule_save', {
+      p_key: key, p_open: open_at, p_close: close_at, p_days: dayList, p_message: text, p_active: is_active !== false, p_admin: ctx.user.id
+    });
+    if (error) throw { status: 500, code: 'db_error', message: error.message };
+    await audit(ctx.user.id, 'site_schedule_save', null, { key, open_at, close_at, days: dayList, is_active: is_active !== false });
+    return data;
+  },
+  async site_schedule_delete({ key } = {}, ctx) {
+    if (!SITE_KEYS.includes(key)) throw { status: 400, code: 'bad_input', message: 'key is required' };
+    const { error } = await db.rpc('ex_admin_site_schedule_delete', { p_key: key, p_admin: ctx.user.id });
+    if (error) throw { status: 500, code: 'db_error', message: error.message };
+    await audit(ctx.user.id, 'site_schedule_delete', null, { key });
+    return { ok: true };
+  },
   async site_control_set({ key, paused, message } = {}, ctx) {
-    const KEYS = ['site', 'home', 'exchange', 'transactions', 'correction', 'rating', 'balance', 'balance_history',
-      'support', 'verify', 'whatsapp', 'changes', 'rules', 'profile', 'signup', 'login',
-      'name', 'phone', 'email', 'password', 'delete'];
-    if (!KEYS.includes(key) || typeof paused !== 'boolean') throw { status: 400, code: 'bad_input', message: 'key and paused are required' };
+    if (!SITE_KEYS.includes(key) || typeof paused !== 'boolean') throw { status: 400, code: 'bad_input', message: 'key and paused are required' };
     const text = message == null ? null : String(message).trim().slice(0, 300) || null;
     const { data, error } = await db.rpc('ex_admin_site_control_set', { p_key: key, p_paused: paused, p_message: text, p_admin: ctx.user.id });
     if (error) throw { status: 500, code: 'db_error', message: error.message };

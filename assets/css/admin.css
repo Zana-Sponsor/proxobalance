@@ -976,3 +976,16 @@ body{height:100% !important;min-height:0 !important;max-height:100% !important;
 .list-more{display:flex;align-items:center;justify-content:center;gap:14px;padding:14px 12px 16px;border-top:1px solid #edf1f5;font-size:12.5px;color:#8994a5}
 .list-more .act-btn{height:38px}
 #bnPlacesWrap .modal-lbl{margin-top:14px}
+
+/* ── v55 working hours (pause page) ── */
+.ph-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0 8px;border-bottom:1px solid #edf1f5}
+.ph-head h3{padding:5px 0}
+.ph-row .act-btn{flex-shrink:0;height:36px}
+.ph-row.is-idle .ps-main b,.ph-row.is-idle .ps-main small{color:#94a3b8}
+.ps-state:not(.on):not(.off){color:#8994a5}
+.ph-times{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ph-times .minp{text-align:center;font-variant-numeric:tabular-nums}
+#phDays{gap:6px}
+.modal-btn.ph-del{background:#fff;color:#dc2626;border:1.5px solid #f2c9c9}
+.modal-btn.ph-del:hover{background:#fef2f2}
+.ps-modal-btns .modal-btn[hidden]{display:none}
