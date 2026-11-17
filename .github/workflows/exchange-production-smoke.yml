@@ -22,7 +22,8 @@ jobs:
                grep -q 'site-pause.js?v=2' current-index.html &&
                grep -q 'banners.js?v=2' current-index.html &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin' -o current-admin.html &&
-               grep -q 'admin.js?v=38' current-admin.html; then
+               grep -q 'admin.js?v=38' current-admin.html &&
+               grep -q 'exchange-whatsapp-admin.js?v=4' current-admin.html; then
               exit 0
             fi
             sleep 6
@@ -82,9 +83,11 @@ jobs:
           grep -q 'exchange-fee-tiers.js?v=1' exchange-admin.html
           grep -q 'id="pgPause"' exchange-admin.html
           grep -q 'id="pgBanners"' exchange-admin.html
+          grep -q 'exchange-whatsapp-admin.js?v=4' exchange-admin.html
+          grep -q 'ژمارە پشتڕاستکراوەکانی کڕیار' exchange-admin.html
           if grep -q 'firebasejs' route.html; then echo 'FAIL: the customer page still loads Firebase.'; exit 1; fi
           if grep -q 'id="pgRewards"' exchange-admin.html; then echo 'FAIL: the rewards admin page is still published.'; exit 1; fi
-          echo "PASS: v54 customer app and admin panel are live."
+          echo "PASS: customer app and verified-number WhatsApp admin panel are live."
       - name: Verify APIs refuse anonymous callers and leak nothing
         shell: bash
         run: |

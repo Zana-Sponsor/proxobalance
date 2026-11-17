@@ -129,7 +129,7 @@
     }
   };
 
-  // ── who turned WhatsApp notifications on, and on / off for them (super admin) ──
+  // ── all verified customer numbers and their WhatsApp notification state (super admin) ──
   let subs = [], subsFilter = 'all', subsBusy = false;
   async function loadSubscribers(){
     if (typeof isSuperAdmin === 'function' && !isSuperAdmin()) return;
@@ -151,8 +151,8 @@
       if (!q) return true;
       return [r.full_name, r.email, r.phone, r.account_phone, displayPhone(r.phone)].some(v => String(v || '').toLowerCase().includes(q));
     });
-    if (!rows.length) { wrap.innerHTML = '<div class="empty"><i class="fas fa-whatsapp"></i><p>هیچ کەسێک نییە</p></div>'; return; }
-    wrap.innerHTML = '<table><thead><tr><th>کڕیار</th><th>ژمارەی واتسئاپ</th><th>دۆخ</th><th>دوایین گۆڕین</th><th>نێردراو</th><th>سەرنەکەوتوو</th><th></th></tr></thead><tbody>'
+    if (!rows.length) { wrap.innerHTML = '<div class="empty"><i class="fas fa-whatsapp"></i><p>هیچ ژمارەی پشتڕاستکراوەیەک نییە</p></div>'; return; }
+    wrap.innerHTML = '<table><thead><tr><th>کڕیار</th><th>ژمارەی پشتڕاستکراوە</th><th>دۆخی ئاگاداری</th><th>دوایین گۆڕین</th><th>نێردراو</th><th>سەرنەکەوتوو</th><th></th></tr></thead><tbody>'
       + rows.map(r => {
           const last = r.last_change || {};
           const by = last.at ? (last.by_admin ? 'لەلایەن ئادمین' : 'لەلایەن کڕیار') : '';
@@ -162,7 +162,7 @@
             : '<button class="wa-toggle on"' + (canOn ? '' : ' disabled title="ژمارەی هەژمارەکە پشتڕاست نەکراوەتەوە"') + ' onclick="setWhatsappSubscriber(\'' + e(r.user_id) + '\',true)">چالاککردن</button>';
           return '<tr>'
             + '<td style="font-size:13px"><b>' + e(r.full_name || r.email || '—') + '</b>' + (r.email && r.full_name ? '<div style="font-size:11px;opacity:.7;direction:ltr;text-align:right">' + e(r.email) + '</div>' : '') + '</td>'
-            + '<td style="direction:ltr;font-size:13px;white-space:nowrap">' + e(displayPhone(r.phone)) + '</td>'
+            + '<td style="direction:ltr;font-size:13px;white-space:nowrap">' + e(displayPhone(r.phone)) + (r.phone_verified ? '<div style="direction:rtl;margin-top:4px"><span class="badge approved">پشتڕاستکراوە</span></div>' : '') + '</td>'
             + '<td>' + (r.enabled ? '<span class="badge approved">چالاکە</span>' : '<span class="badge rejected">ناچالاکە</span>') + '</td>'
             + '<td style="font-size:12px;white-space:nowrap">' + e(last.at ? dt(last.at) : dt(r.updated_at)) + (by ? '<div style="font-size:11px;opacity:.7">' + e(by) + '</div>' : '') + '</td>'
             + '<td style="text-align:center">' + num(r.sent) + '</td>'
@@ -194,7 +194,7 @@
     };
     if (typeof confirm2 === 'function') {
       confirm2(enabled ? 'چالاککردنی ئاگاداری واتسئاپ؟' : 'ناچالاککردنی ئاگاداری واتسئاپ؟',
-        (enabled ? 'نامەی پەسەندکردن و ڕەتکردنەوەی داواکاری دووبارە بۆ ' : 'ئیتر نامەی واتسئاپ بۆ ') + who + (enabled ? ' دەنێردرێت.' : ' نانێردرێت. کڕیار خۆی دەتوانێت لە پڕۆفایل دووبارە چالاکی بکاتەوە.'),
+        (enabled ? 'لە داهاتوودا نامەی پەسەندکردن و ڕەتکردنەوەی داواکاری بۆ ' : 'ئیتر نامەی دۆخی داواکاری بۆ ') + who + (enabled ? ' دەنێردرێت.' : ' نانێردرێت. کڕیار خۆی دەتوانێت لە پڕۆفایل دووبارە چالاکی بکاتەوە.'),
         'fab fa-whatsapp', enabled ? '#16a34a' : '#dc2626', go);
     } else go();
   };
