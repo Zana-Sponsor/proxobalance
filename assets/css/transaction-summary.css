@@ -299,3 +299,132 @@ body #mainApp #pageSummary .tx-screen-body > .tf-flow { padding: 0; }
 body #mainApp #pageSummary .ts-loading,
 body #mainApp #pageSummary .ts-error { min-height: 50vh; }
 body #mainApp #pageSummary .ts-error button { min-height: 44px; padding: 0 20px; border: 1px solid var(--tf-line); border-radius: 12px; background: var(--tf-surface); color: var(--tf-ink); font: inherit; font-size: 14px; cursor: pointer; }
+
+/* ═════════════════════════════════════════════════════════════════
+   Transaction details (#pageSummary) — v67: the app's card language
+
+   The exchange and identity screens' values (exchange-form.css, kyc-screen.css):
+     card     radius 20 · padding 16 · border · soft shadow · 12 between cards
+     title    14/600, no marker
+     row      label 13/400 muted · value 14/500 ink · hairline between rows
+     button   50 / radius 14
+
+     ┌──────────────────────────────┐
+     │             (✓)              │   status, 56
+     │     بڕی گەیشتوو بە وەرگر      │
+     │         245,000 IQD          │   28/700
+     │         ● پەسەندکرا           │
+     │ ──────────────────────────── │
+     │   [FP] FastPay  →  [FIB] FIB │   wallets with their icons
+     └──────────────────────────────┘
+     ┌ وردەکاری بڕ ─────────────────┐   one card per section
+     ┌ دابەشکردنی بڕ ───────────────┐
+     ┌ زانیاری مامەڵە ──────────────┐
+     notes: tinted by tone (rejection red, correction amber)
+     [ دووبارەکردنەوەی ئاڵوگۆڕ ] [ داگرتنی پسووڵە ] …
+   The site header steps aside on phones, as on every inner screen.
+   ═════════════════════════════════════════════════════════════════ */
+body #mainApp:has(#pageSummary.active) #siteHeader.pxh { display: none !important; }
+@media (min-width: 1024px) {
+  body #mainApp:has(#pageSummary.active) #siteHeader.pxh { display: block !important; }
+}
+html body #mainApp#mainApp #pageSummary.page { padding-top: 0 !important; padding-inline: 14px !important; }
+html body #mainApp#mainApp #pageSummary {
+  --sx-card: #ffffff; --sx-line: #e8ecf3; --sx-rule: #eef2f6; --sx-field: #f8fafd;
+  --sx-shadow: 0 1px 2px rgba(20, 35, 60, .04), 0 12px 28px -18px rgba(20, 35, 60, .18);
+  --sx-ink: #0f172a; --sx-text: #5f6f86; --sx-label: #64748b;
+  --sx-accent: #0265ff; --sx-accent-soft: #eff4fe; --sx-btn: #0265ff;
+  --sx-bad: #c2414b; --sx-bad-soft: #fff3f3; --sx-bad-line: #f5c9cb;
+  --sx-warn: #8a5300; --sx-warn-soft: #fff6e3; --sx-warn-line: #f6dba6;
+}
+html[data-theme="dark"] body #mainApp#mainApp #pageSummary {
+  --sx-card: #131c2e; --sx-line: #25324a; --sx-rule: #1b2740; --sx-field: #0e1725;
+  --sx-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 12px 28px -18px rgba(0, 0, 0, .6);
+  --sx-ink: #e8edf6; --sx-text: #c4cee0; --sx-label: #a3b1c7;
+  --sx-accent: #3b8cff; --sx-accent-soft: #10223d; --sx-btn: #1c6cff;
+  --sx-bad: #f87171; --sx-bad-soft: #3a1816; --sx-bad-line: #6b2a27;
+  --sx-warn: #f7b955; --sx-warn-soft: #2e2511; --sx-warn-line: #5a4521;
+}
+html body #mainApp#mainApp #pageSummary .tx-screen-body { padding: 0 0 32px; }
+html body #mainApp#mainApp #pageSummary .tf-flow { display: flex; flex-direction: column; gap: 12px; color: var(--sx-ink); }
+/* every block is a card */
+html body #mainApp#mainApp #pageSummary .tf-flow > :is(.tf-hero, .tf-sec, .tf-note) {
+  margin: 0 !important; padding: 16px; border: 1px solid var(--sx-line) !important; border-radius: 20px;
+  background: var(--sx-card) !important; box-shadow: var(--sx-shadow) !important;
+}
+/* the top card: status, amount, state, then the route */
+html body #mainApp#mainApp #pageSummary .tf-flow > .tf-hero { padding: 22px 16px 16px; gap: 2px; }
+html body #mainApp#mainApp #pageSummary .tf-hero-ico { width: 56px; height: 56px; margin-bottom: 10px; }
+html body #mainApp#mainApp #pageSummary .tf-hero-label { color: var(--sx-label); font-size: 13px; line-height: 20px; }
+html body #mainApp#mainApp #pageSummary .tf-hero-amount { margin: 2px 0 10px; color: var(--sx-ink); font-size: 28px; font-weight: 700; line-height: 36px; }
+html body #mainApp#mainApp #pageSummary .tf-hero-route {
+  display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 10px;
+  width: 100%; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--sx-rule);
+}
+html body #mainApp#mainApp #pageSummary .tf-hero-route .tf-w { display: inline-flex; align-items: center; gap: 8px; color: var(--sx-ink); font-size: 14px; font-weight: 500; line-height: 1.5; }
+html body #mainApp#mainApp #pageSummary .tf-hero-route .method-icon { width: 28px !important; height: 28px !important; flex: 0 0 28px; margin: 0 !important; border-radius: 9px !important; }
+html body #mainApp#mainApp #pageSummary .tf-hero-route .tx-route-arrow { display: inline-grid; place-items: center; color: var(--sx-label); }
+html body #mainApp#mainApp #pageSummary .tf-hero-route .tx-route-arrow svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+/* section titles: the words only, like the exchange's steps */
+html body #mainApp#mainApp #pageSummary .tf-flow .tf-sec-title {
+  margin: 0 0 4px !important; color: var(--sx-ink) !important; font-size: 14px !important; font-weight: 600 !important; line-height: 1.6 !important;
+}
+html body #mainApp#mainApp #pageSummary .tf-flow .tf-sec-title::before { display: none; }
+/* rows */
+html body #mainApp#mainApp #pageSummary .tf-flow .tf-row { min-height: 46px; padding: 11px 0; border-bottom: 1px solid var(--sx-rule); }
+html body #mainApp#mainApp #pageSummary .tf-flow .tf-row:last-child { border-bottom: 0; padding-bottom: 0; min-height: 35px; }
+html body #mainApp#mainApp #pageSummary .tf-flow .tf-k { color: var(--sx-label); font-size: 13px; }
+html body #mainApp#mainApp #pageSummary .tf-flow .tf-v { color: var(--sx-ink); font-size: 14px; font-weight: 500; }
+html body #mainApp#mainApp #pageSummary .tf-flow .tf-row.is-total { margin-top: 0; border-top: 0; }
+html body #mainApp#mainApp #pageSummary .tf-flow .tf-row.is-total .tf-k { color: var(--sx-ink); font-weight: 500; }
+html body #mainApp#mainApp #pageSummary .tf-flow .tf-row.is-total .tf-v { font-size: 15px; font-weight: 700; }
+html body #mainApp#mainApp #pageSummary .tf-flow .tf-v.is-strong { color: var(--sx-accent); font-size: 15px; font-weight: 600; }
+/* «بۆچی؟» after «بڕی گەڕاوە بۆ باڵانس»: words, like under the exchange's split, not an (i) */
+html body #mainApp#mainApp #pageSummary .tf-flow .tf-info {
+  width: auto; height: auto; padding: 0; border: 0; border-radius: 0; background: none; color: var(--sx-accent);
+  font: 600 12.5px/1.6 Rabar, Arial, sans-serif; text-decoration: underline; text-underline-offset: 3px;
+}
+html body #mainApp#mainApp #pageSummary .tf-flow .tf-info:focus-visible { outline: 2px solid var(--sx-accent); outline-offset: 2px; border-radius: 4px; }
+html body #mainApp#mainApp #pageSummary .tf-flow .tf-copy svg { stroke: var(--sx-accent); }
+/* notes: tinted by what they say */
+html body #mainApp#mainApp #pageSummary .tf-flow .tf-note p { color: var(--sx-text); font-size: 13.5px; line-height: 1.85; }
+html body #mainApp#mainApp #pageSummary .tf-flow > .tf-note.is-bad { border-color: var(--sx-bad-line) !important; background: var(--sx-bad-soft) !important; box-shadow: none !important; }
+html body #mainApp#mainApp #pageSummary .tf-flow > .tf-note.is-bad > .tf-sec-title { color: var(--sx-bad) !important; }
+html body #mainApp#mainApp #pageSummary .tf-flow > .tf-note.is-warn { border-color: var(--sx-warn-line) !important; background: var(--sx-warn-soft) !important; box-shadow: none !important; }
+html body #mainApp#mainApp #pageSummary .tf-flow > .tf-note.is-warn > .tf-sec-title { color: var(--sx-warn) !important; }
+/* buttons: the app's 50 / 14 */
+html body #mainApp#mainApp #pageSummary .tf-flow .tf-btn { min-height: 50px; margin-top: 14px; border-radius: 14px; background: var(--sx-btn); font-size: 14px; font-weight: 500; }
+html body #mainApp#mainApp #pageSummary .tf-flow .tf-actions { display: grid; gap: 10px; margin: 4px 0 0; }
+html body #mainApp#mainApp #pageSummary .tf-flow .tf-ghost {
+  min-height: 50px; margin: 0; border: 1px solid var(--sx-line); border-radius: 14px; background: var(--sx-card); color: var(--sx-ink);
+  font-size: 14px; font-weight: 500;
+}
+html body #mainApp#mainApp #pageSummary .tf-flow .tf-ghost svg { color: var(--sx-accent); }
+html body #mainApp#mainApp #pageSummary .tf-flow .tf-ghost.is-danger { border-color: var(--sx-bad-line); background: var(--sx-bad-soft); color: var(--sx-bad); }
+html body #mainApp#mainApp #pageSummary .tf-flow .tf-ghost.is-danger svg { color: var(--sx-bad); }
+html body #mainApp#mainApp #pageSummary .tf-flow .tf-input { border-color: var(--sx-line) !important; border-radius: 14px !important; background: var(--sx-field) !important; }
+html body #mainApp#mainApp #pageSummary .tf-flow .tf-media img { margin-top: 10px; border-radius: 14px; }
+/* while it loads: the same cards, empty */
+html body #mainApp#mainApp #pageSummary .tf-flow.is-skel > :is(.tf-hero, .tf-sec) { box-shadow: none !important; }
+
+/* ── «گەڕاوە بۆ باڵانس» (#summaryInfoBackdrop): the exchange's explanation sheet — the amount
+   box and the points share its values (exchange-form.css); the frame is the same here ── */
+html body #summaryInfoBackdrop .ts-info-sheet {
+  width: min(100%, 480px); padding: 10px 0 max(18px, env(safe-area-inset-bottom)); border: 1px solid var(--ri-line); border-bottom: 0;
+  border-radius: 16px 16px 0 0; background: var(--ri-sheet); color: var(--ri-ink); box-shadow: none;
+}
+html body #summaryInfoBackdrop .ts-info-grip { width: 38px; height: 4px; margin: 0 auto 14px; background: var(--ri-line); }
+html body #summaryInfoBackdrop .ts-info-head { margin: 0 0 6px; padding: 0 18px 12px; border-bottom: 1px solid var(--ri-line); }
+html body #summaryInfoBackdrop .ts-info-head h2 { color: var(--ri-ink); font-size: 18px; font-weight: 500; line-height: 1.5; }
+html body #summaryInfoBackdrop .ts-info-close {
+  display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--ri-close-line); border-radius: 14px;
+  background: var(--ri-close); color: var(--ri-close-ink); font-size: 0; cursor: pointer;
+}
+html body #summaryInfoBackdrop .ts-info-body { display: flex; flex-direction: column; gap: 10px; padding: 6px 18px 0; }
+html body #summaryInfoBackdrop .ts-info-ok {
+  display: block; width: calc(100% - 36px); min-height: 48px; margin: 16px 18px 4px; padding: 11px 14px;
+  border: 1px solid var(--ri-btn); border-radius: 12px; background: var(--ri-btn); color: #fff;
+  font: inherit; font-family: Rabar, Arial, sans-serif; font-size: 14px; font-weight: 500; line-height: 1.6; cursor: pointer;
+}
+html body #summaryInfoBackdrop .ts-info-ok:active { border-color: var(--ri-btn-press); background: var(--ri-btn-press); }
+html body #summaryInfoBackdrop .ts-info-ok:focus-visible { outline: 2px solid var(--ri-accent); outline-offset: 2px; }

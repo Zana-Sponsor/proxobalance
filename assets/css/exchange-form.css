@@ -1,0 +1,444 @@
+/* ═════════════════════════════════════════════════════════════════
+   New exchange (#pageHome, route "/exchange") — v62, top toolbar v63
+
+   The identity screen's measured values (kyc-screen.css), so the two forms
+   read as one product:
+
+     card      radius 20 · padding 18/16 · border · soft shadow · 14 between cards
+     title     14/600, no decorative icon; a small chip at the end when it says something
+     label     12/400, 6 above its field
+     field     48 / radius 14, filled; the amount 52 / 20px
+     button    52 / radius 14 / 15px
+     bar       the identity screen's progress bar under the button while it sends
+
+   One card per step: what you send, what arrives, the figures, the receipt.
+   The swap between the first two keeps its line and button exactly as they were.
+   On wide screens the form is on the right and the figures, receipt and button
+   on the left. Loaded last; light and dark use the app's palette.
+   ═════════════════════════════════════════════════════════════════ */
+html body #mainApp#mainApp#mainApp #pageHome {
+  --xf-card: #ffffff; --xf-line: #e8ecf3; --xf-rule: #eef2f6;
+  --xf-shadow: 0 1px 2px rgba(20, 35, 60, .04), 0 12px 28px -18px rgba(20, 35, 60, .18);
+  --xf-field: #f8fafd; --xf-field-line: #e8ecf3; --xf-field-focus: #ffffff;
+  --xf-ink: #0f172a; --xf-title: #1f2d44; --xf-text: #5f6f86; --xf-label: #64748b; --xf-ph: #94a3b8;
+  --xf-accent: #0265ff; --xf-accent-soft: #eff4fe; --xf-accent-line: #d6e4fd; --xf-ring: rgba(2, 101, 255, .1);
+  --xf-chip: #f1f5fa; --xf-chip-ink: #3a4962;
+  --xf-btn: #0265ff; --xf-btn-press: #0052d6;
+  --xf-font: Rabar, Arial, sans-serif;
+}
+html[data-theme="dark"] body #mainApp#mainApp#mainApp #pageHome {
+  --xf-card: #131c2e; --xf-line: #25324a; --xf-rule: #1b2740;
+  --xf-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 12px 28px -18px rgba(0, 0, 0, .6);
+  --xf-field: #0e1725; --xf-field-line: #25324a; --xf-field-focus: #131c2e;
+  --xf-ink: #e8edf6; --xf-title: #e8edf6; --xf-text: #a3b1c7; --xf-label: #a3b1c7; --xf-ph: #7d8ba3;
+  --xf-accent: #3b8cff; --xf-accent-soft: #10223d; --xf-accent-line: #264a73; --xf-ring: rgba(59, 140, 255, .14);
+  --xf-chip: #1b2740; --xf-chip-ink: #c4cee0;
+  --xf-btn: #1c6cff; --xf-btn-press: #1559d6;
+}
+
+/* ── the container is no longer a card: each step is ── */
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard {
+  display: flex !important; flex-direction: column !important; gap: 14px !important;
+  margin: 0 !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important;
+  background: transparent !important; box-shadow: none !important; font-family: var(--xf-font);
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-cols { display: flex !important; flex-direction: column !important; gap: 0 !important; margin: 0 !important; padding: 0 !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard :is(.ux-review-grid, .ux-review-column, .ux-proof-column) {
+  display: flex !important; flex-direction: column !important; gap: 14px !important; margin: 0 !important; padding: 0 !important;
+  border: 0 !important; background: transparent !important; box-shadow: none !important;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard :is(#grpSend, #grpRecv, #grpProof, #xcBreakdown) {
+  display: flex !important; flex-direction: column !important; margin: 0 !important; padding: 18px 16px !important; box-sizing: border-box;
+  border: 1px solid var(--xf-line) !important; border-radius: 20px !important; background: var(--xf-card) !important; box-shadow: var(--xf-shadow) !important;
+}
+/* the swap keeps its own look (line, button, line); it spans the column again and gets room */
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-swap { align-self: stretch !important; margin: 6px 0 !important; }
+/* what the app hides stays hidden: a step, a figure row, the receipt for balance orders */
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard :is(.xc-step, #xcBreakdown, .xc-sum-row, .xc-badge, .field)[hidden]:not(#_shown) { display: none !important; }
+/* while an identity check is asked for, only the notice shows (app.css) */
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard.kyc-locked > :not(.xc-head):not(#exchangeKycGate):not(#balanceSendSection) { display: none !important; }
+
+/* ── a step's title: the words, and a chip at the end when it says something ── */
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard :is(.xc-step-head, .xc-summary-head) {
+  display: flex !important; align-items: center !important; gap: 8px !important; min-height: 28px;
+  margin: 0 0 14px !important; padding: 0 2px !important; border: 0 !important; background: none !important;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-step-ico { display: none !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard :is(.xc-step-head, .xc-summary-head) h3 {
+  flex: 1 1 auto; margin: 0 !important; color: var(--xf-ink) !important; font-family: var(--xf-font) !important;
+  font-size: 14px !important; font-weight: 600 !important; line-height: 1.6 !important; letter-spacing: 0 !important;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-step-head .xc-badge:not(#etaBadge) {
+  flex: 0 0 auto; height: 26px; margin: 0 !important; padding: 0 10px !important; display: inline-flex !important; align-items: center;
+  border: 0 !important; border-radius: 999px !important; background: var(--xf-chip) !important; color: var(--xf-chip-ink) !important;
+  font-size: 12px !important; font-weight: 400 !important; line-height: 1 !important; white-space: nowrap;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-step-head .xc-saved-recipients-btn {
+  flex: 0 0 32px; width: 32px !important; height: 32px !important; margin: 0 !important; padding: 0 !important;
+  display: inline-grid !important; place-items: center; order: 2;
+  border: 1px solid var(--xf-field-line) !important; border-radius: 10px !important; background: var(--xf-field) !important;
+  color: var(--xf-label) !important; box-shadow: none !important;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-step-head .xc-saved-recipients-btn:active { background: var(--xf-accent-soft) !important; color: var(--xf-accent) !important; }
+
+/* ── the wallet chooser: a filled row with the wallet's mark, its role and its name ── */
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .select-wrap { margin: 0 !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .picker-trigger {
+  width: 100% !important; min-height: 60px !important; height: auto !important; margin: 0 !important; padding: 10px 12px !important; box-sizing: border-box;
+  display: flex !important; align-items: center !important; gap: 12px !important;
+  border: 1px solid var(--xf-field-line) !important; border-radius: 14px !important; background: var(--xf-field) !important; box-shadow: none !important;
+  color: var(--xf-ink) !important; font-family: var(--xf-font) !important; text-align: right !important; cursor: pointer;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .picker-trigger:focus-visible { outline: 0 !important; border-color: var(--xf-accent) !important; box-shadow: 0 0 0 4px var(--xf-ring) !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .picker-trigger .method-icon {
+  flex: 0 0 38px; width: 38px !important; height: 38px !important; margin: 0 !important; border-radius: 11px !important; box-shadow: none !important;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .picker-trigger-text { flex: 1 1 auto; min-width: 0; display: flex !important; flex-direction: column !important; gap: 0 !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .picker-trigger-label { color: var(--xf-label) !important; font-size: 12px !important; font-weight: 400 !important; line-height: 1.6 !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .picker-trigger-value { color: var(--xf-ink) !important; font-size: 15px !important; font-weight: 500 !important; line-height: 1.6 !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .picker-trigger .select-chevron {
+  flex: 0 0 auto; position: static !important; inset: auto !important; transform: none !important; margin: 0 !important; color: var(--xf-label) !important;
+}
+
+/* ── where to send: the number to pay into, read at a glance, with copy ── */
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .wallet-row.ux-payment-destination {
+  display: flex !important; flex-direction: column !important; gap: 4px !important;
+  margin: 10px 0 0 !important; padding: 12px 14px !important;
+  border: 1px solid var(--xf-accent-line) !important; border-radius: 14px !important; background: var(--xf-accent-soft) !important; box-shadow: none !important;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .ux-wallet-head { margin: 0 !important; padding: 0 !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .ux-wallet-head .wallet-label { color: var(--xf-label) !important; font-size: 12px !important; font-weight: 400 !important; line-height: 1.6 !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .wallet-row-line {
+  display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 12px !important; margin: 0 !important;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .wallet-row-line .wallet-value {
+  flex: 1 1 auto !important; min-width: 0; height: auto !important; margin: 0 !important; padding: 0 !important;
+  border: 0 !important; background: none !important; box-shadow: none !important;
+  color: var(--xf-ink) !important; font-size: 19px !important; font-weight: 600 !important; line-height: 1.5 !important;
+  text-align: right !important; letter-spacing: .02em; font-variant-numeric: tabular-nums; overflow-wrap: anywhere;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .wallet-row-line .copy-btn {
+  flex: 0 0 auto; height: 34px !important; min-height: 34px !important; margin: 0 !important; padding: 0 12px !important;
+  align-items: center !important; gap: 6px !important;
+  border: 1px solid var(--xf-accent-line) !important; border-radius: 999px !important; background: var(--xf-card) !important;
+  color: var(--xf-accent) !important; font-size: 13px !important; font-weight: 500 !important; box-shadow: none !important;
+}
+
+/* ── fields ── */
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .field { margin: 14px 0 0 !important; padding: 0 !important; border: 0 !important; background: none !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .field-label {
+  display: flex !important; align-items: center !important; gap: 8px; margin: 0 0 6px !important; padding: 0 2px !important;
+  color: var(--xf-label) !important; font-family: var(--xf-font) !important; font-size: 12px !important; font-weight: 400 !important; line-height: 1.6 !important;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-input-wrap {
+  position: relative; display: flex !important; align-items: center !important; margin: 0 !important; padding: 0 !important;
+  border: 0 !important; background: none !important; box-shadow: none !important;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-input-wrap .input {
+  width: 100% !important; height: 48px !important; min-height: 48px !important; margin: 0 !important; padding: 0 12px !important; box-sizing: border-box;
+  border: 1px solid var(--xf-field-line) !important; border-radius: 14px !important; background: var(--xf-field) !important; box-shadow: none !important;
+  color: var(--xf-ink) !important; font-family: var(--xf-font) !important; font-size: 16px !important; font-weight: 400 !important; line-height: 46px !important;
+  transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-input-wrap .input[dir="ltr"] { text-align: left !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-input-wrap .input::placeholder { color: var(--xf-ph) !important; opacity: 1; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-input-wrap .input:is(:focus, :focus-visible) {
+  outline: 0 !important; border-color: var(--xf-accent) !important; background: var(--xf-field-focus) !important; box-shadow: 0 0 0 4px var(--xf-ring) !important;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-input-wrap .input[aria-invalid="true"] { border-color: #c2414b !important; }
+/* the amount is the line the eye looks for */
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #amt {
+  height: 54px !important; min-height: 54px !important; padding-inline: 14px 58px !important;
+  font-size: 21px !important; font-weight: 600 !important; line-height: 52px !important; font-variant-numeric: tabular-nums;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-in-suffix {
+  position: absolute !important; top: 50% !important; right: 14px !important; left: auto !important; transform: translateY(-50%) !important;
+  margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important;
+  color: var(--xf-label) !important; font-size: 13px !important; font-weight: 500 !important; line-height: 1 !important; pointer-events: none;
+}
+/* quick amounts: three pills, the size of a tap */
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .wallet-row-line .copy-btn:not([style*="none"]) { display: inline-flex !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .quick-amounts {
+  display: flex !important; flex-wrap: wrap !important; justify-content: flex-start !important; gap: 8px !important; margin: 10px 0 0 !important; padding: 0 !important; direction: rtl;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .quick-amount-btn {
+  flex: 0 0 auto !important; width: auto !important; height: 34px !important; min-height: 34px !important; margin: 0 !important; padding: 0 14px !important;
+  border: 1px solid transparent !important; border-radius: 999px !important; background: var(--xf-chip) !important; box-shadow: none !important;
+  color: var(--xf-chip-ink) !important; font-family: var(--xf-font) !important; font-size: 13px !important; font-weight: 500 !important; line-height: 1 !important;
+  font-variant-numeric: tabular-nums;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .quick-amount-btn:active { border-color: var(--xf-accent-line) !important; background: var(--xf-accent-soft) !important; color: var(--xf-accent) !important; }
+/* the sender's name comes from the profile: read-only, and says so */
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-locked .input { background: var(--xf-chip) !important; border-color: transparent !important; color: var(--xf-text) !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-locked-tag {
+  display: inline-flex !important; align-items: center !important; gap: 4px !important; height: 22px; margin: 0 !important; margin-inline-start: auto !important; padding: 0 8px !important;
+  border: 0 !important; border-radius: 999px !important; background: var(--xf-chip) !important; color: var(--xf-label) !important;
+  font-size: 11.5px !important; font-weight: 400 !important; line-height: 1 !important;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-locked-tag .icn { width: 12px !important; height: 12px !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-hint { margin: 6px 0 0 !important; padding: 0 2px !important; border: 0 !important; background: none !important; color: var(--xf-label) !important; font-size: 12px !important; line-height: 1.7 !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-hint b { color: var(--xf-title) !important; font-weight: 600 !important; }
+
+/* ── the figures: rows, then what arrives in a soft box ── */
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-summary-head { margin-bottom: 6px !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-sum-group { margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-sum-row {
+  display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 12px !important;
+  min-height: 44px; margin: 0 !important; padding: 10px 2px !important; border: 0 !important; border-top: 1px solid var(--xf-rule) !important;
+  background: none !important; border-radius: 0 !important;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-sum-group > .xc-sum-row:first-child { border-top: 0 !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-sum-row .lbl {
+  display: inline-flex !important; align-items: center; gap: 6px; color: var(--xf-label) !important; font-size: 13.5px !important; font-weight: 400 !important; line-height: 1.6 !important;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-sum-row .v {
+  color: var(--xf-ink) !important; font-size: 14px !important; font-weight: 500 !important; line-height: 1.6 !important; font-variant-numeric: tabular-nums;
+}
+/* What comes out of it (v68), so the customer sees at a glance how much the recipient gets:
+     دوای کرێ ..................... 245,490 IQD     after the fee, before it is split
+     ┌ وەرگر وەریدەگرێت ┐ ┌ دەخرێتە سەر باڵانسەکەت ┐
+     │ 245,000 IQD     │ │ 490 IQD               │   two tiles, the recipient's first
+     └─────────────────┘ └───────────────────────┘
+     one sentence on why, and «بۆچی؟» for the whole explanation
+   Nothing to split (a whole thousand, or USDT): one tile across, «وەرگر وەریدەگرێت». */
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-sum-result {
+  display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;
+  margin: 0 !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-sum-result > .xc-sum-row { grid-column: 1 / -1; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-sum-result.has-payout > #bdExpectedRow { margin-bottom: 6px !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-sum-result.has-payout > #bdExpectedRow .lbl { color: var(--xf-ink) !important; font-weight: 500 !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-sum-result.has-payout > #bdExpectedRow .v { font-weight: 600 !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-sum-result .total-value { font: inherit; color: inherit; }
+/* nothing left over: «دوای کرێ» is the recipient's amount, said once in the tile */
+html body #mainApp#mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-sum-result.has-payout:has(> #bdRoundingRow[hidden]) > #bdExpectedRow { display: none !important; }
+/* the tiles */
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-sum-result :is(.xc-split-tile, #bdExpectedRow) {
+  margin: 0 !important; border-radius: 14px !important;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown :is(.xc-sum-result > .xc-split-tile:not([hidden]), .xc-sum-result:not(.has-payout) > #bdExpectedRow) {
+  display: flex !important; flex-direction: column !important; align-items: flex-start !important; justify-content: center !important; gap: 2px !important;
+  min-height: 0; padding: 12px 14px !important; border: 1px solid var(--xf-field-line) !important; background: var(--xf-field) !important;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-sum-result.has-payout > .xc-split-tile { grid-column: auto; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-sum-result.has-payout:has(> #bdRoundingRow[hidden]) > #bdPayoutRow { grid-column: 1 / -1; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown :is(.xc-sum-result > .xc-split-tile, .xc-sum-result:not(.has-payout) > #bdExpectedRow) .lbl { font-size: 12.5px !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown :is(.xc-sum-result > .xc-split-tile, .xc-sum-result:not(.has-payout) > #bdExpectedRow) .v {
+  font-size: 19px !important; font-weight: 700 !important; line-height: 1.4 !important; unicode-bidi: isolate;
+}
+/* the recipient's tile is the answer: blue */
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown :is(.xc-sum-result > #bdPayoutRow:not([hidden]), .xc-sum-result:not(.has-payout) > #bdExpectedRow) {
+  border-color: var(--xf-accent-line) !important; background: var(--xf-accent-soft) !important;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown :is(.xc-sum-result > #bdPayoutRow, .xc-sum-result:not(.has-payout) > #bdExpectedRow) :is(.lbl, .v, .total-value) { color: var(--xf-accent) !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-sum-result #bdRoundingRow .v { color: var(--xf-ink) !important; font-weight: 600 !important; }
+/* one sentence, then «بۆچی؟» */
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-why-line { display: none; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-why-line:has(> #payoutRoundingNote:not([hidden])) { display: block; margin: 10px 2px 0; }
+html body #mainApp#mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-why-line > #payoutRoundingNote:not([hidden]) {
+  display: inline !important; margin: 0 !important; color: var(--xf-text) !important; font-size: 12.5px !important; line-height: 1.8 !important;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-why {
+  display: none; margin: 0 4px 0 0; padding: 0; border: 0; background: none; color: var(--xf-accent);
+  font-family: var(--xf-font); font-size: 12.5px; font-weight: 600; line-height: 1.8; cursor: pointer; text-decoration: underline; text-underline-offset: 3px;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown:has(#bdRoundingRow:not([hidden])) .xc-why { display: inline; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-why:focus-visible { outline: 2px solid var(--xf-accent); outline-offset: 2px; border-radius: 4px; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown :is(.payout-rounding-note, .fee-note, .xc-tier-hint):not([hidden]) {
+  margin: 10px 2px 0 !important; padding: 0 !important; border: 0 !important; background: none !important; color: var(--xf-label) !important; font-size: 12px !important; line-height: 1.7 !important;
+}
+
+/* ── the receipt: one tap target, the picture's name once chosen ── */
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #grpProof .file-field { margin: 0 !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #grpProof label.file-picker {
+  display: flex !important; align-items: center !important; gap: 12px !important; min-height: 64px !important; margin: 0 !important; padding: 12px 14px !important; box-sizing: border-box;
+  border: 1.5px dashed var(--xf-field-line) !important; border-radius: 14px !important; background: var(--xf-field) !important; box-shadow: none !important; cursor: pointer;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #grpProof .file-picker-icon {
+  flex: 0 0 40px; width: 40px !important; height: 40px !important; margin: 0 !important; display: grid !important; place-items: center;
+  border: 0 !important; border-radius: 12px !important; background: var(--xf-accent-soft) !important; color: var(--xf-accent) !important; box-shadow: none !important;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #grpProof .file-picker-icon svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #grpProof .file-picker-copy { flex: 1 1 auto; min-width: 0; display: flex !important; flex-direction: column !important; gap: 0 !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #grpProof .file-picker-copy b { overflow: hidden; color: var(--xf-ink) !important; font-size: 14px !important; font-weight: 500 !important; line-height: 1.6 !important; text-overflow: ellipsis; white-space: nowrap; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #grpProof .file-picker-copy small { color: var(--xf-label) !important; font-size: 12px !important; line-height: 1.6 !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #grpProof .file-picker-action { display: none !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #grpProof .xc-hint { margin-top: 8px !important; }
+
+/* ── send: the identity screen's button, and its bar under it while sending ── */
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-submit-wrap {
+  position: static !important; display: flex !important; flex-direction: column !important; gap: 12px !important;
+  margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #submitBtn {
+  width: 100% !important; height: 52px !important; min-height: 52px !important; margin: 0 !important; padding: 0 16px !important;
+  display: flex !important; align-items: center !important; justify-content: center !important; gap: 8px !important;
+  border: 0 !important; border-radius: 14px !important; background: var(--xf-btn) !important; box-shadow: none !important;
+  color: #fff !important; font-family: var(--xf-font) !important; font-size: 15px !important; font-weight: 400 !important;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #submitBtn:active:not(:disabled) { background: var(--xf-btn-press) !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #submitBtn:disabled { opacity: .55 !important; cursor: default; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #submitBtn .pxi { width: 18px; height: 18px; }
+/* the bar: kyc-screen.css's .kv-progress, value for value */
+html body #mainApp#mainApp#mainApp #pageHome .xc-progress { display: flex; flex-direction: column; gap: 6px; margin: 0; }
+html body #mainApp#mainApp#mainApp #pageHome .xc-progress[hidden] { display: none !important; }
+html body #mainApp#mainApp#mainApp #pageHome .xc-progress .kv-progress-track { height: 6px; overflow: hidden; border-radius: 999px; background: var(--xf-line); }
+html body #mainApp#mainApp#mainApp #pageHome .xc-progress .kv-progress-track span { display: block; width: 0; height: 100%; border-radius: inherit; background: var(--xf-accent); transition: width .3s ease; }
+html body #mainApp#mainApp#mainApp #pageHome .xc-progress small { color: var(--xf-label); font-family: var(--xf-font); font-size: 12px; line-height: 1.6; text-align: center; }
+/* while it sends, the form is still there but quiet */
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard[aria-busy="true"] :is(.xc-cols, .ux-review-grid) { opacity: .6; transition: opacity .2s ease; }
+
+/* ── the top: the profile section's toolbar (profile-screens.css) — back, the title in the
+   middle, nothing else. The site header (logo + bell) steps aside on phones as it does on
+   every other inner screen; wide screens keep it, with the toolbar under it. ── */
+html body #mainApp:has(#pageHome.active) #siteHeader.pxh { display: none !important; }
+@media (min-width: 1024px) {
+  html body #mainApp:has(#pageHome.active) #siteHeader.pxh { display: block !important; }
+}
+html body #mainApp#mainApp#mainApp #pageHome.page { padding-top: 0 !important; padding-inline: 14px !important; }
+html body #mainApp#mainApp#mainApp #pageHome > .pfx-bar + * { margin-top: 0 !important; }
+
+/* ── wide screens: the form on the right; the figures, the receipt and the button on the left ── */
+@media (min-width: 1024px) {
+  html body #mainApp#mainApp#mainApp #pageHome #exchangeCard {
+    display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; grid-template-rows: auto auto 1fr !important; align-items: start !important;
+    column-gap: 20px !important; row-gap: 14px !important;
+  }
+  html body #mainApp#mainApp#mainApp #pageHome #exchangeCard > :is(.xc-kyc-gate, .hp-field) { grid-column: 1 / -1; }
+  html body #mainApp#mainApp#mainApp #pageHome #exchangeCard > .xc-cols { grid-column: 1; grid-row: 2 / span 2; }
+  html body #mainApp#mainApp#mainApp #pageHome #exchangeCard > .ux-review-grid { grid-column: 2; grid-row: 2; }
+  html body #mainApp#mainApp#mainApp #pageHome #exchangeCard > .xc-submit-wrap { grid-column: 2; grid-row: 3; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body #mainApp#mainApp#mainApp #pageHome :is(.xc-progress .kv-progress-track span, #exchangeCard .input, #exchangeCard[aria-busy="true"] .xc-cols) { transition: none !important; }
+}
+
+/* ── the confirmation before sending (#confirmSheet): the amount and route first,
+   then what arrives, then who sends and who receives — each group a soft card ── */
+html body #confirmSheet {
+  --cf-ink: #0f172a; --cf-label: #64748b; --cf-field: #f8fafd; --cf-line: #e8ecf3; --cf-rule: #eef2f6;
+  --cf-accent: #0265ff; --cf-accent-soft: #eff4fe; --cf-accent-line: #d6e4fd;
+}
+html[data-theme="dark"] body #confirmSheet {
+  --cf-ink: #e8edf6; --cf-label: #a3b1c7; --cf-field: #0e1725; --cf-line: #25324a; --cf-rule: #1b2740;
+  --cf-accent: #3b8cff; --cf-accent-soft: #10223d; --cf-accent-line: #264a73;
+}
+html body #confirmSheet #confirmSummary { display: flex !important; flex-direction: column !important; gap: 10px !important; margin: 0 !important; padding: 0 !important; background: none !important; border: 0 !important; }
+html body #confirmSheet .cf-head {
+  display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 16px 14px;
+  border: 1px solid var(--cf-accent-line); border-radius: 16px; background: var(--cf-accent-soft); text-align: center;
+}
+html body #confirmSheet .cf-amount { color: var(--cf-ink); font-size: 24px; font-weight: 600; line-height: 1.3; font-variant-numeric: tabular-nums; }
+html body #confirmSheet .cf-route { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 10px; }
+html body #confirmSheet .cf-w { display: inline-flex; align-items: center; gap: 6px; color: var(--cf-ink); font-size: 14px; font-weight: 500; line-height: 1.5; }
+html body #confirmSheet .cf-w .method-icon { width: 26px !important; height: 26px !important; flex: 0 0 26px; margin: 0 !important; border-radius: 8px !important; }
+html body #confirmSheet .cf-arrow { width: 18px; height: 18px; color: var(--cf-label); stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+html body #confirmSheet .cf-rows { padding: 0 14px; border: 1px solid var(--cf-line); border-radius: 16px; background: var(--cf-field); }
+html body #confirmSheet .cf-rows .confirm-row {
+  display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 12px !important;
+  min-height: 46px; margin: 0 !important; padding: 10px 0 !important; border: 0 !important; border-top: 1px solid var(--cf-rule) !important;
+  border-radius: 0 !important; background: none !important; box-shadow: none !important;
+}
+html body #confirmSheet .cf-rows .confirm-row:first-child { border-top: 0 !important; }
+html body #confirmSheet .cf-rows .confirm-row-label { color: var(--cf-label) !important; font-size: 13.5px !important; font-weight: 400 !important; line-height: 1.6 !important; }
+html body #confirmSheet .cf-rows .confirm-row-value { color: var(--cf-ink) !important; font-size: 14px !important; font-weight: 500 !important; line-height: 1.6 !important; text-align: left; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+html body #confirmSheet .cf-rows .confirm-row.is-result :is(.confirm-row-label, .confirm-row-value) { color: var(--cf-accent) !important; font-weight: 600 !important; }
+html body #confirmSheet .cf-rows .confirm-row.is-result .confirm-row-value { font-size: 16px !important; }
+html body #confirmSheet #confirmSummary > .payout-rounding-note { margin: -2px 4px 0 !important; padding: 0 !important; border: 0 !important; background: none !important; color: var(--cf-label) !important; font-size: 12px !important; line-height: 1.7 !important; }
+
+/* paying from the account balance: the box shows the balance (Kurdish text, no copy) */
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .wallet-row.is-internal .wallet-row-line .copy-btn { display: none !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .wallet-row.is-internal .wallet-row-line .wallet-value {
+  direction: rtl !important; unicode-bidi: plaintext; font-size: 16px !important; font-weight: 500 !important; letter-spacing: 0;
+}
+
+/* ── «بڕی باڵانسی نەنێردراو» (#roundingInfoSheet): the frame of the exchange's other sheets
+   (its amount box and points are shared with the summary's «گەڕاوە بۆ باڵانس», #summaryInfoBackdrop)
+   (picker, recipient, confirmation — proxo-design-system.css), then the amount that comes back
+   in a soft box, and why in three short points, each with its icon, in one grouped card.
+     ┌────────────────────────────────────┐
+     │ [×]              بڕی باڵانسی نەنێردراو │   title 18/500, close 44
+     ├────────────────────────────────────┤
+     │ ╭────────────────────────────────╮ │
+     │ │            [wallet]            │ │
+     │ │            490 IQD             │ │   24/600
+     │ │  بۆ باڵانسی هەژمارەکەت دەگەڕێتەوە  │ │
+     │ ╰────────────────────────────────╯ │
+     │ ╭────────────────────────────────╮ │
+     │ │ سیاسەتی بانکەکان            [▥] │ │   14/600 + 13/400
+     │ │ ──────────────────────────────  │ │
+     │ │ دوورکەوتنەوە لە گومان        [◇] │ │
+     │ │ ──────────────────────────────  │ │
+     │ │ خۆکار، دوای پەسەندکردن        [↺] │ │
+     │ ╰────────────────────────────────╯ │
+     │ [          باشە، تێگەیشتم          ] │   48 / radius 12
+     └────────────────────────────────────┘ */
+html body :is(#roundingInfoSheet, #summaryInfoBackdrop) {
+  --ri-sheet: #ffffff; --ri-line: #e3e7f0; --ri-field: #f8fafd; --ri-field-line: #e8ecf3; --ri-rule: #eef2f6;
+  --ri-ink: #0f172a; --ri-text: #5f6f86; --ri-label: #64748b;
+  --ri-accent: #0265ff; --ri-accent-soft: #eff4fe; --ri-accent-line: #d6e4fd;
+  --ri-close: #f6f7f9; --ri-close-ink: #64748b; --ri-close-line: transparent; --ri-btn: #0265ff; --ri-btn-press: #0052d6;
+}
+html[data-theme="dark"] body :is(#roundingInfoSheet, #summaryInfoBackdrop) {
+  --ri-sheet: #131c2e; --ri-line: #25324a; --ri-field: #0e1725; --ri-field-line: #25324a; --ri-rule: #1b2740;
+  --ri-ink: #e8edf6; --ri-text: #a3b1c7; --ri-label: #a3b1c7;
+  --ri-accent: #3b8cff; --ri-accent-soft: #10223d; --ri-accent-line: #264a73;
+  --ri-close: #0e1725; --ri-close-ink: #c4cee0; --ri-close-line: #25324a; --ri-btn: #1c6cff; --ri-btn-press: #1559d6;
+}
+html body #roundingInfoSheet#roundingInfoSheet > .sheet {
+  background: var(--ri-sheet) !important; color: var(--ri-ink) !important; font-family: Rabar, Arial, sans-serif;
+  border: 1px solid var(--ri-line) !important; border-bottom: 0 !important; border-radius: 16px 16px 0 0 !important; box-shadow: none !important;
+}
+html body #roundingInfoSheet#roundingInfoSheet .sheet-head h3 {
+  color: var(--ri-ink) !important; font-size: 18px !important; font-weight: 500 !important; line-height: 1.5 !important;
+}
+html body #roundingInfoSheet#roundingInfoSheet .sheet-close {
+  width: 44px !important; height: 44px !important; min-height: 44px !important; flex: 0 0 44px; border-radius: 14px !important;
+  border: 1px solid var(--ri-close-line) !important; background: var(--ri-close) !important; color: var(--ri-close-ink) !important;
+}
+/* no scrollbar gutter: it is short, and the reserved strip only pushed the cards off centre */
+html body #roundingInfoSheet#roundingInfoSheet .sheet-body { display: flex; flex-direction: column; gap: 10px; padding: 6px 18px 0 !important; scrollbar-gutter: auto; }
+html body :is(#roundingInfoSheet, #summaryInfoBackdrop) .pxi { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+/* what comes back */
+html body :is(#roundingInfoSheet, #summaryInfoBackdrop) .ri-hero {
+  display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 16px 14px;
+  border: 1px solid var(--ri-accent-line); border-radius: 16px; background: var(--ri-accent-soft); text-align: center;
+}
+html body :is(#roundingInfoSheet, #summaryInfoBackdrop) .ri-hero:has(> .ri-amount[hidden]) { display: none; }
+html body :is(#roundingInfoSheet, #summaryInfoBackdrop) .ri-amount { color: var(--ri-ink); font-size: 24px; font-weight: 600; line-height: 1.3; font-variant-numeric: tabular-nums; unicode-bidi: isolate; }
+html body :is(#roundingInfoSheet, #summaryInfoBackdrop) .ri-amount[hidden] { display: none; }
+html body :is(#roundingInfoSheet, #summaryInfoBackdrop) .ri-hero small { color: var(--ri-label); font-size: 13px; font-weight: 400; line-height: 1.6; }
+/* why: plain sentences in one card, a hairline between them — no icons */
+html body :is(#roundingInfoSheet, #summaryInfoBackdrop) .ri-text {
+  padding: 2px 14px; border: 1px solid var(--ri-field-line); border-radius: 16px; background: var(--ri-field);
+}
+html body :is(#roundingInfoSheet, #summaryInfoBackdrop) .ri-text p { margin: 0; padding: 11px 0; color: var(--ri-text); font-size: 13.5px; font-weight: 400; line-height: 1.85; }
+html body :is(#roundingInfoSheet, #summaryInfoBackdrop) .ri-text p + p { border-top: 1px solid var(--ri-rule); }
+html body :is(#roundingInfoSheet, #summaryInfoBackdrop) .ri-text p:first-child { color: var(--ri-ink); font-weight: 500; }
+html body :is(#roundingInfoSheet, #summaryInfoBackdrop) .ri-text b { color: var(--ri-ink); font-weight: 600; white-space: nowrap; unicode-bidi: isolate; }
+/* the button: the exchange sheets' primary */
+html body #roundingInfoSheet#roundingInfoSheet .confirm-actions { padding: 16px 18px 4px !important; border: 0 !important; background: none !important; }
+html body #roundingInfoSheet#roundingInfoSheet .confirm-actions .btn.btn-primary {
+  width: 100%; min-height: 48px !important; height: auto !important; padding: 11px 14px !important;
+  border: 1px solid var(--ri-btn) !important; border-radius: 12px !important; background: var(--ri-btn) !important; background-image: none !important;
+  box-shadow: none !important; color: #fff !important; font-family: Rabar, Arial, sans-serif !important; font-size: 14px !important; font-weight: 500 !important; line-height: 1.6 !important;
+}
+html body #roundingInfoSheet#roundingInfoSheet .confirm-actions .btn.btn-primary:active { border-color: var(--ri-btn-press) !important; background: var(--ri-btn-press) !important; }
+html body #roundingInfoSheet#roundingInfoSheet .confirm-actions .btn.btn-primary:focus-visible { outline: 2px solid var(--ri-accent) !important; outline-offset: 2px; }
+/* wide screens: the exchange's choosing sheets open as a window in the middle (app.css, ≥640px) —
+   round all four corners. The explanation stays a bottom sheet on every screen: it rises from the
+   bottom edge, 480px wide in the middle, like the summary's «گەڕاوە بۆ باڵانس». */
+@media (min-width: 640px) {
+  html body :is(#pickerSheet, #recipientSheet, #confirmSheet):not(#_x) > .sheet { border-radius: 16px !important; }
+  html body #roundingInfoSheet#roundingInfoSheet { align-items: flex-end !important; }
+  html body #roundingInfoSheet#roundingInfoSheet > .sheet {
+    max-width: 480px; opacity: 1; transform: translateY(100%); transition: transform .24s cubic-bezier(.2, .8, .2, 1);
+  }
+  html body #roundingInfoSheet#roundingInfoSheet.open > .sheet { transform: translateY(0); }
+  html body #roundingInfoSheet#roundingInfoSheet .sheet-grabber { display: block; }
+  html body #roundingInfoSheet#roundingInfoSheet .sheet-head { padding: 0 18px 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html body #roundingInfoSheet#roundingInfoSheet > .sheet { transition: none; }
+}

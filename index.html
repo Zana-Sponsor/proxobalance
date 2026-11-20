@@ -119,7 +119,7 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
 <link rel="stylesheet" href="/assets/css/proxo-ui-v2.css?v=18">
 <link rel="stylesheet" href="/assets/css/proxo-dark.css?v=10">
 <link rel="stylesheet" href="/assets/css/proxo-design-system.css?v=5">
-<link rel="stylesheet" href="/assets/css/transaction-summary.css?v=7">
+<link rel="stylesheet" href="/assets/css/transaction-summary.css?v=9">
 <link rel="stylesheet" href="/assets/css/whatsapp-notify.css?v=1">
 <link rel="stylesheet" href="/assets/css/auth-balance.css?v=6">
 <link rel="stylesheet" href="/assets/css/auth-phone.css?v=2">
@@ -128,7 +128,7 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
 <link rel="stylesheet" href="/assets/css/app-icons.css?v=2">
 <link rel="stylesheet" href="/assets/css/support-case.css?v=2">
 <link rel="stylesheet" href="/assets/css/skeletons.css?v=3">
-<link rel="stylesheet" href="/assets/css/dashboard.css?v=8">
+<link rel="stylesheet" href="/assets/css/dashboard.css?v=10">
 <link rel="stylesheet" href="/assets/css/account-delete.css?v=4">
 <link rel="stylesheet" href="/assets/css/account-settings.css?v=6">
 <link rel="stylesheet" href="/assets/css/profile-screens.css?v=2">
@@ -137,6 +137,8 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
 <link rel="stylesheet" href="/assets/css/site-pause.css?v=5">
 <link rel="stylesheet" href="/assets/css/banners.css?v=2">
 <link rel="stylesheet" href="/assets/css/profile-head.css?v=1">
+<link rel="stylesheet" href="/assets/css/exchange-form.css?v=5">
+<link rel="stylesheet" href="/assets/css/auth-progress.css?v=1">
 </head>
 
 <body>
@@ -378,17 +380,18 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
   <div class="sheet">
     <div class="sheet-grabber"></div>
     <div class="sheet-head">
-      <h3 id="roundingInfoTitle">بڕی باڵانسی نەنێردراو</h3>
+      <h3 id="roundingInfoTitle">بۆچی بڕێک دەخرێتە سەر باڵانسەکەت؟</h3>
       <button type="button" class="sheet-close" onclick="closeRoundingInfo()" aria-label="داخستن">
         <span class="icn icn-sm icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>
       </button>
     </div>
     <div class="sheet-body">
-      <div class="xc-info-body">
-        <p>ئێمە بڕی ناتەواو نانێرین، بەهۆی سیاسەتە نوێیەکانی بانکەکانی وەک FIB و Qi Card.</p>
-        <p>بڕی ناتەواو دەبێتە هۆی گومان لێکردنی بانکەکان بۆ ئاڵوگۆڕکردنی دراوە ئەلیکترۆنییەکانی وەک USDT.</p>
-        <p>بۆیە ئەو بڕە دەگەڕێنینەوە بۆ باڵانسی هەژمارەکەت، بە شێوەیەکی خۆکار دوای پەسەندکردنی داواکارییەکەت.</p>
+      <!-- the amount, then the same sentences as the summary's sheet (app.js roundingExplainHTML) -->
+      <div class="ri-hero">
+        <b class="ri-amount" id="roundingInfoAmount" dir="ltr" hidden></b>
+        <small>دەخرێتە سەر باڵانسی هەژمارەکەت</small>
       </div>
+      <div class="ri-text" id="roundingInfoText"></div>
     </div>
     <div class="confirm-actions">
       <button type="button" class="btn btn-primary btn-block" onclick="closeRoundingInfo()">باشە، تێگەیشتم</button>
@@ -488,6 +491,10 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
           <span id="authBtnTxt">چوونەژوورەوە</span>
           <span class="icn icon--solar icon--solar--arrow-left-linear" aria-hidden="true"></span>
         </button>
+        <div class="kv-progress au-progress" id="authProgress" hidden aria-live="polite">
+          <div class="kv-progress-track"><span></span></div>
+          <small>ئامادەکردن...</small>
+        </div>
         <div class="amsg" id="authMsg"></div>
         <div class="auth-account-switch">
           <span>هەژمارت نییە؟</span>
@@ -528,6 +535,10 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
           <span>دروستکردنی هەژمار</span>
           <span class="icn icon--solar icon--solar--arrow-left-linear" aria-hidden="true"></span>
         </button>
+        <div class="kv-progress au-progress" id="signupProgress" hidden aria-live="polite">
+          <div class="kv-progress-track"><span></span></div>
+          <small>ئامادەکردن...</small>
+        </div>
         <div class="amsg" id="authMsgSignup"></div>
         <div class="auth-account-switch">
           <span>پێشتر هەژمارت هەیە؟</span>
@@ -554,6 +565,10 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
         </div>
         <div class="amsg" id="otpMsg"></div>
         <button class="btn btn-primary btn-block otp-confirm" id="otpVerifyBtn" onclick="verifyOtp()">پشتڕاستکردنەوە</button>
+        <div class="kv-progress au-progress" id="otpProgress" hidden aria-live="polite">
+          <div class="kv-progress-track"><span></span></div>
+          <small>ئامادەکردن...</small>
+        </div>
         <div class="otp-again">
           <span class="otp-wait" id="otpTimerWrap">دووبارە ناردنەوە لە <b id="otpTimerVal" dir="ltr">5:00</b></span>
           <button type="button" class="otp-again-btn" id="otpResendBtn" onclick="resendOtp()" hidden>دووبارە ناردنەوە</button>
@@ -717,6 +732,8 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
       <span class="db-new-ico" aria-hidden="true"><svg class="pxi" viewBox="0 0 24 24" focusable="false"><path d="M12 5v14"/><path d="M5 12h14"/></svg></span>
       <span class="db-new-txt"><b>داواکاری نوێ</b><small>ئاڵوگۆڕی دراو لە نێوان جزدانەکان</small></span>
       <span class="db-new-go" aria-hidden="true"><svg class="pxi" viewBox="0 0 24 24" focusable="false"><path d="m15 18-6-6 6-6"/></svg></span>
+      <!-- a short message over the card once the app opens: it types, says it, and is gone after 5 seconds -->
+      <span class="db-new-tip" id="dbNewTip" aria-hidden="true" hidden><span class="db-new-tip-b"><span class="db-new-tip-dots"><span><i></i><i></i><i></i></span></span><span class="db-new-tip-txt"><span>داواکاری نوێ بکە!</span></span></span></span>
     </button>
   </div>
 
@@ -774,10 +791,7 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
 
   <!-- ══════════════ PAGE: EXCHANGE (route "/exchange", opened from the + button) ══════════════ -->
   <section class="page" id="pageHome" data-route="exchange">
-    <div class="page-head support-page-head ex-head">
-      <button type="button" class="support-back ex-back" onclick="navigate('home')" aria-label="گەڕانەوە بۆ سەرەکی"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"/></svg></button>
-      <div><h2>ئاڵوگۆڕی نوێ</h2><p>ڕێگا و بڕەکە هەڵبژێرە، پاشان داواکارییەکەت بنێرە.</p></div>
-    </div>
+    <div class="pfx-bar"><button type="button" class="pfx-bar-btn" onclick="navigate('home')" aria-label="گەڕانەوە بۆ سەرەکی"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"/></svg></button><h2>ئاڵوگۆڕی نوێ</h2><span aria-hidden="true"></span></div>
 
   <div class="panel" id="exchangeCard">
 
@@ -918,7 +932,7 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
                    oninput="this.value = this.value.replace(/[^0-9]/g, ''); clearFieldError('userPhone'); validatePhoneLive();">
           </div>
           <div class="xc-hint" id="phoneHint">
-            <span id="phoneHintText">ژمارەی عێراقی بە <b>07</b> دەست پێدەکات و <b>11</b> ژمارەیە.</span>
+            <span id="phoneHintText">ژمارەکە بە <b>07</b> دەست پێدەکات و <b>11</b> ژمارەیە.</span>
           </div>
           <span class="field-error" id="userPhoneError"></span>
         </div>
@@ -954,27 +968,26 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
         <div class="xc-tier-hint" id="bdTierHint" hidden></div>
       </div>
 
-      <!-- what comes out of it -->
+      <!-- what comes out of it: after the fee, then where it goes — the recipient, and what is
+           under a whole thousand to the customer's balance — then one sentence and «بۆچی؟» -->
       <div class="xc-sum-result" id="xcSumResult">
         <div class="xc-sum-row" id="bdExpectedRow">
-          <span class="lbl" id="bdExpectedLabel">بڕ دوای لێبڕین</span>
+          <span class="lbl" id="bdExpectedLabel">دوای کرێ</span>
           <span class="v"><span id="totalDisplay" class="total-value">0 IQD</span></span>
         </div>
-        <div class="xc-sum-row total" id="bdPayoutRow" hidden>
-          <span class="lbl">بڕی ناردن بۆ وەرگر</span>
+        <div class="xc-sum-row total xc-split-tile is-recipient" id="bdPayoutRow" hidden>
+          <span class="lbl">وەرگر وەریدەگرێت</span>
           <span class="v" id="payoutDisplay" dir="ltr">—</span>
         </div>
-        <div class="xc-sum-row xc-sum-unsent" id="bdRoundingRow" hidden>
-          <span class="lbl">
-            بڕی باڵانسی نەنێردراو
-            <button type="button" class="xc-info-btn" onclick="openRoundingInfo()" aria-label="بۆچی ئەم بڕە نانێردرێت؟" aria-haspopup="dialog">
-              <svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>
-            </button>
-          </span>
+        <div class="xc-sum-row xc-sum-unsent xc-split-tile is-balance" id="bdRoundingRow" hidden>
+          <span class="lbl">دەخرێتە سەر باڵانسەکەت</span>
           <span class="v" id="roundingDisplay" dir="ltr">—</span>
         </div>
       </div>
-      <p class="payout-rounding-note" id="payoutRoundingNote" hidden></p>
+      <div class="xc-why-line">
+        <p class="payout-rounding-note" id="payoutRoundingNote" hidden></p>
+        <button type="button" class="xc-why" id="payoutWhyBtn" onclick="openRoundingInfo()" aria-haspopup="dialog">بۆچی؟</button>
+      </div>
       <div id="feeDisplay" class="fee-note" hidden></div>
     </div>
 
@@ -1018,6 +1031,11 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
         <svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>
         ناردنی داواکاری
       </button>
+      <!-- the identity screen's bar (#kycProgress): one track, one line of text, step by step -->
+      <div class="kv-progress xc-progress" id="orderProgress" hidden aria-live="polite">
+        <div class="kv-progress-track"><span id="orderProgressFill"></span></div>
+        <small id="orderProgressText">ئامادەکردن...</small>
+      </div>
     </div>
   </div>
 
@@ -1690,10 +1708,20 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
 <div id="summaryInfoBackdrop" class="ts-info-backdrop" hidden onclick="if(event.target===this)closeSummaryInfo()">
   <section class="ts-info-sheet" role="dialog" aria-modal="true" aria-labelledby="summaryInfoTitle" onclick="event.stopPropagation()">
     <div class="ts-info-grip" aria-hidden="true"></div>
-    <div class="ts-info-head"><h2 id="summaryInfoTitle">گەڕاوە بۆ باڵانس</h2>
-      <button class="ts-info-close" type="button" onclick="closeSummaryInfo()" aria-label="داخستن">×</button>
+    <div class="ts-info-head"><h2 id="summaryInfoTitle">بۆچی بڕێک دەخرێتە سەر باڵانسەکەت؟</h2>
+      <button class="ts-info-close" type="button" onclick="closeSummaryInfo()" aria-label="داخستن">
+        <span class="icn icn-sm icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>
+      </button>
     </div>
-    <p>ئەم بڕە بە شێوەیەکی خۆکار بۆ باڵانسی هەژمارەکەت گەڕێندراوەتەوە. بەشێکە لە کۆی گشتیی مامەڵەکە و جارێکی تر زیاد ناکرێت؛ تەنها بڕی دیاریکراو بۆ وەرگر نێردراوە.</p>
+    <!-- the same sheet as the exchange's (#roundingInfoSheet): the amount, then the same sentences -->
+    <div class="ts-info-body">
+      <div class="ri-hero">
+        <b class="ri-amount" id="summaryInfoAmount" dir="ltr" hidden></b>
+        <small>دەخرێتە سەر باڵانسی هەژمارەکەت</small>
+      </div>
+      <div class="ri-text" id="summaryInfoText"></div>
+    </div>
+    <button class="ts-info-ok" type="button" onclick="closeSummaryInfo()">باشە، تێگەیشتم</button>
   </section>
 </div>
 
@@ -1705,7 +1733,7 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
 <script src="/assets/js/exchange-live.js?v=1"></script>
 <script src="/assets/js/proxo-toast.js?v=1"></script>
 <script src="/assets/js/skeletons.js?v=2"></script>
-<script src="/assets/js/app.js?v=109"></script>
+<script src="/assets/js/app.js?v=114"></script>
 <script src="/assets/js/activity-tracker.js?v=1"></script>
 <script src="/assets/js/site-pause.js?v=5"></script>
 <script src="/assets/js/banners.js?v=2"></script>

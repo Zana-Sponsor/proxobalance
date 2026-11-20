@@ -1,0 +1,21 @@
+/* ═════════════════════════════════════════════════════════════════
+   Sign-in, sign-up and the code screen — the identity screen's bar (v63)
+
+     [        چوونەژوورەوە        ]
+                 14px
+     ━━━━━━━━━━━━━━━━──────────────   6px track, the accent fills it
+         پشتڕاستکردنەوەی هەژمار...       12px, one line, step by step
+
+   kyc-screen.css's .kv-progress value for value, on the sign-in screen's own
+   tokens (--au-line, --au-accent, --au-muted from auth-balance.css), which are
+   the identity screen's line, accent and label in light and dark.
+   ═════════════════════════════════════════════════════════════════ */
+html body #authWrap#authWrap .au-progress { display: flex; flex-direction: column; gap: 6px; margin: 14px 0 0; }
+html body #authWrap#authWrap .au-progress[hidden] { display: none !important; }
+html body #authWrap#authWrap .au-progress .kv-progress-track { height: 6px; overflow: hidden; border-radius: 999px; background: var(--au-line); }
+html body #authWrap#authWrap .au-progress .kv-progress-track span { display: block; width: 0; height: 100%; border-radius: inherit; background: var(--au-accent); transition: width .3s ease; }
+html body #authWrap#authWrap .au-progress small { color: var(--au-muted); font-family: Rabar, Arial, sans-serif; font-size: 12px; line-height: 1.6; text-align: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  html body #authWrap#authWrap .au-progress .kv-progress-track span { transition: none !important; }
+}

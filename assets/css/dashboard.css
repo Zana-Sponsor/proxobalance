@@ -181,6 +181,71 @@ html body #mainApp#mainApp #pageDash .db-new-txt small { color: rgba(255, 255, 2
 html body #mainApp#mainApp #pageDash .db-new-go { flex: 0 0 auto; display: grid; place-items: center; opacity: .85; }
 html body #mainApp#mainApp #pageDash .db-new-go .pxi { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
+/* «داواکاری نوێ بکە!» — a chat message on the card's top edge, over its + (app.js dbNewTip).
+   It pops out of the +, types for a moment, says it, floats a little while it waits, and goes
+   back into the card at 5 s; the + breathes under it meanwhile. It sits on the edge — 20px above
+   the card, 8px on it — so it stays clear of the name above (the name's line ends 36px above
+   the card). The tail points at the + (the card's 14px padding + half of the 40px icon = 34px
+   from its right edge). Tapping it opens the exchange, like the card.
+                        ┌──────────────────┐
+                        │ داواکاری نوێ بکە! │   28px · 13/600 · radius 14
+     ┌──────────────────└─────────────▾────┘──┐
+     │ ‹            داواکاری نوێ          (+) │ */
+html body #mainApp#mainApp #pageDash .db-new { position: relative; }
+html body #mainApp#mainApp #pageDash .db-new-tip {
+  --tip-bg: #ffffff; --tip-line: #e3ebf8; --tip-ink: #0265ff; --tip-dot: #8fb4f5;
+  --tip-shadow: 0 12px 24px -12px rgba(2, 101, 255, .5), 0 2px 6px -2px rgba(16, 24, 40, .08);
+  position: absolute; z-index: 3; right: 10px; bottom: calc(100% - 8px); display: block;
+}
+html[data-theme="dark"] body #mainApp#mainApp #pageDash .db-new-tip {
+  --tip-bg: #1b2740; --tip-line: #2b3a55; --tip-ink: #e8edf6; --tip-dot: #8ab8ff;
+  --tip-shadow: 0 12px 24px -12px rgba(0, 0, 0, .7);
+}
+html body #mainApp#mainApp #pageDash .db-new-tip[hidden] { display: none; }
+html body #mainApp#mainApp #pageDash .db-new-tip-b {
+  position: relative; display: flex; align-items: center; height: 28px; padding: 0 12px;
+  border: 1px solid var(--tip-line); border-radius: 14px; background: var(--tip-bg); box-shadow: var(--tip-shadow);
+  color: var(--tip-ink); font-family: var(--db-font); font-size: 13px; font-weight: 600; line-height: 18px; white-space: nowrap;
+  transform-origin: calc(100% - 24px) calc(100% + 5px);
+}
+html body #mainApp#mainApp #pageDash .db-new-tip-b::after {
+  content: ""; position: absolute; right: 19px; bottom: -4px; width: 8px; height: 8px;
+  border: solid var(--tip-line); border-width: 0 1px 1px 0; border-bottom-right-radius: 2px;
+  background: var(--tip-bg); transform: rotate(45deg);
+}
+/* typing → saying: the dots fold away while the words open out, the tail stays over the + */
+html body #mainApp#mainApp #pageDash :is(.db-new-tip-dots, .db-new-tip-txt) {
+  display: grid; transition: grid-template-columns .4s cubic-bezier(.2, .8, .2, 1), opacity .25s ease;
+}
+html body #mainApp#mainApp #pageDash :is(.db-new-tip-dots, .db-new-tip-txt) > span { min-width: 0; overflow: hidden; }
+html body #mainApp#mainApp #pageDash .db-new-tip-dots { grid-template-columns: 1fr; opacity: 1; }
+html body #mainApp#mainApp #pageDash .db-new-tip-dots > span { display: flex; align-items: center; gap: 4px; padding: 0 2px; }
+html body #mainApp#mainApp #pageDash .db-new-tip-dots i { flex: 0 0 6px; width: 6px; height: 6px; border-radius: 50%; background: var(--tip-dot); animation: dbTipDot 1s ease-in-out infinite; }
+html body #mainApp#mainApp #pageDash .db-new-tip-dots i:nth-child(2) { animation-delay: .15s; }
+html body #mainApp#mainApp #pageDash .db-new-tip-dots i:nth-child(3) { animation-delay: .3s; }
+html body #mainApp#mainApp #pageDash .db-new-tip-txt { grid-template-columns: 0fr; opacity: 0; }
+html body #mainApp#mainApp #pageDash .db-new-tip:is([data-state="say"], [data-state="out"]) .db-new-tip-dots { grid-template-columns: 0fr; opacity: 0; }
+html body #mainApp#mainApp #pageDash .db-new-tip:is([data-state="say"], [data-state="out"]) .db-new-tip-txt { grid-template-columns: 1fr; opacity: 1; }
+/* in, a soft float while it waits, out */
+html body #mainApp#mainApp #pageDash .db-new-tip[data-state] .db-new-tip-b { animation: dbTipIn .5s cubic-bezier(.2, .9, .25, 1.3) both; }
+html body #mainApp#mainApp #pageDash .db-new-tip[data-state="say"] { animation: dbTipFloat 2.4s ease-in-out .3s infinite; }
+html body #mainApp#mainApp #pageDash .db-new-tip[data-state="out"] .db-new-tip-b { animation: dbTipOut .3s cubic-bezier(.4, 0, 1, 1) both; }
+html body #mainApp#mainApp #pageDash .db-new.is-tip .db-new-ico { animation: dbTipRing 1.5s ease-out .3s 3; }
+@keyframes dbTipIn { 0% { opacity: 0; transform: translateY(8px) scale(.4); } 60% { opacity: 1; transform: scale(1.06); } 100% { opacity: 1; transform: none; } }
+@keyframes dbTipOut { 0% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(6px) scale(.5); } }
+@keyframes dbTipFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+@keyframes dbTipDot { 0%, 60%, 100% { opacity: .45; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-3px); } }
+@keyframes dbTipRing { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, .45); } 100% { box-shadow: 0 0 0 12px rgba(255, 255, 255, 0); } }
+@keyframes dbTipFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes dbTipFadeOut { from { opacity: 1; } to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  html body #mainApp#mainApp #pageDash .db-new-tip[data-state] { animation: none; }
+  html body #mainApp#mainApp #pageDash .db-new-tip[data-state] .db-new-tip-b { animation: dbTipFade .2s ease both; }
+  html body #mainApp#mainApp #pageDash .db-new-tip[data-state="out"] .db-new-tip-b { animation: dbTipFadeOut .3s ease both; }
+  html body #mainApp#mainApp #pageDash :is(.db-new-tip-dots i, .db-new.is-tip .db-new-ico) { animation: none; }
+  html body #mainApp#mainApp #pageDash :is(.db-new-tip-dots, .db-new-tip-txt) { transition: none; }
+}
+
 /* exchange page header (back to home) */
 html body #mainApp#mainApp #pageHome .ex-head { margin-bottom: 14px; }
 

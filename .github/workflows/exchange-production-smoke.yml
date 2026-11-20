@@ -15,13 +15,15 @@ jobs:
           set -euo pipefail
           for attempt in $(seq 1 30); do
             if curl -fLsS --max-time 15 'https://www.proxobalance.app/' -o current-index.html &&
-               grep -q 'app.js?v=109' current-index.html &&
+               grep -q 'app.js?v=114' current-index.html &&
                grep -q 'receipt-access.js?v=1' current-index.html &&
                grep -q 'auth-phone.css?v=2' current-index.html &&
                grep -q 'auth-otp.css?v=1' current-index.html &&
                grep -q 'site-pause.js?v=5' current-index.html &&
                grep -q 'banners.js?v=2' current-index.html &&
                grep -q 'profile-head.css?v=1' current-index.html &&
+               grep -q 'exchange-form.css?v=5' current-index.html &&
+               grep -q 'auth-progress.css?v=1' current-index.html &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin' -o current-admin.html &&
                grep -q 'admin.js?v=42' current-admin.html &&
                grep -q 'admin-details.css?v=1' current-admin.html &&
@@ -30,7 +32,7 @@ jobs:
             fi
             sleep 6
           done
-          echo 'FAIL: the v61 customer and admin assets were not published within the deployment window.'
+          echo 'FAIL: the expected v68 customer bundle and OTP-secured admin assets were not published within the deployment window.'
           exit 1
       - name: Verify the live customer page and admin panel
         shell: bash
@@ -63,7 +65,7 @@ jobs:
           for bad in 'id="pfPhone"' 'id="waPhone"' 'id="signupEmail"' 'id="welcomeReward"' 'id="rewardBanner"' 'id="bdDiscountRow"' 'pxn-fab' 'exchange-reward-pricing'; do
             if grep -q "$bad" index.html; then echo "FAIL: $bad is still published."; exit 1; fi
           done
-          curl -fLsS --max-time 25 "$root/assets/js/app.js?v=109" -o app.js
+          curl -fLsS --max-time 25 "$root/assets/js/app.js?v=114" -o app.js
           grep -q 'function submitAccountDeletion' app.js
           grep -q "pxAuthApi('login_start'" app.js
           grep -q "pxAuthApi('phone_change_start'" app.js

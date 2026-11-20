@@ -222,3 +222,126 @@ test('profile head: the photo, the name with the identity mark after it, the num
   assert.match(css, /\.pfx-menu > \.pfx-item \{ border-radius: 0 !important; \}/);
   assert.match(css, /html\[data-theme="dark"\] body #usernameSheet \{\n  --un-ink: #e8edf6;/);
 });
+
+test('exchange screen: one card per step on the identity screen\'s values, and its bar while sending', () => {
+  const html = read('index.html'), css = read('assets/css/exchange-form.css'), app = read('assets/js/app.js');
+  // the top is the inner screens' toolbar: back, the title alone, no line under it
+  assert.match(html, /<section class="page" id="pageHome" data-route="exchange">\n\s*<div class="pfx-bar"><button type="button" class="pfx-bar-btn" onclick="navigate\('home'\)" aria-label="گەڕانەوە بۆ سەرەکی">/);
+  assert.match(html, /<h2>ئاڵوگۆڕی نوێ<\/h2><span aria-hidden="true"><\/span><\/div>/);
+  assert.doesNotMatch(html, /class="page-head support-page-head ex-head"/);
+  // the bar sits under the button, the same markup as #kycProgress
+  assert.match(html, /<div class="kv-progress xc-progress" id="orderProgress" hidden aria-live="polite">\n\s*<div class="kv-progress-track"><span id="orderProgressFill"><\/span><\/div>\n\s*<small id="orderProgressText">/);
+  assert.match(html, /\/assets\/css\/profile-head\.css\?v=1">\n<link rel="stylesheet" href="\/assets\/css\/exchange-form\.css\?v=5">/);
+  // the site header steps aside on phones, as on every inner screen; wide screens keep it
+  assert.match(css, /html body #mainApp:has\(#pageHome\.active\) #siteHeader\.pxh \{ display: none !important; \}\n@media \(min-width: 1024px\) \{\n  html body #mainApp:has\(#pageHome\.active\) #siteHeader\.pxh \{ display: block !important; \}/);
+  // and the same values as kyc-screen.css's .kv-progress
+  assert.match(css, /\.xc-progress \.kv-progress-track \{ height: 6px; overflow: hidden; border-radius: 999px; background: var\(--xf-line\); \}/);
+  assert.match(css, /\.xc-progress \.kv-progress-track span \{ display: block; width: 0; height: 100%; border-radius: inherit; background: var\(--xf-accent\); transition: width \.3s ease; \}/);
+  assert.match(app, /function orderSetProgress\(pct, text\)\{/);
+  for (const step of ["orderSetProgress(6,'پشکنینی هەژمار...')", "orderSetProgress(32,'بارکردنی پسووڵە...')", "orderSetProgress(78,'ناردنی داواکاری...')", "orderSetProgress(100,'تەواو بوو')"])
+    assert(app.includes(step), step);
+  assert.match(app, /setTimeout\(\(\)=>\{ if\(btn\.dataset\.submitting!=='1'\) orderSetProgress\(null\); \}, 900\);/);
+  // what the app hides stays hidden under the new cards
+  assert.match(css, /:is\(\.xc-step, #xcBreakdown, \.xc-sum-row, \.xc-badge, \.field\)\[hidden\]:not\(#_shown\) \{ display: none !important; \}/);
+  assert.match(css, /#exchangeCard\.kyc-locked > :not\(\.xc-head\):not\(#exchangeKycGate\):not\(#balanceSendSection\) \{ display: none !important; \}/);
+  // the number hint no longer names a country
+  assert.doesNotMatch(app, /ژمارەی عێراقی/);
+});
+
+test('sign-in, sign-up and the code screen: the identity screen\'s bar under the button while it works', () => {
+  const html = read('index.html'), css = read('assets/css/auth-progress.css'), app = read('assets/js/app.js');
+  for (const [btn, id] of [['id="authBtn" onclick="submitLogin()"', 'authProgress'], ['id="signupSubmitBtn" onclick="submitSignup()"', 'signupProgress'], ['id="otpVerifyBtn" onclick="verifyOtp()"', 'otpProgress']]) {
+    const at = html.indexOf(btn);
+    assert(at > 0, btn);
+    const after = html.slice(at, at + 700);
+    assert.match(after, new RegExp(`</button>\\n\\s*<div class="kv-progress au-progress" id="${id}" hidden aria-live="polite">\\n\\s*<div class="kv-progress-track"><span></span></div>\\n\\s*<small>`), id);
+  }
+  assert.match(html, /\/assets\/css\/exchange-form\.css\?v=5">\n<link rel="stylesheet" href="\/assets\/css\/auth-progress\.css\?v=1">/);
+  // kyc-screen.css's .kv-progress, value for value, on the sign-in screen's tokens
+  assert.match(css, /\.au-progress \.kv-progress-track \{ height: 6px; overflow: hidden; border-radius: 999px; background: var\(--au-line\); \}/);
+  assert.match(css, /\.au-progress \.kv-progress-track span \{ display: block; width: 0; height: 100%; border-radius: inherit; background: var\(--au-accent\); transition: width \.3s ease; \}/);
+  assert.match(css, /\.au-progress\[hidden\] \{ display: none !important; \}/);
+  assert.match(app, /function authSetProgress\(id,pct,text\)\{/);
+  for (const step of ["authSetProgress('authProgress',35,'پشتڕاستکردنەوەی هەژمار...')", "authSetProgress('signupProgress',40,'ناردنی کۆدی دڵنیایی...')", "authSetProgress('otpProgress',60,'چوونەژوورەوە...')", "authSetProgress('otpProgress',85,'ئامادەکردنی هەژمار...')"])
+    assert(app.includes(step), step);
+  // the bar never outlives the attempt: each one ends by hiding it
+  for (const id of ['authProgress', 'signupProgress', 'otpProgress'])
+    assert(app.includes(`authSetProgress('${id}',null);`), id);
+});
+
+test('home: «داواکاری نوێ بکە!» types over the new-order card once the app opens, and is gone after 5 seconds', () => {
+  const html = read('index.html'), css = read('assets/css/dashboard.css'), app = read('assets/js/app.js');
+  // inside the card, so a tap on it opens the exchange; hidden from screen readers (the card already says it)
+  const card = html.slice(html.indexOf('id="dbNewOrder"'), html.indexOf('</button>', html.indexOf('id="dbNewOrder"')));
+  assert.match(card, /<span class="db-new-tip" id="dbNewTip" aria-hidden="true" hidden>/);
+  assert.match(card, /<span class="db-new-tip-txt"><span>داواکاری نوێ بکە!<\/span><\/span>/);
+  assert.match(html, /\/assets\/css\/dashboard\.css\?v=10"/);
+  // types, says, goes: 5 s from the moment it appears
+  assert.match(app, /if\(!calm\) later\(\(\)=>\{ tip\.dataset\.state='say'; \},1100\);\n\s*later\(\(\)=>\{ tip\.dataset\.state='out'; \},4700\);\n\s*later\(dbNewTipStop,5000\);/);
+  // once per opening of the app, only on home, never over a sheet or while the exchange is paused
+  assert.match(app, /if\(route==='home'\)\{[\s\S]*?dbNewTip\(\);\n\s*\} else dbNewTipStop\(\);/);
+  assert.match(app, /document\.querySelector\('\.sheet-overlay\.open, #notifPanel\.open'\)/);
+  assert.match(app, /getElementById\('pageHome'\)\?\.classList\.contains\('svc-paused'\)/);
+  // on the card's top edge (20px above, 8px on it), so it never reaches the name 36px above the card
+  assert.match(css, /position: absolute; z-index: 3; right: 10px; bottom: calc\(100% - 8px\);/);
+  assert.match(css, /\.db-new-tip-b \{\n  position: relative; display: flex; align-items: center; height: 28px;/);
+  assert.match(css, /@keyframes dbTipFloat \{ 0%, 100% \{ transform: translateY\(0\); \} 50% \{ transform: translateY\(-2px\); \} \}/);
+  // the tail sits over the + and the motion respects reduced motion
+  assert.match(css, /\.db-new-tip-b::after \{\n  content: ""; position: absolute; right: 19px;/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\n  html body #mainApp#mainApp #pageDash \.db-new-tip\[data-state\] \{ animation: none; \}/);
+});
+
+test('exchange: «بۆچی بڕێک دەخرێتە سەر باڵانسەکەت؟» — the amount, then plain sentences shared with the summary, in the exchange sheets\' frame', () => {
+  const html = read('index.html'), css = read('assets/css/exchange-form.css'), app = read('assets/js/app.js');
+  const sheet = html.slice(html.indexOf('<div id="roundingInfoSheet"'), html.indexOf('<!-- ══', html.indexOf('<div id="roundingInfoSheet"')));
+  assert.match(sheet, /<b class="ri-amount" id="roundingInfoAmount" dir="ltr" hidden><\/b>/);
+  // sentences, not icons: no icon in the sheet's body, the text comes from one function
+  assert.match(sheet, /<h3 id="roundingInfoTitle">بۆچی بڕێک دەخرێتە سەر باڵانسەکەت؟<\/h3>/);
+  assert.match(sheet, /<div class="ri-text" id="roundingInfoText"><\/div>/);
+  assert.doesNotMatch(sheet.slice(sheet.indexOf('<div class="sheet-body">')), /<svg|ri-ico|ri-points/);
+  assert.doesNotMatch(sheet, /xc-info-body/);
+  const explain = app.slice(app.indexOf('function roundingExplainHTML(n){'), app.indexOf('function fillRoundingExplain('));
+  for (const words of ['بۆ وەرگر تەنها بڕی تەواو بە هەزار دەنێرین', 'ئەم بڕە نافەوتێت', 'لە مێژووی باڵانسدا دەیبینیت', 'FIB و Qi&nbsp;Card'])
+    assert(explain.includes(words), words);
+  // the figures of this request: what the split says
+  assert.match(app, /fillRoundingExplain\('roundingInfoAmount','roundingInfoText',n\);/);
+  // under the split: one sentence and «بۆچی؟» in words, not an (i)
+  assert.match(html, /<button type="button" class="xc-why" id="payoutWhyBtn" onclick="openRoundingInfo\(\)" aria-haspopup="dialog">بۆچی؟<\/button>/);
+  assert.match(html, /<span class="lbl">وەرگر وەریدەگرێت<\/span>\n\s*<span class="v" id="payoutDisplay" dir="ltr">/);
+  assert.match(html, /<span class="lbl">دەخرێتە سەر باڵانسەکەت<\/span>\n\s*<span class="v" id="roundingDisplay" dir="ltr">/);
+  assert.doesNotMatch(html, /class="xc-info-btn"/);
+  assert.match(css, /#xcBreakdown \.xc-sum-result \{\n  display: grid !important; grid-template-columns: repeat\(2, minmax\(0, 1fr\)\); gap: 8px;/);
+  // the frame of the exchange's other sheets: title 18/500 in ink, a 44px close, the blue button in light and dark
+  assert.match(css, /#roundingInfoSheet#roundingInfoSheet \.sheet-head h3 \{\n  color: var\(--ri-ink\) !important; font-size: 18px !important; font-weight: 500 !important;/);
+  assert.match(css, /#roundingInfoSheet#roundingInfoSheet \.sheet-close \{\n  width: 44px !important; height: 44px !important;/);
+  assert.match(css, /--ri-close: #f6f7f9; --ri-close-ink: #64748b; --ri-close-line: transparent; --ri-btn: #0265ff;/);
+  // a bottom sheet on every screen: on wide screens too it rises from the bottom edge
+  assert.match(css, /@media \(min-width: 640px\) \{\n  html body :is\(#pickerSheet, #recipientSheet, #confirmSheet\):not\(#_x\) > \.sheet \{ border-radius: 16px !important; \}/);
+  assert.match(css, /html body #roundingInfoSheet#roundingInfoSheet \{ align-items: flex-end !important; \}/);
+  assert.match(css, /html body #roundingInfoSheet#roundingInfoSheet\.open > \.sheet \{ transform: translateY\(0\); \}/);
+});
+
+test('transaction details: one card per block in the exchange\'s values, the route with its wallets in the top card', () => {
+  const html = read('index.html'), css = read('assets/css/transaction-summary.css'), xf = read('assets/css/exchange-form.css'), app = read('assets/js/app.js');
+  assert.match(html, /\/assets\/css\/transaction-summary\.css\?v=9"/);
+  // the site header steps aside on phones, as on every inner screen
+  assert.match(css, /body #mainApp:has\(#pageSummary\.active\) #siteHeader\.pxh \{ display: none !important; \}/);
+  // cards: radius 20, border, the exchange's shadow; titles without the marker
+  assert.match(css, /#pageSummary \.tf-flow > :is\(\.tf-hero, \.tf-sec, \.tf-note\) \{\n  margin: 0 !important; padding: 16px; border: 1px solid var\(--sx-line\) !important; border-radius: 20px;/);
+  assert.match(css, /#pageSummary \.tf-flow \.tf-sec-title::before \{ display: none; \}/);
+  assert.match(css, /--sx-card: #131c2e; --sx-line: #25324a; --sx-rule: #1b2740;/);
+  // the route moved into the top card, with the wallets' icons
+  assert.match(app, /hero\.route=tfRouteIconsHTML\(o\.from_method,refundedSheet\?'AccountBalance':o\.to_method\);/);
+  assert.match(app, /\+ \(opts\.route\?'<div class="tf-hero-route" dir="ltr">'\+opts\.route\+'<\/div>':''\)/);
+  assert.doesNotMatch(app.slice(app.indexOf('function txDetailHTML'), app.indexOf('function closeTxDetail')), /tfRow\('ڕێگای گواستنەوە'/);
+  // the summary's sheet is the exchange's: the same title, amount box and sentences
+  const info = html.slice(html.indexOf('<div id="summaryInfoBackdrop"'), html.indexOf('</div>\n\n\n<script', html.indexOf('<div id="summaryInfoBackdrop"')));
+  assert.match(info, /<b class="ri-amount" id="summaryInfoAmount" dir="ltr" hidden><\/b>/);
+  assert.match(info, /<h2 id="summaryInfoTitle">بۆچی بڕێک دەخرێتە سەر باڵانسەکەت؟<\/h2>/);
+  assert.match(info, /<div class="ri-text" id="summaryInfoText"><\/div>/);
+  assert.doesNotMatch(info.slice(info.indexOf('<div class="ts-info-body">')), /<svg|ri-ico/);
+  assert.match(app, /fillRoundingExplain\('summaryInfoAmount','summaryInfoText',n\);/);
+  assert.match(app, /<button class="tf-info" type="button" onclick="openSummaryInfo\(\)" aria-haspopup="dialog">بۆچی؟<\/button>/);
+  assert.match(info, /<button class="ts-info-ok" type="button" onclick="closeSummaryInfo\(\)">باشە، تێگەیشتم<\/button>/);
+  assert.match(xf, /html body :is\(#roundingInfoSheet, #summaryInfoBackdrop\) \.ri-hero \{/);
+});
