@@ -192,3 +192,33 @@ test('profile: username and creation date are rows of the account list; verified
   assert.match(ui, /body #mainApp \.pxn-state\[data-state="ok"\] \{ background: #0265ff; \}/);
   assert.match(dark, /\[data-tone="ok"\] \{\n  --kt: #3b8cff !important;/);
 });
+
+test('panel details: the order, account and identity windows use the lists\' card language', () => {
+  const js = read('assets/js/admin.js'), css = read('assets/css/admin-details.css'), html = read('exchange-admin.html');
+  assert.match(html, /admin-lists\.css\?v=1">\n<link rel="stylesheet" href="assets\/css\/admin-details\.css\?v=1">/);
+  assert.match(js, /function dxGroup\(title, rows, cls\)\{/);
+  assert.match(js, /document\.getElementById\('odTitle'\)\.textContent = 'وردەکاری مامەڵە';/);
+  assert.match(js, /dxGroup\('بڕ',money\)\+dxGroup\('نێرەر',sender\)\+dxGroup\('وەرگر',receiver\)\+dxGroup\('مامەڵە',facts\)/);
+  assert.match(js, /<div class="dx-decide"><button type="button" class="act-btn gr" onclick="approveOrder\('\$\{oid\}'\);closeMo\('moOrderDetail'\)">پەسەندکردن<\/button>/);
+  assert.match(js, /<div class="dx-head" id="aiHead"><span class="lv-av" id="aiAv"><\/span>/);
+  assert.match(js, /document\.getElementById\('kycRvTitle'\)\.textContent=pending\?'پشکنینی بەڵگەنامە':'بەڵگەنامەی ناسنامە';/);
+  assert.match(js, /<div class="dx-decide kyc-rv-actions">/);
+  // the same values as admin-lists.css
+  assert.match(css, /--dx-ink: #202c3c; --dx-muted: #66768c; --dx-line: #e8edf3;/);
+  assert.match(css, /\.act-btn\.gr \{ background: var\(--dx-ok-bg\) !important;/);
+  assert.match(css, /html body #pgKyc \.kyc-admin-card \{\n  --kc-edge: #0b6bcb;/);
+});
+
+test('profile head: the photo, the name with the identity mark after it, the number; one font in every window', () => {
+  const html = read('index.html'), css = read('assets/css/profile-head.css');
+  const hero = html.slice(html.indexOf('<div class="pfx-hero">'), html.indexOf('<section class="pfx-card pfx-balance"'));
+  assert.doesNotMatch(hero, /pfx-cover|pfx-avatar-wrap|pfKycBadge|pfx-meta/);
+  assert.match(hero, /<div class="pfx-name-row">\n\s*<div class="pfx-name" id="pfNameLbl">/);
+  assert.match(hero, /<span class="pfx-verified" id="pfVerifiedDot" hidden/);
+  assert.match(hero, /<div class="pfx-email" id="pfEmailLbl" dir="ltr">/);
+  assert.match(html, /\/assets\/css\/banners\.css\?v=2">\n<link rel="stylesheet" href="\/assets\/css\/profile-head\.css\?v=1">/);
+  assert.match(css, /html:has\(#mainApp\) \{ font-family: Rabar, Arial, sans-serif; \}/);
+  assert.match(css, /\.pfx-hero \.pfx-verified \{\n  position: static !important;/);
+  assert.match(css, /\.pfx-menu > \.pfx-item \{ border-radius: 0 !important; \}/);
+  assert.match(css, /html\[data-theme="dark"\] body #usernameSheet \{\n  --un-ink: #e8edf6;/);
+});

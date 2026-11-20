@@ -1,0 +1,123 @@
+/* Profile, v61: the top of the screen, the account rows, and the username window.
+   Loaded last. Light and dark use the app's own values (proxo-ui-v2.css, app-dark.css).
+
+   Top of the profile: one row in the profile's card — the photo, the name with the
+   identity mark right after it (blue rosette when verified, the same shape for the
+   other states), and the number or e-mail under it. No cover band, nothing on the photo. */
+
+/* The page's base font. body inherits its font (proxo-complete-theme.css), so the windows
+   outside #mainApp (the username window, sheets) fell back to the browser's serif. */
+html:has(#mainApp) { font-family: Rabar, Arial, sans-serif; }
+
+html body #mainApp#mainApp#mainApp #pageProfile .pfx-hero {
+  --ph-ink: #0f172a; --ph-muted: #64748b; --ph-av: #eaf2ff; --ph-av-ink: #0265ff;
+  display: flex !important; flex-direction: row !important; align-items: center !important; gap: 14px;
+  min-height: 0; margin: 0 0 14px; padding: 16px !important; overflow: visible; text-align: right !important;
+}
+html[data-theme="dark"] body #mainApp#mainApp#mainApp #pageProfile .pfx-hero {
+  --ph-ink: #e8edf6; --ph-muted: #a3b1c7; --ph-av: #10223d; --ph-av-ink: #3b8cff;
+}
+html body #mainApp#mainApp#mainApp #pageProfile .pfx-hero .pfx-avatar {
+  flex: 0 0 60px; width: 60px !important; height: 60px !important; margin: 0 !important;
+  display: grid; place-items: center; overflow: hidden;
+  border: 0 !important; border-radius: 50%; background: var(--ph-av) !important; color: var(--ph-av-ink) !important;
+  box-shadow: none !important; font-size: 24px; font-weight: 600; line-height: 1;
+}
+html body #mainApp#mainApp#mainApp #pageProfile .pfx-hero .pfx-avatar img { width: 100%; height: 100%; object-fit: cover; }
+html body #mainApp#mainApp#mainApp #pageProfile .pfx-hero .pfx-id {
+  flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+}
+html body #mainApp#mainApp#mainApp #pageProfile .pfx-hero .pfx-name-row { display: flex; align-items: center; gap: 6px; max-width: 100%; min-width: 0; }
+html body #mainApp#mainApp#mainApp #pageProfile .pfx-hero .pfx-name {
+  flex: 0 1 auto; min-width: 0; max-width: 100%; margin: 0 !important; overflow: hidden;
+  color: var(--ph-ink); font-size: 17px; font-weight: 600; line-height: 1.5; text-overflow: ellipsis; white-space: nowrap;
+}
+/* the identity mark sits after the name, the size of a capital letter's line */
+html body #mainApp#mainApp#mainApp #pageProfile .pfx-hero .pfx-verified {
+  position: static !important; inset: auto !important; flex: 0 0 auto;
+  width: 20px !important; height: 20px !important; margin: 0 !important; padding: 0 !important;
+  border: 0 !important; background: transparent !important; filter: none !important;
+}
+html body #mainApp#mainApp#mainApp #pageProfile .pfx-hero .pfx-verified[hidden] { display: none !important; }
+html body #mainApp#mainApp#mainApp #pageProfile .pfx-hero .pfx-verified .kyc-shield { width: 20px; height: 20px; overflow: visible; }
+html body #mainApp#mainApp#mainApp #pageProfile .pfx-hero .pfx-verified .kyc-shield .ks-bg { stroke: none !important; }
+html body #mainApp#mainApp#mainApp #pageProfile .pfx-hero .pfx-email {
+  max-width: 100%; margin: 0 !important; overflow: hidden;
+  color: var(--ph-muted); font-size: 13.5px; line-height: 1.6; text-align: right;
+  direction: ltr; unicode-bidi: isolate; text-overflow: ellipsis; white-space: nowrap; font-variant-numeric: tabular-nums;
+}
+html body #mainApp#mainApp#mainApp #pageProfile .pfx-hero .pfx-chip { flex: 0 0 auto; align-self: center; min-height: 28px; padding: 0 10px; font-size: 12px; }
+
+/* ── account rows: straight dividers in light and dark (buttons took the 14px corner) ── */
+html body #mainApp#mainApp#mainApp #pageProfile .pfx-menu > .pfx-item { border-radius: 0 !important; }
+html body #mainApp#mainApp#mainApp #pageProfile .pfx-menu > .pfx-item + .pfx-item { border-top: 1px solid #f0f3f8 !important; }
+html[data-theme="dark"] body #mainApp#mainApp#mainApp #pageProfile .pfx-menu > .pfx-item + .pfx-item { border-top-color: #1b2740 !important; }
+
+/* ── the username window: the account screens' card, field and button (account-settings.css) ── */
+html body #usernameSheet {
+  --un-ink: #0f172a; --un-title: #1f2d44; --un-label: #64748b; --un-text: #5f6f86; --un-ph: #94a3b8;
+  --un-field: #f8fafd; --un-line: #e8ecf3; --un-focus: #ffffff; --un-accent: #0265ff; --un-ring: rgba(2, 101, 255, .1);
+  --un-warn: #fff6e3; --un-warn-line: #f6dba6; --un-warn-ink: #8a5300;
+  --un-ok: #16a34a; --un-ok-ink: #146c35; --un-bad: #c2414b; --un-bad-soft: #fff3f3; --un-bad-line: #f5c9cb;
+  --un-btn: #0265ff;
+}
+html[data-theme="dark"] body #usernameSheet {
+  --un-ink: #e8edf6; --un-title: #e8edf6; --un-label: #a3b1c7; --un-text: #c4cee0; --un-ph: #7d8ba3;
+  --un-field: #0e1725; --un-line: #25324a; --un-focus: #131c2e; --un-accent: #3b8cff; --un-ring: rgba(59, 140, 255, .14);
+  --un-warn: #2e2511; --un-warn-line: #5a4521; --un-warn-ink: #f7b955;
+  --un-ok: #22a35a; --un-ok-ink: #4ade80; --un-bad: #f87171; --un-bad-soft: #3a1816; --un-bad-line: #6b2a27;
+  --un-btn: #1c6cff;
+}
+html body #usernameSheet .un-body { display: flex; flex-direction: column; gap: 0; color: var(--un-ink); font-family: Rabar, Arial, sans-serif; font-size: 14px; }
+html body #usernameSheet .un-body :is(p, span, b, li, label, button, input) { font-family: inherit; }
+/* what it is now: the account screens' "current" card */
+html body #usernameSheet .un-current {
+  order: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; margin: 0;
+  padding: 12px 14px; border: 1px solid var(--un-line); border-radius: 14px; background: var(--un-field);
+}
+html body #usernameSheet .un-current span { color: var(--un-label); font-size: 12px; font-weight: 400; line-height: 1.6; }
+html body #usernameSheet .un-current b { color: var(--un-ink); font-size: 15px; font-weight: 400; line-height: 1.7; direction: ltr; unicode-bidi: isolate; }
+/* once only: the calm notice */
+html body #usernameSheet .un-warn,
+html[data-theme="dark"] body:has(#mainApp):not(#_d1):not(#_d2):not(#_d3) #usernameSheet .un-warn {
+  order: 2; display: block; margin: 12px 0 0; padding: 12px 14px;
+  border: 1px solid var(--un-warn-line) !important; border-radius: 14px; background: var(--un-warn) !important;
+}
+html body #usernameSheet .un-warn .pxi { display: none; }
+html body #usernameSheet .un-warn p,
+html[data-theme="dark"] body:has(#mainApp):not(#_d1):not(#_d2):not(#_d3) #usernameSheet .un-warn p { margin: 0; color: var(--un-text) !important; font-size: 13.5px; line-height: 1.8; }
+html body #usernameSheet .un-warn b,
+html[data-theme="dark"] body:has(#mainApp):not(#_d1):not(#_d2):not(#_d3) #usernameSheet .un-warn b { color: var(--un-warn-ink) !important; font-weight: 600; }
+/* the new name */
+html body #usernameSheet .un-label { order: 3; display: block; margin: 16px 0 6px; padding: 0 2px; color: var(--un-label); font-size: 12px; font-weight: 400; line-height: 1.6; }
+html body #usernameSheet .un-field {
+  order: 4; display: flex; align-items: center; direction: ltr; height: 48px; padding: 0 12px;
+  border: 1px solid var(--un-line); border-radius: 14px; background: var(--un-field); box-shadow: none;
+}
+html body #usernameSheet .un-field:focus-within { border-color: var(--un-accent); background: var(--un-focus); box-shadow: 0 0 0 4px var(--un-ring); }
+html body #usernameSheet .un-field.is-bad { border-color: var(--un-bad); box-shadow: none; }
+html body #usernameSheet .un-at { margin-inline-end: 2px; color: var(--un-label); font-size: 16px; line-height: 1; }
+html body #usernameSheet .un-field input { color: var(--un-ink) !important; font-size: 16px; font-weight: 400; }
+html body #usernameSheet .un-field input::placeholder { color: var(--un-ph); opacity: 1; }
+/* the three rules, ticked as they are met */
+html body #usernameSheet .un-rules { order: 5; display: grid; gap: 6px; margin: 10px 0 0; padding: 0 2px; list-style: none; }
+html body #usernameSheet .un-rules li { display: flex; align-items: center; gap: 8px; color: var(--un-label); font-size: 12.5px; line-height: 1.6; }
+html body #usernameSheet .un-rules i { width: 16px; height: 16px; border: 1.5px solid var(--un-line); border-radius: 50%; background: transparent; }
+html body #usernameSheet .un-rules li.is-ok { color: var(--un-ok-ink); }
+html body #usernameSheet .un-rules li.is-ok i { border-color: var(--un-ok); background: var(--un-ok); }
+html body #usernameSheet .un-rules li.is-bad { color: var(--un-bad); }
+html body #usernameSheet .un-rules li.is-bad i { border-color: var(--un-bad); }
+html body #usernameSheet .un-error { order: 6; }
+html body #usernameSheet .un-error.show { margin: 12px 0 0; padding: 10px 14px; border: 1px solid var(--un-bad-line); border-radius: 14px; background: var(--un-bad-soft); color: var(--un-bad); font-size: 13px; line-height: 1.8; }
+/* "I understand" and the button */
+html body #usernameSheet .un-confirm {
+  order: 7; display: flex; align-items: center; gap: 10px; margin: 16px 0 0; padding: 12px 14px;
+  border: 1px solid var(--un-line); border-radius: 14px; background: transparent; color: var(--un-ink); font-size: 13.5px; line-height: 1.7;
+}
+html body #usernameSheet .un-confirm input { width: 20px; height: 20px; margin: 0; flex: 0 0 auto; accent-color: var(--un-accent); }
+/* (dark: app-dark.css paints the button — #1c6cff, and #163056 while it waits) */
+html body #usernameSheet .un-submit {
+  order: 8; width: 100%; min-height: 52px; margin: 16px 0 0; border: 0 !important; border-radius: 14px !important;
+  background: var(--un-btn) !important; color: #fff !important; box-shadow: none !important; font-size: 15px; font-weight: 400;
+}
+html body #usernameSheet .un-submit:disabled { opacity: .55; }

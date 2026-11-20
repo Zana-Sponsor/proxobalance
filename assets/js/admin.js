@@ -1410,72 +1410,83 @@ function openOrderFromLink(){
   });
 }
 
+// Order details: one language with the lists and the ban window (assets/css/admin-details.css).
+// A summary card (amount, route, state), then titled groups of rows, the receipts,
+// the admin's note, and the decisions last.
 function showOrderDetail(id){
   const order = allOrders.find(x=>String(x.id)===String(id));
   if(!order){ showToast('نەدۆزرایەوە','rd'); return; }
   if(_payoutReceiptUploads.get(order.id)?.url===order.payout_receipt_url)_payoutReceiptUploads.delete(order.id);
+  const oid=esc(String(order.id));
   const displayAmt = formatNum(order.amount)+(order.from_method==='USDT'?' $':' IQD');
-  document.getElementById('odTitle').textContent = 'ئۆردەر '+fmtCode(orderCodeOf(order));
-  document.getElementById('odContent').innerHTML = `
-    <div class="detail-row"><span class="lbl">ئایدی مامەڵە</span><span class="val">${orderCodeChip(order)}</span></div>
-    <div class="detail-row"><span class="lbl">بەکارهێنەر</span><span class="val">${esc(order.profile?.full_name||'—')}</span></div>
-    <div class="detail-row"><span class="lbl">ئیمەیل</span><span class="val">${esc(order.profile?.email||'—')}</span></div>
-    ${(order.sender_phone||walletNeedsSenderPhone(order.from_method))
-      ? `<div class="detail-row"><span class="lbl">ژمارەی نێرەر</span><span class="val">${esc(order.sender_phone||'—')}</span></div>`
-      : `<div class="detail-row"><span class="lbl">ناوی هەژماری نێرەر</span><span class="val">${esc(order.sender_name||order.profile?.full_name||'—')}</span></div>`}
-    <div class="detail-row"><span class="lbl">لە</span><span class="val">${methodPill(order.from_method)}</span></div>
-    <div class="detail-row"><span class="lbl">بۆ</span><span class="val">${methodPill(order.to_method)}</span></div>
-    <div class="detail-row"><span class="lbl">بڕی نێردراو</span><span class="val">${displayAmt}</span></div>
-    <div class="detail-row"><span class="lbl">بڕی سەرەکی دوای لێبڕین</span><span class="val">${formatNum(order.total)} ${order.to_method==='USDT'?'$':'IQD'}</span></div>
-    ${adminOrderRoundingRows(order)}
-    ${Number(order.shortfall_refunded_iqd||0)>0?`<div class="detail-row"><span class="lbl">کۆی گەڕاوەکان بۆ باڵانس</span><span class="val" style="color:var(--gr)">${formatNum(order.shortfall_refunded_iqd)} IQD</span></div>
-    <div class="detail-row"><span class="lbl">نێردراو بە حسابی کۆی گەڕاوەکان</span><span class="val">${formatNum(Number(order.total)-Number(order.shortfall_refunded_iqd))} IQD</span></div>`:''}
-    <div class="detail-row"><span class="lbl">ژمارەی وەرگر</span><span class="val">${esc(order.phone||'—')}</span></div>
-    ${order.extra_info?`<div class="detail-row"><span class="lbl">زانیاری زیاتر</span><span class="val">${esc(order.extra_info)}</span></div>`:''}
-    <div class="detail-row"><span class="lbl">باری</span><span class="val">${orderBadgeHTML(order)}</span></div>
-    <div class="detail-row"><span class="lbl">بەروار</span><span class="val">${new Date(order.created_at).toLocaleString('ku')}</span></div>
-    ${order.balance_debit_journal_id?`<div class="detail-row"><span class="lbl">تۆماری کەمکردنەوە لە باڵانس</span><span class="val" dir="ltr">${esc(order.balance_debit_journal_id)}</span></div>`:order.receipt_url?`<div style="margin-top:10px"><div style="font-size:11px;color:var(--mt);margin-bottom:8px">وێنەی پسووڵە (لەلایەن کڕیارەوە)</div><img src="${order.receipt_url}" class="rcpt-img" onclick="showImg('${order.receipt_url}')"></div>`:`<div class="fee-toggle-note" style="margin-top:10px"><i class="fas fa-paper-plane" style="margin-left:4px"></i>وێنەی پسووڵە بۆ تیلیگرامی ئەدمین نێردراوە لەکاتی ناردنی داواکارییەکە.</div>`}
-    ${order.correction_request?`<div class="order-admin-correction request"><b><i class="fas fa-pen-to-square"></i> داوای ڕاستکردنەوەی ئادمین</b><p>${esc(order.correction_request)}</p><small>${order.correction_requested_at?esc(fmtDateTime(order.correction_requested_at)):''}</small></div>`:''}
-    ${order.correction_response?`<div class="order-admin-correction response"><b><i class="fas fa-reply"></i> وەڵامی کڕیار</b><p>${esc(order.correction_response)}</p><small>${order.correction_responded_at?esc(fmtDateTime(order.correction_responded_at)):''}</small></div>`:''}
-    <div id="odCorrectionHistory" class="order-correction-history-loading"><i class="fas fa-circle-notch fa-spin"></i> مێژووی ڕاستکردنەوە بار دەکرێت...</div>
-    ${order.status===STATUS_APPROVED?`<div style="margin-top:10px">
-      <div style="font-size:11px;color:var(--mt);margin-bottom:8px">وێنەی پسووڵەی پارەدان (بۆ کڕیار)</div>
-      ${order.payout_receipt_url?`<img src="${order.payout_receipt_url}" class="rcpt-img" onclick="showImg('${order.payout_receipt_url}')">`:''}
-      ${typeof ProxoPayoutRounding==='object'&&ProxoPayoutRounding.canAttachReceipt(order)?(_payoutReceiptUploads.has(order.id)?
-        `<button type="button" class="act-btn cy" id="podUploadLbl" onclick="uploadPayoutReceiptDirect(null,'${order.id}')">پشکنینەوەی هەمان پسووڵەی پێشوو</button>`:
-        `<label class="act-btn cy" style="cursor:pointer;display:inline-flex;margin-top:8px" id="podUploadLbl">
-        <i class="fas fa-upload"></i> ${order.payout_receipt_url?'گۆڕینی وێنە':'ناردنی وێنەی پسووڵە بۆ کڕیار'}
-        <input type="file" accept="image/*" style="display:none" onchange="uploadPayoutReceiptDirect(this,'${order.id}')">
-      </label>`):''}
-    </div>`:''}
-    ${order.status===STATUS_APPROVED?`<section class="admin-order-feedback" id="adminOrderFeedback"><h4>هەڵسەنگاندنی کڕیار</h4><p>هەڵسەنگاندن بار دەکرێت...</p></section>`:''}
-    <label class="modal-lbl">تێبینی ئەدمین</label>
-    <textarea class="minp mta" id="odNote">${esc(order.admin_note||'')}</textarea>
-    <div class="act-grp" style="margin-top:12px">
-      <div class="act-btn dark" onclick="saveOrderNote('${order.id}')"><i class="fas fa-floppy-disk"></i> پاشەکەوتی تێبینی</div>
-      ${!order.balance_refunded_at && CORRECTABLE_ORDER_STATUSES.has(order.status)?`<div class="act-btn yw" onclick="openOrderCorrectionRequest('${order.id}')"><i class="fas fa-pen-to-square"></i> داوای ڕاستکردنەوە</div>`:''}
-    </div>
-    ${cancelWaitsRefund(order)?`<div class="act-grp" style="margin-top:12px">
-      <button type="button" class="act-btn gr" onclick="refundCancelledOrder('${order.id}')"><i class="fas fa-wallet"></i> گەڕاندنەوە بۆ باڵانس</button>
-    </div>`:''}
-    ${!order.balance_refunded_at && REVIEW_START_STATUSES.has(order.status)?`<div class="act-grp" style="margin-top:12px">
-      <div class="act-btn cy" onclick="setOrderReview('${order.id}',true)"><i class="fas fa-hourglass-half"></i> لەژێر پێداچوونەوە</div>
-    </div>`:''}
-    ${order.status===STATUS_REVIEW?`<div class="act-grp" style="margin-top:12px">
-      <div class="act-btn dark" onclick="setOrderReview('${order.id}',false)"><i class="fas fa-rotate-left"></i> گەڕاندنەوە بۆ چاوەڕوان</div>
-    </div>`:''}
-    ${!order.balance_refunded_at && order.status!==STATUS_APPROVED && order.status!==STATUS_CANCELLED && !order.payout_receipt_url && order.from_method!=='USDT' && order.to_method!=='USDT'?`<div class="act-grp" style="margin-top:12px">
-      <button type="button" class="act-btn rd" onclick="openOrderRefund('${order.id}')"><i class="fas fa-wallet"></i> ڕەتکردنەوە و گەڕاندنەوە بۆ باڵانس</button>
-    </div>`:''}
-    ${!order.balance_refunded_at && order.status===STATUS_APPROVED && order.from_method!=='USDT' && order.to_method!=='USDT'?`<div class="act-grp" style="margin-top:12px">
-      <button type="button" class="act-btn cy" onclick="openOrderShortfall('${order.id}')"><i class="fas fa-wallet" aria-hidden="true"></i> گەڕاندنەوەی بڕی کەم نێردراو بۆ باڵانس</button>
-    </div>`:''}
-    ${!order.balance_refunded_at && REVIEWABLE_ORDER_STATUSES.has(order.status)?`<div class="act-grp" style="margin-top:12px">
-      <div class="act-btn gr" style="flex:1;justify-content:center" onclick="approveOrder('${order.id}');closeMo('moOrderDetail')"><i class="fas fa-check"></i> پەسەندکردن</div>
-      <div class="act-btn rd" style="flex:1;justify-content:center" onclick="showRejectReason('${order.id}');closeMo('moOrderDetail')"><i class="fas fa-times"></i> ڕەتکردنەوە</div>
-    </div>`:''}
-    ${typeof ProxoOrderManual==='object'?ProxoOrderManual.buttonsHTML(order):''}
-  `;
+  const toUnit = order.to_method==='USDT'?'$':'IQD';
+  const row=(label,value,attrs='')=>`<div class="detail-row"><span class="lbl">${label}</span><span class="val"${attrs}>${value}</span></div>`;
+  const profileMail=order.profile?.email&&!/@phone\.proxobalance\.app$/i.test(order.profile.email)?order.profile.email:'';
+  const refunded=!!order.balance_refunded_at;
+  document.getElementById('odTitle').textContent = 'وردەکاری مامەڵە';
+
+  const head=`<div class="dx-head dx-head-order">
+      <div class="dx-head-main"><b dir="ltr">${esc(displayAmt)}</b>
+        <span class="dx-route"><span class="lv-w">${walletMark(order.from_method)}<span>${esc(walletName(order.from_method))}</span></span><i class="fas fa-arrow-left lv-arrow" aria-hidden="true"></i><span class="lv-w">${walletMark(order.to_method)}<span>${esc(walletName(order.to_method))}</span></span></span>
+      </div>
+      <div class="dx-head-end">${orderBadgeHTML(order)}</div>
+    </div>`;
+
+  const money=row('بڕی نێردراو',esc(displayAmt),' dir="ltr"')+
+    row('بڕی سەرەکی دوای لێبڕین',esc(formatNum(order.total)+' '+toUnit),' dir="ltr"')+
+    adminOrderRoundingRows(order)+
+    (Number(order.shortfall_refunded_iqd||0)>0?
+      row('کۆی گەڕاوەکان بۆ باڵانس',esc(formatNum(order.shortfall_refunded_iqd)+' IQD'),' dir="ltr" data-tone="ok"')+
+      row('نێردراو بە حسابی کۆی گەڕاوەکان',esc(formatNum(Number(order.total)-Number(order.shortfall_refunded_iqd))+' IQD'),' dir="ltr"'):'');
+  const sender=row('بەکارهێنەر',esc(order.profile?.full_name||'—'),' dir="rtl"')+
+    (order.profile?.phone?row('ژمارەی هەژمار',esc(order.profile.phone),' dir="ltr"'):'')+
+    (profileMail?row('ئیمەیڵ',esc(profileMail),' dir="ltr"'):'')+
+    ((order.sender_phone||walletNeedsSenderPhone(order.from_method))
+      ? row('ژمارەی نێرەر',esc(order.sender_phone||'—'),' dir="ltr"')
+      : row('ناوی هەژماری نێرەر',esc(order.sender_name||order.profile?.full_name||'—'),' dir="rtl"'));
+  const receiver=row('ژمارەی وەرگر',esc(order.phone||'—'),' dir="ltr"')+
+    (order.extra_info?row('زانیاری زیاتر',esc(order.extra_info),' dir="rtl"'):'');
+  const facts=row('ئایدی مامەڵە',orderCodeChip(order))+
+    row('بەروار',esc(fmtDateTime(order.created_at)),' dir="ltr"')+
+    (order.balance_debit_journal_id?row('تۆماری کەمکردنەوە لە باڵانس',esc(order.balance_debit_journal_id),' dir="ltr" data-small="1"'):'');
+
+  // receipts: the customer's, and on an approved order the one sent to the customer
+  const shot=(label,url)=>`<figure class="dx-fig"><button type="button" class="dx-shot" data-url="${esc(url)}" onclick="showImg(this.dataset.url)" aria-label="${esc(label)}"><img src="${esc(url)}" alt="" loading="lazy"></button><figcaption>${esc(label)}</figcaption></figure>`;
+  const shots=[];
+  if(!order.balance_debit_journal_id && order.receipt_url) shots.push(shot('پسووڵەی کڕیار',order.receipt_url));
+  if(order.status===STATUS_APPROVED && order.payout_receipt_url) shots.push(shot('پسووڵەی پارەدان بۆ کڕیار',order.payout_receipt_url));
+  const canAttach=order.status===STATUS_APPROVED&&typeof ProxoPayoutRounding==='object'&&ProxoPayoutRounding.canAttachReceipt(order);
+  const attach=!canAttach?'':_payoutReceiptUploads.has(order.id)?
+    `<button type="button" class="act-btn cy" id="podUploadLbl" onclick="uploadPayoutReceiptDirect(null,'${oid}')">پشکنینەوەی هەمان پسووڵەی پێشوو</button>`:
+    `<label class="act-btn cy dx-file" id="podUploadLbl">${order.payout_receipt_url?'گۆڕینی پسووڵەی پارەدان':'ناردنی پسووڵەی پارەدان بۆ کڕیار'}<input type="file" accept="image/*" hidden onchange="uploadPayoutReceiptDirect(this,'${oid}')"></label>`;
+  const receipts=(shots.length?`<div class="dx-shots">${shots.join('')}</div>`:'')+
+    (!order.balance_debit_journal_id&&!order.receipt_url?'<p class="dx-quiet">پسووڵەی کڕیار بۆ تیلیگرامی ئادمین نێردراوە.</p>':'')+
+    (attach?`<div class="dx-attach">${attach}</div>`:'');
+
+  // what can be done now; the decision is the last row
+  const acts=[];
+  if(!refunded && CORRECTABLE_ORDER_STATUSES.has(order.status)) acts.push(`<button type="button" class="act-btn" onclick="openOrderCorrectionRequest('${oid}')">داوای ڕاستکردنەوە</button>`);
+  if(!refunded && REVIEW_START_STATUSES.has(order.status)) acts.push(`<button type="button" class="act-btn" onclick="setOrderReview('${oid}',true)">لەژێر پێداچوونەوە</button>`);
+  if(order.status===STATUS_REVIEW) acts.push(`<button type="button" class="act-btn" onclick="setOrderReview('${oid}',false)">گەڕاندنەوە بۆ چاوەڕوان</button>`);
+  if(cancelWaitsRefund(order)) acts.push(`<button type="button" class="act-btn gr" onclick="refundCancelledOrder('${oid}')">گەڕاندنەوە بۆ باڵانس</button>`);
+  if(!refunded && order.status===STATUS_APPROVED && order.from_method!=='USDT' && order.to_method!=='USDT') acts.push(`<button type="button" class="act-btn" onclick="openOrderShortfall('${oid}')">گەڕاندنەوەی بڕی کەم نێردراو بۆ باڵانس</button>`);
+  if(!refunded && order.status!==STATUS_APPROVED && order.status!==STATUS_CANCELLED && !order.payout_receipt_url && order.from_method!=='USDT' && order.to_method!=='USDT') acts.push(`<button type="button" class="act-btn rd" onclick="openOrderRefund('${oid}')">ڕەتکردنەوە و گەڕاندنەوە بۆ باڵانس</button>`);
+  const decide=!refunded && REVIEWABLE_ORDER_STATUSES.has(order.status)?
+    `<div class="dx-decide"><button type="button" class="act-btn gr" onclick="approveOrder('${oid}');closeMo('moOrderDetail')">پەسەندکردن</button><button type="button" class="act-btn rd" onclick="showRejectReason('${oid}');closeMo('moOrderDetail')">ڕەتکردنەوە</button></div>`:'';
+
+  document.getElementById('odContent').innerHTML = head+
+    dxGroup('بڕ',money)+dxGroup('نێرەر',sender)+dxGroup('وەرگر',receiver)+dxGroup('مامەڵە',facts)+
+    (receipts?`<section class="dx-group"><h4 class="dx-h">پسووڵە</h4>${receipts}</section>`:'')+
+    (order.correction_request?`<div class="order-admin-correction request"><b>داوای ڕاستکردنەوەی ئادمین</b><p>${esc(order.correction_request)}</p><small dir="ltr">${order.correction_requested_at?esc(fmtDateTime(order.correction_requested_at)):''}</small></div>`:'')+
+    (order.correction_response?`<div class="order-admin-correction response"><b>وەڵامی کڕیار</b><p>${esc(order.correction_response)}</p><small dir="ltr">${order.correction_responded_at?esc(fmtDateTime(order.correction_responded_at)):''}</small></div>`:'')+
+    `<div id="odCorrectionHistory" class="order-correction-history-loading"><i class="fas fa-circle-notch fa-spin"></i> مێژووی ڕاستکردنەوە بار دەکرێت...</div>`+
+    (order.status===STATUS_APPROVED?`<section class="dx-group"><h4 class="dx-h">هەڵسەنگاندنی کڕیار</h4><div class="admin-order-feedback" id="adminOrderFeedback"><p>هەڵسەنگاندن بار دەکرێت...</p></div></section>`:'')+
+    `<section class="dx-group dx-notebox"><h4 class="dx-h"><label for="odNote">تێبینی ئادمین</label></h4>
+      <textarea class="minp mta" id="odNote" rows="3">${esc(order.admin_note||'')}</textarea>
+      <div class="dx-note-save"><button type="button" class="act-btn" onclick="saveOrderNote('${oid}')">پاشەکەوتی تێبینی</button></div></section>`+
+    (acts.length?`<div class="dx-acts">${acts.join('')}</div>`:'')+
+    decide+
+    (typeof ProxoOrderManual==='object'?ProxoOrderManual.buttonsHTML(order):'');
   openMo('moOrderDetail');
   if(typeof ProxoOrderManual==='object') ProxoOrderManual.loadHistory(order.id);
   loadOrderCorrectionHistory(order.id);
@@ -1487,10 +1498,10 @@ async function loadAdminOrderFeedback(orderId){
   try{
     const {data,error}=await sb.from('ex_order_feedback').select('rating,comment,created_at').eq('order_id',orderId).maybeSingle();
     if(error)throw error;
-    if(!data){panel.innerHTML='<h4>هەڵسەنگاندنی کڕیار</h4><p>هێشتا هەڵسەنگاندنی بۆ ئەم داواکارییە تۆمار نەکراوە.</p>';return;}
+    if(!data){panel.innerHTML='<p>هێشتا هەڵسەنگاندنی بۆ ئەم داواکارییە تۆمار نەکراوە.</p>';return;}
     const stars=Array.from({length:5},(_,index)=>`<span class="${index<Number(data.rating)?'filled':''}" aria-hidden="true">★</span>`).join('');
-    panel.innerHTML=`<h4>هەڵسەنگاندنی کڕیار</h4><div class="feedback-stars" aria-label="${Number(data.rating)} لە 5 ئەستێرە">${stars}</div>${data.comment?`<p class="feedback-comment">${esc(data.comment)}</p>`:'<p>تەنها ئەستێرە هەڵبژێردراوە.</p>'}<small>${data.created_at?esc(fmtDateTime(data.created_at)):''}</small>`;
-  }catch(error){panel.innerHTML='<h4>هەڵسەنگاندنی کڕیار</h4><p>نەتوانرا هەڵسەنگاندن باربکرێت.</p>';}
+    panel.innerHTML=`<div class="feedback-stars" aria-label="${Number(data.rating)} لە 5 ئەستێرە">${stars}</div>${data.comment?`<p class="feedback-comment">${esc(data.comment)}</p>`:'<p>تەنها ئەستێرە هەڵبژێردراوە.</p>'}<small>${data.created_at?esc(fmtDateTime(data.created_at)):''}</small>`;
+  }catch(error){panel.innerHTML='<p>نەتوانرا هەڵسەنگاندن باربکرێت.</p>';}
 }
 
 function correctionHistoryValue(value){
@@ -1881,10 +1892,10 @@ function accountBalanceCell(id){
     (row&&Number(row.held_iqd)>0?'<div class="rec-card-sub">پارەی گیراو: '+formatNum(row.held_iqd)+' دینار</div>':'');
 }
 function accountBalanceDetails(row){
-  return '<div class="ai-sec">باڵانسی هەژمار</div>'+
-    '<div class="detail-row"><div class="lbl">باڵانسی بەردەست</div><div class="val">'+accountBalanceValue(row)+'</div></div>'+
-    '<div class="detail-row"><div class="lbl">پارەی گیراو</div><div class="val">'+(row?formatNum(row.held_iqd)+' دینار':'—')+'</div></div>'+
-    '<div class="detail-row"><div class="lbl">دوایین نوێکردنەوە</div><div class="val">'+(row?.updated_at?fmtDateTime(row.updated_at):'—')+'</div></div>';
+  return dxGroup('باڵانسی هەژمار',
+    '<div class="detail-row"><span class="lbl">باڵانسی بەردەست</span><span class="val" dir="ltr">'+accountBalanceValue(row)+'</span></div>'+
+    '<div class="detail-row"><span class="lbl">پارەی گیراو</span><span class="val" dir="ltr">'+(row?formatNum(row.held_iqd)+' دینار':'—')+'</span></div>'+
+    '<div class="detail-row"><span class="lbl">دوایین نوێکردنەوە</span><span class="val" dir="ltr">'+(row?.updated_at?fmtDateTime(row.updated_at):'—')+'</span></div>');
 }
 // Entering the page always reads the accounts again (leaving it reset the page).
 function openAccountsPage(){
@@ -1992,15 +2003,28 @@ function renderAccCards(list){ return renderAccTable(list); }
 // Injected from JS so no change to exchange-admin.html is needed.
 // ══════════════════════════════════════════════════════════════
 let _accountInfoLoad=0;
+// ── detail windows (order, account, identity) share one language with the lists and
+// the ban window: a summary card first, then titled groups of label/value rows.
+// assets/css/admin-details.css lays them out.
+function dxGroup(title, rows, cls){
+  return '<section class="dx-group'+(cls?' '+cls:'')+'">'+(title?'<h4 class="dx-h">'+esc(title)+'</h4>':'')+'<div class="dx-card">'+rows+'</div></section>';
+}
+function dxPersonHead(name, sub, end, tone){
+  const n=String(name||'').trim();
+  return '<div class="dx-head'+(tone?' tone-'+tone:'')+'"><span class="lv-av">'+esc(n.charAt(0).toUpperCase()||'?')+'</span>'+
+    '<div class="dx-head-main"><b>'+esc(n||'بێ ناو')+'</b>'+(sub?'<small dir="ltr">'+esc(sub)+'</small>':'')+'</div>'+
+    (end?'<div class="dx-head-end">'+end+'</div>':'')+'</div>';
+}
 function ensureAccountInfoModal(){
   if(document.getElementById('moAccountInfo')) return;
   const o=document.createElement('div');
   o.className='overlay'; o.id='moAccountInfo';
-  o.innerHTML=`<div class="modal" style="max-width:560px">
+  o.innerHTML=`<div class="modal dx-modal" role="dialog" aria-modal="true" aria-labelledby="aiTitle">
       <div class="modal-hdr">
-        <h3 id="aiTitle">زانیاری هەژمار</h3>
+        <h3>زانیاری هەژمار</h3>
         <div class="modal-close" onclick="closeMo('moAccountInfo')"><i class="fas fa-xmark"></i></div>
       </div>
+      <div class="dx-head" id="aiHead"><span class="lv-av" id="aiAv"></span><div class="dx-head-main"><b id="aiTitle"></b><small id="aiSub" dir="ltr"></small></div><div class="dx-head-end" id="aiBadges"></div></div>
       <div id="aiBody"></div>
     </div>`;
   document.body.appendChild(o);
@@ -2009,30 +2033,34 @@ function ensureAccountInfoModal(){
 
 function contactCell(value, verified){
   if(!value) return '—';
-  return esc(value)+(verified?' <span style="color:var(--gr);font-size:11px">✓ پشتڕاستکراوە</span>':' <span style="color:var(--mt);font-size:11px">پشتڕاست نەکراوە</span>');
+  return esc(value)+(verified?' <span class="ct-ver is-ok">پشتڕاستکراوە</span>':' <span class="ct-ver">پشتڕاست نەکراوە</span>');
 }
 async function openAccountInfo(id){
   const a=allAccounts.find(x=>x.id===id);
   if(!a){ showToast('هەژمارەکە نەدۆزرایەوە','rd'); return; }
   ensureAccountInfoModal();
   const loadId=++_accountInfoLoad;
-  document.getElementById('aiTitle').textContent=a.full_name||a.email||'زانیاری هەژمار';
+  const name=a.full_name||a.email||'زانیاری هەژمار';
+  document.getElementById('aiTitle').textContent=name;
+  document.getElementById('aiAv').textContent=String(name).trim().charAt(0).toUpperCase()||'?';
+  document.getElementById('aiSub').textContent=[a.username?'@'+a.username:'',a.phone||a.email||''].filter(Boolean).join('  ·  ');
+  document.getElementById('aiBadges').innerHTML=accBadges(a);
+  const head=document.getElementById('aiHead');
+  if(head) head.className='dx-head tone-'+(a.is_banned?'banned':a.is_admin?'admin':'active');
+  const row=(label,value,attrs='')=>'<div class="detail-row"><span class="lbl">'+label+'</span><span class="val"'+attrs+'>'+value+'</span></div>';
 
-  const base=`
-    <div class="ai-sec">زانیاری بنەڕەتی</div>
-    <div class="detail-row"><div class="lbl">ناوی تەواو</div><div class="val" dir="rtl">${esc(a.full_name||'—')}</div></div>
-    <div class="detail-row"><div class="lbl">ناوی بەکارهێنەر</div><div class="val">${a.username?'@'+esc(a.username):'—'}</div></div>
-    <div class="detail-row"><div class="lbl">ئیمەیل</div><div class="val">${contactCell(a.email, !!a.email_verified_at)}</div></div>
-    <div class="detail-row"><div class="lbl">ڕۆڵ</div><div class="val" dir="rtl">${a.role==='super_admin'?'سوپەر ئادمین':a.role==='admin'?'ئادمین':'بەکارهێنەر'}</div></div>
-    <div class="detail-row"><div class="lbl">ژمارەی مۆبایل</div><div class="val">${contactCell(a.phone, !!a.phone_verified_at)}</div></div>
-    <div class="detail-row"><div class="lbl">باری هەژمار</div><div class="val" dir="rtl">${accBadges(a)}</div></div>
-    <div class="detail-row"><div class="lbl">بەرواری تۆمارکردن</div><div class="val">${fmtDate(a.created_at)}</div></div>
-    <div class="detail-row"><div class="lbl">کاتی تۆمارکردن</div><div class="val">${fmtTime(a.created_at)||'—'}</div></div>
-    <div class="detail-row"><div class="lbl">تەمەنی هەژمار</div><div class="val" dir="rtl">${fmtAgo(a.created_at)||'—'}</div></div>
-    <div class="detail-row"><div class="lbl">ئایدی بەکارهێنەر</div><div class="val" style="font-size:11px">${esc(a.id)}</div></div>`;
+  const base=dxGroup('زانیاری بنەڕەتی',
+    row('ناوی تەواو',esc(a.full_name||'—'),' dir="rtl"')+
+    row('ناوی بەکارهێنەر',a.username?'@'+esc(a.username):'—',' dir="ltr"')+
+    row('ژمارەی مۆبایل',contactCell(a.phone, !!a.phone_verified_at),' dir="ltr"')+
+    row('ئیمەیڵ',contactCell(a.email, !!a.email_verified_at),' dir="ltr"')+
+    row('ڕۆڵ',a.role==='super_admin'?'سوپەر ئادمین':a.role==='admin'?'ئادمین':'بەکارهێنەر',' dir="rtl"')+
+    row('بەرواری تۆمارکردن',esc(fmtDate(a.created_at)+(fmtTime(a.created_at)?' — '+fmtTime(a.created_at):'')),' dir="ltr"')+
+    row('تەمەنی هەژمار',esc(fmtAgo(a.created_at)||'—'),' dir="rtl"')+
+    row('ئایدی بەکارهێنەر',esc(a.id),' dir="ltr" data-small="1"'));
 
   document.getElementById('aiBody').innerHTML = base + accountBalanceDetails(null) +
-    `<div class="ai-sec">چالاکی</div><div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>`;
+    `<section class="dx-group"><h4 class="dx-h">داواکارییەکان</h4><div class="dx-card dx-wait"><i class="fas fa-circle-notch fa-spin"></i></div></section>`;
   openMo('moAccountInfo');
 
   const [ordersRes, ipsRes, balanceRes] = await Promise.all([
@@ -2047,7 +2075,7 @@ async function openAccountInfo(id){
     if(_curPage==='accounts')filterAccounts();
   }
   const balanceHtml=balanceRes.error
-    ? '<div class="ai-sec">باڵانسی هەژمار</div><div class="fee-toggle-note">نەتوانرا باڵانس بخوێندرێتەوە: '+esc(balanceRes.error.message)+'</div>'
+    ? '<section class="dx-group"><h4 class="dx-h">باڵانسی هەژمار</h4><p class="dx-quiet is-bad">نەتوانرا باڵانس بخوێندرێتەوە: '+esc(balanceRes.error.message)+'</p></section>'
     : accountBalanceDetails(balanceRes.data[0]);
 
   const orders = ordersRes.data||[];
@@ -2057,36 +2085,29 @@ async function openAccountInfo(id){
   const last = orders[0];
 
   let html = base + balanceHtml + `
-    <div class="ai-sec">چالاکی داواکارییەکان</div>
-    <div class="ai-stats">
-      <div class="ai-stat"><b>${formatNum(orders.length)}</b><span>کۆی داواکاری</span></div>
-      <div class="ai-stat yw"><b>${formatNum(n(STATUS_PENDING))}</b><span>چاوەڕوان</span></div>
-      <div class="ai-stat gr"><b>${formatNum(n(STATUS_APPROVED))}</b><span>پەسەندکراو</span></div>
-      <div class="ai-stat rd"><b>${formatNum(n(STATUS_REJECTED))}</b><span>ڕەتکراو</span></div>
+    <section class="dx-group"><h4 class="dx-h">داواکارییەکان</h4>
+    <div class="dx-card dx-stats">
+      <div class="dx-stat"><b>${formatNum(orders.length)}</b><span>کۆی داواکاری</span></div>
+      <div class="dx-stat tone-wait"><b>${formatNum(n(STATUS_PENDING))}</b><span>چاوەڕوان</span></div>
+      <div class="dx-stat tone-ok"><b>${formatNum(n(STATUS_APPROVED))}</b><span>پەسەندکراو</span></div>
+      <div class="dx-stat tone-no"><b>${formatNum(n(STATUS_REJECTED))}</b><span>ڕەتکراو</span></div>
     </div>
-    <div class="detail-row" style="margin-top:10px"><div class="lbl">کۆی گۆڕینەوەی پەسەندکراو</div><div class="val">${formatNum(volume)} IQD</div></div>
-    <div class="detail-row"><div class="lbl">دوایین داواکاری</div><div class="val">${last?fmtDateTime(last.created_at):'—'}</div></div>`;
+    <div class="dx-card">${row('کۆی گۆڕینەوەی پەسەندکراو',esc(formatNum(volume)+' IQD'),' dir="ltr"')}${row('دوایین داواکاری',last?esc(fmtDateTime(last.created_at)):'—',' dir="ltr"')}</div>
+    </section>`;
 
   const ips = ipsRes.ips||[];
-  html += `<div class="ai-sec">پشتڕاستکردنەوەی ناسنامە</div>
-    <div class="detail-row"><div class="lbl">دۆخ</div><div class="val" dir="rtl" id="aiKycStatus"><i class="fas fa-circle-notch fa-spin"></i></div></div>
-    <div class="act-grp" style="margin:8px 0 4px">
-      <div class="act-btn cy" onclick="openKycRequestById('${esc(a.id)}')"><i class="fas fa-id-card"></i> داواکردنی پشتڕاستکردنەوە</div>
-      <div class="act-btn dark" onclick="closeMo('moAccountInfo');goPage('kyc');setTimeout(()=>{const s=document.getElementById('kycListSearch'); if(s){ s.value='${esc(a.username||'')}'; setKycFilter('all'); }},50)"><i class="fas fa-clock-rotate-left"></i> مێژووی پشتڕاستکردنەوە</div>
-    </div>`;
-  html += `<div class="ai-sec">IP و ئامێر</div>`;
-  if(!ips.length){
-    html += `<div class="fee-toggle-note">هیچ IPـیەک بۆ ئەم هەژمارە تۆمار نەکراوە.</div>`;
-  }else{
-    html += ips.map(r=>`
-      <div class="detail-row">
-        <div class="lbl" style="flex:1;min-width:0">
-          <span class="ip-chip ${r.is_banned?'banned':''}">${esc(r.ip_address)}</span>
-          <div style="font-size:10.5px;margin-top:4px">${esc(r.browser||'—')} · ${esc(r.os||'')} · ${esc(r.device||'')}</div>
-        </div>
-        <div class="val" style="font-size:11px">${r.events} ڕووداو<br>${fmtDateTime(r.last_seen)}</div>
-      </div>`).join('');
-  }
+  html += `<section class="dx-group"><h4 class="dx-h">پشتڕاستکردنەوەی ناسنامە</h4>
+    <div class="dx-card">${row('دۆخ','<i class="fas fa-circle-notch fa-spin"></i>',' dir="rtl" id="aiKycStatus"')}</div>
+    <div class="dx-acts">
+      <button type="button" class="act-btn" onclick="openKycRequestById('${esc(a.id)}')">داواکردنی پشتڕاستکردنەوە</button>
+      <button type="button" class="act-btn" onclick="closeMo('moAccountInfo');goPage('kyc');setTimeout(()=>{const s=document.getElementById('kycListSearch'); if(s){ s.value='${esc(a.username||'')}'; setKycFilter('all'); }},50)">مێژووی پشتڕاستکردنەوە</button>
+    </div></section>`;
+  html += ips.length ? dxGroup('IP و ئامێر', ips.map(r=>`
+      <div class="detail-row dx-ip">
+        <span class="lbl"><span class="ip-chip ${r.is_banned?'banned':''}" dir="ltr">${esc(r.ip_address)}</span><small>${esc([r.browser,r.os,r.device].filter(Boolean).join(' · ')||'—')}</small></span>
+        <span class="val" dir="rtl">${formatNum(r.events)} ڕووداو<small dir="ltr">${esc(fmtDateTime(r.last_seen))}</small></span>
+      </div>`).join(''))
+    : '<section class="dx-group"><h4 class="dx-h">IP و ئامێر</h4><p class="dx-quiet">هیچ IPـیەک بۆ ئەم هەژمارە تۆمار نەکراوە.</p></section>';
 
   document.getElementById('aiBody').innerHTML = html;
   try{
@@ -3343,13 +3364,12 @@ function kycNameCompareHTML(it){
     note='<p class="kyc-nc-note bad"><i class="fas fa-triangle-exclamation"></i> ناوی ئێستای هەژمار جیاوازە لەم داواکارییە.</p>';
   }
   if(!same && it.status==='approved' && it.is_latest_approved){
-    note+='<button class="modal-btn cy" id="kycSyncNameBtn" onclick="syncKycProfileName()"><i class="fas fa-arrows-rotate"></i> نوێکردنەوەی ناوی هەژمار بە ناوی سەر ناسنامە</button>';
+    note+='<button type="button" class="act-btn" id="kycSyncNameBtn" onclick="syncKycProfileName()">نوێکردنەوەی ناوی هەژمار بە ناوی سەر ناسنامە</button>';
   }
-  return `<div class="kyc-name-compare ${same?'ok':'bad'}">
-    <div class="kyc-nc-grid">
-      <div><small>ناوی هەژمار</small><b dir="auto">${esc(account||'—')}</b></div>
-      <div><small>ناوی سەر ناسنامە (یاسایی)</small><b dir="auto">${esc(legal||'—')}</b></div>
-    </div>${note}</div>`;
+  return `<section class="dx-group kyc-name-compare ${same?'ok':'bad'}"><h4 class="dx-h">ناو</h4><div class="dx-card">
+      <div class="detail-row"><span class="lbl">ناوی هەژمار</span><span class="val" dir="auto">${esc(account||'—')}</span></div>
+      <div class="detail-row"><span class="lbl">ناوی سەر ناسنامە</span><span class="val" dir="auto">${esc(legal||'—')}</span></div>
+    </div>${note}</section>`;
 }
 async function syncKycProfileName(){
   const it=_kycReviewItem;
@@ -3437,10 +3457,11 @@ function onKycListSearch(){
 
 function kycUserLine(u){
   u=u||{};
-  return `<div class="user-cell"><div class="mini-av">${esc((u.full_name||u.email||'?')[0].toUpperCase())}</div>
+  const n=String(u.full_name||u.email||'?').trim();
+  return `<div class="user-cell kyc-person"><span class="lv-av">${esc(n.charAt(0).toUpperCase()||'?')}</span>
     <div style="min-width:0"><div class="user-cell-name">${esc(u.full_name||'بێ ناو')}</div>
     <div class="user-cell-handle" dir="ltr">${u.username?'@'+esc(u.username):'—'}</div>
-    <div class="user-cell-email">${esc(u.email||'—')}</div></div></div>`;
+    ${u.email?`<div class="user-cell-email">${esc(u.email)}</div>`:''}</div></div>`;
 }
 
 function renderKycList(){
@@ -3543,11 +3564,11 @@ async function openKycRequestById(userId){
 }
 function showKycRequestModal(u){
   _kycReqTarget=u;
-  document.getElementById('kycReqUser').innerHTML=kycUserLine(u)+`<div style="margin-top:8px">${kycBadgeHTML(u.kyc_status)}</div>`;
+  document.getElementById('kycReqUser').innerHTML=dxPersonHead(u.full_name||u.username,[u.username?'@'+u.username:'',u.email||''].filter(Boolean).join('  ·  '),kycBadgeHTML(u.kyc_status));
   document.getElementById('kycReqReason').value='';
   const btn=document.getElementById('kycReqSendBtn');
   btn.disabled=false;
-  btn.innerHTML='<i class="fas fa-paper-plane"></i> ناردنی داواکاری';
+  btn.textContent='ناردنی داواکاری';
   openMo('moKycRequest');
 }
 async function confirmKycRequest(){
@@ -3567,7 +3588,7 @@ async function confirmKycRequest(){
     if(_curPage==='kyc') loadKycAdmin(); else loadKycSummary(false);
   }catch(e){
     showToast(adminDbMessage(e),'rd');
-    btn.disabled=false; btn.innerHTML='<i class="fas fa-paper-plane"></i> ناردنی داواکاری';
+    btn.disabled=false; btn.textContent='ناردنی داواکاری';
   }finally{ _kycBusy=false; }
 }
 function cancelKycRequest(requestId){
@@ -3615,46 +3636,38 @@ async function openKycReview(i){
   const u=it.user||{};
   const pending=it.status==='pending';
   const isSelf=adminUser && u.id===adminUser.id;
-  document.getElementById('kycRvTitle').textContent=(pending?'پشکنینی بەڵگەنامە — ':'بەڵگەنامە — ')+(u.full_name||u.username||'');
+  document.getElementById('kycRvTitle').textContent=pending?'پشکنینی بەڵگەنامە':'بەڵگەنامەی ناسنامە';
   const r=it.request;
-  document.getElementById('kycRvBody').innerHTML=`
-    <div class="kyc-rv-top">${kycUserLine(u)}${kycBadgeHTML(it.status)}</div>
-    <div class="kyc-rv-images">
-      <figure><figcaption>ڕووی پێشەوە</figcaption><div class="kyc-img-slot" id="kycRvFront"><i class="fas fa-circle-notch fa-spin"></i></div></figure>
-      <figure><figcaption>ڕووی دواوە</figcaption><div class="kyc-img-slot" id="kycRvBack"><i class="fas fa-circle-notch fa-spin"></i></div></figure>
-    </div>
-    ${it.exchange_blocked?'<div class="kyc-admin-note danger"><b>ئاڵوگۆڕ ڕاگیراوە</b><p>ئەم بەکارهێنەرە تا پەسەندکردنی ناسنامەکەی ناتوانێت ئاڵوگۆڕی نوێ بکات.</p></div>':''}
-    <div class="ai-sec">ناو</div>
-    ${kycNameCompareHTML(it)}
-    <div class="ai-sec">زانیارییەکانی بەڵگەنامە</div>
-    <div class="detail-row"><div class="lbl">جۆری بەڵگەنامە</div><div class="val" dir="rtl">${esc(KYC_ADMIN_DOC[it.document_type]||it.document_type)}</div></div>
-    <div class="detail-row"><div class="lbl">ناوی تەواوی یاسایی</div><div class="val" dir="rtl">${esc(it.full_legal_name)}</div></div>
-    <div class="detail-row"><div class="lbl">بەرواری لەدایکبوون</div><div class="val">${esc(it.date_of_birth||'—')}</div></div>
-    <div class="detail-row"><div class="lbl">ژمارەی بەڵگەنامە</div><div class="val">${esc(it.document_number)}</div></div>
-    <div class="detail-row"><div class="lbl">ناوی هەژمار</div><div class="val" dir="rtl">${esc(u.full_name||'—')}</div></div>
-    <div class="detail-row"><div class="lbl">ئیمەیل</div><div class="val">${esc(u.email||'—')}</div></div>
-    <div class="detail-row"><div class="lbl">کاتی ناردن</div><div class="val">${esc(fmtDateTime(it.submitted_at))}</div></div>
-    ${it.reviewed_at?`<div class="detail-row"><div class="lbl">کاتی بڕیار</div><div class="val">${esc(fmtDateTime(it.reviewed_at))}</div></div>
-    <div class="detail-row"><div class="lbl">بڕیاردەر</div><div class="val" dir="rtl">${esc(it.reviewer?.full_name||'—')}${it.reviewer?.username?' <span dir="ltr">@'+esc(it.reviewer.username)+'</span>':''}</div></div>`:''}
-    ${it.rejection_reason?`<div class="kyc-admin-note danger"><b>هۆکاری ڕەتکردنەوە</b><p>${esc(it.rejection_reason)}</p></div>`:''}
-    ${r?`<div class="kyc-admin-note"><b>داواکاری ئادمین — ${esc(r.requested_by||'')} (${esc(fmtDateTime(r.created_at))})</b><p>${esc(r.reason||'بێ هۆکار')}</p></div>`:''}
-    ${pending ? (isSelf ? `<div class="kyc-admin-note danger"><b>ئاگاداری</b><p>ناتوانیت بەڵگەنامەی خۆت پەسەند یان ڕەت بکەیتەوە.</p></div>` : `
-    <div class="ai-sec">بڕیار</div>
-    <label class="modal-lbl" for="kycRvReason">هۆکاری ڕەتکردنەوە <span style="font-weight:400">(تەنها بۆ ڕەتکردنەوە پێویستە)</span></label>
-    <textarea class="minp mta" id="kycRvReason" maxlength="500" placeholder="بۆ نموونە: وێنەی بەڵگەنامەکە ڕوون نییە."></textarea>
-    <div class="kyc-quick">
-      <span onclick="kycFillReason('kycRvReason',this)">وێنەی بەڵگەنامەکە ڕوون نییە.</span>
-      <span onclick="kycFillReason('kycRvReason',this)">هەموو گۆشەکانی بەڵگەنامەکە دیار نین.</span>
-      <span onclick="kycFillReason('kycRvReason',this)">زانیارییەکان لەگەڵ بەڵگەنامەکە ناگونجێن.</span>
-      <span onclick="kycFillReason('kycRvReason',this)">بەڵگەنامەکە بەسەرچووە.</span>
-      <span onclick="kycFillReason('kycRvReason',this)">The document image is not clear.</span>
-    </div>
-    <div class="kyc-rv-actions">
-      <button class="modal-btn rd" id="kycRvRejectBtn" onclick="reviewKyc('reject')"><i class="fas fa-circle-xmark"></i> ڕەتکردنەوە</button>
-      <button class="modal-btn gr" id="kycRvApproveBtn" onclick="reviewKyc('approve')"><i class="fas fa-circle-check"></i> پەسەندکردن</button>
-    </div>`) : ''}
-    <div class="ai-sec">مێژوو</div>
-    <div id="kycRvHistory" class="kyc-timeline"><div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div></div>`;
+  const row=(label,value,attrs='')=>'<div class="detail-row"><span class="lbl">'+label+'</span><span class="val"'+attrs+'>'+value+'</span></div>';
+  const quick=['وێنەی بەڵگەنامەکە ڕوون نییە.','هەموو گۆشەکانی بەڵگەنامەکە دیار نین.','زانیارییەکان لەگەڵ بەڵگەنامەکە ناگونجێن.','بەڵگەنامەکە بەسەرچووە.','The document image is not clear.'];
+  document.getElementById('kycRvBody').innerHTML=
+    dxPersonHead(u.full_name||u.username,[u.username?'@'+u.username:'',u.email||''].filter(Boolean).join('  ·  '),kycBadgeHTML(it.status))+
+    (it.exchange_blocked?'<div class="kyc-admin-note danger"><b>ئاڵوگۆڕ ڕاگیراوە</b><p>تا پەسەندکردنی ناسنامەکەی ناتوانێت ئاڵوگۆڕی نوێ بکات.</p></div>':'')+
+    `<section class="dx-group"><h4 class="dx-h">وێنەکان</h4><div class="dx-shots kyc-rv-images">
+      <figure class="dx-fig"><div class="kyc-img-slot" id="kycRvFront"><i class="fas fa-circle-notch fa-spin"></i></div><figcaption>ڕووی پێشەوە</figcaption></figure>
+      <figure class="dx-fig"><div class="kyc-img-slot" id="kycRvBack"><i class="fas fa-circle-notch fa-spin"></i></div><figcaption>ڕووی دواوە</figcaption></figure>
+    </div></section>`+
+    kycNameCompareHTML(it)+
+    dxGroup('بەڵگەنامە',
+      row('جۆری بەڵگەنامە',esc(KYC_ADMIN_DOC[it.document_type]||it.document_type),' dir="rtl"')+
+      row('ناوی تەواوی یاسایی',esc(it.full_legal_name),' dir="auto"')+
+      row('بەرواری لەدایکبوون',esc(it.date_of_birth||'—'),' dir="ltr"')+
+      row('ژمارەی بەڵگەنامە',esc(it.document_number),' dir="ltr"')+
+      row('کاتی ناردن',esc(fmtDateTime(it.submitted_at)),' dir="ltr"')+
+      (it.reviewed_at?row('کاتی بڕیار',esc(fmtDateTime(it.reviewed_at)),' dir="ltr"')+
+        row('بڕیاردەر',esc(it.reviewer?.full_name||'—')+(it.reviewer?.username?' <span dir="ltr">@'+esc(it.reviewer.username)+'</span>':''),' dir="rtl"'):''))+
+    (it.rejection_reason?`<div class="kyc-admin-note danger"><b>هۆکاری ڕەتکردنەوە</b><p>${esc(it.rejection_reason)}</p></div>`:'')+
+    (r?`<div class="kyc-admin-note"><b>داواکاری ئادمین · ${esc(r.requested_by||'—')} · <span dir="ltr">${esc(fmtDateTime(r.created_at))}</span></b><p>${esc(r.reason||'بێ هۆکار')}</p></div>`:'')+
+    (pending ? (isSelf ? `<div class="kyc-admin-note danger"><b>ئاگاداری</b><p>ناتوانیت بەڵگەنامەی خۆت پەسەند یان ڕەت بکەیتەوە.</p></div>` : `
+    <section class="dx-group"><h4 class="dx-h"><label for="kycRvReason">هۆکاری ڕەتکردنەوە</label></h4>
+      <textarea class="minp mta" id="kycRvReason" maxlength="500" rows="3" placeholder="تەنها بۆ ڕەتکردنەوە پێویستە"></textarea>
+      <div class="kyc-quick">${quick.map(q=>`<button type="button" class="kyc-chip" onclick="kycFillReason('kycRvReason',this)"${/^[A-Za-z]/.test(q)?' dir="ltr"':''}>${esc(q)}</button>`).join('')}</div>
+    </section>
+    <div class="dx-decide kyc-rv-actions">
+      <button type="button" class="act-btn gr" id="kycRvApproveBtn" onclick="reviewKyc('approve')">پەسەندکردن</button>
+      <button type="button" class="act-btn rd" id="kycRvRejectBtn" onclick="reviewKyc('reject')">ڕەتکردنەوە</button>
+    </div>`) : '')+
+    `<section class="dx-group"><h4 class="dx-h">مێژوو</h4><div id="kycRvHistory" class="dx-card kyc-timeline"><div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div></div></section>`;
   openMo('moKycReview');
   loadKycImage(it.front_image_path,'kycRvFront');
   loadKycImage(it.back_image_path,'kycRvBack');

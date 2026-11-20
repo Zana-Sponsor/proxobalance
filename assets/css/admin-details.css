@@ -1,0 +1,301 @@
+/* Panel detail windows — an order, an account, an identity document (assets/js/admin.js),
+   and the identity list. v61. The same language as the lists and the ban window
+   (admin-lists.css): a summary card first (who or what, the state at the end), then
+   titled groups of label/value rows in white cards, the pictures, a note, and the
+   decisions last. Loaded after every other panel sheet; the ids in the selectors
+   outrank the panel theme's !important button and field rules. */
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) {
+  --dx-paper: #ffffff; --dx-soft: #f8fafc; --dx-ink: #202c3c; --dx-muted: #66768c; --dx-line: #e8edf3;
+  --dx-rule: #eef2f6; --dx-ctl: #f2f4f7; --dx-ctl-line: #dce3eb; --dx-blue: #1685fa;
+  --dx-ok: #15803d; --dx-ok-bg: #16a34a; --dx-no: #b42318; --dx-no-line: #f2c9c9; --dx-no-soft: #fef2f2;
+  --dx-warn: #b45309; --dx-warn-line: #f3dfb8; --dx-warn-soft: #fffaf0;
+  --dx-info: #0b6bcb; --dx-info-line: #d6e6fb; --dx-info-soft: #f5f9ff;
+}
+html body #moAccountInfo .modal.dx-modal { max-width: 560px; }
+html body #moKycReview .modal.kyc-review-modal { max-width: 640px !important; }
+
+/* ── summary card ── */
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-head {
+  display: flex; align-items: center; gap: 12px; margin: 0; padding: 14px 16px;
+  border: 1px solid var(--dx-line); border-radius: 14px; background: var(--dx-soft);
+}
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-head .lv-av { width: 44px; height: 44px; font-size: 17px; }
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-head.tone-banned .lv-av { background: #fdeeee; color: var(--dx-no); }
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-head-main { flex: 1 1 auto; min-width: 0; }
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-head-main b {
+  display: block; overflow: hidden; color: var(--dx-ink); font-size: 15px; font-weight: 600; line-height: 1.5;
+  text-overflow: ellipsis; white-space: nowrap;
+}
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-head-main small {
+  display: block; margin-top: 2px; overflow: hidden; color: var(--dx-muted); font-size: 12.5px; line-height: 1.5;
+  text-align: right; text-overflow: ellipsis; white-space: nowrap; unicode-bidi: isolate;
+}
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-head-main small:empty { display: none; }
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-head-end {
+  flex: 0 1 auto; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px; max-width: 46%;
+}
+/* an order: the amount, and the route under it with each wallet's own mark */
+html body #moOrderDetail .dx-head-order .dx-head-main b {
+  font-family: Inter, system-ui, sans-serif; font-size: 20px; font-weight: 600; line-height: 1.35;
+  text-align: right; font-variant-numeric: tabular-nums;
+}
+html body #moOrderDetail .dx-route { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; }
+html body #moOrderDetail .dx-route .lv-w { color: var(--dx-ink); font-size: 13px; }
+
+/* ── groups of rows ── */
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-group { margin: 20px 0 0; }
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-h {
+  margin: 0 2px 8px; padding: 0; border: 0; color: var(--dx-ink); font-size: 13px; font-weight: 600; line-height: 1.6;
+}
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-h label { display: inline; margin: 0; color: inherit; font: inherit; }
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-card {
+  margin: 0; padding: 0 16px; border: 1px solid var(--dx-line); border-radius: 14px; background: var(--dx-paper);
+}
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-card + .dx-card { margin-top: 8px; }
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-card .detail-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 48px;
+  margin: 0; padding: 12px 0; border: 0; border-top: 1px solid var(--dx-rule); font-size: 14px;
+}
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-card .detail-row:first-child { border-top: 0; }
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-card .detail-row .lbl {
+  flex: 0 0 auto; max-width: 48%; color: var(--dx-muted); font-size: 13px; font-weight: 400; line-height: 1.6;
+}
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-card .detail-row .val {
+  flex: 0 1 auto; min-width: 0; color: var(--dx-ink); font-size: 14px; font-weight: 500; line-height: 1.6;
+  direction: rtl; text-align: left; overflow-wrap: anywhere; word-break: normal;
+}
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-card .detail-row .val[dir="ltr"] { direction: ltr; unicode-bidi: isolate; font-variant-numeric: tabular-nums; }
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-card .detail-row .val[dir="auto"] { direction: rtl; unicode-bidi: plaintext; }
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-card .detail-row .val[data-small] { color: var(--dx-muted); font-size: 12px; font-weight: 400; }
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-card .detail-row .val[data-tone="ok"] { color: var(--dx-ok); }
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-card .payout-rounding-note {
+  margin: 0; padding: 0 0 12px; color: var(--dx-muted); font-size: 12.5px; line-height: 1.7;
+}
+/* verified or not, after an e-mail or a number */
+html body .ct-ver {
+  display: inline-block; margin-inline-start: 6px; padding: 1px 8px; border-radius: 999px; background: #f2f4f7;
+  color: #66768c; font-size: 11.5px; font-weight: 400; line-height: 1.7; vertical-align: 1px; direction: rtl;
+}
+html body .ct-ver.is-ok { background: #ecfdf3; color: #15803d; }
+/* the code chip copies the code */
+html body #moOrderDetail .order-code-chip {
+  display: inline-block; padding: 2px 10px; border: 1px solid var(--dx-line); border-radius: 8px; background: var(--dx-soft);
+  color: var(--dx-ink); font-family: Inter, system-ui, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: .02em; cursor: copy;
+}
+/* an IP: the address and the device; the count and the last time */
+html body #moAccountInfo .dx-ip .lbl, html body #moAccountInfo .dx-ip .val { display: flex; flex-direction: column; gap: 4px; }
+html body #moAccountInfo .dx-ip .lbl { align-items: flex-start; max-width: 60%; }
+html body #moAccountInfo .dx-ip .val { align-items: flex-end; text-align: left; }
+html body #moAccountInfo .dx-ip small { color: var(--dx-muted); font-size: 12px; font-weight: 400; }
+
+/* account: the four order counts in one strip */
+html body #moAccountInfo .dx-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 0; }
+html body #moAccountInfo .dx-stat { padding: 14px 6px; text-align: center; }
+html body #moAccountInfo .dx-stat + .dx-stat { border-inline-start: 1px solid var(--dx-rule); }
+html body #moAccountInfo .dx-stat b {
+  display: block; color: var(--dx-ink); font-family: Inter, system-ui, sans-serif; font-size: 18px; font-weight: 600; line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+}
+html body #moAccountInfo .dx-stat span { display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; color: var(--dx-muted); font-size: 12px; line-height: 1.4; }
+html body #moAccountInfo .dx-stat[class*="tone-"] span::before { content: ''; width: 6px; height: 6px; flex: 0 0 auto; border-radius: 50%; background: currentColor; }
+html body #moAccountInfo .dx-stat.tone-wait span::before { background: #d97706; }
+html body #moAccountInfo .dx-stat.tone-ok span::before { background: var(--dx-ok-bg); }
+html body #moAccountInfo .dx-stat.tone-no span::before { background: var(--dx-no); }
+html body #moAccountInfo .dx-wait { display: flex; align-items: center; justify-content: center; min-height: 72px; color: var(--dx-muted); }
+
+/* a quiet line where a card has nothing to show */
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-quiet {
+  margin: 0; padding: 12px 14px; border: 1px dashed var(--dx-ctl-line); border-radius: 12px; background: var(--dx-paper);
+  color: var(--dx-muted); font-size: 13px; line-height: 1.7;
+}
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-quiet.is-bad { border-style: solid; border-color: var(--dx-no-line); background: var(--dx-no-soft); color: var(--dx-no); }
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-quiet + .dx-attach,
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-shots + .dx-quiet { margin-top: 8px; }
+
+/* ── pictures: receipts and identity documents, side by side ── */
+html body .overlay:is(#moOrderDetail, #moKycReview) .dx-shots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+html body .overlay:is(#moOrderDetail, #moKycReview) .dx-fig { margin: 0; min-width: 0; }
+html body .overlay:is(#moOrderDetail, #moKycReview) :is(.dx-shot, .kyc-img-slot) {
+  position: relative; display: flex; align-items: center; justify-content: center; width: 100%; height: auto; aspect-ratio: 4 / 3;
+  margin: 0; padding: 0; overflow: hidden; border: 1px solid var(--dx-line); border-radius: 12px; background: var(--dx-soft);
+  color: var(--dx-muted); font-size: 16px; cursor: zoom-in;
+}
+html body .overlay:is(#moOrderDetail, #moKycReview) :is(.dx-shot, .kyc-img-slot) img { display: block; width: 100%; height: 100%; object-fit: contain; cursor: zoom-in; }
+html body .overlay:is(#moOrderDetail, #moKycReview) .dx-shot:focus-visible { outline: 2px solid var(--dx-blue); outline-offset: 2px; }
+html body .overlay:is(#moOrderDetail, #moKycReview) .dx-fig figcaption {
+  margin: 6px 0 0; color: var(--dx-muted); font-size: 12.5px; font-weight: 400; line-height: 1.6; text-align: center;
+}
+html body #moKycReview .kyc-img-zoom {
+  bottom: 8px; left: 8px; padding: 2px 10px; border-radius: 999px; background: rgba(32, 44, 60, .72);
+  color: #fff; font-size: 11.5px; font-weight: 400;
+}
+html body #moKycReview .kyc-img-zoom i, html body #moKycReview .kyc-img-zoom .svg-icon { display: none; }
+html body #moKycReview .kyc-img-empty { color: var(--dx-muted); font-size: 12.5px; }
+html body #moOrderDetail .dx-attach { display: flex; margin-top: 10px; }
+html body #moOrderDetail .dx-attach .act-btn { flex: 1 1 auto; }
+
+/* ── notes: an admin's request (amber), the customer's answer (blue), a warning (red) ── */
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) :is(.kyc-admin-note, .order-admin-correction) {
+  margin: 12px 0 0; padding: 12px 14px; border: 1px solid var(--dx-info-line); border-radius: 12px; background: var(--dx-info-soft);
+}
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) :is(.kyc-admin-note, .order-admin-correction) b {
+  display: block; margin: 0 0 4px; color: var(--dx-info); font-size: 12.5px; font-weight: 600; line-height: 1.6;
+}
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) :is(.kyc-admin-note, .order-admin-correction) p {
+  margin: 0; color: var(--dx-ink); font-size: 13.5px; line-height: 1.8; white-space: pre-wrap; overflow-wrap: anywhere;
+}
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) :is(.kyc-admin-note, .order-admin-correction) small {
+  display: block; margin-top: 6px; color: var(--dx-muted); font-size: 12px; text-align: right;
+}
+html body #moOrderDetail .order-admin-correction.request { border-color: var(--dx-warn-line); background: var(--dx-warn-soft); }
+html body #moOrderDetail .order-admin-correction.request b { color: var(--dx-warn); }
+html body .overlay:is(#moOrderDetail, #moKycReview, #moKycRequest) .kyc-admin-note.danger { border-color: var(--dx-no-line); background: var(--dx-no-soft); }
+html body .overlay:is(#moOrderDetail, #moKycReview, #moKycRequest) .kyc-admin-note.danger b { color: var(--dx-no); }
+html body #moOrderDetail :is(.order-correction-history-loading, .order-correction-history-error) {
+  margin: 12px 0 0; padding: 10px 14px; border-radius: 12px; background: var(--dx-soft); color: var(--dx-muted); font-size: 12.5px;
+}
+html body #moOrderDetail .order-correction-history-error { border: 1px solid var(--dx-no-line); background: var(--dx-no-soft); color: var(--dx-no); }
+html body #moOrderDetail .order-correction-history { margin: 20px 0 0; }
+
+/* name check on an identity document: two rows and the verdict under them */
+html body #moKycReview .kyc-name-compare { padding: 0; border: 0; border-radius: 0; background: none; }
+html body #moKycReview .kyc-name-compare.bad .detail-row .val { color: var(--dx-warn); }
+html body #moKycReview .kyc-nc-note {
+  display: flex; align-items: flex-start; gap: 8px; margin: 8px 2px 0; font-size: 13px; font-weight: 400; line-height: 1.7;
+}
+html body #moKycReview .kyc-nc-note.ok { color: var(--dx-ok); }
+html body #moKycReview .kyc-nc-note.bad { color: var(--dx-warn); font-weight: 500; }
+html body #moKycReview .kyc-nc-note.warn { color: var(--dx-muted); }
+html body #moKycReview #kycSyncNameBtn { width: 100%; margin-top: 10px !important; }
+
+/* the customer's rating of an approved order */
+html body #moOrderDetail .admin-order-feedback {
+  margin: 20px 0 0; padding: 12px 16px; border: 1px solid var(--dx-line); border-radius: 14px; background: var(--dx-paper);
+  color: var(--dx-ink); font-family: inherit; box-shadow: none;
+}
+html body #moOrderDetail .admin-order-feedback h4 { margin: 0 0 4px; color: var(--dx-ink); font-family: inherit; font-size: 13px; font-weight: 600; }
+html body #moOrderDetail .admin-order-feedback > p,
+html body #moOrderDetail .admin-order-feedback small { margin: 0; color: var(--dx-muted); font-family: inherit; font-size: 12.5px; font-weight: 400; }
+html body #moOrderDetail .admin-order-feedback .feedback-comment { color: var(--dx-ink); font-size: 13.5px; }
+
+/* identity history: a line of dots in a card */
+html body #moKycReview .kyc-timeline { gap: 0; padding: 4px 16px; }
+html body #moKycReview .kyc-tl-item { gap: 12px; padding: 12px 0; }
+html body #moKycReview .kyc-tl-item + .kyc-tl-item { border-top: 1px solid var(--dx-rule); }
+html body #moKycReview .kyc-tl-item:not(:last-child)::after { display: none; }
+html body #moKycReview .kyc-tl-dot { width: 10px; height: 10px; flex: 0 0 10px; margin-top: 7px; box-shadow: none; }
+html body #moKycReview .kyc-tl-item b { color: var(--dx-ink); font-size: 13.5px; font-weight: 500; line-height: 1.6; }
+html body #moKycReview .kyc-tl-item small { margin-top: 2px; color: var(--dx-muted); font-size: 12px; line-height: 1.6; }
+html body #moKycReview .kyc-tl-item p { margin-top: 4px; color: var(--dx-ink); font-size: 13px; }
+html body #moKycReview .kyc-timeline .loading { padding: 16px 0; text-align: center; color: var(--dx-muted); }
+
+/* ── fields ── */
+html body .overlay:is(#moOrderDetail, #moKycReview, #moKycRequest) textarea.minp {
+  display: block; width: 100%; min-height: 88px; margin: 0; padding: 12px 14px; resize: vertical;
+  border: 1px solid var(--dx-ctl-line) !important; border-radius: 12px !important; background: var(--dx-paper) !important;
+  color: var(--dx-ink) !important; font-family: inherit; font-size: 14px !important; line-height: 1.7; box-shadow: none !important;
+}
+html body .overlay:is(#moOrderDetail, #moKycReview, #moKycRequest) textarea.minp:focus { border-color: var(--dx-blue) !important; box-shadow: 0 0 0 3px rgba(22, 133, 250, .12) !important; }
+html body .overlay:is(#moOrderDetail, #moKycReview, #moKycRequest) textarea.minp::placeholder { color: #94a3b8; }
+html body #moOrderDetail .dx-note-save { display: flex; justify-content: flex-end; margin-top: 8px; }
+html body #moOrderDetail .dx-note-save .act-btn { height: 38px; padding: 0 14px !important; font-size: 13px !important; }
+/* quick reasons: the ban window's chips */
+html body .overlay:is(#moKycReview, #moKycRequest) .kyc-quick { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 0; }
+html body .overlay:is(#moKycReview, #moKycRequest) .kyc-quick :is(.kyc-chip, span) {
+  display: inline-flex; align-items: center; min-height: 32px; margin: 0; padding: 4px 12px; border: 1px solid var(--dx-line); border-radius: 999px;
+  background: var(--dx-paper); color: var(--dx-ink); font-family: inherit; font-size: 12.5px; line-height: 1.5; cursor: pointer; text-align: start;
+}
+html body .overlay:is(#moKycReview, #moKycRequest) .kyc-quick :is(.kyc-chip, span):hover { border-color: var(--dx-ctl-line); background: var(--dx-ctl); }
+
+/* ── buttons: neutral, green to approve, red to refuse ── */
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .act-btn {
+  display: inline-flex !important; align-items: center; justify-content: center; gap: 6px; min-height: 44px; height: auto;
+  margin: 0 !important; padding: 8px 14px !important; border: 1px solid var(--dx-ctl-line) !important; border-radius: 12px !important;
+  background: var(--dx-paper) !important; color: var(--dx-ink) !important; box-shadow: none !important; transform: none;
+  font-family: inherit !important; font-size: 14px !important; font-weight: 500 !important; line-height: 1.4;
+  text-align: center; white-space: normal; cursor: pointer;
+}
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .act-btn:hover { background: var(--dx-ctl) !important; }
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .act-btn:focus-visible { outline: 2px solid var(--dx-blue); outline-offset: 2px; }
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .act-btn.gr { background: var(--dx-ok-bg) !important; border-color: var(--dx-ok-bg) !important; color: #fff !important; }
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .act-btn.gr:hover { background: var(--dx-ok) !important; border-color: var(--dx-ok) !important; }
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .act-btn.rd { background: var(--dx-paper) !important; border-color: var(--dx-no-line) !important; color: var(--dx-no) !important; }
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .act-btn.rd:hover { background: var(--dx-no-soft) !important; }
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .act-btn:disabled { opacity: .5; pointer-events: none; }
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) :is(.dx-acts, .dx-decide, .dx-note-save, .dx-attach) .act-btn > :is(i, .svg-icon) { display: none; }
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-acts { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 0; }
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-group > .dx-acts { margin-top: 8px; }
+html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-acts > .act-btn { flex: 1 1 calc(50% - 4px); min-width: 0; }
+html body .overlay:is(#moOrderDetail, #moKycReview) .dx-decide { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 16px 0 0; }
+html body .overlay:is(#moOrderDetail, #moKycReview) .dx-decide .act-btn { min-height: 48px; font-size: 15px !important; }
+html body #moOrderDetail .dx-acts + .dx-decide { margin-top: 8px; }
+html body #moOrderDetail .dx-file input { display: none; }
+
+/* manual control of an order (assets/js/exchange-order-manual.js): the same card */
+html body #moOrderDetail .om-box { margin: 20px 0 0; padding: 14px 16px; border: 1px solid var(--dx-line); border-radius: 14px; background: var(--dx-paper); }
+html body #moOrderDetail .om-box h4 { margin: 0 0 10px; color: var(--dx-ink); font-family: inherit; font-size: 13px; font-weight: 600; }
+html body #moOrderDetail .om-box h4 > :is(i, .svg-icon) { display: none; }
+html body #moOrderDetail .om-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+html body #moOrderDetail .om-btns .act-btn { flex: 1 1 0; min-width: 96px; min-height: 40px; font-size: 13.5px !important; }
+html body #moOrderDetail .om-btns .act-btn > :is(i, .svg-icon) { display: none; }
+html body #moOrderDetail .om-hint { margin: 10px 0 0; color: var(--dx-muted); font-family: inherit; font-size: 12px; }
+html body #moOrderDetail .om-note { font-family: inherit; }
+
+/* the request window: the person as a card, the note quiet */
+html body #moKycRequest .kyc-req-user { margin: 0 0 16px; padding: 0; border: 0; background: none; }
+html body #moKycRequest .fee-toggle-note {
+  margin: 12px 0 0; padding: 12px 14px; border: 1px solid var(--dx-warn-line); border-radius: 12px; background: var(--dx-warn-soft);
+  color: #6b4a07; font-size: 13px; line-height: 1.8;
+}
+html body #moKycRequest .fee-toggle-note > :is(i, .svg-icon) { display: none; }
+html body #moKycRequest #kycReqSendBtn { min-height: 48px; margin-top: 16px; border-radius: 12px; font-size: 15px; }
+
+@media (max-width: 520px) {
+  html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-head { padding: 12px 14px; }
+  html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-card { padding: 0 14px; }
+  html body .overlay:is(#moOrderDetail, #moAccountInfo, #moKycReview, #moKycRequest) .dx-card .detail-row { gap: 12px; }
+  html body #moOrderDetail .dx-head-order .dx-head-main b { font-size: 18px; }
+}
+
+/* ── identity page: each request or document as a list row (admin-lists.css) ── */
+html body #pgKyc .kyc-admin-list { gap: 8px; padding: 12px; }
+html body #pgKyc .kyc-admin-card {
+  --kc-edge: #0b6bcb;
+  gap: 12px; padding: 14px 16px; border: 1px solid #e8edf3; border-radius: 14px; background: #fff;
+  box-shadow: inset -3px 0 0 var(--kc-edge);
+}
+html body #pgKyc .kyc-admin-card.required { --kc-edge: #d97706; }
+html body #pgKyc .kyc-admin-card.approved { --kc-edge: #16a34a; }
+html body #pgKyc .kyc-admin-card.rejected { --kc-edge: #b42318; }
+html body #pgKyc .kyc-admin-head { align-items: center; padding: 0; border: 0; }
+html body #pgKyc .kyc-admin-facts { gap: 10px 16px; padding: 12px 0 0; border-top: 1px solid #eef2f6; }
+html body #pgKyc .kyc-admin-facts span { gap: 2px; padding: 0; border-radius: 0; background: none !important; box-shadow: none !important; }
+html body #pgKyc .kyc-admin-facts small { color: #66768c; font-size: 12px; }
+html body #pgKyc .kyc-admin-facts b { color: #202c3c; font-size: 13.5px; font-weight: 500; line-height: 1.6; }
+html body #pgKyc .kyc-admin-facts .kyc-fact-bad b { color: #b45309; }
+html body #pgKyc .kyc-admin-card .kyc-admin-note { padding: 10px 12px; border-color: #f3dfb8; background: #fffaf0; }
+html body #pgKyc .kyc-admin-card .kyc-admin-note b { color: #b45309; font-size: 12px; font-weight: 600; }
+html body #pgKyc .kyc-admin-card .kyc-admin-note.danger { border-color: #f2c9c9; background: #fef2f2; }
+html body #pgKyc .kyc-admin-card .kyc-admin-note.danger b { color: #b42318; }
+html body #pgKyc .kyc-admin-foot { margin: 0; padding: 12px 0 0; border-top: 1px solid #eef2f6; }
+html body #pgKyc .kyc-admin-foot small { color: #66768c; font-size: 12px; }
+html body #pgKyc :is(.kyc-admin-foot, .kyc-user-side) .act-btn {
+  height: 34px !important; padding: 0 14px !important; border: 1px solid #dce3eb !important; border-radius: 10px !important;
+  background: #fff !important; color: #202c3c !important; font-size: 13px !important; font-weight: 500 !important; box-shadow: none !important;
+}
+html body #pgKyc :is(.kyc-admin-foot, .kyc-user-side) .act-btn:hover { background: #f2f4f7 !important; }
+html body #pgKyc :is(.kyc-admin-foot, .kyc-user-side) .act-btn.rd { border-color: #f2c9c9 !important; color: #b42318 !important; }
+html body #pgKyc :is(.kyc-admin-foot, .kyc-user-side) .act-btn > :is(i, .svg-icon) { display: none; }
+html body #pgKyc .kyc-user-row { padding: 12px 14px; border-color: #e8edf3; border-radius: 14px; }
+
+/* a person: the lists' avatar, the name, the handle and the e-mail */
+html body :is(#pgKyc, #moKycRequest) .kyc-person { gap: 12px; }
+html body :is(#pgKyc, #moKycRequest) .kyc-person .lv-av { width: 38px; height: 38px; }
+html body :is(#pgKyc, #moKycRequest) .kyc-person .user-cell-name { color: #202c3c; font-size: 14px; font-weight: 600; line-height: 1.5; }
+html body :is(#pgKyc, #moKycRequest) .kyc-person :is(.user-cell-handle, .user-cell-email) {
+  color: #66768c; font-family: inherit; font-size: 12px; font-weight: 400; line-height: 1.5; text-align: right;
+}
+/* a long name and two states: the states go under the person rather than squeeze the name */
+html body #pgKyc .kyc-admin-head { flex-wrap: wrap; row-gap: 10px; }
+html body #pgKyc .kyc-admin-head .user-cell { flex: 1 1 200px; }
+html body #pgKyc .kyc-admin-head .kyc-badges { flex: 0 1 auto; justify-content: flex-start; }
