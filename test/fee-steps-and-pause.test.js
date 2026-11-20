@@ -88,7 +88,7 @@ test('server: every customer action that a switch covers checks it', () => {
     assert.match(authSrc, new RegExp(`${action}: '${key}'`), action);
   assert.match(read('api-handlers/error-log.js'), /code === 'SECTION_PAUSED'\) return json\(res, 202, \{ ok: true, ignored: true \}\)/);
   const admin = read('api-handlers/admin.js');
-  assert.match(admin, /'site_controls','site_control_set','site_schedule_save','site_schedule_delete'\]\.includes\(action\)&&profile\.role!=='super_admin'/);
+  assert.match(admin, /'site_controls','site_control_set','site_schedule_save','site_schedule_delete',[^\]]*\]\.includes\(action\)&&profile\.role!=='super_admin'/);
   assert.match(admin, /db\.rpc\('ex_admin_site_control_set', \{ p_key: key, p_paused: paused, p_message: text, p_admin: ctx\.user\.id \}\)/);
 });
 
@@ -177,5 +177,7 @@ test('panel: the rates page leads with the steps card and lists routes by wallet
   assert.match(adminJs, /if\(typeof ftModalPatch==='function'\) Object\.assign\(row,ftModalPatch\(prevRate\)\);/);
   assert.match(read('assets/js/exchange-fee-tiers.js'), /sb\.from\('ex_rates'\)\.update\(patch\)\.in\('id', ids\)\.select\('\*'\)/);
   assert.doesNotMatch(read('assets/js/exchange-fee-tiers.js'), /rate_value\s*:/);
-  assert.match(read('assets/js/exchange-staff.js'), /'otp','activity','security','errors','audit','pause'/);
+  // v57: the OTP page is gone from the panel
+  assert.match(read('assets/js/exchange-staff.js'), /\['activity','security','errors','audit','pause'\]\.includes\(page\)\)return isSuperAdmin\(\);/);
+  assert.doesNotMatch(read('assets/js/exchange-staff.js'), /'otp'/);
 });

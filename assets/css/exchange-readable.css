@@ -258,29 +258,29 @@
   outline-offset:3px;
 }
 [data-theme="dark"] .btn.btn-primary{
-  background:#303a48;
-  border-color:#455164;
-  color:#e9edf3;
+  background:#2b3a55;
+  border-color:#3a4a66;
+  color:#e8edf6;
 }
 [data-theme="dark"] .btn.btn-ghost,
 [data-theme="dark"] .quick-amount-btn,
 [data-theme="dark"] .icon-btn{
-  background:#252d39;
-  border-color:#394559;
-  color:#e2e8f0;
+  background:#1b2740;
+  border-color:#3a4a66;
+  color:#e8edf6;
 }
 [data-theme="dark"] .filter-chip.on,
 [data-theme="dark"] .bn-item.on .bn-ico,
 [data-theme="dark"] .hdr-nav-link.on{
-  background:#303a48;
-  border-color:#526174;
-  color:#e6edf5;
+  background:#2b3a55;
+  border-color:#3a4a66;
+  color:#e8edf6;
 }
 [data-theme="dark"] #submitBtn,[data-theme="dark"] #confirmSendBtn,
 [data-theme="dark"] #pfSaveBtn,[data-theme="dark"] #kycSubmitBtn,
 [data-theme="dark"] #supportSubmitBtn{
-  background:#414d5e;
-  border-color:#57667b;
+  background:#3a4a66;
+  border-color:#3a4a66;
   color:#fff;
 }
 @media(prefers-reduced-motion:reduce){

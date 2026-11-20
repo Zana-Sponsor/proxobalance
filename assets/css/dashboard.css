@@ -20,11 +20,11 @@ html body #mainApp#mainApp #pageDash {
   --db-font: Rabar, Arial, sans-serif;
 }
 html[data-theme="dark"] body #mainApp#mainApp #pageDash {
-  --db-card: #131c2e; --db-soft: #0f1828; --db-line: #25324a;
-  --db-ink: #e8edf6; --db-text: #c4cee0; --db-muted: #98a6bd;
+  --db-card: #131c2e; --db-soft: #0e1725; --db-line: #25324a;
+  --db-ink: #e8edf6; --db-text: #c4cee0; --db-muted: #a3b1c7;
   --db-accent: #3b8cff; --db-accent-soft: #10223d;
-  --db-ok: #4ade80; --db-wait: #7d8ba3; --db-fix: #f7b955; --db-bad: #ff8a80;
-  --db-track: #1c2840;
+  --db-ok: #22c55e; --db-wait: #7d8ba3; --db-fix: #f5a524; --db-bad: #ef5350;
+  --db-track: #1b2740;
   --db-shadow: none;
 }
 

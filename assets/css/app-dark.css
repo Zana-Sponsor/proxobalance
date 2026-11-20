@@ -1,8 +1,12 @@
 /* ═════════════════════════════════════════════════════════════════
    Dark mode for the app inside (#mainApp) — one palette, same structure as light:
    page = canvas, sections = cards with a hairline, text in three steps.
-   canvas #0b1220 · card #131c2e · field #0e1725 · line #25324a
-   ink #e8edf6 · text #c4cee0 · muted #a3b1c7 · accent #3b8cff / soft #10223d
+     surfaces  canvas #0b1220 · field #0e1725 · card #131c2e · raised #1b2740
+     lines     #25324a · #2b3a55
+     text      ink #e8edf6 · text #c4cee0 · muted #a3b1c7
+     blue      text and icons #3b8cff · filled buttons #1c6cff (pressed #1559d6) · tint #10223d
+     states    ok #4ade80 / #10301f · warn #f7b955 / #2e2511 · bad #f87171 / #3a1816 (a large red box #231619)
+   Every colour in a dark rule of any stylesheet is one of these (t/darksnap.py).
    Loaded last. Light mode is untouched (every rule starts with html[data-theme="dark"]).
    ═════════════════════════════════════════════════════════════════ */
 html[data-theme="dark"] body:has(#mainApp) {
@@ -10,7 +14,8 @@ html[data-theme="dark"] body:has(#mainApp) {
   --proxo-canvas: #0b1220; --proxo-card: #131c2e; --proxo-ink: #e8edf6; --proxo-muted: #a3b1c7; --proxo-line: #25324a;
   --dk-canvas: #0b1220; --dk-card: #131c2e; --dk-field: #0e1725; --dk-line: #25324a; --dk-line-2: #2b3a55;
   --dk-ink: #e8edf6; --dk-text: #c4cee0; --dk-muted: #a3b1c7; --dk-accent: #3b8cff; --dk-accent-soft: #10223d;
-  --dk-warn: #f7b955; --dk-warn-soft: #33270d; --dk-ok: #4ade80; --dk-ok-soft: #10301f; --dk-bad: #ff8a80; --dk-bad-soft: #3a1816;
+  --dk-fill: #1c6cff; --dk-fill-press: #1559d6; --dk-raised: #1b2740;
+  --dk-warn: #f7b955; --dk-warn-soft: #2e2511; --dk-ok: #4ade80; --dk-ok-soft: #10301f; --dk-bad: #f87171; --dk-bad-soft: #3a1816;
   background: #0b1220 !important; color-scheme: dark;
 }
 html[data-theme="dark"] body:has(#mainApp) #mainApp,
@@ -20,7 +25,12 @@ html[data-theme="dark"] body:has(#mainApp) #mainApp .page { background: var(--dk
 
 /* header: same colour as the page, like light mode */
 html[data-theme="dark"] body #mainApp#mainApp #siteHeader.pxh { background: var(--dk-canvas) !important; border-bottom: 1px solid transparent !important; box-shadow: none !important; }
-html[data-theme="dark"] body #mainApp#mainApp #siteHeader :is(button, a):not(.pxh-brand) { background: var(--dk-card) !important; border: 1px solid var(--dk-line) !important; color: var(--dk-ink) !important; box-shadow: none !important; }
+html[data-theme="dark"] body #mainApp#mainApp #siteHeader :is(button, a):not(.pxh-brand):not(.pxh-link) { background: var(--dk-card) !important; border: 1px solid var(--dk-line) !important; color: var(--dk-ink) !important; box-shadow: none !important; }
+
+/* wide screens: the tab bar in the header — one card, plain tabs, the open one tinted (as in light) */
+html[data-theme="dark"] body #mainApp#mainApp #siteHeader .pxh-nav { background: var(--dk-card) !important; border-color: var(--dk-line) !important; box-shadow: none !important; }
+html[data-theme="dark"] body #mainApp#mainApp #siteHeader .pxh-link { background: transparent !important; border: 0 !important; color: var(--dk-muted) !important; box-shadow: none !important; }
+html[data-theme="dark"] body #mainApp#mainApp #siteHeader .pxh-link.on { background: #163056 !important; color: #8ab8ff !important; }
 
 /* fields */
 html[data-theme="dark"] body #mainApp#mainApp :is(input.input, textarea.input, select.input, .input:not(div)) {
@@ -41,10 +51,16 @@ html[data-theme="dark"] body #mainApp#mainApp .support-back { background: var(--
 html[data-theme="dark"] body #mainApp#mainApp .btn.btn-ghost { background: var(--dk-field) !important; border: 1px solid var(--dk-line) !important; color: var(--dk-text) !important; }
 
 /* profile: cover, avatar, verification badge */
-html[data-theme="dark"] body #mainApp#mainApp #pageProfile .pfx-cover { background: linear-gradient(180deg, var(--dk-accent-soft) 0%, rgba(16,34,61,0) 100%) !important; }
+html[data-theme="dark"] body #mainApp#mainApp #pageProfile .pfx-cover { background: linear-gradient(180deg, #163056 0%, rgba(22,48,86,0) 100%) !important; }
 html[data-theme="dark"] body #mainApp#mainApp #pageProfile .pfx-avatar { background: var(--dk-accent-soft) !important; color: var(--dk-accent) !important; border-color: var(--dk-card) !important; box-shadow: 0 0 0 4px var(--dk-card) !important; }
 html[data-theme="dark"] body #mainApp#mainApp .kyc-badge { background: var(--dk-field) !important; border: 1px solid var(--dk-line) !important; color: var(--dk-text) !important; box-shadow: none !important; }
 html[data-theme="dark"] body #mainApp#mainApp .kyc-badge-ico { background: var(--dk-card) !important; color: var(--dk-muted) !important; }
+/* the verification badge keeps its state colour, as in light mode: verified is blue */
+html[data-theme="dark"] body #mainApp#mainApp .kyc-badge[data-state="approved"] { background: var(--dk-accent-soft) !important; border-color: #264a73 !important; color: #8ab8ff !important; }
+html[data-theme="dark"] body #mainApp#mainApp .kyc-badge[data-state="pending"] { background: var(--dk-raised) !important; border-color: var(--dk-line-2) !important; color: var(--dk-text) !important; }
+html[data-theme="dark"] body #mainApp#mainApp .kyc-badge[data-state="required"] { background: var(--dk-warn-soft) !important; border-color: rgba(247,185,85,.3) !important; color: var(--dk-warn) !important; }
+html[data-theme="dark"] body #mainApp#mainApp .kyc-badge:is([data-state="rejected"], [data-state="error"]) { background: var(--dk-bad-soft) !important; border-color: rgba(248,113,113,.3) !important; color: var(--dk-bad) !important; }
+html[data-theme="dark"] body #mainApp#mainApp .kyc-badge[data-state] .kyc-badge-ico { background: transparent !important; color: inherit !important; }
 html[data-theme="dark"] body #mainApp#mainApp #pageProfile .pfx-head :is(span, button):not(.pfx-avatar):not(.kyc-badge-ico) { background-color: transparent; }
 
 /* profile: balance card — a normal card (was a bright blue gradient) */
@@ -54,13 +70,13 @@ html[data-theme="dark"] body #mainApp#mainApp #pageProfile .pfx-balance .bx-ico 
 html[data-theme="dark"] body #mainApp#mainApp #pageProfile .pfx-balance .bx-title,
 html[data-theme="dark"] body #mainApp#mainApp #pageProfile .pfx-balance .bx-amount strong { color: var(--dk-ink) !important; }
 html[data-theme="dark"] body #mainApp#mainApp #pageProfile .pfx-balance .bx-amount { background: var(--dk-field) !important; border-color: var(--dk-line) !important; }
-html[data-theme="dark"] body #mainApp#mainApp #pageProfile .pfx-balance .bx-btn { background: var(--dk-accent) !important; border-color: var(--dk-accent) !important; color: #fff !important; }
+html[data-theme="dark"] body #mainApp#mainApp #pageProfile .pfx-balance .bx-btn { background: var(--dk-fill) !important; border-color: var(--dk-fill) !important; color: #fff !important; }
 html[data-theme="dark"] body #mainApp#mainApp #pageProfile .pfx-balance .bx-btn.bx-secondary { background: var(--dk-field) !important; border-color: var(--dk-line) !important; color: var(--dk-text) !important; }
 
 /* rules */
 html[data-theme="dark"] body #mainApp#mainApp .rule-item { background: var(--dk-card) !important; border: 1px solid var(--dk-line) !important; box-shadow: none !important; }
-html[data-theme="dark"] body #mainApp#mainApp .rule-num { background: var(--dk-accent-soft) !important; color: var(--dk-accent) !important; }
-html[data-theme="dark"] body #mainApp#mainApp .rule-note { background: var(--dk-warn-soft) !important; border-color: rgba(247,185,85,.25) !important; }
+html[data-theme="dark"] body #mainApp#mainApp .rule-num { background: #1b2740 !important; color: var(--dk-accent) !important; }
+html[data-theme="dark"] body #mainApp#mainApp .rule-note { background: var(--dk-card) !important; border-color: rgba(247,185,85,.4) !important; }
 html[data-theme="dark"] body #mainApp#mainApp .rule-note :is(span, b, p, strong) { color: var(--dk-warn) !important; }
 
 /* support form: see support-case.css */
@@ -72,7 +88,7 @@ html[data-theme="dark"] body #mainApp#mainApp .kyc-banner { background: var(--dk
 html[data-theme="dark"] body #mainApp#mainApp .page-head { background: transparent !important; box-shadow: none !important; }
 
 /* quick amounts on the exchange form */
-html[data-theme="dark"] body #mainApp#mainApp .quick-amount-btn { background: var(--dk-field) !important; border: 1px solid var(--dk-line) !important; color: var(--dk-ink) !important; box-shadow: none !important; }
+html[data-theme="dark"] body #mainApp#mainApp .quick-amount-btn { background: #1b2740 !important; border-color: #1b2740 !important; color: var(--dk-ink) !important; box-shadow: none !important; }
 html[data-theme="dark"] body #mainApp#mainApp .quick-amount-btn:active { background: var(--dk-accent-soft) !important; border-color: var(--dk-accent) !important; }
 
 /* ── bottom sheets and pop-ups (they live outside #mainApp) ─────────── */
@@ -119,3 +135,61 @@ html[data-theme="dark"] body #mainApp#mainApp .chg-item :is(.chg-time, .chg-rout
 html[data-theme="dark"] body #mainApp#mainApp .chg-item .chg-vals { background: var(--dk-field) !important; border-color: var(--dk-line) !important; }
 html[data-theme="dark"] body #mainApp#mainApp .chg-item .chg-old { color: var(--dk-muted) !important; }
 html[data-theme="dark"] body #mainApp#mainApp .chg-item :is(.chg-new, .chg-to) { color: var(--dk-ink) !important; }
+
+/* profile and transactions set light tokens of their own (exchange-readable.css): the dark ones here */
+html[data-theme="dark"] #pageProfile, html[data-theme="dark"] #pageTx {
+  --surface: #131c2e; --surface-2: #0e1725; --surface-hover: #1b2740;
+  --border: #25324a; --border-strong: #2b3a55;
+  --text: #e8edf6; --text-muted: #a3b1c7; --text-faint: #a3b1c7;
+  --primary: #3b8cff; --primary-hover: #5b9dff;
+  color: #e8edf6;
+}
+
+/* amber notes: in dark the card with an amber line and amber text (a warm tint on navy turns brown) */
+html[data-theme="dark"] body #mainApp#mainApp #kycFormCard .kyc-name-note:not(.ok), html[data-theme="dark"] body #mainApp#mainApp .kyc-name-note:not(.ok) { background: var(--dk-card) !important; border-color: rgba(247,185,85,.4) !important; color: var(--dk-warn) !important; }
+
+/* filled buttons: one blue, as deep as light mode's (white text 4.5:1); blue text and icons stay #3b8cff */
+html[data-theme="dark"] body #mainApp#mainApp#mainApp :is(.btn.btn-primary, .db-new, .home-feedback-action, .sc-picker-go, .acx-btn, #orderFeedbackSubmit, .pfx-balance .bx-btn:not(.bx-secondary)),
+html[data-theme="dark"] body #authWrap#authWrap#authWrap .btn.btn-primary,
+html[data-theme="dark"] body:has(#mainApp):not(#_d1):not(#_d2):not(#_d3) :is(.sheet-overlay, .modal-overlay) :is(.btn.btn-primary, .un-submit) {
+  background: #1c6cff !important; border-color: #1c6cff !important; color: #fff !important;
+}
+html[data-theme="dark"] body #mainApp#mainApp#mainApp :is(.btn.btn-primary, .db-new, .home-feedback-action, .sc-picker-go, .acx-btn, #orderFeedbackSubmit, .pfx-balance .bx-btn:not(.bx-secondary)):active,
+html[data-theme="dark"] body #authWrap#authWrap#authWrap .btn.btn-primary:active,
+html[data-theme="dark"] body:has(#mainApp):not(#_d1):not(#_d2):not(#_d3) :is(.sheet-overlay, .modal-overlay) :is(.btn.btn-primary, .un-submit):active { background: #1559d6 !important; border-color: #1559d6 !important; }
+html[data-theme="dark"] body #mainApp#mainApp#mainApp .pxn-line { background: #1c6cff !important; }
+
+/* small grey controls of light mode (chips, counts, quick amounts, the username and
+   joined chips): in dark one raised step above the card, never the card's own colour */
+html[data-theme="dark"] body #mainApp#mainApp#mainApp :is(.xc-badge, .quick-amount-btn, .chip-count, .pfx-handle, .pfx-chip) {
+  background: #1b2740 !important; border-color: #1b2740 !important; color: #c4cee0 !important; box-shadow: none !important;
+}
+html[data-theme="dark"] body #mainApp#mainApp#mainApp .quick-amount-btn:active { background: #10223d !important; border-color: #264a73 !important; }
+/* the chosen filter: light mode's blue tint, its count on the card */
+html[data-theme="dark"] body #mainApp#mainApp#mainApp .filter-chip.on { background: #163056 !important; border-color: #264a73 !important; color: #8ab8ff !important; }
+html[data-theme="dark"] body #mainApp#mainApp#mainApp .filter-chip.on .chip-count { background: #10223d !important; border-color: #10223d !important; color: #8ab8ff !important; }
+/* receipt picker and the exchange summary: the field colour and a hairline, as in light */
+html[data-theme="dark"] body #mainApp#mainApp#mainApp label.file-picker { background: #0e1725 !important; border-color: #2b3a55 !important; }
+html[data-theme="dark"] body #mainApp#mainApp#mainApp #xcBreakdown.xc-summary { border: 1px solid #25324a !important; }
+
+/* a button that cannot be pressed yet: light mode fades it to a pale tint; on dark a
+   faded fill turns muddy, so it becomes the tint itself with dimmed text */
+html[data-theme="dark"] body #mainApp#mainApp#mainApp :is(.btn.btn-primary, .acx-btn, #orderFeedbackSubmit):disabled,
+html[data-theme="dark"] body #authWrap#authWrap#authWrap .btn.btn-primary:disabled,
+html[data-theme="dark"] body:has(#mainApp):not(#_d1):not(#_d2):not(#_d3) :is(.sheet-overlay, .modal-overlay) :is(.btn.btn-primary, .un-submit):disabled {
+  opacity: 1 !important; background: #163056 !important; border-color: #163056 !important; color: rgba(232, 237, 246, .5) !important;
+}
+html[data-theme="dark"] body #mainApp#mainApp#mainApp #pageDeleteAccount .dax-btn:disabled {
+  opacity: 1 !important; background: #3a1816 !important; border-color: #3a1816 !important; color: rgba(248, 113, 113, .65) !important;
+}
+/* the balance on the profile: light mode's blue tint */
+html[data-theme="dark"] body #mainApp#mainApp#mainApp #pageProfile .pfx-balance .bx-amount { background: #10223d !important; border-color: #264a73 !important; }
+/* amber notes in sheets (username, WhatsApp): like every amber note in dark — the card, an amber line, amber title */
+html[data-theme="dark"] body:has(#mainApp):not(#_d1):not(#_d2):not(#_d3) .un-warn { background: #131c2e !important; border-color: rgba(247, 185, 85, .4) !important; }
+html[data-theme="dark"] body:has(#mainApp):not(#_d1):not(#_d2):not(#_d3) .un-warn :is(b, .pxi) { color: #f7b955 !important; }
+html[data-theme="dark"] body:has(#mainApp):not(#_d1):not(#_d2):not(#_d3) .un-warn p { color: #c4cee0 !important; }
+
+/* the bottom bar's verification dot: the badge's colours */
+html[data-theme="dark"] body #mainApp#mainApp .pxn-state[data-state="ok"] { background: #1c6cff !important; }
+html[data-theme="dark"] body #mainApp#mainApp .pxn-state[data-state="wait"] { background: #3a4a66 !important; }
+html[data-theme="dark"] body #mainApp#mainApp .pxn-state[data-state="warn"] { background: #d9a03f !important; }

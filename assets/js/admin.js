@@ -5,21 +5,31 @@
 const SB_URL='https://pycxuugoblkslvwebxuu.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB5Y3h1dWdvYmxrc2x2d2VieHV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYyMTk3OTksImV4cCI6MjEwMTc5NTc5OX0.VRRwxnnuLs_WORuVUO3oX3CLxrPtgG_uewIJaGrzn_s';
 
-const METHOD_META = {
-  AccountBalance: {label:'باڵانسی هەژمار',color:'#2563eb'},
-  FastPay:  { label:'FastPay',  color:'#7c3aed' },
-  FIB:      { label:'FIB Bank', color:'#0ea5a4' },
-  QiCard:   { label:'Qi Card',  color:'#2563eb' },
-  Asiacell: { label:'Asiacell', color:'#e11d48' },
-  Korek:    { label:'Korek',    color:'#f59e0b' },
-  USDT:     { label:'USDT ($)', color:'#26a17b' }
-};
-const ALL_METHODS = ['FastPay','FIB','QiCard','Asiacell','Korek','USDT'];
-const RECEIVE_METHODS = ['FastPay','FIB','QiCard'];
+// Wallets live only in ex_wallets: names, logos and rules come from there
+// (loadWalletMeta at start, refreshed whenever the wallets page saves).
+const METHOD_META = {};
+const WALLET_PALETTE = ['#7c3aed','#0ea5a4','#2563eb','#e11d48','#f59e0b','#26a17b','#0891b2','#db2777','#65a30d','#9333ea'];
+function walletColor(key){ let h=0; for(const ch of String(key||'')) h=(h*31+ch.charCodeAt(0))>>>0; return WALLET_PALETTE[h%WALLET_PALETTE.length]; }
+function syncMethodMeta(rows){
+  Object.keys(METHOD_META).forEach(k=>delete METHOD_META[k]);
+  (rows||[]).forEach(w=>{ if(w&&w.key) METHOD_META[w.key]={label:w.name||w.key,color:walletColor(w.key),img:w.image_url||null}; });
+}
+async function loadWalletMeta(){
+  try{
+    const {data,error}=await sb.from('ex_wallets').select('*').order('sort_order',{ascending:true});
+    if(error) throw error;
+    if(!allWallets.length) allWallets=data||[];
+    syncMethodMeta(data);
+    if(_curPage==='orders' && allOrders.length) renderOrders(orderQuery());
+  }catch(_){}
+}
 const STATUS_PENDING='چاوەڕوانە', STATUS_APPROVED='پەسەندکرا', STATUS_REJECTED='ڕەتکرا';
 const STATUS_NEEDS_CORRECTION='پێویستی بە ڕاستکردنەوەیە', STATUS_CORRECTED='ڕاستکراوەتەوە';
-const REVIEWABLE_ORDER_STATUSES=new Set([STATUS_PENDING,STATUS_CORRECTED]);
-const CORRECTABLE_ORDER_STATUSES=new Set([STATUS_PENDING,STATUS_CORRECTED,STATUS_NEEDS_CORRECTION]);
+const STATUS_REVIEW='لەژێر پێداچوونەوەدایە', STATUS_CANCELLED='هەڵوەشێنرایەوە';
+const REVIEWABLE_ORDER_STATUSES=new Set([STATUS_PENDING,STATUS_CORRECTED,STATUS_REVIEW]);
+const CORRECTABLE_ORDER_STATUSES=new Set([STATUS_PENDING,STATUS_CORRECTED,STATUS_NEEDS_CORRECTION,STATUS_REVIEW]);
+// waiting orders an admin can take into review (the customer can no longer cancel them)
+const REVIEW_START_STATUSES=new Set([STATUS_PENDING,STATUS_CORRECTED]);
 
 let sb, adminUser=null, adminName='ئادمین', adminRole='admin';
 let allOrders=[], allAccounts=[], allRates=[], allNotifs=[];
@@ -203,7 +213,10 @@ function showApp(){
   if(roleEl) roleEl.textContent = isSuperAdmin() ? 'سوپەر ئادمین' : staffFullAdmin()?'ئادمین':'کارمەند';
   applyStaffUI();
   recordAdminVisit();
+  notePageDefaults();
+  loadWalletMeta();
   goPage('dashboard');
+  openOrderFromLink();
   subscribeOrdersAdmin();
   startAdminLive();
   if(staffFullAdmin()){
@@ -245,14 +258,41 @@ const pageConfig = {
   notifications:{ title:'ئاگادارییەکان', sub:'ناردنی ئاگاداری و بینینی مێژوو', load: ()=>loadNotifPage() },
   cases:{ title:'کەیسەکانی کڕیار', sub:'وێنە، وردەکاری و چارەسەرکردنی کێشەکانی کڕیار', load: ()=>loadSupportCasesAdmin() },
 
-  otp:{ title:'کۆدەکانی OTP', sub:'بینین و بەڕێوەبردنی کۆدەکانی دڵنیاکردنەوە', load: ()=>loadOtp() },
   security:{ title:'ئاسایش و IP', sub:'ڕووداوە گومانلێکراوەکان و بلۆککردنی IP و پەڕەی ئاگادارکردنەوە', load: ()=>loadSecurity() },
   errors:{ title:'لۆگی هەڵەکان', sub:'هەڵەکانی ماڵپەڕی بەکارهێنەر و سێرڤەر', load: ()=>loadErrorLogs() },
 };
 let _curPage='dashboard';
+// Leaving a section resets it: searches are emptied, every filter row goes back to
+// the choice it starts with, the orders and accounts lists are dropped, and coming
+// back reads fresh data. The starting choice of each filter row is noted once.
+function notePageDefaults(){
+  document.querySelectorAll('.pg .chip.on, .pg .lv-tab.on').forEach(c=>{ c.dataset.defaultOn='1'; });
+}
+function resetPage(p){
+  const pg=document.getElementById('pg'+p.charAt(0).toUpperCase()+p.slice(1));
+  if(!pg) return;
+  const ownList=p==='orders'||p==='accounts';
+  if(p==='orders'){ orderFilter='all'; _ordShown=LIST_STEP; allOrders=[]; _ordLoadedAt=0; const w=document.getElementById('ordersTableWrap'); if(w) w.innerHTML=''; }
+  if(p==='accounts'){ accFilter='all'; _accShown=LIST_STEP; allAccounts=[]; _accLoadedAt=0; const w=document.getElementById('accountsTableWrap'); if(w) w.innerHTML=''; }
+  pg.querySelectorAll('input.tbl-search, input.lv-search').forEach(i=>{
+    if(!i.value) return;
+    i.value='';
+    if(!ownList) i.dispatchEvent(new Event('input'));
+  });
+  pg.querySelectorAll('[data-default-on]').forEach(first=>{
+    if(first.classList.contains('on')) return;
+    const row=[...first.parentElement.children].filter(c=>c.classList.contains('chip')||c.classList.contains('lv-tab'));
+    if(ownList||!first.getAttribute('onclick')) row.forEach(c=>c.classList.toggle('on',c===first));
+    else first.click();
+  });
+  pg.querySelectorAll('details.lv-more[open]').forEach(d=>d.removeAttribute('open'));
+  if(typeof pageConfig[p]?.reset==='function') pageConfig[p].reset();
+}
 function goPage(p){
   if(typeof staffPageAllowed==='function'&&!staffPageAllowed(p)){showToast('مۆڵەتی ئەم بەشەت نییە','rd');return;}
+  if(_curPage&&_curPage!==p) resetPage(_curPage);
   _curPage=p;
+  try{ window.scrollTo(0,0); document.getElementById('main')?.scrollTo?.(0,0); }catch(_){}
   document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));
   document.querySelectorAll('.sb-item').forEach(x=>x.classList.remove('active'));
   const pg=document.getElementById('pg'+p.charAt(0).toUpperCase()+p.slice(1));
@@ -1074,14 +1114,37 @@ function orderCodeChip(o){
 }
 function methodPill(key){
   const m=METHOD_META[key];
-  const w=!m && typeof allWallets!=='undefined' ? allWallets.find(x=>x.key===key) : null;
-  const label = m ? m.label : (w ? (w.name||key) : (key||'—'));
+  const label = m ? m.label : (key||'—');
   const color = m ? m.color : 'var(--mt2)';
   if(!key) return '—';
   return `<span class="method-pill"><span class="method-dot" style="background:${color}"></span>${esc(label)}</span>`;
 }
+// a wallet's own logo from ex_wallets, or its first letter on its colour
+function walletMark(key){
+  const m=METHOD_META[key];
+  const label=m?m.label:(key||'?');
+  if(m&&m.img&&/^(data:image\/(png|jpe?g|webp);base64,|https:\/\/)/i.test(m.img)) return `<img class="wl-mark" src="${esc(m.img)}" alt="" loading="lazy">`;
+  return `<span class="wl-mark" style="background:${m?m.color:'#94a3b8'}">${esc(String(label).trim().charAt(0).toUpperCase())}</span>`;
+}
+function walletName(key){ const m=METHOD_META[key]; return m?m.label:(key||'—'); }
+if(typeof document!=='undefined'&&document.addEventListener) document.addEventListener('click',e=>{
+  document.querySelectorAll('details.lv-more[open]').forEach(d=>{ if(!d.contains(e.target)) d.removeAttribute('open'); });
+});
+function walletNeedsSenderPhone(key){ const w=allWallets.find(x=>x.key===key); return !!(w&&w.sender_phone_required); }
+// a calm placeholder while a list loads (no spinner)
+function listSkeleton(rows=6){
+  return '<div class="lv-list lv-skel" aria-busy="true">'+Array.from({length:rows},()=>'<div class="lv-row"><i></i><i></i><i></i></div>').join('')+'</div>';
+}
 function statusBadgeClass(s){
-  return s===STATUS_APPROVED?'approved':s===STATUS_REJECTED?'rejected':s===STATUS_NEEDS_CORRECTION?'needs-correction':s===STATUS_CORRECTED?'corrected':'pending';
+  return s===STATUS_APPROVED?'approved':s===STATUS_REJECTED?'rejected':s===STATUS_NEEDS_CORRECTION?'needs-correction':s===STATUS_CORRECTED?'corrected':s===STATUS_REVIEW?'review':s===STATUS_CANCELLED?'cancelled':'pending';
+}
+// a cancelled wallet order waits until an admin returns its amount to the customer's balance
+function cancelWaitsRefund(o){ return !!o && o.status===STATUS_CANCELLED && !o.balance_refunded_at && o.from_method!=='AccountBalance'; }
+function orderBadgeHTML(o){
+  if(o.status===STATUS_CANCELLED)
+    return `<span class="badge cancelled">${o.balance_refunded_at?'هەڵوەشاوە · گەڕێندرایەوە':o.from_method==='AccountBalance'?'هەڵوەشاوە':'هەڵوەشاوە · چاوەڕێی گەڕاندنەوە'}</span>`;
+  if(o.balance_refunded_at) return `<span class="badge approved">ڕیفاوندکرا</span>`;
+  return `<span class="badge ${statusBadgeClass(o.status)}">${esc(o.status===STATUS_REVIEW?'لەژێر پێداچوونەوە':o.status)}</span>`;
 }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function safeAttr(obj){ return JSON.stringify(obj).replace(/'/g,'&#39;'); }
@@ -1142,7 +1205,7 @@ async function loadDashboardStats(){
     const [{count:usersCount}, {count:bannedCount}, {count:pendingCount}, {data:approvedRows}, {count:rejectedCount}] = await Promise.all([
       sb.from('ex_profiles').select('*',{count:'exact',head:true}),
       sb.from('ex_profiles').select('*',{count:'exact',head:true}).eq('is_banned',true),
-      sb.from('ex_orders').select('*',{count:'exact',head:true}).in('status',[STATUS_PENDING,STATUS_CORRECTED]).is('balance_refunded_at',null),
+      sb.from('ex_orders').select('*',{count:'exact',head:true}).in('status',[STATUS_PENDING,STATUS_CORRECTED,STATUS_REVIEW]).is('balance_refunded_at',null),
       sb.from('ex_orders').select('total').eq('status',STATUS_APPROVED),
       sb.from('ex_orders').select('*',{count:'exact',head:true}).eq('status',STATUS_REJECTED),
     ]);
@@ -1193,19 +1256,17 @@ function subscribeOrdersAdmin(){
     .subscribe();
 }
 let _ordShown=50, _ordLoadedAt=0, _ordLoading=null;
+function orderQuery(){ return (document.getElementById('orderSearch')?.value||'').toLowerCase(); }
+// Entering the page always reads the orders again (leaving it reset the page).
 function openOrdersPage(){
-  if(allOrders.length){
-    renderOrders((document.getElementById('orderSearch')?.value||'').toLowerCase());
-    if(!_ordLoadedAt||Date.now()-_ordLoadedAt>30000) loadOrders();
-    return;
-  }
+  allOrders=[]; _ordLoadedAt=0; _ordShown=LIST_STEP;
   loadOrders();
 }
-function showMoreOrders(){ _ordShown+=LIST_STEP; renderOrders((document.getElementById('orderSearch')?.value||'').toLowerCase()); }
+function showMoreOrders(){ _ordShown+=LIST_STEP; renderOrders(orderQuery()); }
 function loadOrders(){
   if(_ordLoading) return _ordLoading;
   const wrap=document.getElementById('ordersTableWrap');
-  if(!allOrders.length) wrap.innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
+  if(!allOrders.length) wrap.innerHTML=listSkeleton();
   _ordLoading=(async()=>{
     try{
       const {data:orders,error} = await sb.from('ex_orders').select('*').order('created_at',{ascending:false}).limit(300);
@@ -1230,9 +1291,13 @@ function filterOrders(el,typing){
   // typing waits a moment so every key does not redraw the list
   if(typing){ clearTimeout(_ordSearchTimer); _ordSearchTimer=setTimeout(run,150); } else run();
 }
+function orderMatches(o,f){
+  if(f==='all') return true;
+  if(f==='refunded') return !!o.balance_refunded_at&&o.status!==STATUS_CANCELLED;
+  return o.status===f&&(f===STATUS_CANCELLED||!o.balance_refunded_at);
+}
 function renderOrders(q=''){
-  let list=allOrders;
-  if(orderFilter!=='all') list=list.filter(o=>orderFilter==='refunded'?!!o.balance_refunded_at:(!o.balance_refunded_at&&o.status===orderFilter));
+  let list=allOrders.filter(o=>orderMatches(o,orderFilter));
   if(q){
     const qq=q.replace(/[\s#-]/g,'');
     list=list.filter(o=>(o.profile?.full_name||'').toLowerCase().includes(q)
@@ -1241,6 +1306,12 @@ function renderOrders(q=''){
       ||String(o.order_number||'').includes(qq)
       ||(o.phone||'').includes(qq));
   }
+  // every tab shows how many orders it holds
+  document.querySelectorAll('[data-of]').forEach(tab=>{
+    const n=tab.querySelector('.lv-n'); if(!n) return;
+    const count=allOrders.filter(o=>orderMatches(o,tab.dataset.of)).length;
+    n.textContent=count?formatNum(count):'';
+  });
   const page=list.slice(0,_ordShown);
   document.getElementById('ordersTableWrap').innerHTML = (_wideList.matches ? renderOrdersTable(page) : (page.length ? renderOrdersCards(page) : renderOrdersTable(page)))
     + listMoreHTML(page.length,list.length,'showMoreOrders');
@@ -1261,48 +1332,82 @@ function adminOrderRoundingRows(order){
     '<div class="detail-row"><span class="lbl">'+(p.settled?'گەڕاندنەوەی خۆکار بۆ باڵانس':'گەڕاندنەوەی خۆکار دوای پەسەندکردن')+'</span><span class="val" dir="ltr">'+money(p.remainder_iqd)+'</span></div>'+
     (p.valid&&p.payout_iqd===0?'<p class="payout-rounding-note">هیچ ناردنێکی دەرەکی ئەنجام نادرێت.'+(p.remainder_iqd>0?' بڕی ماوە بۆ باڵانسی خاوەنی داواکاری دەگەڕێتەوە.':'')+'</p>':'');
 }
-function renderOrdersTable(list){
-  if(!list.length) return '<div class="empty"><i class="fas fa-inbox"></i><p>هیچ ئۆردەرێک نییە</p></div>';
-  return `<table><thead><tr><th>ئایدی</th><th>بەکارهێنەر</th><th>ڕێگا</th><th>بڕ</th><th>بڕی ناردن بۆ وەرگر</th><th>باری</th><th>بەروار</th><th>کردار</th></tr></thead><tbody>
-    ${list.map(o=>`<tr style="cursor:pointer" onclick='showOrderDetail(${safeAttr(o.id)})'>
-      <td onclick="event.stopPropagation()">${orderCodeChip(o)}</td>
-      <td><div class="user-cell"><div class="mini-av">${(o.profile?.full_name||o.profile?.email||'?')[0].toUpperCase()}</div><div><div class="user-cell-name">${esc(o.profile?.full_name||'—')}</div><div class="user-cell-email">${esc(o.profile?.email||'—')}</div></div></div></td>
-      <td>${methodPill(o.from_method)} <i class="fas fa-arrow-left" style="font-size:10px;color:var(--mt);margin:0 4px"></i> ${methodPill(o.to_method)}</td>
-      <td style="font-family:'Inter';font-weight:700">${formatNum(o.amount)}${o.from_method==='USDT'?'$':''}</td>
-      <td class="order-payout-cell">${adminOrderPayoutHTML(o)}</td>
-      <td><span class="badge ${statusBadgeClass(o.balance_refunded_at?'پەسەندکرا':o.status)}">${esc(o.balance_refunded_at?'ڕیفاوندکرا':o.status)}</span>${o.user_deleted_at?' <span class="badge om-hidden-badge" title="لای بەکارھێنەر شاردراوە"><i class="fas fa-eye-slash"></i> شاراوە</span>':''}</td>
-      <td style="font-size:11px;color:var(--mt)">${fmtDateTime(o.created_at)}</td>
-      <td onclick="event.stopPropagation()"><div class="act-grp">
-        <div class="act-btn dark" onclick='showOrderDetail(${safeAttr(o.id)})'><i class="fas fa-eye"></i></div>
-        ${!o.balance_refunded_at && CORRECTABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn yw" title="داوای ڕاستکردنەوە" onclick="openOrderCorrectionRequest('${o.id}')"><i class="fas fa-pen-to-square"></i></div>`:''}
-        ${!o.balance_refunded_at && REVIEWABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn gr" onclick="approveOrder('${o.id}')"><i class="fas fa-check"></i></div><div class="act-btn rd" onclick="showRejectReason('${o.id}')"><i class="fas fa-times"></i></div>`:''}
-      </div></td>
-    </tr>`).join('')}
-  </tbody></table>`;
+// ── one order per row: code and time · customer · route · amount · status · actions.
+// The same markup serves every width; assets/css/admin-lists.css lays it out.
+function orderTone(o){
+  if(o.status===STATUS_CANCELLED) return 'cancelled';
+  if(o.balance_refunded_at) return 'refunded';
+  return statusBadgeClass(o.status);
 }
-function renderOrdersCards(list){
-  if(!list.length) return '';
-  return `<div class="rec-cards">${list.map(o=>`
-    <div class="rec-card" onclick='showOrderDetail(${safeAttr(o.id)})'>
-      <div class="rec-card-top">
-        <div class="mini-av">${(o.profile?.full_name||o.profile?.email||'?')[0].toUpperCase()}</div>
-        <div class="rec-card-info"><div class="rec-card-name">${esc(o.profile?.full_name||'بێ ناو')}</div><div class="rec-card-sub">${esc(o.profile?.email||'—')}</div></div>
-        <span class="badge ${statusBadgeClass(o.balance_refunded_at?'پەسەندکرا':o.status)}">${esc(o.balance_refunded_at?'ڕیفاوندکرا':o.status)}</span>${o.user_deleted_at?' <span class="badge om-hidden-badge"><i class="fas fa-eye-slash"></i> شاراوە</span>':''}
-      </div>
-      <div class="rec-card-meta">
-        <span style="font-size:12px">${methodPill(o.from_method)} <i class="fas fa-arrow-left" style="font-size:9px;color:var(--mt);margin:0 3px"></i> ${methodPill(o.to_method)}</span>
-      </div>
-      <div class="rec-card-meta">
-        <div class="rec-card-stat gr">${orderCodeChip(o)} • ${adminOrderPayoutHTML(o)}</div>
-        <div class="rec-card-date">${fmtDateTime(o.created_at)}</div>
-      </div>
-      <div class="rec-card-actions" onclick="event.stopPropagation()">
-        <div class="act-btn dark" onclick="showOrderDetail('${o.id}')"><i class="fas fa-eye"></i> وردەکاری</div>
-        ${!o.balance_refunded_at && CORRECTABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn yw" onclick="openOrderCorrectionRequest('${o.id}')"><i class="fas fa-pen-to-square"></i> داوای ڕاستکردنەوە</div>`:''}
-        ${!o.balance_refunded_at && REVIEWABLE_ORDER_STATUSES.has(o.status)?`<div class="act-btn gr" onclick="approveOrder('${o.id}')"><i class="fas fa-check"></i> پەسەندکردن</div>
-        <div class="act-btn rd" onclick="showRejectReason('${o.id}')"><i class="fas fa-times"></i> ڕەتکردنەوە</div>`:''}
-      </div>
-    </div>`).join('')}</div>`;
+function orderActionsHTML(o){
+  const id=esc(String(o.id));
+  let h='';
+  if(!o.balance_refunded_at && REVIEW_START_STATUSES.has(o.status))
+    h+=`<button type="button" class="lv-btn" onclick="event.stopPropagation();setOrderReview('${id}',true)">پێداچوونەوە</button>`;
+  if(!o.balance_refunded_at && REVIEWABLE_ORDER_STATUSES.has(o.status))
+    h+=`<button type="button" class="lv-btn is-ok" onclick="event.stopPropagation();approveOrder('${id}')">پەسەندکردن</button>`
+      +`<button type="button" class="lv-btn is-no" onclick="event.stopPropagation();showRejectReason('${id}')">ڕەتکردنەوە</button>`;
+  if(cancelWaitsRefund(o))
+    h+=`<button type="button" class="lv-btn is-ok" onclick="event.stopPropagation();refundCancelledOrder('${id}')">گەڕاندنەوە بۆ باڵانس</button>`;
+  return h;
+}
+function orderRowHTML(o){
+  const id=esc(String(o.id));
+  const name=o.profile?.full_name||o.profile?.email||'بێ ناو';
+  const contact=o.profile?.phone||o.profile?.email||'';
+  const sent=formatNum(o.amount)+(o.from_method==='USDT'?' $':' IQD');
+  return `<article class="lv-row tone-${orderTone(o)}" tabindex="0" onclick="showOrderDetail('${id}')" onkeydown="if(event.key==='Enter'&&event.target===this)showOrderDetail('${id}')">
+    <div class="lv-c lv-id"><b dir="ltr">${esc(orderCodeOf(o))}</b><small dir="ltr">${esc(fmtDateTime(o.created_at))}</small></div>
+    <div class="lv-c lv-who"><b>${esc(name)}</b>${contact?`<small dir="ltr">${esc(contact)}</small>`:''}</div>
+    <div class="lv-c lv-route"><span class="lv-w">${walletMark(o.from_method)}<span>${esc(walletName(o.from_method))}</span></span><i class="fas fa-arrow-left lv-arrow" aria-hidden="true"></i><span class="lv-w">${walletMark(o.to_method)}<span>${esc(walletName(o.to_method))}</span></span></div>
+    <div class="lv-c lv-amt"><b dir="ltr">${sent}</b><div class="lv-pay order-payout-cell"><small>بۆ وەرگر</small>${adminOrderPayoutHTML(o)}</div></div>
+    <div class="lv-end"><div class="lv-c lv-state">${orderBadgeHTML(o)}${o.user_deleted_at?'<span class="badge om-hidden-badge" title="لای بەکارھێنەر شاردراوە">شاراوە</span>':''}</div>
+    <div class="lv-c lv-act">${orderActionsHTML(o)}</div></div>
+  </article>`;
+}
+function renderOrdersTable(list){
+  if(!list.length) return '<div class="lv-empty">هیچ داواکارییەک نییە</div>';
+  return '<div class="lv-list lv-orders">'+list.map(orderRowHTML).join('')+'</div>';
+}
+function renderOrdersCards(list){ return renderOrdersTable(list); }
+
+// "Under review": the customer can no longer cancel. on:false puts the order back to waiting.
+async function setOrderReview(id,on){
+  try{
+    const row=await adminApiRequest('order_review',{order_id:id,on:on!==false});
+    const o=allOrders.find(x=>String(x.id)===String(id));
+    if(o&&row&&row.id) Object.assign(o,row,{profile:o.profile});
+    showToast(on!==false?'داواکارییەکە خرایە ژێر پێداچوونەوە':'داواکارییەکە گەڕایەوە بۆ چاوەڕوان','gr');
+    if(_curPage==='orders') renderOrders(orderQuery());
+    if(document.getElementById('moOrderDetail')?.classList.contains('on')) showOrderDetail(id);
+    loadDashboardStats();
+  }catch(e){ showToast(e&&e.message?e.message:'نەگۆڕدرا','rd'); }
+}
+// A wallet order the customer cancelled: after the receipt is checked, one click returns the amount to the balance.
+function refundCancelledOrder(id){
+  const o=allOrders.find(x=>String(x.id)===String(id));
+  if(!cancelWaitsRefund(o)) return;
+  confirm2('گەڕاندنەوە بۆ باڵانس','بڕی '+formatNum(o.amount)+' IQD دەخرێتە سەر باڵانسی کڕیار. تەنها دوای ئەوەی پسوولەکەت پشکنی و پارەکە گەیشتووە.','fas fa-wallet','var(--gr)',async()=>{
+    try{
+      await adminApiRequest('order_cancel_refund',{order_id:id});
+      o.balance_refunded_at=new Date().toISOString();
+      showToast('بڕەکە گەڕێندرایەوە بۆ باڵانسی کڕیار','gr');
+      closeMo('moOrderDetail');
+      loadOrders();
+    }catch(e){ showToast(e&&e.message?e.message:'گەڕاندنەوەکە ئەنجام نەدرا','rd'); }
+  });
+}
+// ?order=PXXXXXXXXXXX (the button in the admin WhatsApp message) opens that order
+function openOrderFromLink(){
+  let code='';
+  try{ code=(new URLSearchParams(location.search).get('order')||'').trim().toUpperCase(); }catch(_){}
+  if(!/^P[A-Z0-9]{11}$/.test(code)) return;
+  try{ history.replaceState(null,'',location.pathname); }catch(_){}
+  goPage('orders');
+  Promise.resolve(loadOrders()).then(()=>{
+    const o=allOrders.find(x=>String(orderCodeOf(x)).toUpperCase()===code);
+    if(o) showOrderDetail(o.id); else showToast('ئەم داواکارییە نەدۆزرایەوە','rd');
+  });
 }
 
 function showOrderDetail(id){
@@ -1315,7 +1420,7 @@ function showOrderDetail(id){
     <div class="detail-row"><span class="lbl">ئایدی مامەڵە</span><span class="val">${orderCodeChip(order)}</span></div>
     <div class="detail-row"><span class="lbl">بەکارهێنەر</span><span class="val">${esc(order.profile?.full_name||'—')}</span></div>
     <div class="detail-row"><span class="lbl">ئیمەیل</span><span class="val">${esc(order.profile?.email||'—')}</span></div>
-    ${['Korek','Asiacell'].includes(order.from_method)
+    ${(order.sender_phone||walletNeedsSenderPhone(order.from_method))
       ? `<div class="detail-row"><span class="lbl">ژمارەی نێرەر</span><span class="val">${esc(order.sender_phone||'—')}</span></div>`
       : `<div class="detail-row"><span class="lbl">ناوی هەژماری نێرەر</span><span class="val">${esc(order.sender_name||order.profile?.full_name||'—')}</span></div>`}
     <div class="detail-row"><span class="lbl">لە</span><span class="val">${methodPill(order.from_method)}</span></div>
@@ -1327,7 +1432,7 @@ function showOrderDetail(id){
     <div class="detail-row"><span class="lbl">نێردراو بە حسابی کۆی گەڕاوەکان</span><span class="val">${formatNum(Number(order.total)-Number(order.shortfall_refunded_iqd))} IQD</span></div>`:''}
     <div class="detail-row"><span class="lbl">ژمارەی وەرگر</span><span class="val">${esc(order.phone||'—')}</span></div>
     ${order.extra_info?`<div class="detail-row"><span class="lbl">زانیاری زیاتر</span><span class="val">${esc(order.extra_info)}</span></div>`:''}
-    <div class="detail-row"><span class="lbl">باری</span><span class="val"><span class="badge ${statusBadgeClass(order.balance_refunded_at?'پەسەندکرا':order.status)}">${esc(order.balance_refunded_at?'ڕیفاوندکرا':order.status)}</span></span></div>
+    <div class="detail-row"><span class="lbl">باری</span><span class="val">${orderBadgeHTML(order)}</span></div>
     <div class="detail-row"><span class="lbl">بەروار</span><span class="val">${new Date(order.created_at).toLocaleString('ku')}</span></div>
     ${order.balance_debit_journal_id?`<div class="detail-row"><span class="lbl">تۆماری کەمکردنەوە لە باڵانس</span><span class="val" dir="ltr">${esc(order.balance_debit_journal_id)}</span></div>`:order.receipt_url?`<div style="margin-top:10px"><div style="font-size:11px;color:var(--mt);margin-bottom:8px">وێنەی پسووڵە (لەلایەن کڕیارەوە)</div><img src="${order.receipt_url}" class="rcpt-img" onclick="showImg('${order.receipt_url}')"></div>`:`<div class="fee-toggle-note" style="margin-top:10px"><i class="fas fa-paper-plane" style="margin-left:4px"></i>وێنەی پسووڵە بۆ تیلیگرامی ئەدمین نێردراوە لەکاتی ناردنی داواکارییەکە.</div>`}
     ${order.correction_request?`<div class="order-admin-correction request"><b><i class="fas fa-pen-to-square"></i> داوای ڕاستکردنەوەی ئادمین</b><p>${esc(order.correction_request)}</p><small>${order.correction_requested_at?esc(fmtDateTime(order.correction_requested_at)):''}</small></div>`:''}
@@ -1350,7 +1455,16 @@ function showOrderDetail(id){
       <div class="act-btn dark" onclick="saveOrderNote('${order.id}')"><i class="fas fa-floppy-disk"></i> پاشەکەوتی تێبینی</div>
       ${!order.balance_refunded_at && CORRECTABLE_ORDER_STATUSES.has(order.status)?`<div class="act-btn yw" onclick="openOrderCorrectionRequest('${order.id}')"><i class="fas fa-pen-to-square"></i> داوای ڕاستکردنەوە</div>`:''}
     </div>
-    ${!order.balance_refunded_at && order.status!==STATUS_APPROVED && !order.payout_receipt_url && order.from_method!=='USDT' && order.to_method!=='USDT'?`<div class="act-grp" style="margin-top:12px">
+    ${cancelWaitsRefund(order)?`<div class="act-grp" style="margin-top:12px">
+      <button type="button" class="act-btn gr" onclick="refundCancelledOrder('${order.id}')"><i class="fas fa-wallet"></i> گەڕاندنەوە بۆ باڵانس</button>
+    </div>`:''}
+    ${!order.balance_refunded_at && REVIEW_START_STATUSES.has(order.status)?`<div class="act-grp" style="margin-top:12px">
+      <div class="act-btn cy" onclick="setOrderReview('${order.id}',true)"><i class="fas fa-hourglass-half"></i> لەژێر پێداچوونەوە</div>
+    </div>`:''}
+    ${order.status===STATUS_REVIEW?`<div class="act-grp" style="margin-top:12px">
+      <div class="act-btn dark" onclick="setOrderReview('${order.id}',false)"><i class="fas fa-rotate-left"></i> گەڕاندنەوە بۆ چاوەڕوان</div>
+    </div>`:''}
+    ${!order.balance_refunded_at && order.status!==STATUS_APPROVED && order.status!==STATUS_CANCELLED && !order.payout_receipt_url && order.from_method!=='USDT' && order.to_method!=='USDT'?`<div class="act-grp" style="margin-top:12px">
       <button type="button" class="act-btn rd" onclick="openOrderRefund('${order.id}')"><i class="fas fa-wallet"></i> ڕەتکردنەوە و گەڕاندنەوە بۆ باڵانس</button>
     </div>`:''}
     ${!order.balance_refunded_at && order.status===STATUS_APPROVED && order.from_method!=='USDT' && order.to_method!=='USDT'?`<div class="act-grp" style="margin-top:12px">
@@ -1772,12 +1886,9 @@ function accountBalanceDetails(row){
     '<div class="detail-row"><div class="lbl">پارەی گیراو</div><div class="val">'+(row?formatNum(row.held_iqd)+' دینار':'—')+'</div></div>'+
     '<div class="detail-row"><div class="lbl">دوایین نوێکردنەوە</div><div class="val">'+(row?.updated_at?fmtDateTime(row.updated_at):'—')+'</div></div>';
 }
+// Entering the page always reads the accounts again (leaving it reset the page).
 function openAccountsPage(){
-  if(allAccounts.length){
-    renderAccounts((document.getElementById('accSearch')?.value||'').toLowerCase());
-    if(!_accLoadedAt||Date.now()-_accLoadedAt>60000) loadAccounts();
-    return;
-  }
+  allAccounts=[]; _accLoadedAt=0; _accShown=LIST_STEP;
   loadAccounts();
 }
 function showMoreAccounts(){ _accShown+=LIST_STEP; renderAccounts((document.getElementById('accSearch')?.value||'').toLowerCase()); }
@@ -1785,7 +1896,7 @@ function showMoreAccounts(){ _accShown+=LIST_STEP; renderAccounts((document.getE
 function loadAccounts(){
   if(_accLoading) return _accLoading;
   const wrap=document.getElementById('accountsTableWrap');
-  if(!allAccounts.length) wrap.innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
+  if(!allAccounts.length) wrap.innerHTML=typeof listSkeleton==='function'?listSkeleton():'';
   const redraw=()=>{ if(_curPage==='accounts') renderAccounts((document.getElementById('accSearch')?.value||'').toLowerCase()); };
   _accLoading=(async()=>{
     try{
@@ -1825,19 +1936,25 @@ function filterAccounts(el,typing){
   // typing waits a moment so every key does not redraw the list
   if(typing){ clearTimeout(_accSearchTimer); _accSearchTimer=setTimeout(run,150); } else run();
 }
+function accMatches(a,f){
+  return f==='banned'?!!a.is_banned:f==='admin'?!!a.is_admin:f==='active'?!a.is_banned:true;
+}
 function renderAccounts(q=''){
-  let list=allAccounts;
-  if(accFilter==='banned') list=list.filter(a=>a.is_banned);
-  if(accFilter==='admin') list=list.filter(a=>a.is_admin);
+  let list=allAccounts.filter(a=>accMatches(a,accFilter));
   if(q){
     const h=q.replace(/^@/,'');
     list=list.filter(a=>(a.full_name||'').toLowerCase().includes(q)||(a.email||'').toLowerCase().includes(q)
       ||(a.username||'').toLowerCase().includes(h)||String(a.id||'')===q);
   }
+  if(typeof document.querySelectorAll==='function') document.querySelectorAll('[data-af]').forEach(tab=>{
+    const n=tab.querySelector('.lv-n'); if(!n) return;
+    const count=allAccounts.filter(a=>accMatches(a,tab.dataset.af)).length;
+    n.textContent=count?formatNum(count):'';
+  });
   const countEl=document.getElementById('accCount');
   if(countEl){
     const total=formatNum(allAccounts.length);
-    countEl.textContent = list.length===allAccounts.length ? '('+total+')' : '('+formatNum(list.length)+' لە '+total+')';
+    countEl.textContent = list.length===allAccounts.length ? total+' هەژمار' : formatNum(list.length)+' لە '+total;
   }
   const page=list.slice(0,_accShown);
   document.getElementById('accountsTableWrap').innerHTML = (_wideList.matches ? renderAccTable(page) : (page.length ? renderAccCards(page) : renderAccTable(page)))
@@ -1845,44 +1962,30 @@ function renderAccounts(q=''){
 }
 function accBadges(a){
   let b='';
-  b += a.is_banned ? '<span class="badge banned">بۆیکۆتکراو</span>' : '<span class="badge active">چالاک</span>';
+  b += a.is_banned ? '<span class="badge banned">باندکراو</span>' : '<span class="badge active">چالاک</span>';
   if(a.role==='super_admin') b += ' <span class="badge super">سوپەر ئادمین</span>';
   else if(a.is_admin) b += ' <span class="badge admin">ئادمین</span>';
   return b;
 }
+// ── one account per row: person · contact · balance · device · joined · status · actions.
+function accRowHTML(a){
+  const name=a.full_name||a.email||'بێ ناو';
+  const tone=a.is_banned?'banned':(a.is_admin?'admin':'active');
+  return `<article class="lv-row lv-acc tone-${tone}">
+    <div class="lv-c lv-person"><span class="lv-av">${esc(String(name).trim().charAt(0).toUpperCase()||'?')}</span><div><b>${esc(name)}</b>${a.username?`<small dir="ltr">@${esc(a.username)}</small>`:''}</div></div>
+    <div class="lv-c lv-contact"><span dir="ltr">${esc(a.phone||'—')}</span>${a.email?`<small dir="ltr">${esc(a.email)}</small>`:''}</div>
+    <div class="lv-c lv-bal"><small>باڵانسی بەردەست</small>${accountBalanceCell(a.id)}</div>
+    <div class="lv-c lv-ip">${accIpCell(a.id)}</div>
+    <div class="lv-c lv-when"><span dir="ltr">${fmtDate(a.created_at)}</span><small>${fmtAgo(a.created_at)}</small></div>
+    <div class="lv-end"><div class="lv-c lv-state">${accBadges(a)}</div>
+    <div class="lv-c lv-act"><button type="button" class="lv-btn" onclick="openAccountInfo('${a.id}')">زانیاری</button>${accountAdminActionsHTML(a)}</div></div>
+  </article>`;
+}
 function renderAccTable(list){
-  if(!list.length) return '<div class="empty"><i class="fas fa-user-slash"></i><p>هیچ هەژمارێک نییە</p></div>';
-  return `<table><thead><tr><th>بەکارهێنەر</th><th>باڵانسی بەردەست</th><th>مۆبایل</th><th>IP و ئامێر</th><th>باری</th><th>بەرواری تۆمارکردن</th><th>کردار</th></tr></thead><tbody>
-    ${list.map(a=>`<tr>
-      <td><div class="user-cell"><div class="mini-av">${(a.full_name||a.email||'?')[0].toUpperCase()}</div><div><div class="user-cell-name">${esc(a.full_name||'—')}</div><div class="user-cell-email">${esc(a.email||'—')}</div>${a.username?`<div class="user-cell-handle" dir="ltr">@${esc(a.username)}</div>`:''}</div></div></td>
-      <td>${accountBalanceCell(a.id)}</td>
-      <td style="direction:ltr;font-size:12px">${esc(a.phone||'—')}</td>
-      <td>${accIpCell(a.id)}</td>
-      <td>${accBadges(a)}</td>
-      <td class="ai-when"><b dir="ltr">${fmtDate(a.created_at)}</b><span dir="ltr">${fmtTime(a.created_at)}</span><div>${fmtAgo(a.created_at)}</div></td>
-      <td><div class="act-grp">
-        <div class="act-btn bl" onclick="openAccountInfo('${a.id}')"><i class="fas fa-circle-info"></i> زانیاری</div>
-        ${accountAdminActionsHTML(a)}
-      </div></td>
-    </tr>`).join('')}
-  </tbody></table>`;
+  if(!list.length) return '<div class="lv-empty">هیچ هەژمارێک نییە</div>';
+  return '<div class="lv-list lv-accounts">'+list.map(accRowHTML).join('')+'</div>';
 }
-function renderAccCards(list){
-  if(!list.length) return '';
-  return `<div class="rec-cards">${list.map(a=>`
-    <div class="rec-card" style="cursor:default">
-      <div class="rec-card-top">
-        <div class="mini-av">${(a.full_name||a.email||'?')[0].toUpperCase()}</div>
-        <div class="rec-card-info"><div class="rec-card-name">${esc(a.full_name||'بێ ناو')}</div><div class="rec-card-sub">${esc(a.email||'—')}</div>${a.username?`<div class="rec-card-sub" style="color:var(--cy)">@${esc(a.username)}</div>`:''}</div>
-      </div>
-      <div class="rec-card-meta">${accBadges(a)}<div class="rec-card-date" dir="ltr">${fmtDateTime(a.created_at)}</div></div>
-      <div class="detail-row"><div class="lbl">باڵانسی بەردەست</div><div class="val">${accountBalanceCell(a.id)}</div></div>
-      <div class="rec-card-actions g3">
-        <div class="act-btn bl" onclick="openAccountInfo('${a.id}')"><i class="fas fa-circle-info"></i> زانیاری</div>
-        ${accountAdminActionsHTML(a)}
-      </div>
-    </div>`).join('')}</div>`;
-}
+function renderAccCards(list){ return renderAccTable(list); }
 
 // ══════════════════════════════════════════════════════════════
 // ═══ ACCOUNT INFO ════════════════════════════════════════════════
@@ -1996,22 +2099,79 @@ async function openAccountInfo(id){
 }
 function accountAdminActionsHTML(a){
   if(typeof isSuperAdmin!=='function' || !isSuperAdmin()) return '';
-  return `<div class="act-btn cy" onclick="openContactModal('${a.id}')"><i class="fas fa-address-card"></i> ئیمەیڵ و ژمارە</div>
-    <div class="act-btn dark" onclick="openSetPasswordModal('${a.id}','${esc(a.email||'').replace(/'/g,"\\'")}')"><i class="fas fa-key"></i> گۆڕینی وشەی نهێنی</div>
-    <div class="act-btn ${a.is_banned?'gr':'rd'}" onclick="toggleBan('${a.id}',${a.is_banned})"><i class="fas fa-${a.is_banned?'user-check':'user-slash'}"></i> ${a.is_banned?'لابردنی بۆیکۆت':'بۆیکۆتکردن'}</div>
-    <div class="act-btn cy" onclick="openKycRequestById('${a.id}')"><i class="fas fa-id-card"></i> پشتڕاستکردنەوە</div>
-    ${roleButtonHTML(a)}`;
+  // the rarely used actions sit in one menu so the row stays calm
+  return `<button type="button" class="lv-btn ${a.is_banned?'is-ok':'is-no'}" onclick="toggleBan('${a.id}',${!!a.is_banned})">${a.is_banned?'لابردنی باند':'باندکردن'}</button>
+    <details class="lv-more"><summary aria-label="کردارەکانی تر">زیاتر</summary><div class="lv-menu">
+    <div class="act-btn cy" onclick="openContactModal('${a.id}')">ئیمەیڵ و ژمارە</div>
+    <div class="act-btn dark" onclick="openSetPasswordModal('${a.id}','${esc(a.email||'').replace(/'/g,"\\'")}')">گۆڕینی وشەی نهێنی</div>
+    <div class="act-btn cy" onclick="openKycRequestById('${a.id}')">پشتڕاستکردنەوە</div>
+    ${roleButtonHTML(a)}</div></details>`;
+}
+// Ban / unban: one dialog with the person, an optional reason the customer sees
+// on their banned screen, and the date it started.
+const BAN_REASONS=['پسوولەی ساختە','هەوڵی فێڵکردن','بەکارهێنانی هەژماری کەسێکی تر','بە داوای خاوەنی هەژمار'];
+let _banTarget=null;
+function ensureBanModal(){
+  if(document.getElementById('moBan')) return;
+  const o=document.createElement('div');
+  o.className='overlay'; o.id='moBan';
+  o.innerHTML=`<div class="modal ban-modal" role="dialog" aria-modal="true" aria-labelledby="banTitle">
+      <div class="modal-hdr"><h3 id="banTitle"></h3><div class="modal-close" onclick="closeMo('moBan')"><i class="fas fa-xmark"></i></div></div>
+      <div class="ban-person" id="banPerson"></div>
+      <div id="banBody"></div>
+      <div class="ban-err" id="banErr" role="alert"></div>
+      <div class="ban-btns">
+        <button type="button" class="modal-btn ban-cancel" onclick="closeMo('moBan')">پاشگەزبوونەوە</button>
+        <button type="button" class="modal-btn" id="banGo" onclick="submitBan()"></button>
+      </div>
+    </div>`;
+  document.body.appendChild(o);
+  o.addEventListener('click', e=>{ if(e.target===o) closeMo('moBan'); });
 }
 function toggleBan(id, current){
   if(!isSuperAdmin())return;
+  ensureBanModal();
   const next=!current;
-  confirm2(next?'بۆیکۆتکردنی هەژمار':'لابردنی بۆیکۆت', next?'ئایا دڵنیایت لە بۆیکۆتکردنی ئەم هەژمارە؟ ناتوانێت بچێتە ژوورەوە.':'ئایا دڵنیایت لە لابردنی بۆیکۆت؟',
-    'fas fa-user-slash','var(--rd)', async()=>{
-    let error;try{await adminApiRequest('set_ban',{user_id:id,banned:next});}catch(e){error=e;}
-    if(error){ showToast(adminDbMessage(error),'rd'); return; }
-    showToast(next?'هەژمار بۆیکۆتکرا':'بۆیکۆت لابرا', next?'rd':'gr');
+  const a=(allAccounts||[]).find(x=>x.id===id)||(typeof _staffDirectoryRows!=='undefined'?(_staffDirectoryRows||[]).find(x=>x.id===id):null)||{id};
+  _banTarget={id,next};
+  const name=a.full_name||a.email||'هەژمار';
+  document.getElementById('banTitle').textContent=next?'باندکردنی هەژمار':'لابردنی باند';
+  document.getElementById('banPerson').innerHTML=`<span class="lv-av">${esc(String(name).trim().charAt(0).toUpperCase()||'?')}</span><div><b>${esc(name)}</b><small dir="ltr">${esc(a.phone||a.email||'')}</small></div>`;
+  if(next){
+    document.getElementById('banBody').innerHTML=`<label class="modal-lbl" for="banReason">هۆکار <span class="ban-hint">کڕیار دەیبینێت</span></label>
+      <div class="ban-chips">${BAN_REASONS.map(r=>`<button type="button" class="ban-chip" onclick="pickBanReason(this)">${esc(r)}</button>`).join('')}</div>
+      <textarea class="minp mta" id="banReason" maxlength="300" rows="3" placeholder="ئارەزوومەندانە" oninput="document.getElementById('banCount').textContent=this.value.length+'/300'"></textarea>
+      <div class="ban-count" id="banCount" dir="ltr">0/300</div>`;
+  }else{
+    const when=a.banned_at?fmtDateTime(a.banned_at):'';
+    document.getElementById('banBody').innerHTML=(a.ban_reason||when)?`<dl class="ban-facts">${a.ban_reason?`<div><dt>هۆکار</dt><dd>${esc(a.ban_reason)}</dd></div>`:''}${when?`<div><dt>لە</dt><dd dir="ltr">${esc(when)}</dd></div>`:''}</dl>`:'';
+  }
+  const go=document.getElementById('banGo');
+  go.textContent=next?'باندکردن':'لابردنی باند';
+  go.className='modal-btn '+(next?'ban-go-no':'ban-go-ok');
+  go.disabled=false;
+  document.getElementById('banErr').textContent='';
+  openMo('moBan');
+}
+function pickBanReason(btn){
+  const box=document.getElementById('banReason'); if(!box) return;
+  box.value=btn.textContent; box.dispatchEvent(new Event('input'));
+  document.querySelectorAll('.ban-chip').forEach(x=>x.classList.toggle('on',x===btn));
+}
+async function submitBan(){
+  if(!_banTarget||!isSuperAdmin()) return;
+  const {id,next}=_banTarget;
+  const go=document.getElementById('banGo'); if(go.disabled) return; go.disabled=true;
+  const reason=next?(document.getElementById('banReason')?.value||'').trim().slice(0,300):null;
+  try{
+    await adminApiRequest('set_ban',{user_id:id,banned:next,reason});
+    closeMo('moBan');
+    showToast(next?'هەژمارەکە باندکرا':'باندەکە لابرا', next?'rd':'gr');
     loadAccounts(); loadDashboardStats();
-  });
+  }catch(e){
+    document.getElementById('banErr').textContent=adminDbMessage(e);
+    go.disabled=false;
+  }
 }
 // Role changes are super-admin only and go through ex_admin_set_role; the
 // database rejects them for everyone else, this only hides the button.
@@ -2201,16 +2361,37 @@ async function submitSetPassword(){
 // ══════════════════════════════════════════════════════════════
 // ═══ ADMIN: CREATE USER (via secure Edge Function) ══════════════
 // ══════════════════════════════════════════════════════════════
+let _createUserOtpEmail='';
 function openCreateUserModal(){
   if(!isSuperAdmin()){showToast('تەنها سوپەر ئادمین دەتوانێت هەژمار زیاد بکات','rd');return;}
   document.getElementById('cuName').value = '';
   document.getElementById('cuEmail').value = '';
   document.getElementById('cuPhone').value = '';
   document.getElementById('cuPass').value = '';
+  document.getElementById('cuOtp').value = '';
+  document.getElementById('cuOtpMsg').style.display='none';
+  _createUserOtpEmail='';
   document.getElementById('cuIsAdmin').checked = false;
   document.getElementById('cuErr').style.display='none';
   document.getElementById('cuIsAdmin').closest('.mswitch-row').hidden=!isSuperAdmin();
   openMo('moCreateUser');
+}
+async function requestCreateUserOtp(){
+  const errEl=document.getElementById('cuErr');
+  const email=document.getElementById('cuEmail').value.trim().toLowerCase();
+  const btn=document.getElementById('cuSendOtpBtn');
+  if(!isSuperAdmin()){errEl.textContent='تەنها سوپەر ئادمین مافی زیادکردنی هەژمار هەیە';errEl.style.display='block';return;}
+  if(!email||!email.includes('@')){errEl.textContent='ئیمەیلێکی دروست بنووسە';errEl.style.display='block';return;}
+  errEl.style.display='none';btn.disabled=true;btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i>';
+  try{
+    const result=await callAdminFn('admin-create-user',{action:'request_otp',email});
+    _createUserOtpEmail=email;
+    document.getElementById('cuOtp').value='';
+    const msg=document.getElementById('cuOtpMsg');
+    msg.textContent=result?.already_sent?'کۆدێکی چالاک هەیە؛ هەمان کۆدەکە بەکاربهێنە.':'کۆدی OTP بۆ ئیمەیڵەکە نێردرا.';
+    msg.style.display='block';
+  }catch(e){errEl.textContent=e.message;errEl.style.display='block';}
+  finally{btn.disabled=false;btn.innerHTML='<i class="fas fa-paper-plane"></i> ناردنی کۆد بۆ ئیمەیڵ';}
 }
 async function submitCreateUser(){
   const errEl = document.getElementById('cuErr');
@@ -2221,12 +2402,15 @@ async function submitCreateUser(){
   const phone = document.getElementById('cuPhone').value.trim();
   const password = document.getElementById('cuPass').value;
   const is_admin = document.getElementById('cuIsAdmin').checked;
+  const otp_code = document.getElementById('cuOtp').value.replace(/\D/g,'');
   if(!email || !email.includes('@')){ errEl.textContent='ئیمەیلێکی دروست بنووسە'; errEl.style.display='block'; return; }
   if(password.length < 8){ errEl.textContent='وشەی نهێنی دەبێت لانیکەم 8 پیت/ژمارە بێت'; errEl.style.display='block'; return; }
+  if(_createUserOtpEmail!==email.toLowerCase()){errEl.textContent='سەرەتا کۆدی پشتڕاستکردنەوە بۆ ئەم ئیمەیڵە داوا بکە';errEl.style.display='block';return;}
+  if(!/^\d{6}$/.test(otp_code)){errEl.textContent='کۆدی 6 ژمارەیی بنووسە';errEl.style.display='block';return;}
   const btn = document.getElementById('cuSaveBtn');
   btn.disabled = true; btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
   try{
-    await callAdminFn('admin-create-user', { email, password, full_name, phone, is_admin });
+    await callAdminFn('admin-create-user', { action:'create', email, password, full_name, phone, is_admin, otp_code });
     closeMo('moCreateUser');
     showToast('✅ هەژمار دروستکرا','gr');
     loadAccounts(); loadDashboardStats();
@@ -2258,25 +2442,17 @@ async function loadRates(){
   subscribeRatesAdmin();
 }
 function subscribeRatesAdmin(){if(typeof startAdminLive==='function')startAdminLive();}
-// Method options for the rate From/To selects: the original fixed methods (kept so
-// existing rates like Korek/USDT — which have no ex_wallets row — still edit correctly)
-// merged live with whatever wallets exist in ex_wallets, so a newly-added wallet shows
-// up here automatically without any code change.
+// Method options for the rate From/To selects: only the wallets in ex_wallets.
 function buildMethodLabelMap(){
   const map=new Map();
-  ALL_METHODS.forEach(k=>map.set(k, (METHOD_META[k]&&METHOD_META[k].label)||k));
   allWallets.forEach(w=>{ if(w.key) map.set(w.key, w.name||w.key); });
   return map;
 }
 function buildFromMethodKeys(){
-  const set=new Set(ALL_METHODS);
-  allWallets.forEach(w=>{ if(w.key && w.allow_from!==false) set.add(w.key); });
-  return [...set];
+  return allWallets.filter(w=>w.key && w.allow_from!==false).map(w=>w.key);
 }
 function buildToMethodKeys(){
-  const set=new Set(RECEIVE_METHODS);
-  allWallets.forEach(w=>{ if(w.key && w.allow_receive===true) set.add(w.key); });
-  return [...set];
+  return allWallets.filter(w=>w.key && w.allow_receive===true).map(w=>w.key);
 }
 function rateTypeLabel(t){ return t==='fee_percent' ? 'حمولە %' : t==='fee_fixed' ? 'حمولەی جێگیر' : 'مەزراپ'; }
 // Routes grouped by the wallet they leave from: destination, fee (or the
@@ -2390,6 +2566,7 @@ async function loadWalletsAdmin(quiet=false){
     const {data,error} = await sb.from('ex_wallets').select('*').order('sort_order',{ascending:true});
     if(error) throw error;
     allWallets = data||[];
+    syncMethodMeta(allWallets);
     await loadPairs();
     renderWalletsGrid();
   }catch(e){
@@ -2492,6 +2669,8 @@ function openWalletModal(w){
     document.getElementById('walletCanSend').checked=w.allow_from!==false;
     document.getElementById('walletCanReceive').checked=!!w.allow_receive;
     document.getElementById('walletLocked').checked=!!w.is_locked;
+    document.getElementById('walletRecipientFormat').value=w.recipient_format==='card'?'card':'phone';
+    document.getElementById('walletSenderPhone').checked=w.sender_phone_required===true;
   }else{
     document.getElementById('walletModalTitle').textContent='زیادکردنی واڵێتی نوێ';
     document.getElementById('walletId').value='';
@@ -2506,6 +2685,8 @@ function openWalletModal(w){
     document.getElementById('walletCanSend').checked=true;
     document.getElementById('walletCanReceive').checked=false;
     document.getElementById('walletLocked').checked=false;
+    document.getElementById('walletRecipientFormat').value='phone';
+    document.getElementById('walletSenderPhone').checked=false;
   }
   document.getElementById('walletImgFile').value='';
   document.getElementById('pairBulkValue').value='';
@@ -2534,14 +2715,16 @@ async function saveWallet(){
   const previousLabel=btn.innerHTML;btn.textContent='پاشەکەوت دەکرێت…';
   const errorBox=document.getElementById('walletSaveError');errorBox.textContent='';
   const badge=document.getElementById('walletBadge').value;
-  const payload={name,key,wallet_number:wallet_number||null,image_url,price,fee,fee_type,allow_from,allow_receive,is_locked,badge};
+  const recipient_format=document.getElementById('walletRecipientFormat').value==='card'?'card':'phone';
+  const sender_phone_required=document.getElementById('walletSenderPhone').checked;
+  const payload={name,key,wallet_number:wallet_number||null,image_url,price,fee,fee_type,allow_from,allow_receive,is_locked,badge,recipient_format,sender_phone_required};
   try{
     if((price!==null&&!Number.isFinite(price))||(fee!==null&&!Number.isFinite(fee)))throw new Error('نرخ و حمولەی دروست بنووسە');
     const routes=walletPairRows(key,id?_walletOldKey:'');
     const {data:saved,error}=await sb.rpc('ex_staff_save_wallet',{p_wallet_id:id||null,p_wallet:payload,p_routes:routes});
     if(error)throw error;
     if(!saved?.id)throw new Error('نەتوانرا پاشەکەوتکردن پشتڕاست بکرێتەوە');
-    allWallets=allWallets.filter(w=>w.id!==saved.id);allWallets.push(saved);
+    allWallets=allWallets.filter(w=>w.id!==saved.id);allWallets.push(saved);if(typeof syncMethodMeta==='function')syncMethodMeta(allWallets);
     renderWalletsGrid();closeMo('moWallet');showToast('جزدان و ڕێگاکان پاشەکەوتکران','gr');
     loadWalletsAdmin(true);
   }catch(e){errorBox.textContent=adminDbMessage(e);await handleDbWriteError(e);}
@@ -2592,7 +2775,7 @@ function fmtPairRow(r){
 }
 function walletLabelFor(key){
   const w=allWallets.find(x=>x.key===key);
-  return w ? (w.name||key) : ((METHOD_META[key]&&METHOD_META[key].label)||key);
+  return w ? (w.name||key) : walletName(key);
 }
 async function loadPairs(){
   try{
@@ -3027,179 +3210,6 @@ function deleteBroadcast(id){
 }
 
 // The Firebase text banner page was replaced in v53 by «بانەرەکان» (exchange-banners-admin.js).
-
-// ══════════════════════════════════════════════════════════════
-// ═══ OTP CODES (full admin read + edit) ════════════════════════
-// All calls go through SECURITY DEFINER RPCs gated by is_ex_admin():
-// ex_admin_list_otp / ex_admin_update_otp / ex_admin_create_otp /
-// ex_admin_expire_otp / ex_admin_delete_otp. Every write is recorded
-// in ex_admin_audit_log.
-// ══════════════════════════════════════════════════════════════
-let allOtp=[], otpFilter='all';
-async function loadOtp(){
-  const wrap=document.getElementById('otpTableWrap');
-  wrap.innerHTML='<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
-  try{
-    const {data,error} = await sb.rpc('ex_admin_list_otp',{p_limit:300});
-    if(error) throw error;
-    allOtp = data||[];
-    renderOtpTable();
-  }catch(e){
-    wrap.innerHTML=`<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>هەڵە: ${esc(e.message)}</p></div>`;
-  }
-}
-function filterOtp(el){
-  if(el){ document.querySelectorAll('[data-otpf]').forEach(x=>x.classList.remove('on')); el.classList.add('on'); otpFilter=el.dataset.otpf; }
-  renderOtpTable();
-}
-function otpStatusBadge(status){
-  if(status==='active') return '<span class="badge active">چالاک</span>';
-  if(status==='used') return '<span class="badge approved">بەکارهاتووە</span>';
-  return '<span class="badge rejected">بەسەرچووە</span>';
-}
-function otpPurposeLbl(p){
-  return { login:'چوونەژوورەوە', signup:'خۆتۆمارکردن', reset_password:'گۆڕینی وشەی نهێنی' }[p] || (p||'—');
-}
-function copyOtpCode(code){
-  const done=()=>showToast('کۆد کۆپی کرا: '+code,'gr');
-  if(navigator.clipboard?.writeText){ navigator.clipboard.writeText(code).then(done).catch(()=>done()); }
-  else{
-    const t=document.createElement('textarea'); t.value=code; document.body.appendChild(t);
-    t.select(); try{ document.execCommand('copy'); }catch(_){}
-    document.body.removeChild(t); done();
-  }
-}
-function renderOtpTable(){
-  const q=(document.getElementById('otpSearch')?.value||'').toLowerCase().trim();
-  let list=allOtp;
-  if(otpFilter!=='all') list=list.filter(o=>o.status===otpFilter);
-  if(q) list=list.filter(o=>(o.email||'').toLowerCase().includes(q)||(o.code||'').includes(q));
-  const wrap=document.getElementById('otpTableWrap');
-  if(!list.length){ wrap.innerHTML='<div class="empty"><i class="fas fa-key"></i><p>هیچ کۆدێکی OTP نییە</p></div>'; return; }
-  wrap.innerHTML = `<table><thead><tr><th>ئیمەیل</th><th>کۆد</th><th>مەبەست</th><th>باری</th><th>دروستکرا</th><th>بەسەردەچێت</th><th>کردار</th></tr></thead><tbody>
-    ${list.map(o=>`<tr>
-      <td style="direction:ltr;font-size:12px">${esc(o.email||'—')}</td>
-      <td><span onclick="copyOtpCode('${esc(o.code||'')}')" title="کلیک بۆ کۆپیکردن" style="direction:ltr;display:inline-block;font-family:monospace;font-size:14px;font-weight:800;letter-spacing:2px;color:var(--dark);background:var(--bg);border:1.5px solid var(--b1);border-radius:8px;padding:4px 10px;cursor:pointer">${esc(o.code||'—')}</span></td>
-      <td style="font-size:12px">${otpPurposeLbl(o.purpose)}</td>
-      <td>${otpStatusBadge(o.status)}</td>
-      <td style="font-size:11px;color:var(--mt)">${new Date(o.created_at).toLocaleString('ku')}</td>
-      <td style="font-size:11px;color:var(--mt)">${new Date(o.expires_at).toLocaleString('ku')}</td>
-      <td><div class="act-grp">
-        <div class="act-btn cy" onclick='openOtpEditModal(${safeAttr(o)})'><i class="fas fa-pen"></i> دەستکاری</div>
-        <div class="act-btn yw" ${o.status!=='active'?'style="opacity:.4;pointer-events:none"':''} onclick="otpForceExpire('${o.id}')"><i class="fas fa-hourglass-end"></i> بەسەرببە</div>
-        <div class="act-btn rd" onclick="otpDelete('${o.id}')"><i class="fas fa-trash"></i> سڕینەوە</div>
-      </div></td>
-    </tr>`).join('')}
-  </tbody></table>`;
-}
-
-// ─── datetime-local <-> ISO helpers (input works in local time) ───
-function toLocalInput(iso){
-  const d=new Date(iso); if(isNaN(d)) return '';
-  const p=n=>String(n).padStart(2,'0');
-  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
-}
-function fromLocalInput(v){ if(!v) return null; const d=new Date(v); return isNaN(d)?null:d.toISOString(); }
-
-function openOtpEditModal(o){
-  document.getElementById('oeId').value = o.id;
-  document.getElementById('oeEmail').textContent = o.email || '—';
-  document.getElementById('oeCode').value = o.code || '';
-  const purposeSel=document.getElementById('oePurpose');
-  if(o.purpose && !Array.from(purposeSel.options).some(x=>x.value===o.purpose)){
-    purposeSel.add(new Option(o.purpose, o.purpose));
-  }
-  purposeSel.value = o.purpose || 'login';
-  document.getElementById('oeExpires').value = toLocalInput(o.expires_at);
-  document.getElementById('oeIsUsed').checked = !!o.is_used;
-  document.getElementById('oeErr').style.display='none';
-  openMo('moOtpEdit');
-}
-function bumpOtpExpiry(mins){
-  const d=new Date(Date.now()+mins*60000);
-  document.getElementById('oeExpires').value = toLocalInput(d.toISOString());
-  document.getElementById('oeIsUsed').checked = false;
-}
-async function submitOtpEdit(){
-  const errEl=document.getElementById('oeErr'); errEl.style.display='none';
-  const id=document.getElementById('oeId').value;
-  const code=document.getElementById('oeCode').value.trim();
-  const purpose=document.getElementById('oePurpose').value;
-  const expires=fromLocalInput(document.getElementById('oeExpires').value);
-  const isUsed=document.getElementById('oeIsUsed').checked;
-  if(!code){ errEl.textContent='کۆد نابێت بەتاڵ بێت'; errEl.style.display='block'; return; }
-  if(!expires){ errEl.textContent='کاتی بەسەرچوون دروست نییە'; errEl.style.display='block'; return; }
-  const btn=document.getElementById('oeSaveBtn');
-  btn.disabled=true; btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i>';
-  try{
-    const {error} = await sb.rpc('ex_admin_update_otp',{
-      p_id:id, p_code:code, p_purpose:purpose, p_expires_at:expires, p_is_used:isUsed
-    });
-    if(error) throw error;
-    closeMo('moOtpEdit');
-    showToast('کۆدەکە نوێکرایەوە','gr');
-    loadOtp();
-  }catch(e){
-    errEl.textContent='هەڵە: '+e.message; errEl.style.display='block';
-  }finally{
-    btn.disabled=false; btn.innerHTML='<i class="fas fa-check"></i> پاشەکەوتکردن';
-  }
-}
-
-function openOtpCreateModal(){
-  document.getElementById('ocEmail').value='';
-  document.getElementById('ocCode').value='';
-  document.getElementById('ocPurpose').value='login';
-  document.getElementById('ocMinutes').value=10;
-  document.getElementById('ocErr').style.display='none';
-  openMo('moOtpCreate');
-}
-function genOtpCode(){
-  document.getElementById('ocCode').value = String(Math.floor(100000+Math.random()*900000));
-}
-async function submitOtpCreate(){
-  const errEl=document.getElementById('ocErr'); errEl.style.display='none';
-  const email=document.getElementById('ocEmail').value.trim();
-  const code=document.getElementById('ocCode').value.trim();
-  const purpose=document.getElementById('ocPurpose').value;
-  const mins=parseInt(document.getElementById('ocMinutes').value,10)||10;
-  if(!email||!email.includes('@')){ errEl.textContent='ئیمەیلێکی دروست بنووسە'; errEl.style.display='block'; return; }
-  if(!code){ errEl.textContent='کۆد بنووسە یان کۆدێکی هەڕەمەکی دروست بکە'; errEl.style.display='block'; return; }
-  const btn=document.getElementById('ocSaveBtn');
-  btn.disabled=true; btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i>';
-  try{
-    const {error} = await sb.rpc('ex_admin_create_otp',{
-      p_email:email, p_code:code, p_purpose:purpose, p_minutes:mins
-    });
-    if(error) throw error;
-    closeMo('moOtpCreate');
-    showToast('کۆد دروستکرا: '+code,'gr');
-    loadOtp();
-  }catch(e){
-    errEl.textContent='هەڵە: '+e.message; errEl.style.display='block';
-  }finally{
-    btn.disabled=false; btn.innerHTML='<i class="fas fa-check"></i> دروستکردن';
-  }
-}
-
-function otpForceExpire(id){
-  confirm2('بەسەرخستنی کۆد', 'ئەم کۆدە OTP یە دەبێتە نەچالاک و بەکارهێنەر ناتوانێت بەکاری بهێنێت — دەبێت داوای کۆدێکی نوێ بکات. ئایا دڵنیایت؟',
-    'fas fa-hourglass-end','var(--yw)', async()=>{
-    const {error} = await sb.rpc('ex_admin_expire_otp',{p_id:id});
-    if(error){ showToast('هەڵە: '+error.message,'rd'); return; }
-    showToast('کۆدەکە بەسەرخرا','gr');
-    loadOtp();
-  });
-}
-function otpDelete(id){
-  confirm2('سڕینەوەی کۆد', 'ئەم تۆمارە OTP یە بە تەواوی دەسڕدرێتەوە. ئایا دڵنیایت؟',
-    'fas fa-trash','var(--rd)', async()=>{
-    const {error} = await sb.rpc('ex_admin_delete_otp',{p_id:id});
-    if(error){ showToast('هەڵە: '+error.message,'rd'); return; }
-    showToast('تۆمارەکە سڕدرایەوە','gr');
-    loadOtp();
-  });
-}
 
 // ══════════════════════════════════════════════════════════════
 // ═══ IDENTITY VERIFICATION (KYC) MANAGEMENT ═══════════════════

@@ -989,3 +989,21 @@ body{height:100% !important;min-height:0 !important;max-height:100% !important;
 .modal-btn.ph-del{background:#fff;color:#dc2626;border:1.5px solid #f2c9c9}
 .modal-btn.ph-del:hover{background:#fef2f2}
 .ps-modal-btns .modal-btn[hidden]{display:none}
+
+/* ── v56 order statuses + admin WhatsApp numbers ── */
+.badge.review{background:rgba(8,145,178,.09);color:var(--cy);border:1px solid rgba(8,145,178,.22);}
+.badge.cancelled{background:rgba(100,116,139,.09);color:#475569;border:1px solid rgba(100,116,139,.22);}
+.wa-alert-state{font-size:12.5px;color:#b45309}
+.wa-alert-state.on{color:#15803d}
+.wa-alert-card{padding:14px 18px}
+.wa-alert-add{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:10px;align-items:center;padding-bottom:12px;border-bottom:1px solid #edf1f5}
+.wa-alert-add .minp{padding:10px 13px}
+.wa-alert-add .act-btn{height:42px;justify-content:center}
+.wa-alert-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid #f1f4f8}
+.wa-alert-row:last-child{border-bottom:0}
+.wa-alert-row.is-off .wa-alert-main{opacity:.55}
+.wa-alert-main{display:flex;flex-direction:column;gap:2px;min-width:0}
+.wa-alert-main b{font-size:14px;font-weight:500;color:#171d28;text-align:right}
+.wa-alert-main small{font-size:12px;color:#8994a5}
+.wa-alert-empty{padding:14px 0 4px;font-size:13px;color:#8994a5}
+@media(max-width:700px){ .wa-alert-add{grid-template-columns:1fr} }

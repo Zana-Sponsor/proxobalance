@@ -34,14 +34,14 @@ html body #mainApp#mainApp #pageVerify {
 html[data-theme="dark"] body #mainApp#mainApp #pageVerify {
   --kv-card: #131c2e; --kv-line: #25324a;
   --kv-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 12px 28px -18px rgba(0, 0, 0, .6);
-  --kv-field: #0e1725; --kv-field-line: #25324a; --kv-field-focus: #131c2e; --kv-field-ink: #e8edf6; --kv-field-weight: 500;
-  --kv-ink: #e8edf6; --kv-title: #e8edf6; --kv-text: #acb6c3; --kv-label: #a3b1c7; --kv-ph: #a3b1c7;
+  --kv-field: #0e1725; --kv-field-line: #25324a; --kv-field-focus: #131c2e; --kv-field-ink: #e8edf6; --kv-field-weight: 400;
+  --kv-ink: #e8edf6; --kv-title: #e8edf6; --kv-text: #a3b1c7; --kv-label: #a3b1c7; --kv-ph: #a3b1c7;
   --kv-accent: #3b8cff; --kv-accent-soft: #10223d; --kv-ring: rgba(2, 101, 255, .1);
-  --kv-btn: #2563eb; --kv-btn-press: #1d4fd8; --kv-btn-shadow: 0 10px 22px -12px rgba(37, 99, 235, .7);
-  --kv-chip: #121c29; --kv-chip-ink: #c4cee0;
+  --kv-btn: #1c6cff; --kv-btn-press: #1559d6; --kv-btn-shadow: 0 10px 22px -12px rgba(37, 99, 235, .7);
+  --kv-chip: #131c2e; --kv-chip-ink: #c4cee0;
   --kv-radio: #3a4a66;
-  --kv-err-soft: #320606; --kv-err-line: #4d1616; --kv-err-ink: #e78888;
-  --kv-ok-ink: #83e5a8; --kv-warn-ink: #fbbf65;
+  --kv-err-soft: #3a1816; --kv-err-line: #3a1816; --kv-err-ink: #f87171;
+  --kv-ok-ink: #4ade80; --kv-warn-ink: #fbbf65;
 }
 
 html body #mainApp#mainApp #pageVerify :is(.kv-status, .kv, .kv-done) { font-family: var(--kv-font); color: var(--kv-ink); }
@@ -54,15 +54,15 @@ html body #mainApp#mainApp #pageVerify .kv-status {
   border: 1px solid var(--st-line); border-radius: 16px; background: var(--st-bg);
 }
 html body #mainApp#mainApp #pageVerify .kv-status[data-state="required"] { --st-bg: #fff6e3; --st-line: #f6dba6; }
-html body #mainApp#mainApp #pageVerify .kv-status[data-state="pending"]  { --st-bg: #eef4ff; --st-line: #c6d8fb; }
-html body #mainApp#mainApp #pageVerify .kv-status[data-state="approved"] { --st-bg: #ecf8f1; --st-line: #c2e8d1; }
+html body #mainApp#mainApp #pageVerify .kv-status[data-state="pending"]  { --st-bg: #f1f5f9; --st-line: #dbe2ea; }
+html body #mainApp#mainApp #pageVerify .kv-status[data-state="approved"] { --st-bg: #eaf2ff; --st-line: #c9dcff; }
 html body #mainApp#mainApp #pageVerify .kv-status:is([data-state="rejected"], [data-state="error"]) { --st-bg: #fff0f0; --st-line: #f5c6c6; }
 html body #mainApp#mainApp #pageVerify .kv-status[data-state="loading"] { --st-bg: var(--kv-card); --st-line: var(--kv-line); }
 html[data-theme="dark"] body #mainApp#mainApp #pageVerify .kv-status { --st-bg: #0e1725; --st-line: #25324a; }
-html[data-theme="dark"] body #mainApp#mainApp #pageVerify .kv-status[data-state="required"] { --st-bg: #3c2b07; --st-line: #674c16; }
-html[data-theme="dark"] body #mainApp#mainApp #pageVerify .kv-status[data-state="pending"]  { --st-bg: #061634; --st-line: #0e2550; }
-html[data-theme="dark"] body #mainApp#mainApp #pageVerify .kv-status[data-state="approved"] { --st-bg: #142c1e; --st-line: #244d34; }
-html[data-theme="dark"] body #mainApp#mainApp #pageVerify .kv-status:is([data-state="rejected"], [data-state="error"]) { --st-bg: #320606; --st-line: #4d1616; }
+html[data-theme="dark"] body #mainApp#mainApp #pageVerify .kv-status[data-state="required"] { --st-bg: #131c2e; --st-line: rgba(247, 185, 85, .4); }
+html[data-theme="dark"] body #mainApp#mainApp #pageVerify .kv-status[data-state="pending"]  { --st-bg: #1b2740; --st-line: #2b3a55; }
+html[data-theme="dark"] body #mainApp#mainApp #pageVerify .kv-status[data-state="approved"] { --st-bg: #10223d; --st-line: #264a73; }
+html[data-theme="dark"] body #mainApp#mainApp #pageVerify .kv-status:is([data-state="rejected"], [data-state="error"]) { --st-bg: #3a1816; --st-line: #3a1816; }
 html[data-theme="dark"] body #mainApp#mainApp #pageVerify .kv-status[data-state="loading"] { --st-bg: var(--kv-card); --st-line: var(--kv-line); }
 html body #mainApp#mainApp #pageVerify .kv-status > div { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 html body #mainApp#mainApp #pageVerify .kv-status b { color: var(--kv-title); font-size: 14.5px; font-weight: 600; line-height: 1.6; }

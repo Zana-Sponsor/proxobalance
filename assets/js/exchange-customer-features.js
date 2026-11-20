@@ -116,7 +116,7 @@ async function saveRecipient(){
  const phone=document.getElementById('recipientPhone').value.replace(/\s+/g,'');
  const error=document.getElementById('recipientError');error.textContent='';
  if(!label||label.length>60||!RECEIVE_OPTIONS.includes(wallet_key)||
-  !(wallet_key==='QiCard'?/^\d{6,32}$/:/^07\d{9}$/).test(phone)){
+  !((typeof recipientIsCard==='function'&&recipientIsCard(wallet_key))?/^\d{6,32}$/:/^07\d{9}$/).test(phone)){
   error.textContent='ناو، جزدان و ژمارەی دروست بنووسە';return;
  }
  const button=document.getElementById('recipientSave');if(button.disabled)return;button.disabled=true;
@@ -167,6 +167,8 @@ function startCustomerLive(){
   }},
   {key:'features',...owned('ex_customer_feature_changes'),read:loadCustomerConveniences},
   {key:'balance',...owned('ex_customer_balances'),read:()=>typeof loadMyBalance==='function'?loadMyBalance():null},
-  {key:'payouts',...owned('ex_payout_requests'),read:()=>typeof loadMyBalance==='function'?loadMyBalance():null}
+  {key:'payouts',...owned('ex_payout_requests'),read:()=>typeof loadMyBalance==='function'?loadMyBalance():null},
+  // banned while the app is open: the banned screen appears at once
+  {key:'profile',table:'ex_profiles',filter:'id=eq.'+owner,events:['UPDATE'],read:()=>typeof checkBanState==='function'?checkBanState():null}
  ]);
 }

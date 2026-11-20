@@ -16,12 +16,12 @@ html body #mainApp#mainApp #pageSupport {
   --sc-font: Rabar, Arial, sans-serif;
 }
 html[data-theme="dark"] body #mainApp#mainApp #pageSupport {
-  --sc-card: #131c2e; --sc-field: #0e1725; --sc-soft: #0f1828;
+  --sc-card: #131c2e; --sc-field: #0e1725; --sc-soft: #0e1725;
   --sc-line: #25324a; --sc-field-line: #2b3a55;
   --sc-ink: #e8edf6; --sc-text: #c4cee0; --sc-muted: #a3b1c7;
   --sc-accent: #3b8cff; --sc-accent-soft: #10223d; --sc-ring: rgba(59, 140, 255, .18);
   --sc-ok: #4ade80; --sc-ok-soft: #10301f; --sc-warn: #f7b955; --sc-warn-soft: #33270d;
-  --sc-gray: #a3b1c7; --sc-gray-soft: #1a2438; --sc-bad: #ff8a80;
+  --sc-gray: #a3b1c7; --sc-gray-soft: #1b2740; --sc-bad: #f87171;
   --sc-shadow: none;
 }
 

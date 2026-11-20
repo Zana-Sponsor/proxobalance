@@ -40,11 +40,11 @@ html body #mainApp#mainApp .acx-page {
 html[data-theme="dark"] body #mainApp#mainApp .acx-page {
   --ax-card: #131c2e; --ax-line: #25324a;
   --ax-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 12px 28px -18px rgba(0, 0, 0, .6);
-  --ax-field: #0e1725; --ax-field-line: #25324a; --ax-field-focus: #131c2e; --ax-field-ink: #e8edf6; --ax-field-weight: 500;
-  --ax-ink: #e8edf6; --ax-title: #e8edf6; --ax-text: #acb6c3; --ax-label: #a3b1c7; --ax-ph: #a3b1c7;
+  --ax-field: #0e1725; --ax-field-line: #25324a; --ax-field-focus: #131c2e; --ax-field-ink: #e8edf6; --ax-field-weight: 400;
+  --ax-ink: #e8edf6; --ax-title: #e8edf6; --ax-text: #a3b1c7; --ax-label: #a3b1c7; --ax-ph: #a3b1c7;
   --ax-accent: #3b8cff; --ax-accent-soft: #10223d; --ax-ring: rgba(2, 101, 255, .1);
-  --ax-btn: #2563eb; --ax-btn-press: #1d4fd8; --ax-btn-shadow: 0 10px 22px -12px rgba(37, 99, 235, .7);
-  --ax-badge: #121c29; --ax-badge-ink: #a3b1c7;
+  --ax-btn: #1c6cff; --ax-btn-press: #1559d6; --ax-btn-shadow: 0 10px 22px -12px rgba(37, 99, 235, .7);
+  --ax-badge: #131c2e; --ax-badge-ink: #a3b1c7;
   --ax-note: #0e1725; --ax-note-line: #25324a;
 }
 /* the site's verified / not-verified / waiting tones */
@@ -52,10 +52,10 @@ html body #mainApp#mainApp .acx-page [data-tone="ok"]   { --kt: #16a34a; --kt-in
 html body #mainApp#mainApp .acx-page [data-tone="warn"],
 html body #mainApp#mainApp .acx-page [data-tone="wait"] { --kt: #e08a00; --kt-ink: #8a5300; --kt-bg: #fff6e3; --kt-bd: #f6dba6; }
 html body #mainApp#mainApp .acx-page :is([data-tone="lock"], [data-tone="info"]) { --kt: #2563eb; --kt-ink: #1d4fb8; --kt-bg: #eef4ff; --kt-bd: #c6d8fb; }
-html[data-theme="dark"] body #mainApp#mainApp .acx-page [data-tone="ok"]   { --kt-ink: #83e5a8; --kt-bg: #142c1e; --kt-bd: #244d34; }
+html[data-theme="dark"] body #mainApp#mainApp .acx-page [data-tone="ok"]   { --kt-ink: #4ade80; --kt-bg: #10301f; --kt-bd: #1f5135; }
 html[data-theme="dark"] body #mainApp#mainApp .acx-page [data-tone="warn"],
-html[data-theme="dark"] body #mainApp#mainApp .acx-page [data-tone="wait"] { --kt-ink: #fbbf65; --kt-bg: #3c2b07; --kt-bd: #674c16; }
-html[data-theme="dark"] body #mainApp#mainApp .acx-page :is([data-tone="lock"], [data-tone="info"]) { --kt-ink: #86a6e9; --kt-bg: #061634; --kt-bd: #0e2550; }
+html[data-theme="dark"] body #mainApp#mainApp .acx-page [data-tone="wait"] { --kt-ink: #f7b955; --kt-bg: #2e2511; --kt-bd: #5a4521; }
+html[data-theme="dark"] body #mainApp#mainApp .acx-page :is([data-tone="lock"], [data-tone="info"]) { --kt-ink: #8ab8ff; --kt-bg: #10223d; --kt-bd: #10223d; }
 
 html body #mainApp#mainApp .acx-page .acx { display: flex; flex-direction: column; gap: 14px; font-family: var(--ax-font); color: var(--ax-ink); }
 html body #mainApp#mainApp .acx-page .pxi { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
@@ -91,7 +91,7 @@ html body #mainApp#mainApp .acx-page .acx-note {
 }
 html body #mainApp#mainApp .acx-page .acx-note[hidden] { display: none; }
 html body #mainApp#mainApp .acx-page .acx-note[data-tone="wait"] { --ax-note: #fff6e3; --ax-note-line: #f6dba6; }
-html[data-theme="dark"] body #mainApp#mainApp .acx-page .acx-note[data-tone="wait"] { --ax-note: #3c2b07; --ax-note-line: #674c16; }
+html[data-theme="dark"] body #mainApp#mainApp .acx-page .acx-note[data-tone="wait"] { --ax-note: #131c2e; --ax-note-line: rgba(247, 185, 85, .4); }
 html body #mainApp#mainApp .acx-page .acx-note-body { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 3px; }
 html body #mainApp#mainApp .acx-page .acx-note-body b { color: var(--ax-title); font-size: 14.5px; font-weight: 600; line-height: 1.6; }
 html body #mainApp#mainApp .acx-page .acx-note-body p { margin: 0; color: var(--ax-text); font-size: 14px; font-weight: 400; line-height: 1.75; }
@@ -208,8 +208,33 @@ html body #mainApp#mainApp #pageProfile .acx-menu .pfx-item-txt small { display:
 html body #mainApp#mainApp #pageProfile .acx-menu :is(.acx-ok, .acx-warn) { display: inline-flex; align-items: center; height: 20px; padding: 0 8px; border-radius: 999px; font-size: 11px; font-weight: 600; line-height: 1; }
 html body #mainApp#mainApp #pageProfile .acx-menu .acx-ok { background: #e8f7ef; color: #0f7b4a; }
 html body #mainApp#mainApp #pageProfile .acx-menu .acx-warn { background: #fff6e5; color: #8a5300; }
-html[data-theme="dark"] body #mainApp#mainApp #pageProfile .acx-menu .acx-ok { background: #12291e; color: #4fd18b; }
-html[data-theme="dark"] body #mainApp#mainApp #pageProfile .acx-menu .acx-warn { background: #2a2213; color: #f7c66b; }
+html[data-theme="dark"] body #mainApp#mainApp #pageProfile .acx-menu .acx-ok { background: #10301f; color: #4ade80; }
+html[data-theme="dark"] body #mainApp#mainApp #pageProfile .acx-menu .acx-warn { background: #2e2511; color: #f7b955; }
+
+/* username and creation date: rows of the account list, like the phone number.
+   The username row opens the change sheet while it can still be changed once
+   ("گۆڕین" tag), otherwise it copies; the icon on the end always copies. */
+html body #mainApp#mainApp #pageProfile .acx-menu :is(.un-item, .pfx-item-static) { cursor: default; }
+html body #mainApp#mainApp #pageProfile .acx-menu :is(.un-item, .pfx-item-static):active { background: transparent !important; }
+html body #mainApp#mainApp #pageProfile .acx-menu .un-item { padding-inline-end: 8px; }
+html body #mainApp#mainApp #pageProfile .acx-menu .un-item > .pfx-item-txt {
+  align-self: stretch; justify-content: center; margin: 0; padding: 0; border: 0; background: transparent;
+  color: inherit; font: inherit; text-align: start; cursor: pointer;
+}
+html body #mainApp#mainApp #pageProfile .acx-menu .pfx-item-copy {
+  flex: 0 0 auto; width: 40px; height: 40px; display: grid; place-items: center; margin: 0; padding: 0;
+  border: 0; border-radius: 12px; background: transparent; color: #8a97ab; cursor: pointer;
+}
+html body #mainApp#mainApp #pageProfile .acx-menu .pfx-item-copy[hidden] { display: none; }
+html body #mainApp#mainApp #pageProfile .acx-menu .pfx-item-copy .pxi { width: 18px; height: 18px; }
+html body #mainApp#mainApp #pageProfile .acx-menu .pfx-item-copy:active { background: #f1f5fa; }
+html body #mainApp#mainApp #pageProfile .acx-menu .pfx-item-copy.is-copied { color: #0265ff; }
+html body #mainApp#mainApp #pageProfile .acx-menu .pfx-item-copy:focus-visible { outline: 2px solid #0265ff; outline-offset: 2px; }
+html body #mainApp#mainApp #pageProfile .acx-menu .acx-edit-tag { display: inline-flex; align-items: center; height: 20px; padding: 0 8px; border-radius: 999px; background: #eaf2ff; color: #0b5bd3; font-size: 11px; font-weight: 600; line-height: 1; }
+html[data-theme="dark"] body #mainApp#mainApp #pageProfile .acx-menu .acx-edit-tag { background: #10223d; color: #8ab8ff; }
+html[data-theme="dark"] body #mainApp#mainApp #pageProfile .acx-menu .pfx-item-copy { color: #a3b1c7; }
+html[data-theme="dark"] body #mainApp#mainApp #pageProfile .acx-menu .pfx-item-copy:active { background: #1b2740; }
+html[data-theme="dark"] body #mainApp#mainApp #pageProfile .acx-menu .pfx-item-copy.is-copied { color: #3b8cff; }
 
 @media (prefers-reduced-motion: reduce) {
   html body #mainApp#mainApp .acx-page :is(.acx-btn, .acx-spin, .acx-input, .acx-link, .acx-digit) { transition: none !important; animation: none !important; }

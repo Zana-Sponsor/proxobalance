@@ -4,7 +4,7 @@
    card size, padding and spacing stay exactly as when the data arrives.
    ═════════════════════════════════════════════════════════════════ */
 :root { --skb: #edf1f6; --skb-hi: #f8fafc; }
-html[data-theme="dark"] { --skb: #1b2740; --skb-hi: #263552; }
+html[data-theme="dark"] { --skb: #1b2740; --skb-hi: #264a73; }
 
 /* a bar of text: .skb-w takes the line's height (zero-width space), .skb is the shimmering bar */
 html body .skb-w {

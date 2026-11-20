@@ -1,0 +1,279 @@
+/* Panel lists — orders and accounts (assets/js/admin.js), and the ban dialog. v57.
+   One row per record that reads right to left: who and what first, the decision
+   last. A 3px edge on the row's start carries the status colour, so a long list
+   can be scanned without reading every label. Loaded after every other panel sheet. */
+#pgOrders, #pgAccounts, #moBan {
+  --lv-paper: #ffffff; --lv-ink: #202c3c; --lv-muted: #66768c; --lv-line: #e8edf3;
+  --lv-ctl: #f2f4f7; --lv-ctl-line: #dce3eb; --lv-blue: #1685fa;
+  --lv-ok: #15803d; --lv-ok-bg: #16a34a; --lv-no: #b42318; --lv-no-line: #f2c9c9; --lv-no-soft: #fef2f2;
+}
+
+/* search, total and page actions */
+.lv-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 0 0 12px; }
+.lv-search {
+  flex: 1 1 220px; min-width: 0; height: 44px; padding: 0 14px;
+  border: 1px solid var(--lv-ctl-line); border-radius: 12px; background: var(--lv-paper);
+  color: var(--lv-ink); font: inherit; font-size: 14px; outline: none;
+}
+.lv-search::placeholder { color: #94a3b8; }
+.lv-search:focus { border-color: var(--lv-blue); box-shadow: 0 0 0 3px rgba(22, 133, 250, .12); }
+.lv-search::-webkit-search-cancel-button { cursor: pointer; }
+.lv-total { font-size: 13px; color: var(--lv-muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.lv-bar .lv-btn, .lv-bar .act-btn { height: 44px; padding: 0 16px; border-radius: 12px; }
+
+/* status tabs with their counts */
+.lv-tabs { display: flex; gap: 6px; overflow-x: auto; margin: 0 0 12px; padding: 2px 0 4px; scrollbar-width: none; }
+.lv-tabs::-webkit-scrollbar { display: none; }
+.lv-tab {
+  flex: 0 0 auto; display: inline-flex; align-items: center; gap: 7px; height: 36px; padding: 0 14px;
+  border: 1px solid var(--lv-line); border-radius: 999px; background: var(--lv-paper);
+  color: var(--lv-muted); font: inherit; font-size: 13px; line-height: 1; cursor: pointer; white-space: nowrap;
+}
+.lv-tab:hover { color: var(--lv-ink); border-color: var(--lv-ctl-line); }
+.lv-tab:focus-visible { outline: 2px solid var(--lv-blue); outline-offset: 2px; }
+.lv-tab .lv-n {
+  min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: var(--lv-ctl);
+  color: var(--lv-ink); font-size: 11.5px; line-height: 20px; text-align: center; font-variant-numeric: tabular-nums;
+}
+.lv-tab .lv-n:empty { display: none; }
+.lv-tab.on { background: var(--lv-ink); border-color: var(--lv-ink); color: #fff; }
+.lv-tab.on .lv-n { background: rgba(255, 255, 255, .18); color: #fff; }
+
+/* rows */
+.lv-list { display: grid; gap: 8px; }
+.lv-row {
+  --lv-edge: transparent;
+  position: relative; display: grid; align-items: center; gap: 12px 16px;
+  padding: 14px 18px; background: var(--lv-paper); border: 1px solid var(--lv-line); border-radius: 14px;
+  box-shadow: inset -3px 0 0 var(--lv-edge);
+}
+.lv-orders .lv-row { cursor: pointer; }
+.lv-orders .lv-row:hover { border-color: var(--lv-ctl-line); }
+.lv-row:focus-visible { outline: 2px solid var(--lv-blue); outline-offset: 2px; }
+.lv-row.tone-pending { --lv-edge: #d97706; }
+.lv-row.tone-review { --lv-edge: #0b6bcb; }
+.lv-row.tone-needs-correction { --lv-edge: #dc2626; }
+.lv-row.tone-corrected { --lv-edge: #0e7490; }
+.lv-row.tone-approved { --lv-edge: #16a34a; }
+.lv-row.tone-rejected { --lv-edge: #b42318; }
+.lv-row.tone-cancelled, .lv-row.tone-refunded { --lv-edge: #94a3b8; }
+.lv-row.tone-banned { --lv-edge: #dc2626; }
+.lv-row.tone-admin { --lv-edge: #0891b2; }
+
+.lv-c { min-width: 0; }
+.lv-c b { display: block; font-size: 14px; font-weight: 600; line-height: 1.5; color: var(--lv-ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lv-c small { display: block; margin-top: 2px; font-size: 12px; line-height: 1.5; color: var(--lv-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lv-c small[dir="ltr"], .lv-c b[dir="ltr"] { text-align: right; }
+.lv-id b { font-family: Inter, system-ui, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: .02em; }
+
+/* route: each wallet's own logo from ex_wallets */
+.lv-route { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.lv-w { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--lv-ink); white-space: nowrap; }
+.wl-mark {
+  width: 22px; height: 22px; flex-shrink: 0; border-radius: 6px; object-fit: cover;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 11px; font-weight: 700; font-family: Inter, system-ui, sans-serif;
+}
+.lv-arrow { font-size: 10px; color: #a3aebf; }
+
+.lv-amt b { font-family: Inter, system-ui, sans-serif; font-variant-numeric: tabular-nums; }
+.lv-pay { display: flex; align-items: baseline; gap: 5px; flex-wrap: wrap; margin-top: 2px; font-size: 12px; color: var(--lv-muted); }
+.lv-pay small { display: inline; margin: 0; }
+.lv-pay > span { color: var(--lv-ink); font-variant-numeric: tabular-nums; }
+.lv-pay .order-payout-credit { flex-basis: 100%; }
+.lv-state { display: flex; flex-wrap: wrap; gap: 4px; }
+
+/* actions */
+.lv-act { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 6px; }
+.lv-act:empty { display: none; }
+.lv-btn {
+  display: inline-flex; align-items: center; justify-content: center; height: 34px; padding: 0 12px;
+  border: 1px solid var(--lv-ctl-line); border-radius: 10px; background: var(--lv-paper); color: var(--lv-ink);
+  font: inherit; font-size: 13px; line-height: 1; cursor: pointer; white-space: nowrap;
+}
+.lv-btn:hover { background: var(--lv-ctl); }
+.lv-btn:focus-visible { outline: 2px solid var(--lv-blue); outline-offset: 2px; }
+.lv-btn.is-ok { background: var(--lv-ok-bg); border-color: var(--lv-ok-bg); color: #fff; }
+.lv-btn.is-ok:hover { background: var(--lv-ok); }
+.lv-btn.is-no { background: var(--lv-paper); border-color: var(--lv-no-line); color: var(--lv-no); }
+.lv-btn.is-no:hover { background: var(--lv-no-soft); }
+
+/* the account row's "more" menu (an id in the selector: the panel theme styles .act-btn with !important) */
+.lv-more { position: relative; }
+.lv-more > summary { list-style: none; }
+.lv-more > summary::-webkit-details-marker { display: none; }
+.lv-more > summary {
+  display: inline-flex; align-items: center; height: 34px; padding: 0 12px; border: 1px solid var(--lv-ctl-line);
+  border-radius: 10px; background: var(--lv-paper); color: var(--lv-ink); font-size: 13px; cursor: pointer; user-select: none;
+}
+.lv-more[open] > summary { background: var(--lv-ctl); }
+.lv-menu {
+  position: absolute; top: calc(100% + 6px); left: 0; z-index: 30; min-width: 210px; padding: 6px;
+  display: grid; gap: 2px; background: var(--lv-paper); border: 1px solid var(--lv-line); border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(20, 39, 69, .12);
+}
+#accountsTableWrap .lv-menu .act-btn, #accountsTableWrap .lv-menu button {
+  display: flex !important; justify-content: flex-start !important; width: 100%; height: 38px; padding: 0 12px !important;
+  border: 0 !important; border-radius: 8px !important; background: transparent !important; color: var(--lv-ink) !important;
+  font-size: 13px !important; font-weight: 400 !important; box-shadow: none !important;
+}
+#accountsTableWrap .lv-menu .act-btn:hover, #accountsTableWrap .lv-menu button:hover { background: var(--lv-ctl) !important; }
+#accountsTableWrap .lv-menu .act-btn i, #accountsTableWrap .lv-menu button i { display: none; }
+
+/* accounts */
+.lv-person { display: flex; align-items: center; gap: 12px; }
+.lv-person > div { min-width: 0; }
+.lv-av, .ban-person .lv-av {
+  width: 38px; height: 38px; flex-shrink: 0; border-radius: 50%; background: #eaf3ff; color: #0b6bcb;
+  display: inline-flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600;
+}
+.tone-banned .lv-av { background: #fdeeee; color: var(--lv-no); }
+.lv-contact span { display: block; font-size: 13.5px; color: var(--lv-ink); font-variant-numeric: tabular-nums; text-align: right; }
+.lv-bal small { margin: 0 0 2px; }
+.lv-bal > div { font-size: 14px; font-weight: 600; color: var(--lv-ink); font-variant-numeric: tabular-nums; }
+.lv-bal .rec-card-sub { font-size: 11.5px; font-weight: 400; color: var(--lv-muted); }
+.lv-when span { display: block; font-size: 13px; color: var(--lv-ink); font-variant-numeric: tabular-nums; text-align: right; }
+.lv-ip { font-size: 12.5px; color: var(--lv-muted); }
+.lv-ip:empty::before { content: '—'; }
+
+/* Layout. The list is a container, so a row follows the room the list really has
+   (the sidebar, a narrow window) rather than the screen width.
+   Phones: the row in a few lines. */
+.lv-list { container-type: inline-size; }
+.lv-end { display: contents; }
+.lv-orders .lv-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "id state" "who amt" "route route" "act act";
+}
+.lv-orders .lv-id { grid-area: id; } .lv-orders .lv-state { grid-area: state; justify-content: flex-end; }
+.lv-orders .lv-who { grid-area: who; } .lv-orders .lv-amt { grid-area: amt; text-align: left; }
+.lv-orders .lv-amt .lv-pay { justify-content: flex-end; }
+.lv-orders .lv-amt b[dir="ltr"] { text-align: left; }
+.lv-orders .lv-route { grid-area: route; } .lv-orders .lv-act { grid-area: act; justify-content: stretch; }
+.lv-orders .lv-act .lv-btn { flex: 1 1 0; height: 40px; }
+.lv-accounts .lv-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "person state" "contact bal" "when ip" "act act";
+}
+.lv-accounts .lv-person { grid-area: person; } .lv-accounts .lv-state { grid-area: state; justify-content: flex-end; }
+.lv-accounts .lv-contact { grid-area: contact; } .lv-accounts .lv-bal { grid-area: bal; text-align: left; }
+.lv-accounts .lv-when { grid-area: when; } .lv-accounts .lv-ip { grid-area: ip; text-align: left; }
+.lv-accounts .lv-act { grid-area: act; justify-content: stretch; }
+.lv-accounts .lv-act > .lv-btn, .lv-accounts .lv-act > .lv-more { flex: 1 1 0; }
+.lv-accounts .lv-act > .lv-more > summary { width: 100%; justify-content: center; height: 40px; }
+.lv-accounts .lv-act > .lv-btn { height: 40px; }
+.lv-row { padding: 14px 16px; }
+
+/* Tablets and small laptops: two lines of facts, the status and the buttons at the end. */
+@container (min-width: 640px) {
+  .lv-row { padding: 14px 18px; gap: 10px 18px; }
+  .lv-end { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 8px; grid-area: end; align-self: stretch; }
+  .lv-end .lv-state, .lv-end .lv-act { justify-content: flex-start; }
+  .lv-end .lv-act { flex-wrap: nowrap; }
+  .lv-end .lv-act .lv-btn, .lv-end .lv-act > .lv-more { flex: 0 0 auto; height: 34px; }
+  .lv-end .lv-act > .lv-more > summary { width: auto; height: 34px; }
+  .lv-orders .lv-row {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) 290px;
+    grid-template-areas: "id who end" "route amt end";
+  }
+  .lv-orders .lv-amt, .lv-orders .lv-amt b[dir="ltr"] { text-align: right; }
+  .lv-orders .lv-amt .lv-pay { justify-content: flex-start; }
+  .lv-accounts .lv-row {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr) 250px;
+    grid-template-areas: "person contact bal end" "person when ip end";
+  }
+  .lv-accounts .lv-bal, .lv-accounts .lv-ip { text-align: right; }
+}
+/* Wide: one line per record, columns that line up from row to row. */
+@container (min-width: 880px) {
+  .lv-orders .lv-row {
+    grid-template-columns: 136px minmax(0, 1fr) minmax(0, 1.1fr) 140px 284px;
+    grid-template-areas: "id who route amt end";
+  }
+}
+/* not quite room for both wallets on one line: one under the other */
+@container (min-width: 880px) and (max-width: 1059px) {
+  .lv-orders .lv-route { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .lv-orders .lv-arrow { display: none; }
+  .lv-orders .lv-route .lv-w::before { content: 'لە'; width: 13px; font-size: 11.5px; color: var(--lv-muted); }
+  .lv-orders .lv-route .lv-arrow + .lv-w::before { content: 'بۆ'; }
+}
+@container (min-width: 1060px) {
+  .lv-accounts .lv-row {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) 150px minmax(0, .8fr) 120px 250px;
+    grid-template-areas: "person contact bal ip when end";
+  }
+}
+
+.lv-empty { padding: 40px 16px; border: 1px dashed var(--lv-ctl-line); border-radius: 14px; background: var(--lv-paper); color: var(--lv-muted); font-size: 14px; text-align: center; }
+
+/* loading rows (no spinner, nothing moves) */
+.lv-skel .lv-row { grid-template-columns: 1fr 2fr 1fr; cursor: default; }
+.lv-skel .lv-row i { display: block; height: 12px; border-radius: 6px; background: #eef1f5; }
+.lv-skel .lv-row i:nth-child(2) { width: 70%; }
+
+/* list pager reuses .list-more */
+#ordersTableWrap .list-more, #accountsTableWrap .list-more { margin-top: 12px; }
+
+/* ban dialog */
+#moBan .ban-modal { max-width: 460px; }
+.ban-person { display: flex; align-items: center; gap: 12px; padding: 12px 14px; margin: 0 0 16px; border: 1px solid var(--lv-line); border-radius: 14px; background: #f8fafc; }
+.ban-person > div { min-width: 0; }
+.ban-person b { display: block; font-size: 14.5px; font-weight: 600; color: var(--lv-ink); }
+.ban-person small { display: block; font-size: 12.5px; color: var(--lv-muted); text-align: right; }
+.ban-hint { margin-right: 6px; font-size: 12px; font-weight: 400; color: var(--lv-muted); }
+.ban-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px; }
+.ban-chip { height: 32px; padding: 0 12px; border: 1px solid var(--lv-line); border-radius: 999px; background: var(--lv-paper); color: var(--lv-ink); font: inherit; font-size: 12.5px; cursor: pointer; }
+.ban-chip.on { border-color: var(--lv-no); color: var(--lv-no); background: var(--lv-no-soft); }
+#moBan textarea.minp { min-height: 84px; resize: vertical; }
+.ban-count { margin-top: 4px; font-size: 11.5px; color: var(--lv-muted); text-align: left; }
+.ban-facts { margin: 0; padding: 4px 14px; border: 1px solid var(--lv-line); border-radius: 14px; }
+.ban-facts > div { padding: 10px 0; }
+.ban-facts > div + div { border-top: 1px solid var(--lv-line); }
+.ban-facts dt { font-size: 12px; color: var(--lv-muted); }
+.ban-facts dd { margin: 2px 0 0; font-size: 14px; color: var(--lv-ink); text-align: right; }
+.ban-err:not(:empty) { margin-top: 12px; color: var(--lv-no); font-size: 13px; text-align: center; }
+.ban-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
+.ban-btns .modal-btn { width: 100%; margin: 0; }
+/* an id in the selector: the panel theme paints every .modal-btn white with !important */
+#moBan .modal-btn.ban-cancel { background: var(--lv-paper) !important; color: var(--lv-ink) !important; border: 1px solid var(--lv-ctl-line) !important; }
+#moBan .modal-btn.ban-go-no { background: var(--lv-no) !important; color: #fff !important; border: 1px solid var(--lv-no) !important; }
+#moBan .modal-btn.ban-go-no:hover { background: #912018 !important; border-color: #912018 !important; }
+#moBan .modal-btn.ban-go-ok { background: var(--lv-ok-bg) !important; color: #fff !important; border: 1px solid var(--lv-ok-bg) !important; }
+#moBan .modal-btn.ban-go-ok:hover { background: var(--lv-ok) !important; border-color: var(--lv-ok) !important; }
+#moBan .modal-btn:disabled { opacity: .6; }
+
+/* Pause page: the whole-site card (assets/js/exchange-site-pause-admin.js). The same
+   two bars customers see on the paused screen; a green dot while the site works. */
+#pgPause .ps-site { padding: 20px 22px; }
+.ps-hero { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 16px; }
+.ps-hero .ps-main { gap: 4px; }
+.ps-hero .ps-main b { font-size: 17px; font-weight: 600; color: #171d28; }
+.ps-hero .ps-main small { font-size: 13px; color: #66768c; }
+.ps-mark {
+  width: 48px; height: 48px; border-radius: 50%; background: #e9f7ef;
+  display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+}
+.ps-mark::before { content: ''; width: 12px; height: 12px; border-radius: 50%; background: #16a34a; box-shadow: 0 0 0 5px rgba(22, 163, 74, .15); }
+.ps-mark i { display: none; width: 5px; height: 18px; border-radius: 2px; background: #b45309; }
+.ps-site.is-off .ps-mark { background: #fdeccf; }
+.ps-site.is-off .ps-mark::before { display: none; }
+.ps-site.is-off .ps-mark i { display: block; }
+.ps-site.is-off .ps-hero .ps-main b { color: #92400e; }
+.ps-quote {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 4px 14px;
+  margin: 16px 0 0; padding: 12px 14px; border: 1px solid #f3dfb8; border-radius: 12px; background: #fff;
+}
+.ps-quote span { font-size: 12px; color: #8994a5; }
+.ps-quote p { grid-column: 1; margin: 0; font-size: 14px; line-height: 1.7; color: #1f2937; overflow-wrap: anywhere; }
+.ps-quote .ps-link { grid-column: 2; grid-row: 1 / span 2; }
+.ps-offlist { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 16px; padding-top: 14px; border-top: 1px solid #eef2f6; }
+.ps-offlist span { margin-left: 4px; font-size: 12.5px; color: #8994a5; }
+.ps-offlist em { padding: 3px 10px; border-radius: 999px; background: #fff4e5; color: #b45309; font-size: 12.5px; font-style: normal; }
+@media (max-width: 520px) {
+  #pgPause .ps-site { padding: 16px; }
+  .ps-hero { gap: 12px; }
+  .ps-mark { width: 40px; height: 40px; }
+  .ps-quote { grid-template-columns: 1fr; }
+  .ps-quote .ps-link { grid-column: 1; grid-row: auto; justify-self: start; }
+}

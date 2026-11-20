@@ -84,6 +84,27 @@
       + '<label class="mswitch" title="' + (r.paused ? 'ڕاگیراوە' : 'کارایە') + '"><input type="checkbox" aria-label="' + e(name) + '"' + (r.paused ? '' : ' checked') + (busy ? ' disabled' : '') + ' onchange="toggleSitePause(\'' + key + '\', this)"><span class="track"></span></label>'
       + '</div>';
   }
+  // The whole-site card: the state in words, the customer's message, which sections are off.
+  function siteHTML(){
+    const r = row('site');
+    const byHours = r.paused && r.paused_source === 'schedule';
+    const off = SECTIONS.filter(s => row(s[0]).paused).map(s => s[1]);
+    const sub = !r.paused ? 'هەموو بەشەکان بۆ کڕیار کراونەتەوە'
+      : byHours ? 'داخراوە بەپێی کاتژمێری کار'
+      : (r.updated_at ? 'لە ' + when(r.updated_at) : 'کڕیار شاشەی ڕاگرتن دەبینێت');
+    return '<div class="ps-hero">'
+      + '<span class="ps-mark" aria-hidden="true"><i></i><i></i></span>'
+      + '<div class="ps-main"><b>' + (r.paused ? 'ماڵپەڕەکە ڕاگیراوە' : 'ماڵپەڕەکە کارایە') + '</b><small dir="auto">' + e(sub) + '</small></div>'
+      + '<label class="mswitch" title="' + (r.paused ? 'ڕاگیراوە' : 'کارایە') + '"><input type="checkbox" aria-label="' + e(NAMES.site) + '"' + (r.paused ? '' : ' checked') + (busy ? ' disabled' : '') + ' onchange="toggleSitePause(\'site\', this)"><span class="track"></span></label>'
+      + '</div>'
+      + (r.paused && !byHours
+        ? '<div class="ps-quote"><span>پەیام بۆ کڕیار</span><p>' + (r.message ? e(r.message) : 'هیچ پەیامێک نییە') + '</p>'
+          + '<button type="button" class="ps-link" onclick="openSitePause(\'site\', true)">گۆڕینی پەیام</button></div>'
+        : '')
+      + (off.length && !r.paused
+        ? '<div class="ps-offlist"><span>ڕاگیراوەکان</span>' + off.map(n => '<em>' + e(n) + '</em>').join('') + '</div>'
+        : '');
+  }
   function hoursHTML(h){
     const state = !h.is_active ? '<span class="ps-state">ناچالاکە</span>'
       : h.last_state === 'closed' ? '<span class="ps-state off">دەرەوەی کاتی کار</span>'
@@ -103,7 +124,7 @@
       const items = hours().slice().sort((a, b) => order.indexOf(a.key) - order.indexOf(b.key));
       hoursWrap.innerHTML = items.length ? items.map(hoursHTML).join('') : '<div class="ps-empty">هیچ کاتژمێرێک دانەنراوە</div>';
     }
-    if (site) { site.innerHTML = rowHTML('site', NAMES.site, 'هەموو بەشەکان بۆ کڕیار'); site.classList.toggle('is-off', !!row('site').paused); }
+    if (site) { site.innerHTML = siteHTML(); site.classList.toggle('is-off', !!row('site').paused); }
     if (list) list.innerHTML = GROUPS.map(g => '<div class="ps-group"><h4>' + e(g[0]) + '</h4>' + g[1].map(s => rowHTML(s[0], s[1], s[2])).join('') + '</div>').join('');
     if (log) {
       const items = (data && data.log) || [];

@@ -1,7 +1,7 @@
 import { json, readJson, serviceFetch, withSecurity } from './_lib/security.js';
 import { payoutPlan } from './_lib/payout-rounding.js';
 
-const UNSETTLED_STATUSES = new Set(['چاوەڕوانە', 'ڕاستکراوەتەوە', 'پێویستی بە ڕاستکردنەوەیە']);
+const UNSETTLED_STATUSES = new Set(['چاوەڕوانە', 'لەژێر پێداچوونەوەدایە', 'ڕاستکراوەتەوە', 'پێویستی بە ڕاستکردنەوەیە']);
 
 const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'

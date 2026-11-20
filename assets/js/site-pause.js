@@ -6,7 +6,7 @@
    customer before they fill in a form.
 
      site                one screen over everything
-     a screen            its header stays, a notice replaces the rest
+     a screen            its header stays, the rest becomes one centred paused state
      support             only the new-case form is replaced
      balance             paying with the balance: the exchange send button stops
      signup / login      a notice on the step, its button stops
@@ -81,18 +81,31 @@
       .catch(function () {});
   }
 
+  // one card: a tile with two bars, the title and the admin's message; on a paused
+  // screen it also offers "check again" and the way home (site-pause.css)
   function makeNote() {
     var box = document.createElement('div');
     box.className = 'svc-note';
     box.setAttribute('role', 'status');
-    box.appendChild(document.createElement('b'));
-    box.appendChild(document.createElement('p'));
+    box.innerHTML = '<span class="svc-note-mark" aria-hidden="true"><i></i><i></i></span>'
+      + '<div class="svc-note-body"><b></b><p></p></div>'
+      + '<div class="svc-note-actions">'
+      + '<button type="button" class="svc-note-btn is-soft" data-act="check">دووبارە پشکنین</button>'
+      + '<button type="button" class="svc-note-btn" data-act="home">سەرەکی</button></div>';
+    box.querySelector('[data-act="check"]').addEventListener('click', function () {
+      var btn = this;
+      btn.disabled = true; btn.textContent = 'پشکنین...';
+      load().then(function () { setTimeout(function () { btn.disabled = false; btn.textContent = 'دووبارە پشکنین'; }, 600); });
+    });
+    box.querySelector('[data-act="home"]').addEventListener('click', function () {
+      if (typeof window.navigate === 'function') window.navigate('home');
+    });
     return box;
   }
   function fill(box, key) {
     box.dataset.svc = key;
-    box.firstChild.textContent = TITLES[key] || TITLES.site;
-    box.lastChild.textContent = (state[key] && state[key].message) || LATER;
+    box.querySelector('b').textContent = TITLES[key] || TITLES.site;
+    box.querySelector('p').textContent = (state[key] && state[key].message) || LATER;
   }
   function lock(ids, on) {
     ids.forEach(function (id) {
@@ -124,9 +137,11 @@
       el.setAttribute('role', 'alertdialog');
       el.setAttribute('aria-modal', 'true');
       el.setAttribute('aria-labelledby', 'svcSiteTitle');
-      el.innerHTML = '<div class="svc-site-box"><img class="svc-site-logo" src="/assets/images/auth/proxo-logo.webp" alt="Proxo">'
+      el.innerHTML = '<img class="svc-site-logo" src="/assets/images/auth/proxo-logo.webp" alt="Proxo">'
+        + '<div class="svc-site-box"><div class="svc-site-mark" aria-hidden="true"><i></i><i></i></div>'
         + '<h1 id="svcSiteTitle"></h1><p id="svcSiteText"></p>'
-        + '<button type="button" class="svc-site-btn" id="svcSiteBtn">دووبارە هەوڵبدەرەوە</button></div>';
+        + '<div class="svc-site-actions"><button type="button" class="svc-site-btn" id="svcSiteBtn">دووبارە هەوڵبدەرەوە</button>'
+        + '<a class="svc-site-btn is-ghost" href="https://t.me/proxo_exchange" target="_blank" rel="noopener">پەیوەندی بە پشتگیری</a></div></div>';
       document.body.appendChild(el);
       el.querySelector('#svcSiteBtn').addEventListener('click', function () {
         var btn = this;

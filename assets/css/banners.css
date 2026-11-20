@@ -28,7 +28,7 @@ html body #mainApp .dbb-dot {
   display: grid; place-items: center; width: 18px; height: 18px; margin: 0; padding: 0;
   border: 0; background: none; cursor: pointer; transition: width .2s;
 }
-html[data-theme="dark"] body #mainApp .dbb-dot { --dot: #33415a; --dot-on: #3b8cff; }
+html[data-theme="dark"] body #mainApp .dbb-dot { --dot: #2b3a55; --dot-on: #3b8cff; }
 html body #mainApp .dbb-dot::before { content: ''; width: 6px; height: 6px; border-radius: 999px; background: var(--dot); transition: width .2s, background .2s; }
 html body #mainApp .dbb-dot.on { width: 26px; }
 html body #mainApp .dbb-dot.on::before { width: 18px; background: var(--dot-on); }

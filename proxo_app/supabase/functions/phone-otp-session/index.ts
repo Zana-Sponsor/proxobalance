@@ -21,12 +21,12 @@
  * So verification and session issuance are ONE call. The client never gets to
  * stand between them.
  *
- * This also fixes a second problem. `verify_otp_whatsapp` sets `is_used =
- * true` on the matching row, so a code can only be verified once. If the
- * client called the n8n webhook first and this function second, the second
- * call would always fail with "code already used".
+ * The purpose-aware `pa_verify_whatsapp_otp` sets `is_used =
+ * true` on the matching row, so a code can only be verified once. Signup must
+ * call the purpose-aware `pa_verify_whatsapp_otp` RPC with `signup`; the older
+ * `verify_otp_whatsapp` wrapper is intentionally login-only.
  *
- * ⚠ `verify_otp_whatsapp` returns `success: true` for a WRONG code — it means
+ * ⚠ `pa_verify_whatsapp_otp` returns `success: true` for a WRONG code — it means
  * "the function ran", not "the code matched". The only correct check is
  * `data.verified === true`. Do not loosen this.
  *
@@ -120,11 +120,11 @@ Deno.serve(async (req) => {
     // ── 1. Verify the OTP ───────────────────────────────────────────────────
     // Consumes the code (is_used = true) when it matches.
     const { data: verifyRes, error: verifyErr } = await admin.rpc(
-      "verify_otp_whatsapp",
-      { p_phone: phone, p_code: code },
+      "pa_verify_whatsapp_otp",
+      { p_phone: phone, p_code: code, p_purpose: "signup" },
     );
     if (verifyErr) {
-      console.error("verify_otp_whatsapp failed", verifyErr);
+      console.error("pa_verify_whatsapp_otp failed", verifyErr);
       return json({ ok: false, error: "verify_failed" }, 500);
     }
 

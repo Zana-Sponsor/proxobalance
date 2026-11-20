@@ -7,7 +7,7 @@ process.env.WEVLIX_API_KEY = 'wevlix-test-key';
 const { default: handler, normalizeIraqiPhone, phoneEmail } = await import('../api-handlers/auth.js');
 
 function backend() {
-  const db = { users: new Map(), passwords: new Map(), codes: [], locks: new Map(), devices: new Map(), sent: [], emailCodes: [], sessions: 0, tokens: new Map(), profiles: new Map() };
+  const db = { users: new Map(), passwords: new Map(), codes: [], locks: new Map(), devices: new Map(), sent: [], emailCodes: [], sessions: 0, tokens: new Map(), profiles: new Map(), events: [] };
   const DAY = 864e5;
   const taken = (phone, except) => [...db.profiles.entries()].some(([id, p]) => id !== except && p.phone === phone && p.verified)
     || [...db.users.values()].some(u => u.id !== except && u.email === `p964${phone.slice(1)}@phone.proxobalance.app`);
@@ -29,7 +29,7 @@ function backend() {
   };
   const rpcs = {
     ex_ip_check: () => [{ banned: false }],
-    ex_record_event: () => null,
+    ex_record_event: payload => { db.events.push(payload); return null; },
     ex_auth_lock_until: ({ p_key }) => lock(p_key),
     ex_auth_fail: ({ p_key }) => failKey(p_key),
     ex_auth_clear: ({ p_key }) => { if (!lock(p_key)) db.locks.delete(p_key); return null; },
@@ -46,7 +46,7 @@ function backend() {
     },
     ex_auth_code_check: ({ p_phone, p_purpose, p_code }) => {
       if (lock(`phone:${p_phone}`)) return { ok: false, reason: 'locked', locked_until: lock(`phone:${p_phone}`) };
-      const c = db.codes.filter(x => x.phone === p_phone && x.purpose === p_purpose && !x.used).at(-1);
+      const c = db.codes.filter(x => x.phone === p_phone && x.purpose === p_purpose && !x.used && x.expiresAt > Date.now()).at(-1);
       if (!c) return { ok: false, reason: 'expired' };
       if (c.code !== p_code) { const f = failKey(`phone:${p_phone}`); return f.locked_until ? { ok: false, reason: 'locked', locked_until: f.locked_until } : { ok: false, reason: 'wrong', attempts_left: f.attempts_left }; }
       c.used = true;
@@ -412,4 +412,56 @@ test('v51: a code that could not be sent is written to the admin error log, with
     assert.match(r.message, /SMTP connection refused/);
     assert.equal(r.metadata.target, 'n•••@gmail.com');
   }
+});
+
+
+test('registration requires a valid unexpired single-use OTP before any user is created', async () => {
+  const { db, call } = backend();
+  const base = { action: 'signup_finish', phone: '07509990001', name: 'Test Person', password: 'longpassword' };
+  const missing = await call(base);
+  assert.equal(missing.code, 'CODE_INVALID');
+  assert.equal(db.users.size, 0);
+
+  const start = await call({ action: 'signup_start', phone: base.phone, name: base.name, password: base.password });
+  assert.equal(start.status, 200);
+  const code = db.sent.at(-1).components[0].parameters[0].text;
+  const wrong = await call({ ...base, code: '000001' });
+  assert.equal(wrong.status, 401);
+  assert.equal(db.users.size, 0);
+
+  db.codes.at(-1).expiresAt = Date.now() - 1;
+  const expired = await call({ ...base, code });
+  assert.equal(expired.status, 410);
+  assert.equal(db.users.size, 0);
+
+  const phone2 = '07509990002';
+  await call({ action: 'signup_start', phone: phone2, name: base.name, password: base.password });
+  const code2 = db.sent.at(-1).components[0].parameters[0].text;
+  const good = await call({ ...base, phone: phone2, code: code2 });
+  assert.equal(good.status, 200);
+  const replay = await call({ ...base, phone: phone2, code: code2 });
+  assert.equal(replay.status, 410);
+  assert.equal(db.users.size, 1);
+});
+
+test('parallel verification of the same registration OTP creates at most one user', async () => {
+  const { db, call } = backend();
+  const phone = '07509990003';
+  await call({ action: 'signup_start', phone, name: 'Test Person', password: 'longpassword' });
+  const code = db.sent.at(-1).components[0].parameters[0].text;
+  const payload = { action: 'signup_finish', phone, name: 'Test Person', password: 'longpassword', code };
+  const results = await Promise.all([call(payload), call(payload)]);
+  assert.deepEqual(results.map(result => result.status).sort(), [200, 410]);
+  assert.equal(db.users.size, 1);
+});
+
+
+test('failed OTP attempts are logged without destination phone or submitted code', async () => {
+  const { db, call } = backend();
+  const phone = '07509990004';
+  await call({ action: 'signup_start', phone, name: 'Test Person', password: 'longpassword' });
+  await call({ action: 'signup_finish', phone, name: 'Test Person', password: 'longpassword', code: '000009' });
+  const events = JSON.stringify(db.events);
+  assert.match(events, /otp_verification_failed/);
+  assert.doesNotMatch(events, /07509990004|\+9647509990004|000009/);
 });

@@ -83,7 +83,7 @@ test('v47: every profile screen starts with the same toolbar (back right, center
   }
   assert.match(css, /body #mainApp \.pfx-bar h2 \{[^}]*font-size: 16px;[^}]*font-weight: 700;/);
   assert.match(css, /body #mainApp \.pfx-bar \{ margin-bottom: 14px !important; \}/);
-  assert.match(html, /\/assets\/css\/profile-screens\.css\?v=1/);
+  assert.match(html, /\/assets\/css\/profile-screens\.css\?v=2/);
 });
 
 test('v48: the code screens offer "send again" only after the code expired, and the confirm button never stays busy', () => {
@@ -130,8 +130,8 @@ test('v49: account screens use the site\'s measured card, label, field and butto
   assert.match(html, /<label for="daxPass">وشەی نهێنیی ئێستا<\/label>/);
   assert.match(html, /<div class="acx-sent"><span>کۆدەکە نێردرا بۆ<\/span><b dir="ltr" id="ceTarget"><\/b>/);
   assert.match(app, /b\.textContent='دووبارە ناردنەوە لە '\+acxClock\(left\);/);
-  assert.match(html, /account-settings\.css\?v=4/);
-  assert.match(html, /account-delete\.css\?v=3/);
+  assert.match(html, /account-settings\.css\?v=6/);
+  assert.match(html, /account-delete\.css\?v=4/);
 });
 
 test('v50: identity verification rebuilt on the same values; six code boxes in the profile; no decorative icons', () => {
@@ -150,7 +150,7 @@ test('v50: identity verification rebuilt on the same values; six code boxes in t
   assert.match(kv, /\.kv-btn:disabled \{ opacity: \.55( !important)?;/);
   assert.match(app, /document\.querySelectorAll\('\.kv-doc'\)/);
   assert.match(app, /e\.target\.closest\('label\.kv-src, label\.kv-mini'\)/);
-  assert.match(html, /\/assets\/css\/kyc-screen\.css\?v=1/);
+  assert.match(html, /\/assets\/css\/kyc-screen\.css\?v=3/);
   // the profile code step = the sign-in code screen: six boxes, value kept in the hidden field
   for (const p of ['cp', 'ce']) {
     assert.match(html, new RegExp(`<div class="acx-otp" dir="ltr" role="group" aria-label="کۆدی دڵنیایی" data-code="${p}Code" data-sync="${p}Sync">(<input class="acx-digit"[^>]*>){6}</div>\\s*<input type="hidden" id="${p}Code">`));

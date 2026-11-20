@@ -370,7 +370,7 @@ const actions = {
     return { ok: true, otp_required: true, ...(await sendWhatsAppCode(phone, 'signup', context?.ip)) };
   },
 
-  async signup_finish(body, { req }) {
+  async signup_finish(body, { req, log }) {
     const phone = requirePhone(body.phone);
     const name = cleanName(body.name);
     const password = cleanPassword(body.password);
@@ -392,6 +392,7 @@ const actions = {
       // the code proved the number: WhatsApp may use it, and no other account can take it
       body: JSON.stringify({ full_name: name, phone: localPhone(phone), email: null, phone_verified_at: new Date().toISOString() })
     });
+    await log?.({ type: 'otp_account_created', detail: 'verified_signup', risk: 0, userId, meta: { action: 'signup_finish', purpose: 'signup', channel: 'whatsapp' } });
     const who = { kind: 'phone', phone, key: `phone:${phone}`, authEmail: email };
     return finishSignIn(req, who, { userId, authEmail: email, ownPassword: true }, body.remember === true);
   },
@@ -579,6 +580,18 @@ export default withSecurity(async (req, res, ctx) => {
   try {
     return json(res, 200, await action(body, { ...ctx, req }));
   } catch (error) {
+    const actionName = String(body?.action || '').slice(0, 40);
+    const otpErrors = new Set(['WRONG', 'CODE_EXPIRED', 'CODE_INVALID', 'LOCKED', 'TOO_MANY_CODES']);
+    if (otpErrors.has(error.code) && typeof ctx.log === 'function') {
+      const purposes = { signup_start: 'signup', signup_finish: 'signup', login_start: 'login', login_finish: 'login', reset_start: 'reset', reset_verify: 'reset', phone_change_start: 'change_phone', phone_change_finish: 'change_phone', email_change_start: 'signup', email_change_finish: 'signup' };
+      const rateLimited = error.code === 'LOCKED' || error.code === 'TOO_MANY_CODES';
+      await ctx.log({
+        type: rateLimited ? 'otp_rate_limited' : 'otp_verification_failed',
+        detail: `${actionName}:${error.code}`,
+        risk: rateLimited ? 5 : 1,
+        meta: { action: actionName, purpose: purposes[actionName] || null }
+      });
+    }
     const known = ['WHATSAPP_FAILED', 'WHATSAPP_NOT_CONFIGURED', 'EMAIL_FAILED', 'SESSION_FAILED', 'SIGNUP_FAILED', 'PHONE_CHANGE_FAILED', 'PASSWORD_CHANGE_FAILED', 'EMAIL_CHANGE_FAILED'].includes(error.code);
     // these never reach the generic 5xx logger below, so they are written here
     if (known) await logAuthFailure(error, body, ctx);

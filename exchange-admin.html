@@ -9,14 +9,14 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <!-- Firebase — announcement banner control only (same project as exchange.html) -->
-<link rel="stylesheet" href="assets/css/admin.css?v=16">
+<link rel="stylesheet" href="assets/css/admin.css?v=17">
 <link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/exchange-insights.css?v=2">
 <link rel="stylesheet" href="assets/css/exchange-features.css?v=4">
 <link rel="stylesheet" href="assets/css/exchange-panel-theme.css?v=4">
-<link rel="stylesheet" href="assets/css/exchange-readable.css?v=3">
+<link rel="stylesheet" href="assets/css/exchange-readable.css?v=4">
 <link rel="stylesheet" href="assets/css/exchange-typography.css?v=1">
-<link rel="stylesheet" href="assets/css/exchange-light-panel.css?v=7">
+<link rel="stylesheet" href="assets/css/exchange-light-panel.css?v=13">
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -24,8 +24,9 @@
 <link rel="stylesheet" href="assets/css/admin-contracts.css?v=2">
 <link rel="stylesheet" href="assets/css/exchange-feedback.css?v=4">
 <link rel="stylesheet" href="assets/css/exchange-auth-app.css?v=1">
-<link rel="stylesheet" href="assets/css/exchange-balance.css?v=6">
+<link rel="stylesheet" href="assets/css/exchange-balance.css?v=7">
 <link rel="stylesheet" href="assets/css/app-ui-polish.css?v=2">
+<link rel="stylesheet" href="assets/css/admin-lists.css?v=1">
 <script src="assets/js/exchange-access.js?v=1"></script>
 </head>
 <body>
@@ -83,7 +84,6 @@
     <div class="sb-item" onclick="goPage('cases')"><i class="fas fa-headset" style="color:#2563eb"></i> کەیسەکانی کڕیار <span class="sb-badge rd" id="sbCaseCount" style="display:none">0</span></div>
     <div class="sb-item" onclick="goPage('banners')"><i class="fas fa-images" style="color:#0891b2"></i> بانەرەکان</div>
     <div class="sb-section">ئاسایش</div>
-    <div class="sb-item" onclick="goPage('otp')"><i class="fas fa-key" style="color:#dc2626"></i> کۆدەکانی OTP</div>
     <div class="sb-item" onclick="goPage('security')"><i class="fas fa-user-shield" style="color:#dc2626"></i> ئاسایش و IP <span class="sb-badge rd" id="sbAlertCount" style="display:none">0</span></div>
     <div class="sb-item" onclick="goPage('errors')"><i class="fas fa-bug" style="color:#dc2626"></i> لۆگی هەڵەکان <span class="sb-badge rd" id="sbErrorCount" style="display:none">0</span></div>
   </div>
@@ -226,43 +226,40 @@
 
     <!-- ══ ORDERS ══ -->
     <div class="pg" id="pgOrders">
-      <div class="sec-hdr"><h3>هەموو ئۆردەرەکان</h3></div>
-      <div class="tbl-wrap">
-        <div class="tbl-filter">
-          <input class="tbl-search" id="orderSearch" placeholder="گەڕان بە ئایدی مامەڵە (P...)، ناو، ئیمەیل یان ژمارە..." oninput="filterOrders(null,true)">
-          <div class="chip on" data-of="all" onclick="filterOrders(this)">هەموو</div>
-          <div class="chip yw" data-of="چاوەڕوانە" onclick="filterOrders(this)">چاوەڕوان</div>
-          <div class="chip rd" data-of="پێویستی بە ڕاستکردنەوەیە" onclick="filterOrders(this)">چاوەڕوانی کڕیار</div>
-          <div class="chip" data-of="ڕاستکراوەتەوە" onclick="filterOrders(this)">وەڵامی کڕیار</div>
-          <div class="chip gr" data-of="پەسەندکرا" onclick="filterOrders(this)">پەسەندکرا</div>
-          <div class="chip" data-of="refunded" onclick="filterOrders(this)">ڕیفاوندکرا</div>
-          <div class="chip rd" data-of="ڕەتکرا" onclick="filterOrders(this)">ڕەتکرا</div>
-        </div>
-        <div class="tbl-scroll tbl-wrap-scroll-target" id="ordersTableWrap">
-          <div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
-        </div>
+      <div class="lv-bar">
+        <input class="lv-search" id="orderSearch" type="search" autocomplete="off" placeholder="گەڕان بە کۆد، ناو، ئیمەیل یان ژمارە" aria-label="گەڕان لە داواکارییەکان" oninput="filterOrders(null,true)">
+        <button type="button" class="lv-btn" onclick="openOrdersPage()">نوێکردنەوە</button>
       </div>
+      <div class="lv-tabs" role="toolbar" aria-label="دۆخی داواکاری">
+        <button type="button" class="lv-tab on" data-of="all" onclick="filterOrders(this)">هەموو <span class="lv-n"></span></button>
+        <button type="button" class="lv-tab" data-of="چاوەڕوانە" onclick="filterOrders(this)">چاوەڕوان <span class="lv-n"></span></button>
+        <button type="button" class="lv-tab" data-of="لەژێر پێداچوونەوەدایە" onclick="filterOrders(this)">لەژێر پێداچوونەوە <span class="lv-n"></span></button>
+        <button type="button" class="lv-tab" data-of="پێویستی بە ڕاستکردنەوەیە" onclick="filterOrders(this)">چاوەڕوانی کڕیار <span class="lv-n"></span></button>
+        <button type="button" class="lv-tab" data-of="ڕاستکراوەتەوە" onclick="filterOrders(this)">وەڵامی کڕیار <span class="lv-n"></span></button>
+        <button type="button" class="lv-tab" data-of="پەسەندکرا" onclick="filterOrders(this)">پەسەندکرا <span class="lv-n"></span></button>
+        <button type="button" class="lv-tab" data-of="ڕەتکرا" onclick="filterOrders(this)">ڕەتکرا <span class="lv-n"></span></button>
+        <button type="button" class="lv-tab" data-of="هەڵوەشێنرایەوە" onclick="filterOrders(this)">هەڵوەشاوە <span class="lv-n"></span></button>
+        <button type="button" class="lv-tab" data-of="refunded" onclick="filterOrders(this)">ڕیفاوندکرا <span class="lv-n"></span></button>
+      </div>
+      <div class="tbl-wrap-scroll-target" id="ordersTableWrap"></div>
     </div>
 
     <!-- ══ ACCOUNTS ══ -->
     <div class="pg" id="pgAccounts">
-      <div class="sec-hdr">
-        <h3>هەموو بەکارهێنەران <span class="acc-count" id="accCount"></span></h3>
-        <button type="button" class="act-btn bl" onclick="loadAccounts()">نوێکردنەوە</button>
-        <button type="button" id="staffDirectoryButton" data-super-admin-only class="act-btn cy" onclick="openStaffDirectory()"><i class="fas fa-key"></i> بەڕێوەبردنی ئادمینەکان</button>
+      <div class="lv-bar">
+        <input class="lv-search" id="accSearch" type="search" autocomplete="off" placeholder="گەڕان بە ناو، ئیمەیل، @username یان ئایدی" aria-label="گەڕان لە هەژمارەکان" oninput="filterAccounts(null,true)">
+        <span class="lv-total" id="accCount"></span>
+        <button type="button" class="lv-btn" onclick="openAccountsPage()">نوێکردنەوە</button>
+        <button type="button" id="staffDirectoryButton" data-super-admin-only class="lv-btn" onclick="openStaffDirectory()">ئادمینەکان</button>
         <div class="act-btn dark" data-super-admin-only hidden onclick="openCreateUserModal()"><i class="fas fa-user-plus"></i> زیادکردنی هەژمار</div>
       </div>
-      <div class="tbl-wrap">
-        <div class="tbl-filter">
-          <input class="tbl-search" id="accSearch" placeholder="گەڕان بە ناو، ئیمەیل، @username یان ئایدی..." oninput="filterAccounts(null,true)">
-          <div class="chip on" data-af="all" onclick="filterAccounts(this)">هەموو</div>
-          <div class="chip rd" data-af="banned" onclick="filterAccounts(this)">بۆیکۆتکراو</div>
-          <div class="chip cy" data-af="admin" onclick="filterAccounts(this)">ئادمین</div>
-        </div>
-        <div class="tbl-scroll tbl-wrap-scroll-target" id="accountsTableWrap">
-          <div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
-        </div>
+      <div class="lv-tabs" role="toolbar" aria-label="جۆری هەژمار">
+        <button type="button" class="lv-tab on" data-af="all" onclick="filterAccounts(this)">هەموو <span class="lv-n"></span></button>
+        <button type="button" class="lv-tab" data-af="active" onclick="filterAccounts(this)">چالاک <span class="lv-n"></span></button>
+        <button type="button" class="lv-tab" data-af="banned" onclick="filterAccounts(this)">باندکراو <span class="lv-n"></span></button>
+        <button type="button" class="lv-tab" data-af="admin" onclick="filterAccounts(this)">ئادمین <span class="lv-n"></span></button>
       </div>
+      <div class="tbl-wrap-scroll-target" id="accountsTableWrap"></div>
     </div>
 
     <!-- ══ IDENTITY VERIFICATION (KYC) ══ -->
@@ -628,7 +625,6 @@
       </section>
     </div>
 
-    <!-- ══ OTP CODES ══ -->
     <!-- ══ WHATSAPP ORDER NOTIFICATIONS (ex_whatsapp_messages, sent by n8n via Wevlix) ══ -->
     <div class="pg" id="pgWhatsapp">
       <div class="stats-row">
@@ -661,6 +657,21 @@
 
       <div data-super-admin-only>
         <div class="sec-hdr wa-subs-note">
+          <h3>ئاگادارکردنەوەی داواکاریی دواکەوتوو</h3>
+          <span class="wa-alert-state" id="waAlertState"></span>
+        </div>
+        <div class="tbl-wrap wa-alert-card">
+          <div class="wa-alert-add">
+            <input class="minp" id="waAlertPhone" type="tel" dir="ltr" inputmode="numeric" maxlength="13" placeholder="07xxxxxxxxx" aria-label="ژمارەی مۆبایل">
+            <input class="minp" id="waAlertLabel" maxlength="60" placeholder="ناو (ئارەزوومەندانە)" aria-label="ناو">
+            <button type="button" class="act-btn dark" onclick="addAlertPhone()">زیادکردن</button>
+          </div>
+          <div id="waAlertPhones"></div>
+        </div>
+      </div>
+
+      <div data-super-admin-only>
+        <div class="sec-hdr wa-subs-note">
           <h3>ژمارە پشتڕاستکراوەکانی کڕیار</h3>
           <div class="act-btn dark" onclick="loadWhatsappSubscribers()"><i class="fas fa-arrows-rotate"></i> نوێکردنەوە</div>
         </div>
@@ -675,30 +686,6 @@
             <div class="chip" data-wasf="off" onclick="filterWhatsappSubscribers('off',this)">ناچالاک</div>
           </div>
           <div class="tbl-scroll" id="waSubsTable"><div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="pg" id="pgOtp">
-      <div class="sec-hdr">
-        <h3>کۆدەکانی OTP</h3>
-        <div class="act-btn dark" onclick="openOtpCreateModal()"><i class="fas fa-plus"></i> کۆدی نوێ</div>
-      </div>
-      <div class="fee-toggle-note" style="margin-bottom:14px">
-        <i class="fas fa-shield-halved" style="margin-left:4px"></i>
-        ئادمین دەتوانێت هەموو کۆدەکان ببینێت و دەستکاریان بکات. ئاگاداربە: هەرکەسێک دەستی بەم پەڕەیە بگات، دەتوانێت کۆدی چوونەژوورەوەی هەر هەژمارێک ببینێت — بۆیە تەنها بە هەژماری ئادمینی متمانەپێکراو بەکاری بهێنە. هەموو گۆڕانکارییەک لە ex_admin_audit_log تۆمار دەکرێت.
-      </div>
-      <div class="tbl-wrap">
-        <div class="tbl-filter">
-          <input class="tbl-search" id="otpSearch" placeholder="گەڕان بەپێی ئیمەیل یان کۆد..." oninput="filterOtp()">
-          <div class="chip on" data-otpf="all" onclick="filterOtp(this)">هەموو</div>
-          <div class="chip" data-otpf="active" onclick="filterOtp(this)">چالاک</div>
-          <div class="chip" data-otpf="used" onclick="filterOtp(this)">بەکارهاتوو</div>
-          <div class="chip" data-otpf="expired" onclick="filterOtp(this)">بەسەرچوو</div>
-          <div class="act-btn dark" onclick="loadOtp()"><i class="fas fa-arrows-rotate"></i> نوێکردنەوە</div>
-        </div>
-        <div class="tbl-scroll" id="otpTableWrap">
-          <div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
         </div>
       </div>
     </div>
@@ -1007,6 +994,15 @@
       <span>قوفڵکراوە (بەکارهێنەران نایبینن)</span>
       <label class="mswitch"><input type="checkbox" id="walletLocked"><span class="track"></span></label>
     </div>
+    <label class="modal-lbl" for="walletRecipientFormat">ژمارەی وەرگر</label>
+    <select class="msel" id="walletRecipientFormat">
+      <option value="phone">ژمارەی مۆبایل (07xxxxxxxxx)</option>
+      <option value="card">ژمارەی کارت (6 تا 32 ژمارە)</option>
+    </select>
+    <div class="mswitch-row">
+      <span>ژمارەی مۆبایلی نێرەر پێویستە</span>
+      <label class="mswitch"><input type="checkbox" id="walletSenderPhone"><span class="track"></span></label>
+    </div>
 
     </section><section data-wallet-section="routes" hidden><div class="pair-block">
       <div class="pair-hdr"><i class="fas fa-right-left" style="color:#2563eb"></i> گۆڕینەوە و حمولە بەرامبەر هەر واڵێتێکی تر</div>
@@ -1120,76 +1116,14 @@
     </div>
     <div class="fee-toggle-note" style="margin-top:6px">
       <i class="fas fa-circle-info" style="margin-left:4px"></i>
-      هەژمارەکە ڕاستەوخۆ پەسەندکراو دروست دەبێت (پێویستی بە کۆدی OTP نییە) و دەتوانێت یەکسەر بچێتە ژوورەوە.
+      پێش دروستکردن، کۆدی پشتڕاستکردنەوە بۆ ئیمەیڵەکە دەنێردرێت.
     </div>
+    <label class="modal-lbl">کۆدی پشتڕاستکردنەوە</label>
+    <input class="minp" type="text" id="cuOtp" dir="ltr" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000">
+    <button class="modal-btn" type="button" id="cuSendOtpBtn" onclick="requestCreateUserOtp()"><i class="fas fa-paper-plane"></i> ناردنی کۆد بۆ ئیمەیڵ</button>
+    <div class="fee-toggle-note" id="cuOtpMsg" style="display:none;margin-top:6px"></div>
     <div class="auth-err" id="cuErr" style="margin-top:10px"></div>
-    <button class="modal-btn dark" id="cuSaveBtn" onclick="submitCreateUser()"><i class="fas fa-check"></i> دروستکردن</button>
-  </div>
-</div>
-
-<!-- ══ OTP EDIT MODAL ══ -->
-<div class="overlay" id="moOtpEdit">
-  <div class="modal">
-    <div class="modal-hdr">
-      <h3>دەستکاریکردنی کۆدی OTP</h3>
-      <div class="modal-close" onclick="closeMo('moOtpEdit')"><i class="fas fa-xmark"></i></div>
-    </div>
-    <input type="hidden" id="oeId">
-    <div class="detail-row" style="margin-bottom:6px">
-      <div class="lbl">ئیمەیل</div>
-      <div class="val" id="oeEmail" dir="ltr">—</div>
-    </div>
-    <label class="modal-lbl">کۆد</label>
-    <input class="minp" id="oeCode" dir="ltr" placeholder="123456" inputmode="numeric">
-    <label class="modal-lbl">مەبەست</label>
-    <select class="msel" id="oePurpose">
-      <option value="login">چوونەژوورەوە</option>
-      <option value="signup">خۆتۆمارکردن</option>
-      <option value="reset_password">گۆڕینی وشەی نهێنی</option>
-    </select>
-    <label class="modal-lbl">کاتی بەسەرچوون</label>
-    <input class="minp" type="datetime-local" id="oeExpires" dir="ltr">
-    <div style="display:flex;gap:8px;margin-top:8px">
-      <div class="act-btn dark" onclick="bumpOtpExpiry(10)"><i class="fas fa-clock"></i> +10 خولەک لە ئێستاوە</div>
-      <div class="act-btn dark" onclick="bumpOtpExpiry(60)"><i class="fas fa-clock"></i> +1 کاتژمێر</div>
-    </div>
-    <div class="mswitch-row">
-      <span>وەک بەکارهاتوو نیشانی بکە</span>
-      <label class="mswitch"><input type="checkbox" id="oeIsUsed"><span class="track"></span></label>
-    </div>
-    <div class="auth-err" id="oeErr" style="margin-top:10px"></div>
-    <button class="modal-btn dark" id="oeSaveBtn" onclick="submitOtpEdit()"><i class="fas fa-check"></i> پاشەکەوتکردن</button>
-  </div>
-</div>
-
-<!-- ══ OTP CREATE MODAL ══ -->
-<div class="overlay" id="moOtpCreate">
-  <div class="modal">
-    <div class="modal-hdr">
-      <h3>دروستکردنی کۆدی نوێ</h3>
-      <div class="modal-close" onclick="closeMo('moOtpCreate')"><i class="fas fa-xmark"></i></div>
-    </div>
-    <label class="modal-lbl">ئیمەیلی بەکارهێنەر</label>
-    <input class="minp" type="email" id="ocEmail" dir="ltr" placeholder="user@example.com" autocomplete="off">
-    <label class="modal-lbl">کۆد</label>
-    <div style="display:flex;gap:8px;align-items:center">
-      <input class="minp" id="ocCode" dir="ltr" placeholder="123456" inputmode="numeric" style="flex:1">
-      <div class="act-btn dark" onclick="genOtpCode()" style="white-space:nowrap"><i class="fas fa-dice"></i> هەڕەمەکی</div>
-    </div>
-    <label class="modal-lbl">مەبەست</label>
-    <select class="msel" id="ocPurpose">
-      <option value="login">چوونەژوورەوە</option>
-      <option value="signup">خۆتۆمارکردن</option>
-      <option value="reset_password">گۆڕینی وشەی نهێنی</option>
-    </select>
-    <label class="modal-lbl">ماوەی کارکردن (خولەک)</label>
-    <input class="minp" type="number" id="ocMinutes" dir="ltr" value="10" min="1" max="1440">
-    <div class="fee-toggle-note" style="margin-top:8px">
-      <i class="fas fa-circle-info" style="margin-left:4px"></i>
-      ئەم کۆدە بە ئیمەیل نانێردرێت — تەنها لە داتابەیس دروست دەبێت، دەبێت خۆت بیدەیت بە بەکارهێنەر.
-    </div>
-    <div class="auth-err" id="ocErr" style="margin-top:10px"></div>
-    <button class="modal-btn dark" id="ocSaveBtn" onclick="submitOtpCreate()"><i class="fas fa-check"></i> دروستکردن</button>
+    <button class="modal-btn dark" id="cuSaveBtn" onclick="submitCreateUser()"><i class="fas fa-check"></i> پشتڕاستکردنەوە و دروستکردن</button>
   </div>
 </div>
 
@@ -1430,7 +1364,7 @@
     <div class="modal" style="max-width:520px">
       <div class="modal-hdr"><h3>دەسەڵاتەکانی کارمەند</h3><button type="button" class="modal-close" onclick="closeMo('moStaffPermissions')" aria-label="داخستن">×</button></div>
       <input type="hidden" id="staffTarget"><p id="staffTargetName"></p>
-      <label class="staff-permission-row"><input id="staffFullAccess" type="checkbox" onchange="updateStaffPermissionForm()">دەسەڵاتی تەواوی ئاڵوگۆڕ (بەبێ لۆگ و OTP)</label>
+      <label class="staff-permission-row"><input id="staffFullAccess" type="checkbox" onchange="updateStaffPermissionForm()">دەسەڵاتی تەواوی ئاڵوگۆڕ (بەبێ لۆگەکان)</label>
       <div id="staffPermissionOptions"></div><p id="staffPermissionError" role="alert"></p>
       <button type="button" id="staffPermissionSave" class="act-btn gr" onclick="saveStaffPermissions()">پاشەکەوتکردنی دەسەڵاتەکان</button>
     </div>
@@ -1442,18 +1376,18 @@
       <div id="staffDirectoryList"></div>
     </div>
   </div>
-  <script src="assets/js/exchange-payout-rounding.js?v=1"></script>
+  <script src="assets/js/exchange-payout-rounding.js?v=2"></script>
   <script src="assets/js/exchange-live.js?v=1"></script>
-<script src="assets/js/admin.js?v=38"></script>
+<script src="assets/js/admin.js?v=41"></script>
 <script src="assets/js/receipt-access.js?v=1"></script>
 <script src="assets/js/admin-contracts.js?v=2"></script>
-  <script src="assets/js/exchange-staff.js?v=11"></script>
+  <script src="assets/js/exchange-staff.js?v=12"></script>
   <script src="assets/js/exchange-balance-admin.js?v=9"></script>
   <script src="assets/js/exchange-balance-manual.js?v=2"></script>
-  <script src="assets/js/exchange-order-manual.js?v=2"></script>
+  <script src="assets/js/exchange-order-manual.js?v=3"></script>
   <script src="assets/js/exchange-refund-report.js?v=3"></script>
   <script src="assets/js/exchange-insights.js?v=7"></script>
-  <script src="assets/js/exchange-profit.js?v=5"></script><script src="assets/js/exchange-whatsapp-admin.js?v=4"></script><script src="assets/js/exchange-activity-admin.js?v=1"></script>
-<script src="assets/js/exchange-admin-workspace.js?v=3"></script><script src="assets/js/exchange-fee-tiers.js?v=1"></script><script src="assets/js/exchange-site-pause-admin.js?v=3"></script><script src="assets/js/exchange-banners-admin.js?v=1"></script><script src="assets/js/track.js?v=3"></script>
+  <script src="assets/js/exchange-profit.js?v=5"></script><script src="assets/js/exchange-whatsapp-admin.js?v=5"></script><script src="assets/js/exchange-activity-admin.js?v=1"></script>
+<script src="assets/js/exchange-admin-workspace.js?v=3"></script><script src="assets/js/exchange-fee-tiers.js?v=1"></script><script src="assets/js/exchange-site-pause-admin.js?v=4"></script><script src="assets/js/exchange-banners-admin.js?v=1"></script><script src="assets/js/track.js?v=3"></script>
 </body>
 </html>

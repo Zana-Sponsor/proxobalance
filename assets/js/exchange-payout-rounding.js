@@ -3,7 +3,7 @@
   'use strict';
   const MAX_IQD=1000000000,UNIT_IQD=1000;
   const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-  const PENDING=new Set(['چاوەڕوانە','ڕاستکراوەتەوە','پێویستی بە ڕاستکردنەوەیە']);
+  const PENDING=new Set(['چاوەڕوانە','لەژێر پێداچوونەوەدایە','ڕاستکراوەتەوە','پێویستی بە ڕاستکردنەوەیە']);
   function amount(value,whole=true){
     if(!['number','string'].includes(typeof value)||value==='')return null;
     if(typeof value==='string'&&!/^\d+(?:\.\d+)?$/.test(value))return null;

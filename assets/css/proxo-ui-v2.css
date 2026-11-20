@@ -288,9 +288,9 @@ body #mainApp .pxn-badge {
 /* Verification state on the profile tab. */
 body #mainApp .pxn-state { min-width: 18px; width: 18px; height: 18px; padding: 0; border-radius: 50%; }
 body #mainApp .pxn-state svg { width: 12px; height: 12px; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
-body #mainApp .pxn-state[data-state="ok"] { background: #16a34a; }
-body #mainApp .pxn-state[data-state="wait"] { background: #f59e0b; }
-body #mainApp .pxn-state[data-state="warn"] { background: #ef4444; }
+body #mainApp .pxn-state[data-state="ok"] { background: #0265ff; }
+body #mainApp .pxn-state[data-state="wait"] { background: #64748b; }
+body #mainApp .pxn-state[data-state="warn"] { background: #e08a00; }
 
 @media (min-width: 1024px) {
   body.has-nav { padding-bottom: 32px !important; }
@@ -2045,26 +2045,29 @@ body #mainApp :is(#pageTx, #pageHome) .tx-receipt .tx-card-action {
 
 /* ═════════════════════════════════════════════════════════════════
    ACCOUNT VERIFICATION — one badge system, every state
-   The same shield-with-a-mark is used on the avatar, the status pill,
+   The same rosette with a mark is used on the avatar, the status pill,
    the profile card and the verify page:
-     ✓ green  verified          ! amber  not verified / required
-     ◔ blue   under review      ✕ red    rejected          – grey  unknown
+     ✓ blue   verified          ! amber  not verified / required
+     ◔ slate  under review      ✕ red    rejected          – grey  unknown
    ═════════════════════════════════════════════════════════════════ */
 /* tone tokens */
 body :is(.kyc-badge, .kyc-card, .kyc-banner)[data-state="approved"],
-body :is(.kyc-ico, .pfx-verified)[data-tone="ok"]    { --kt: #16a34a; --kt-ink: #146c35; --kt-bg: #ecf8f1; --kt-bd: #c2e8d1; }
+body :is(.kyc-ico, .pfx-verified)[data-tone="ok"]    { --kt: #0265ff; --kt-ink: #0b5bd3; --kt-bg: #eaf2ff; --kt-bd: #c9dcff; }
 body :is(.kyc-badge, .kyc-card, .kyc-banner)[data-state="none"],
 body :is(.kyc-badge, .kyc-card, .kyc-banner)[data-state="required"],
 body :is(.kyc-ico, .pfx-verified)[data-tone="warn"]  { --kt: #e08a00; --kt-ink: #8a5300; --kt-bg: #fff6e3; --kt-bd: #f6dba6; }
 body :is(.kyc-badge, .kyc-card, .kyc-banner)[data-state="pending"],
-body :is(.kyc-ico, .pfx-verified)[data-tone="wait"]  { --kt: #2563eb; --kt-ink: #1d4fb8; --kt-bg: #eef4ff; --kt-bd: #c6d8fb; }
+body :is(.kyc-ico, .pfx-verified)[data-tone="wait"]  { --kt: #64748b; --kt-ink: #475569; --kt-bg: #f1f5f9; --kt-bd: #dbe2ea; }
 body :is(.kyc-badge, .kyc-card, .kyc-banner)[data-state="rejected"],
 body :is(.kyc-ico, .pfx-verified)[data-tone="bad"]   { --kt: #dc2626; --kt-ink: #a11d1d; --kt-bg: #fff0f0; --kt-bd: #f5c6c6; }
 body :is(.kyc-badge, .kyc-card, .kyc-banner)[data-state="loading"],
 body :is(.kyc-badge, .kyc-card, .kyc-banner)[data-state="error"],
 body :is(.kyc-ico, .pfx-verified)[data-tone="idle"]  { --kt: #8a97ab; --kt-ink: #5b6a80; --kt-bg: #f3f6fa; --kt-bd: #dde3ec; }
 
-/* the shield itself */
+/* the profile card's edge follows the badge's colour */
+body :is(.kyc-badge, .kyc-card, .kyc-banner)[data-state] { --kyc-c: var(--kt); }
+
+/* the rosette itself (the class keeps its old name) */
 body .kyc-shield { display: block; width: 100%; height: 100%; }
 body .kyc-shield .ks-bg { fill: var(--kt, #8a97ab); stroke: none; }
 body .kyc-shield .ks-glyph { fill: none; stroke: #fff; stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
@@ -3064,8 +3067,8 @@ body #mainApp .xc-step-head .xc-saved-recipients-btn:active { background: var(--
    (title row identical to .pfx-title; amount in a soft panel with a quiet unit).
    The two action buttons are intentionally not touched here.
    ═════════════════════════════════════════════════════════════════ */
-html:not([data-theme="dark"]) body #mainApp #pageProfile .pfx-card.pfx-balance,
 html[data-theme="dark"] body #mainApp #pageProfile .pfx-card.pfx-balance { gap: 12px !important; padding: 18px 16px !important; border-radius: 20px !important; }
+html:is(:not([data-theme="dark"]),[data-theme="dark"]) body #mainApp #pageProfile .pfx-card.pfx-balance { gap: 12px !important; padding: 18px 16px !important; border-radius: 20px !important; }
 html body #mainApp #pageProfile .pfx-card.pfx-balance .bx-head {
   justify-content: flex-start !important; gap: 10px !important; margin: 0 !important;
   font-size: 14px !important; font-weight: 400 !important; line-height: 1.5 !important;
@@ -3074,7 +3077,7 @@ html body #mainApp #pageProfile .pfx-card.pfx-balance .bx-ico {
   width: 34px !important; height: 34px !important; flex: 0 0 34px; border-radius: 11px !important;
 }
 html body #mainApp #pageProfile .pfx-card.pfx-balance .bx-ico .pxi { width: 19px !important; height: 19px !important; }
-html:not([data-theme="dark"]) body #mainApp #pageProfile .pfx-card.pfx-balance .bx-title { font-size: 14px !important; font-weight: 400 !important; line-height: 1.5 !important; }
+html:is(:not([data-theme="dark"]),[data-theme="dark"]) body #mainApp #pageProfile .pfx-card.pfx-balance .bx-title { font-size: 14px !important; font-weight: 400 !important; line-height: 1.5 !important; }
 html[data-theme="dark"] body #mainApp #pageProfile .pfx-card.pfx-balance .bx-title { font-size: 14px !important; font-weight: 400 !important; line-height: 1.5 !important; }
 html body #mainApp #pageProfile .pfx-card.pfx-balance .bx-amount {
   display: flex !important; align-items: center; justify-content: center !important; box-sizing: border-box;
@@ -3095,8 +3098,11 @@ html[data-theme="dark"] .xc-tier-hint { color: rgba(255,255,255,.66); }
 .rate-card .rate-tier { margin-top: 2px; opacity: .85; }
 /* Same ink and icon tint as the other account cards (light theme only). */
 html:not([data-theme="dark"]) body #mainApp #pageProfile .pfx-card.pfx-balance .bx-title { color: #1f2d44 !important; }
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-card.pfx-balance .bx-title { color: #e8edf6 !important; }
 html:not([data-theme="dark"]) body #mainApp #pageProfile .pfx-card.pfx-balance .bx-ico { background: #eaf6ff !important; }
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-card.pfx-balance .bx-ico { background: #1b2740 !important; }
 html:not([data-theme="dark"]) body #mainApp #pageProfile .pfx-card.pfx-balance .bx-amount strong { color: #1f2d44 !important; }
+html[data-theme="dark"] body #mainApp #pageProfile .pfx-card.pfx-balance .bx-amount strong { color: #e8edf6 !important; }
 
 /* Full-screen in-app transaction details: same domain, shell and visual language as history. */
 body #mainApp #txSheet.tx-sheet {

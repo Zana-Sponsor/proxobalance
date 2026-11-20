@@ -14,11 +14,11 @@ html body #feedbackSheet {
   --fx-font: Rabar, Arial, sans-serif;
 }
 html[data-theme="dark"] body #feedbackSheet {
-  --fx-card: #121a2b; --fx-soft: #0c1322; --fx-line: #233049;
-  --fx-ink: #edf1f8; --fx-text: #c3ccdb; --fx-muted: #8b98ae;
-  --fx-accent: #3b8cff; --fx-accent-press: #2f7af0;
+  --fx-card: #131c2e; --fx-soft: #0b1220; --fx-line: #25324a;
+  --fx-ink: #e8edf6; --fx-text: #c4cee0; --fx-muted: #a3b1c7;
+  --fx-accent: #3b8cff; --fx-accent-press: #1559d6;
   --fx-star: #f7c13a; --fx-star-off: #2a3650;
-  --fx-ok: #4ade80; --fx-ok-soft: #10301f; --fx-bad: #ff8a80;
+  --fx-ok: #4ade80; --fx-ok-soft: #10301f; --fx-bad: #f87171;
 }
 html[data-theme="dark"] body #feedbackSheet .sheet { background: var(--fx-card) !important; border-color: var(--fx-line) !important; }
 

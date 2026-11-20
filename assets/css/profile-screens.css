@@ -74,7 +74,7 @@ body #mainApp .pfs-empty b,
 body #mainApp #pageBalance .bh-state b { color: var(--v2-ink); font-size: 14.5px; font-weight: 600; line-height: 1.6; }
 html[data-theme="dark"] body #mainApp .pfs-empty,
 html[data-theme="dark"] body #mainApp #pageBalance .bh-state {
-  border-color: #222f44 !important;
+  border-color: #3a4a66 !important;
   background: #131c2e !important;
 }
 html[data-theme="dark"] body #mainApp .pfs-empty b { color: #e8edf6; }

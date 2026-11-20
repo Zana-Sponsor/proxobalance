@@ -5,7 +5,7 @@
    (ex_admin_order_set_status / ex_admin_order_update / ex_admin_order_delete). */
 (function(){
   'use strict';
-  var STATUSES=['چاوەڕوانە','پێویستی بە ڕاستکردنەوەیە','ڕاستکراوەتەوە','پەسەندکرا','ڕەتکرا'];
+  var STATUSES=['چاوەڕوانە','لەژێر پێداچوونەوەدایە','پێویستی بە ڕاستکردنەوەیە','ڕاستکراوەتەوە','پەسەندکرا','ڕەتکرا','هەڵوەشێنرایەوە'];
   var FIELDS=[
     {k:'order_code',l:'کۆدی مامەڵە',t:'text',ltr:1},
     {k:'from_method',l:'ڕێگای ناردن',t:'method'},

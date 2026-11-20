@@ -27,7 +27,7 @@ test('database: hours act only at an opening or closing time and never undo a ha
 
 test('admin API: hours are checked before they are saved; full admins only', () => {
   const admin = read('api-handlers/admin.js');
-  assert.match(admin, /'site_controls','site_control_set','site_schedule_save','site_schedule_delete'\]\.includes\(action\)&&profile\.role!=='super_admin'/);
+  assert.match(admin, /'site_controls','site_control_set','site_schedule_save','site_schedule_delete',[^\]]*\]\.includes\(action\)&&profile\.role!=='super_admin'/);
   assert.match(admin, /const TIME = \/\^\(\[01\]\\d\|2\[0-3\]\):\[0-5\]\\d\$\/;/);
   assert.match(admin, /if \(!SITE_KEYS\.includes\(key\) \|\| !TIME\.test\(String\(open_at\)\) \|\| !TIME\.test\(String\(close_at\)\) \|\| open_at === close_at\)/);
   assert.match(admin, /db\.from\('ex_site_schedules'\)\.select\('key,open_at,close_at,days,message,is_active,last_state,updated_at'\)/);
@@ -57,7 +57,7 @@ test('panel: hours read the same as the customer message', () => {
   assert.match(html, /<div id="psHours"><\/div>/);
   assert.match(html, /<div class="overlay" id="moSiteHours">/);
   assert.match(html, /<input class="minp" type="time" id="phOpen" dir="ltr" step="60" oninput="previewSiteHours\(\)">/);
-  assert.match(html, /exchange-site-pause-admin\.js\?v=3/);
+  assert.match(html, /exchange-site-pause-admin\.js\?v=4/);
   const js = read('assets/js/exchange-site-pause-admin.js');
   assert.match(js, /if \(r\.paused_source === 'schedule'\) return '<span class="ps-state off">داخراوە بەپێی کاتژمێری کار<\/span>';/);
   assert.match(js, /await adminApiRequest\('site_schedule_save', body\);/);

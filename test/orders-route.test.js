@@ -36,7 +36,7 @@ test('calculates the saved route fee tier, ignores forged rewards and returns th
     if (url.pathname === '/rest/v1/ex_wallets') {
       return response([
         { key: 'NassWallet', is_locked: false, allow_from: true, allow_receive: true },
-        { key: 'QiCard', is_locked: false, allow_from: true, allow_receive: true }
+        { key: 'QiCard', is_locked: false, allow_from: true, allow_receive: true, recipient_format: 'card', sender_phone_required: false }
       ]);
     }
     if (url.pathname === '/rest/v1/ex_profiles') {
@@ -132,6 +132,12 @@ test('lets the owner correct the recipient number on an admin-requested order', 
         receipt_hash: 'a'.repeat(64),
         status: 'پێویستی بە ڕاستکردنەوەیە'
       }]);
+    }
+    if (url.pathname === '/rest/v1/ex_wallets') {
+      return response([
+        { key: 'NassWallet', recipient_format: 'phone', sender_phone_required: false },
+        { key: 'FIB', recipient_format: 'phone', sender_phone_required: false }
+      ]);
     }
     if (url.pathname === '/rest/v1/ex_orders' && options.method === 'PATCH') {
       assert.equal(url.searchParams.get('user_id'), 'eq.user-1');

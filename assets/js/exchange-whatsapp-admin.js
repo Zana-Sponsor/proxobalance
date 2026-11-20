@@ -19,9 +19,9 @@
     const s = STATUS[status] || ['pending', status || '—'];
     return '<span class="badge ' + s[0] + '">' + e(s[1]) + '</span>';
   }
-  const KIND = { order_approved: 'پەسەندکردن', order_rejected: 'ڕەتکردنەوە' };
+  const KIND = { order_approved: 'پەسەندکردن', order_rejected: 'ڕەتکردنەوە', admin_order_waiting: 'ئاگاداری ئادمین' };
   function kindBadge(k){
-    const tone = k === 'order_rejected' ? 'rejected' : 'approved';
+    const tone = k === 'order_rejected' ? 'rejected' : k === 'admin_order_waiting' ? 'pending' : 'approved';
     return '<span class="badge ' + tone + '" style="opacity:.85">' + e(KIND[k] || k || '—') + '</span>';
   }
   function templateLine(list){
@@ -96,7 +96,7 @@
     const wrap = document.getElementById('waAdminTable');
     if(wrap && !rows.length) wrap.innerHTML = '<div class="loading"><i class="fas fa-circle-notch fa-spin"></i></div>';
     try{
-      await Promise.all([loadStats(), loadLog(), loadSubscribers()]);
+      await Promise.all([loadStats(), loadLog(), loadSubscribers(), loadAlertPhones()]);
     }catch(err){
       if(wrap) wrap.innerHTML = '<div class="empty"><i class="fas fa-triangle-exclamation"></i><p>هەڵە: ' + e(err && err.message) + '</p></div>';
     }finally{ busy = false; }
@@ -197,6 +197,70 @@
         (enabled ? 'لە داهاتوودا نامەی پەسەندکردن و ڕەتکردنەوەی داواکاری بۆ ' : 'ئیتر نامەی دۆخی داواکاری بۆ ') + who + (enabled ? ' دەنێردرێت.' : ' نانێردرێت. کڕیار خۆی دەتوانێت لە پڕۆفایل دووبارە چالاکی بکاتەوە.'),
         'fab fa-whatsapp', enabled ? '#16a34a' : '#dc2626', go);
     } else go();
+  };
+
+  // ── admin numbers: a WhatsApp message when an order waits 15 minutes (super admin) ──
+  let alertData = { phones: [], template: null }, alertBusy = false;
+  async function loadAlertPhones(){
+    if (typeof isSuperAdmin === 'function' && !isSuperAdmin()) return;
+    const wrap = document.getElementById('waAlertPhones');
+    try {
+      alertData = await adminApiRequest('admin_alert_phones') || { phones: [], template: null };
+      renderAlertPhones();
+    } catch (err) {
+      if (wrap) wrap.innerHTML = '<div class="empty"><p>' + e(err && err.message) + '</p></div>';
+    }
+  }
+  function templateState(t){
+    if (!t) return 'قاڵب دروست نەکراوە';
+    if (t.active) return 'قاڵب چالاکە';
+    if (String(t.meta_status || '').toUpperCase() === 'REJECTED') return 'Meta قاڵبەکەی ڕەت کردەوە';
+    return t.meta_status ? 'قاڵب چاوەڕێی پەسەندکردنی Meta' : 'قاڵبی ' + (t.template_name || '') + ' هێشتا لە Wevlix نەدۆزراوەتەوە';
+  }
+  function renderAlertPhones(){
+    const wrap = document.getElementById('waAlertPhones'), state = document.getElementById('waAlertState');
+    if (state) {
+      state.textContent = templateState(alertData.template);
+      state.className = 'wa-alert-state' + (alertData.template && alertData.template.active ? ' on' : '');
+    }
+    if (!wrap) return;
+    const list = alertData.phones || [];
+    wrap.innerHTML = list.length ? list.map(p =>
+      '<div class="wa-alert-row' + (p.active ? '' : ' is-off') + '">'
+        + '<div class="wa-alert-main"><b dir="ltr">' + e(displayPhone(p.phone)) + '</b>' + (p.label ? '<small>' + e(p.label) + '</small>' : '') + '</div>'
+        + '<label class="mswitch" title="' + (p.active ? 'چالاکە' : 'ناچالاکە') + '"><input type="checkbox" aria-label="' + e(displayPhone(p.phone)) + '"' + (p.active ? ' checked' : '') + ' onchange="toggleAlertPhone(\'' + e(p.phone) + '\', this.checked)"><span class="track"></span></label>'
+        + '<button type="button" class="act-btn rd" aria-label="سڕینەوە" title="سڕینەوە" onclick="removeAlertPhone(\'' + e(p.phone) + '\')"><i class="fas fa-trash"></i></button>'
+      + '</div>').join('')
+      : '<div class="wa-alert-empty">هیچ ژمارەیەک زیاد نەکراوە</div>';
+  }
+  async function saveAlertPhone(body, okText){
+    if (alertBusy) return;
+    alertBusy = true;
+    try {
+      await adminApiRequest('admin_alert_phone_save', body);
+      if (okText) toast(okText, 'gr');
+      await loadAlertPhones();
+    } catch (err) { toast(err && err.message || 'هەڵە', 'rd'); }
+    finally { alertBusy = false; }
+  }
+  window.addAlertPhone = function(){
+    const phone = document.getElementById('waAlertPhone'), label = document.getElementById('waAlertLabel');
+    const value = String(phone && phone.value || '').trim();
+    if (!/^0?7\d{9}$/.test(value.replace(/\s+/g, ''))) { toast('ژمارەی مۆبایلەکە دروست نییە', 'rd'); return; }
+    saveAlertPhone({ phone: value, label: label && label.value || null, active: true }, 'ژمارەکە زیاد کرا')
+      .then(() => { if (phone) phone.value = ''; if (label) label.value = ''; });
+  };
+  window.toggleAlertPhone = function(phone, on){
+    const row = (alertData.phones || []).find(p => p.phone === phone);
+    saveAlertPhone({ phone, label: row ? row.label : null, active: !!on }, on ? 'چالاک کرا' : 'ناچالاک کرا');
+  };
+  window.removeAlertPhone = function(phone){
+    const go = async () => {
+      try { await adminApiRequest('admin_alert_phone_delete', { phone }); toast('ژمارەکە سڕایەوە', 'gr'); await loadAlertPhones(); }
+      catch (err) { toast(err && err.message || 'هەڵە', 'rd'); }
+    };
+    if (typeof confirm2 === 'function') confirm2('سڕینەوەی ژمارە', displayPhone(phone) + ' ئیتر ئاگادارکردنەوەی داواکاریی دواکەوتوو وەرناگرێت', 'fas fa-trash', '#dc2626', go);
+    else go();
   };
 
   // register the page with the admin router

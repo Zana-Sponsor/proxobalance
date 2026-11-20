@@ -45,7 +45,9 @@ const STATUS_APPROVED = 'پەسەندکرا';
 const STATUS_REJECTED = 'ڕەتکرا';
 const STATUS_NEEDS_CORRECTION = 'پێویستی بە ڕاستکردنەوەیە';
 const STATUS_CORRECTED = 'ڕاستکراوەتەوە';
-const REVIEWABLE_ORDER_STATUSES = new Set([STATUS_PENDING, STATUS_CORRECTED]);
+const STATUS_REVIEW = 'لەژێر پێداچوونەوەدایە';
+const STATUS_CANCELLED = 'هەڵوەشێنرایەوە';
+const REVIEWABLE_ORDER_STATUSES = new Set([STATUS_PENDING, STATUS_CORRECTED, STATUS_REVIEW]);
 const SUPPORT_STATUSES = new Set(['open', 'in_progress', 'resolved', 'closed']);
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const isUuid = value => typeof value === 'string' && UUID.test(value);
@@ -278,7 +280,7 @@ async function audit(adminId, action, targetUserId, detail) {
 export function assertStaffAction(profile,action){
   // account mutations are super-admin only (ordinary admins get read-only account controls)
   if(['set_ban','account_set_password','account_contact_update'].includes(action) && profile.role!=='super_admin')throw {status:403,code:'super_admin_required',message:'SUPER_ADMIN_REQUIRED'};
-  if(['error_log_summary','list_error_logs','resolve_error_log','resolve_all_error_logs','activity_overview','activity_user','whatsapp_subscribers','whatsapp_set','site_controls','site_control_set','site_schedule_save','site_schedule_delete'].includes(action)&&profile.role!=='super_admin')throw {status:403,code:'super_admin_required',message:'SUPER_ADMIN_REQUIRED'};
+  if(['error_log_summary','list_error_logs','resolve_error_log','resolve_all_error_logs','activity_overview','activity_user','whatsapp_subscribers','whatsapp_set','site_controls','site_control_set','site_schedule_save','site_schedule_delete','admin_alert_phones','admin_alert_phone_save','admin_alert_phone_delete'].includes(action)&&profile.role!=='super_admin')throw {status:403,code:'super_admin_required',message:'SUPER_ADMIN_REQUIRED'};
   if(profile.role==='super_admin' || profile.staff_permissions==null)return;
   const permissions={
     ping:'view',account_balances:'view',balance_dashboard:'view',balance_lookup_order:'view',
@@ -288,6 +290,7 @@ export function assertStaffAction(profile,action){
     balance_credit_refund:'refunds',balance_credit_shortfall:'refunds',balance_refund_report:'refunds',
     balance_manual_find:'refunds',balance_manual_overview:'refunds',balance_manual_adjust:'refunds',
     order_set_status:'approve_orders',order_delete:'approve_orders',order_actions_list:'view',
+    order_review:'approve_orders',order_cancel_refund:'refunds',
     balance_cancel_payout:'refunds',balance_abort_processing:'refunds',
     balance_claim_payout:'approve_orders',balance_mark_payout_paid:'approve_orders'
   };
@@ -315,7 +318,7 @@ function manualBalanceError(error){
   return {status:500,code:'manual_balance_failed',message:'کردارەکە ئەنجام نەدرا؛ دووبارە هەوڵ بدەرەوە'};
 }
 
-const ORDER_ADMIN_STATUSES=['چاوەڕوانە','پێویستی بە ڕاستکردنەوەیە','ڕاستکراوەتەوە','پەسەندکرا','ڕەتکرا'];
+const ORDER_ADMIN_STATUSES=['چاوەڕوانە','لەژێر پێداچوونەوەدایە','پێویستی بە ڕاستکردنەوەیە','ڕاستکراوەتەوە','پەسەندکرا','ڕەتکرا','هەڵوەشێنرایەوە'];
 const ORDER_EDIT_FIELDS=['from_method','to_method','amount','total','phone','sender_name','sender_phone','receipt_url','receipt_hash',
   'payout_receipt_url','transaction_reference','extra_info','admin_note','order_code','created_at','decided_at'];
 const ORDER_FIELD_LABELS={from_method:'ڕێگای ناردن',to_method:'ڕێگای وەرگرتن',amount:'بڕ',total:'کۆی وەرگیراو',phone:'ژمارەی وەرگر',
@@ -326,6 +329,8 @@ const ORDER_ADMIN_ERRORS=[
   ['ADMIN_REQUIRED',403,'staff_permission_required','مۆڵەتی ئەنجامدانی ئەم کارەت نییە'],
   ['ORDER_NOT_FOUND',404,'order_not_found','ئەم مامەڵەیە نەدۆزرایەوە (لەوانەیە پێشتر سڕابێتەوە)'],
   ['STATUS_INVALID',400,'invalid_status','دۆخی هەڵبژێردراو دروست نییە'],
+  ['ORDER_NOT_REVIEWABLE',409,'order_not_reviewable','تەنها داواکاریی چاوەڕوان دەچێتە ژێر پێداچوونەوە'],
+  ['ORDER_NOT_IN_REVIEW',409,'order_not_in_review','ئەم داواکارییە لەژێر پێداچوونەوەدا نییە'],
   ['NO_CHANGES',400,'no_changes','هیچ گۆڕانکارییەک نەکراوە'],
   ['REASON_TOO_LONG',400,'reason_too_long','هۆکار دەبێت لە 500 پیت زیاتر نەبێت'],
   ['ORDER_SETTLED_LOCKED',409,'order_settled_locked','ئەم مامەڵەیە پارەدانی تێدا کراوە و دۆخەکەی ناگۆڕدرێت؛ تەنها دەتوانیت لای بەکارھێنەر بیشاریتەوە'],
@@ -441,6 +446,67 @@ const actions = {
     await db.rpc('ex_auth_sign_out_everywhere',{p_user:user_id});
     await audit(ctx.user.id,'set_password',user_id,null);
     return {ok:true,signed_out:true};
+  },
+
+  // "Under review": the customer can no longer cancel the order. on:false puts it back to waiting.
+  async order_review({order_id,on},ctx){
+    if(typeof order_id!=='string'||!UUID.test(order_id))
+      throw {status:400,code:'bad_input',message:'مامەڵەکە دروست نییە'};
+    const {data,error}=await db.rpc('ex_admin_order_review',{p_order:order_id.toLowerCase(),p_on:on!==false,p_admin:ctx.user.id});
+    if(error)throw orderAdminError(error);
+    return data;
+  },
+  // A wallet order the customer cancelled: after checking the receipt, its amount goes to the
+  // customer's balance. The order stays cancelled, so no WhatsApp message is sent.
+  async order_cancel_refund({order_id},ctx){
+    if(typeof order_id!=='string'||!UUID.test(order_id))
+      throw {status:400,code:'bad_input',message:'مامەڵەکە دروست نییە'};
+    const id=order_id.toLowerCase();
+    const {data:order,error:readError}=await db.from('ex_orders').select('id,user_id,status,from_method,balance_refunded_at').eq('id',id).maybeSingle();
+    if(readError)throw {status:500,code:'db_error',message:readError.message};
+    if(!order)throw {status:404,code:'order_not_found',message:'ئەم مامەڵەیە نەدۆزرایەوە'};
+    if(order.status!==STATUS_CANCELLED||order.balance_refunded_at||order.from_method==='AccountBalance')
+      throw {status:409,code:'not_waiting_refund',message:'ئەم داواکارییە چاوەڕێی گەڕاندنەوە نییە'};
+    const {data,error}=await db.rpc('ex_admin_reject_and_refund',{
+      p_order_id:id,p_admin_id:ctx.user.id,p_verification_reference:'cancel:'+id,
+      p_reason:'هەڵوەشاندنەوەی داواکاری لەلایەن کڕیار',p_confirmed_received:true
+    });
+    if(error){
+      const message=String(error.message||'');
+      if(/RECEIPT_HAS_MULTIPLE_ORDERS|RECEIPT_ALREADY_REFUNDED/.test(message))
+        throw {status:409,code:'receipt_used',message:'ئەم پسوولەیە لە داواکارییەکی تریشدا بەکارهاتووە؛ بە دەست بیپشکنە'};
+      if(/ORDER_NOT_ELIGIBLE/.test(message))
+        throw {status:409,code:'not_eligible',message:'ئەم داواکارییە ناتوانرێت بۆ باڵانس بگەڕێنرێتەوە'};
+      throw {status:500,code:'refund_failed',message:'گەڕاندنەوەکە ئەنجام نەدرا؛ دووبارە هەوڵ بدەرەوە'};
+    }
+    await audit(ctx.user.id,'order_cancel_refund',order.user_id||null,id);
+    return {ok:true,refund:data};
+  },
+  // Numbers that get a WhatsApp message when an order waits 15 minutes (super admin)
+  async admin_alert_phones(_payload,_ctx){
+    const [phones,tpl]=await Promise.all([
+      db.from('ex_admin_alert_phones').select('phone,label,active,created_at').order('created_at',{ascending:true}),
+      db.from('ex_whatsapp_templates').select('template_name,active,meta_status,checked_at').eq('kind','admin_order_waiting').maybeSingle()
+    ]);
+    if(phones.error)throw {status:500,code:'db_error',message:phones.error.message};
+    return {phones:phones.data||[],template:tpl.data||null};
+  },
+  async admin_alert_phone_save({phone,label,active}={},ctx){
+    const local=adminLocalPhone(phone);
+    if(!/^07\d{9}$/.test(local))throw {status:400,code:'phone_invalid',message:'ژمارەی مۆبایلەکە دروست نییە'};
+    const row={phone:'+964'+local.slice(1),label:label==null?null:String(label).trim().slice(0,60)||null,active:active!==false,created_by:ctx.user.id};
+    const {error}=await db.from('ex_admin_alert_phones').upsert(row,{onConflict:'phone'});
+    if(error)throw {status:500,code:'db_error',message:error.message};
+    await audit(ctx.user.id,'admin_alert_phone_save',null,row.phone);
+    return {ok:true};
+  },
+  async admin_alert_phone_delete({phone}={},ctx){
+    const local=adminLocalPhone(phone);
+    if(!/^07\d{9}$/.test(local))throw {status:400,code:'phone_invalid',message:'ژمارەی مۆبایلەکە دروست نییە'};
+    const {error}=await db.from('ex_admin_alert_phones').delete().eq('phone','+964'+local.slice(1));
+    if(error)throw {status:500,code:'db_error',message:error.message};
+    await audit(ctx.user.id,'admin_alert_phone_delete',null,'+964'+local.slice(1));
+    return {ok:true};
   },
 
   // Manual order control (status / edit / delete). Silent by design: nothing is sent to the
@@ -933,7 +999,7 @@ const actions = {
     const { data: order, error: findError } = await db
       .from('ex_orders').select('*').eq('id', order_id).single();
     if (findError || !order) throw { status: 404, code: 'not_found', message: 'Order not found' };
-    if (![STATUS_PENDING, STATUS_CORRECTED, STATUS_NEEDS_CORRECTION].includes(order.status)) {
+    if (![STATUS_PENDING, STATUS_CORRECTED, STATUS_NEEDS_CORRECTION, STATUS_REVIEW].includes(order.status)) {
       throw { status: 409, code: 'already_decided', message: 'A decided order cannot be corrected' };
     }
 
@@ -948,7 +1014,7 @@ const actions = {
       correction_count: Number(order.correction_count || 0) + 1,
       decided_at: null,
       updated_at: now
-    }).eq('id', order_id).in('status', [STATUS_PENDING, STATUS_CORRECTED, STATUS_NEEDS_CORRECTION]).select().maybeSingle();
+    }).eq('id', order_id).in('status', [STATUS_PENDING, STATUS_CORRECTED, STATUS_NEEDS_CORRECTION, STATUS_REVIEW]).select().maybeSingle();
     if (error) throw { status: 500, code: 'db_error', message: error.message };
     if (!data) throw { status: 409, code: 'state_changed', message: 'Order state changed; please refresh' };
 
@@ -986,13 +1052,16 @@ const actions = {
     return data || [];
   },
 
-  async set_ban({ user_id, banned }, ctx) {
+  // a ban can carry a reason (max 300 characters); the customer sees it on the banned screen
+  async set_ban({ user_id, banned, reason }, ctx) {
     if (!user_id) throw { status: 400, code: 'bad_input', message: 'user_id is required' };
     if (user_id === ctx.user.id) {
       throw { status: 400, code: 'self_ban', message: 'You cannot ban yourself' };
     }
+    const why = banned ? (String(reason ?? '').replace(/\s+/g, ' ').trim().slice(0, 300) || null) : null;
     const { data, error } = await db.from('ex_profiles')
-      .update({ is_banned: !!banned }).eq('id', user_id).select('id, is_banned').single();
+      .update({ is_banned: !!banned, ban_reason: why, banned_at: banned ? new Date().toISOString() : null })
+      .eq('id', user_id).select('id, is_banned, ban_reason, banned_at').single();
     if (error) throw { status: 500, code: 'db_error', message: error.message };
 
     await audit(ctx.user.id, banned ? 'ban_user' : 'unban_user', user_id, null);

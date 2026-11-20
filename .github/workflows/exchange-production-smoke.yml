@@ -15,20 +15,20 @@ jobs:
           set -euo pipefail
           for attempt in $(seq 1 30); do
             if curl -fLsS --max-time 15 'https://www.proxobalance.app/' -o current-index.html &&
-               grep -q 'app.js?v=105' current-index.html &&
+               grep -q 'app.js?v=109' current-index.html &&
                grep -q 'receipt-access.js?v=1' current-index.html &&
                grep -q 'auth-phone.css?v=2' current-index.html &&
                grep -q 'auth-otp.css?v=1' current-index.html &&
-               grep -q 'site-pause.js?v=2' current-index.html &&
+               grep -q 'site-pause.js?v=5' current-index.html &&
                grep -q 'banners.js?v=2' current-index.html &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin' -o current-admin.html &&
-               grep -q 'admin.js?v=38' current-admin.html &&
-               grep -q 'exchange-whatsapp-admin.js?v=4' current-admin.html; then
+               grep -q 'admin.js?v=41' current-admin.html &&
+               grep -q 'exchange-whatsapp-admin.js?v=5' current-admin.html; then
               exit 0
             fi
             sleep 6
           done
-          echo 'FAIL: the v54 customer and admin bundles were not published within the deployment window.'
+          echo 'FAIL: the v59 customer and admin bundles were not published within the deployment window.'
           exit 1
       - name: Verify the live customer page and admin panel
         shell: bash
@@ -46,12 +46,12 @@ jobs:
           grep -q 'id="pageChangePhone" data-route="change-phone"' index.html
           grep -q 'id="pageChangePassword" data-route="change-password"' index.html
           grep -q 'id="pageChangeEmail" data-route="change-email"' index.html
-          grep -q '/assets/css/account-settings.css?v=4' index.html
-          grep -q '/assets/css/account-delete.css?v=3' index.html
-          grep -q '/assets/css/kyc-screen.css?v=1' index.html
+          grep -q '/assets/css/account-settings.css?v=6' index.html
+          grep -q '/assets/css/account-delete.css?v=4' index.html
+          grep -q '/assets/css/kyc-screen.css?v=3' index.html
           grep -q '/assets/js/activity-tracker.js?v=1' index.html
           grep -q '/assets/js/whatsapp-notify.js?v=2' index.html
-          grep -q '/assets/css/profile-screens.css?v=1' index.html
+          grep -q '/assets/css/profile-screens.css?v=2' index.html
           grep -q 'id="pageDash"' index.html
           grep -q 'id="dbNewOrder"' index.html
           grep -q 'id="pageDeleteAccount" data-route="delete-account"' index.html
@@ -61,14 +61,14 @@ jobs:
           for bad in 'id="pfPhone"' 'id="waPhone"' 'id="signupEmail"' 'id="welcomeReward"' 'id="rewardBanner"' 'id="bdDiscountRow"' 'pxn-fab' 'exchange-reward-pricing'; do
             if grep -q "$bad" index.html; then echo "FAIL: $bad is still published."; exit 1; fi
           done
-          curl -fLsS --max-time 25 "$root/assets/js/app.js?v=105" -o app.js
+          curl -fLsS --max-time 25 "$root/assets/js/app.js?v=109" -o app.js
           grep -q 'function submitAccountDeletion' app.js
           grep -q "pxAuthApi('login_start'" app.js
           grep -q "pxAuthApi('phone_change_start'" app.js
           grep -q "pxAuthApi('password_change'" app.js
           grep -q "pxAuthApi('email_change_start'" app.js
           grep -q 'چۆن بوو ئەم مامەڵەیە؟' app.js
-          if grep -Eq 'FEEDBACK_REWARD|loadMyRewards|ProxoRewardPricing|#/balance' app.js; then
+          if grep -Eq 'FEEDBACK_REWARD|loadMyRewards|ProxoRewardPricing|#/balance|WALLET_VISUALS|FALLBACK_RATES|N8N_WEBHOOK|requestOtp' app.js; then
             echo 'FAIL: removed code is still in the customer bundle.'; exit 1
           fi
           curl -fLsS --max-time 25 "$root/assets/js/receipt-access.js?v=1" -o receipt-access.js
@@ -79,14 +79,17 @@ jobs:
           done
           curl -fLsS --retry 5 --retry-all-errors --retry-delay 4 --max-time 25 "$root/exchange-admin" -o exchange-admin.html
           grep -q 'receipt-access.js?v=1' exchange-admin.html
-          grep -q 'exchange-staff.js?v=11' exchange-admin.html
+          grep -q 'exchange-staff.js?v=12' exchange-admin.html
+          grep -q 'admin-lists.css?v=1' exchange-admin.html
+          grep -q 'exchange-site-pause-admin.js?v=4' exchange-admin.html
           grep -q 'exchange-fee-tiers.js?v=1' exchange-admin.html
           grep -q 'id="pgPause"' exchange-admin.html
           grep -q 'id="pgBanners"' exchange-admin.html
-          grep -q 'exchange-whatsapp-admin.js?v=4' exchange-admin.html
+          grep -q 'exchange-whatsapp-admin.js?v=5' exchange-admin.html
           grep -q 'ژمارە پشتڕاستکراوەکانی کڕیار' exchange-admin.html
           if grep -q 'firebasejs' route.html; then echo 'FAIL: the customer page still loads Firebase.'; exit 1; fi
           if grep -q 'id="pgRewards"' exchange-admin.html; then echo 'FAIL: the rewards admin page is still published.'; exit 1; fi
+          if grep -q 'id="pgOtp"' exchange-admin.html; then echo 'FAIL: the OTP admin page is still published.'; exit 1; fi
           echo "PASS: customer app and verified-number WhatsApp admin panel are live."
       - name: Verify APIs refuse anonymous callers and leak nothing
         shell: bash

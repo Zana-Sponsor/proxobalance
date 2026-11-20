@@ -4,7 +4,6 @@ import {
   json, readJson, rpc, serviceFetch, stealth404, withSecurity, config, sectionPaused, pausedBody
 } from './_lib/security.js';
 
-const CARRIER_SENDER_METHODS = new Set(['Asiacell', 'Korek']);
 const MIN_AMOUNT = 10000;
 const STATUS_NEEDS_CORRECTION = 'پێویستی بە ڕاستکردنەوەیە';
 const STATUS_CORRECTED = 'ڕاستکراوەتەوە';
@@ -99,10 +98,19 @@ async function findDuplicate(receiptHash, transactionReference, { userId, exclud
   return null;
 }
 
-function validRecipient(method, phone) {
-  // Recipient identifiers are data, never markup. Qi Card accepts digits only;
-  // Iraqi phone destinations keep the strict 07 + 9 digits format.
-  return method === 'QiCard' ? /^\d{6,32}$/.test(phone) : /^07\d{9}$/.test(phone);
+// Wallets live only in ex_wallets: whether a wallet takes a card number and whether it
+// needs the sender's phone are columns there (set in the admin panel), never names in code.
+const WALLET_FIELDS = 'key,is_locked,allow_from,allow_receive,recipient_format,sender_phone_required';
+async function loadWallets(keys) {
+  const list = [...new Set(keys.filter(Boolean))].map(encodeURIComponent);
+  if (!list.length) return {};
+  const rows = await serviceFetch(`/rest/v1/ex_wallets?key=in.(${list.join(',')})&select=${WALLET_FIELDS}`);
+  return Object.fromEntries((Array.isArray(rows) ? rows : []).map(row => [row.key, row]));
+}
+function validRecipient(wallet, phone) {
+  // Recipient identifiers are data, never markup. A card wallet accepts digits only;
+  // phone wallets keep the strict 07 + 9 digits format.
+  return wallet?.recipient_format === 'card' ? /^\d{6,32}$/.test(phone) : /^07\d{9}$/.test(phone);
 }
 
 async function submitOrderCorrection(res, body, user) {
@@ -121,12 +129,13 @@ async function submitOrderCorrection(res, body, user) {
   }
 
   const phone = oneLine(body.phone, 32).replace(/\s+/g, '');
-  const carrierSender = CARRIER_SENDER_METHODS.has(order.from_method);
+  const orderWallets = await loadWallets([order.from_method, order.to_method]);
+  const carrierSender = orderWallets[order.from_method]?.sender_phone_required === true;
   const senderPhone = carrierSender
     ? oneLine(body.sender_phone, 32).replace(/[^0-9]/g, '')
     : null;
   const customerResponse = oneLine(body.customer_response, 2000);
-  if (!validRecipient(order.to_method, phone)) {
+  if (!validRecipient(orderWallets[order.to_method], phone)) {
     return json(res, 422, { error: 'Invalid recipient number' });
   }
   if (carrierSender && !/^07\d{9}$/.test(senderPhone)) {
@@ -221,7 +230,6 @@ export default withSecurity(async (req, res, { context, user }) => {
   // admin pause: new requests stop (paying from the balance also stops with "balance")
   const paused = await sectionPaused(balanceSource ? ['exchange', 'balance'] : ['exchange']);
   if (paused) return json(res, 423, pausedBody(paused));
-  const carrierSender = CARRIER_SENDER_METHODS.has(fromMethod);
   const senderPhone = oneLine(retryOrder?.sender_phone || body.sender_phone, 32).replace(/[^0-9]/g, '');
   const receiptUrl = cleanReceiptUrl(retryOrder?.receipt_url || body.receipt_url);
   const rawReceiptHash = retryOrder?.receipt_hash || body.receipt_hash || '';
@@ -240,17 +248,23 @@ export default withSecurity(async (req, res, { context, user }) => {
   if (fromMethod !== 'USDT' && !Number.isSafeInteger(amount)) {
     return json(res, 422, { error: 'IQD amounts must be whole dinars' });
   }
-  if (!validRecipient(toMethod, phone)) {
-    return json(res, 422, { error: 'Invalid recipient number' });
-  }
-  if (carrierSender && !/^07\d{9}$/.test(senderPhone)) {
-    return json(res, 422, { error: 'Invalid sender number' });
-  }
   if (balanceSource && (!Number.isSafeInteger(amount) || toMethod==='USDT' ||
       !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(requestKey||''))))
     return json(res,422,{error:'Valid balance request key and whole IQD amount required'});
   if (toMethod==='AccountBalance') return json(res,422,{error:'Account balance is a Send source only'});
   if (!balanceSource && (!receiptUrl || !receiptHash)) return json(res, 422, { error: 'Receipt is required' });
+
+  // checked once the request is well formed: the wallets' own rules from ex_wallets
+  const walletRows = await loadWallets([fromMethod, toMethod]);
+  const source = walletRows[fromMethod];
+  const target = walletRows[toMethod];
+  const carrierSender = source?.sender_phone_required === true;
+  if (!validRecipient(target, phone)) {
+    return json(res, 422, { error: 'Invalid recipient number' });
+  }
+  if (carrierSender && !/^07\d{9}$/.test(senderPhone)) {
+    return json(res, 422, { error: 'Invalid sender number' });
+  }
 
   const rates = await serviceFetch(
     `/rest/v1/ex_rates?from_method=eq.${encodeURIComponent(fromMethod)}&to_method=eq.${encodeURIComponent(toMethod)}&is_active=eq.true&select=rate_type,rate_value,fee_tier_enabled,fee_tier_limit_iqd,fee_tier_low_percent,fee_tier_high_percent,fee_brackets&limit=1`
@@ -258,9 +272,6 @@ export default withSecurity(async (req, res, { context, user }) => {
   const rate = rates?.[0];
   if (!rate) return json(res, 409, { error: 'This exchange route is closed' });
 
-  const wallets = await serviceFetch(`/rest/v1/ex_wallets?key=in.(${encodeURIComponent(fromMethod)},${encodeURIComponent(toMethod)})&select=key,is_locked,allow_from,allow_receive`);
-  const source = wallets?.find(w => w.key === fromMethod);
-  const target = wallets?.find(w => w.key === toMethod);
   if (!source || !target || source.is_locked || target.is_locked || source.allow_from === false || target.allow_receive === false) {
     return json(res, 409, { error: 'This wallet is currently unavailable' });
   }

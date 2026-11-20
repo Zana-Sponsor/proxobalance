@@ -84,7 +84,7 @@ test('customer app: no Firebase, one banner place on the dashboard, every screen
   assert.doesNotMatch(index, /firebasejs|id="newsBanner"/);
   assert.doesNotMatch(app, /firebase\.|listenToNews/);
   assert.match(index, /<div class="dbb" id="dbBanners" hidden><\/div>/);
-  assert.match(index, /<script src="\/assets\/js\/site-pause\.js\?v=2"><\/script>\n<script src="\/assets\/js\/banners\.js\?v=\d+"><\/script>/);
+  assert.match(index, /<script src="\/assets\/js\/site-pause\.js\?v=5"><\/script>\n<script src="\/assets\/js\/banners\.js\?v=\d+"><\/script>/);
   assert.match(app, /if\(typeof pxBannersStart==='function'\) pxBannersStart\(\);/);
   for (const [route, key] of [['home', 'home'], ['transactions', 'transactions'], ['summary', 'transactions'], ['balance', 'balance_history'], ['profile', 'profile'], ['changes', 'changes'], ['rules', 'rules'],
     ['account-name', 'name'], ['change-phone', 'phone'], ['change-email', 'email'], ['change-password', 'password'], ['delete-account', 'delete']])

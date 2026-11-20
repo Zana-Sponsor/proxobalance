@@ -36,7 +36,7 @@
         Number.isFinite(amountNum) && amountNum>0;
 
       var recipient=valueOf(phone);
-      var recipientEntered=toKey==='QiCard'
+      var recipientEntered=(typeof window.recipientIsCard==='function'&&window.recipientIsCard(toKey))
         ? recipient.length>=6
         : /^07[0-9]{9}$/.test(recipient);
       var receiveEntered=!!toKey && toKey!==fromKey && recipientEntered;

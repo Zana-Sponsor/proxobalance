@@ -13,22 +13,8 @@ export default withSecurity(async (req, res) => {
       list = rows;
     }
   } catch (err) {
-    // If database or service key is unreachable, gracefully fall back
-    // to curated completed exchanges so visitors always see a functional feed
-  }
-
-  if (list.length === 0) {
-    const now = Date.now();
-    list = [
-      { from_method: 'FastPay',  to_method: 'FIB',      amount: 150000, total: 147500, created_at: new Date(now - 4 * 60 * 1000).toISOString(),   user_id: 'u_pub_1' },
-      { from_method: 'USDT',     to_method: 'FastPay',  amount: 100,    total: 152000, created_at: new Date(now - 16 * 60 * 1000).toISOString(),  user_id: 'u_pub_2' },
-      { from_method: 'QiCard',   to_method: 'FIB',      amount: 250000, total: 247000, created_at: new Date(now - 35 * 60 * 1000).toISOString(),  user_id: 'u_pub_3' },
-      { from_method: 'Asiacell', to_method: 'FastPay',  amount: 50000,  total: 46500,  created_at: new Date(now - 58 * 60 * 1000).toISOString(),  user_id: 'u_pub_4' },
-      { from_method: 'FIB',      to_method: 'QiCard',   amount: 300000, total: 297000, created_at: new Date(now - 95 * 60 * 1000).toISOString(),  user_id: 'u_pub_5' },
-      { from_method: 'Korek',    to_method: 'FIB',      amount: 40000,  total: 37200,  created_at: new Date(now - 130 * 60 * 1000).toISOString(), user_id: 'u_pub_6' },
-      { from_method: 'FastPay',  to_method: 'QiCard',   amount: 100000, total: 98500,  created_at: new Date(now - 170 * 60 * 1000).toISOString(), user_id: 'u_pub_7' },
-      { from_method: 'USDT',     to_method: 'FIB',      amount: 200,    total: 304000, created_at: new Date(now - 220 * 60 * 1000).toISOString(), user_id: 'u_pub_8' }
-    ];
+    // The feed shows only real approved exchanges from Supabase; when the
+    // database is unreachable it is simply empty.
   }
 
   const since = Date.now() - 86_400_000;

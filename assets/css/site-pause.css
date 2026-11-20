@@ -1,45 +1,124 @@
 /* Admin pause switches, customer side (assets/js/site-pause.js).
-   The notice is the site's own calm notice (identity banner / account
-   notices, "waiting" tone): radius 16, padding 14, 1px line, title 14.5/600,
-   text 14/400, no icon. The whole-site screen uses the sign-in screen's
-   background, ink and main button (48 high, radius 12, 15/400). */
-html body .svc-note {
-  --sv-bg: #fff6e3; --sv-line: #f6dba6; --sv-title: #1f2d44; --sv-text: #5f6f86;
-  display: block; margin: 0 0 14px; padding: 14px;
-  border: 1px solid var(--sv-line); border-radius: 16px; background: var(--sv-bg);
-  font-family: Rabar, Arial, sans-serif; text-align: right;
+   One palette for every paused state, light and dark; the dark values are the
+   app's own (app-dark.css): canvas, card, line, ink, muted, accent.
+   - The whole site paused, and a banned account (app.js showBannedScreen):
+     one full screen — logo, a state mark, title, text, an information card,
+     the actions.
+   - A paused section: one card in the app's own card language — a tinted tile
+     with two bars, the title, the admin's message. On a paused screen the card
+     takes the room of the screen's content, centred, with "check again" and
+     the way home; above a paused form or step (sign-in, sign-up, the support
+     form, paying with the balance) it is a compact row.
+   The full screens use the same tile, larger.
+   Site palette and Rabar; nothing moves. */
+html body .svc-note, .svc-site {
+  --sv-page: #fafafa; --sv-card: #ffffff; --sv-line: #e8edf3; --sv-ink: #1f2d44; --sv-text: #64748b;
+  --sv-tone: #0265ff; --sv-tone-soft: #eaf2ff;
+  --sv-btn: #0265ff; --sv-btn-press: #0052d6;
 }
-html[data-theme="dark"] body .svc-note { --sv-bg: #3c2b07; --sv-line: #674c16; --sv-title: #e8edf6; --sv-text: #acb6c3; }
-html body .svc-note b { display: block; margin: 0 0 3px; color: var(--sv-title); font-size: 14.5px; font-weight: 600; line-height: 1.6; }
-html body .svc-note p { margin: 0; color: var(--sv-text); font-size: 14px; font-weight: 400; line-height: 1.75; overflow-wrap: anywhere; }
+.svc-site { --sv-line: #e3e7f0; --sv-ink: #0f172a; }
+.svc-site.is-ban { --sv-tone: #c0392b; --sv-tone-soft: #fdeeee; }
+html[data-theme="dark"] body .svc-note, html[data-theme="dark"] .svc-site {
+  --sv-page: #0b1220; --sv-card: #131c2e; --sv-line: #25324a; --sv-ink: #e8edf6; --sv-text: #a3b1c7;
+  --sv-tone: #3b8cff; --sv-tone-soft: #10223d;
+  --sv-btn: #1c6cff; --sv-btn-press: #1559d6;
+}
+html[data-theme="dark"] .svc-site.is-ban { --sv-tone: #f87171; --sv-tone-soft: #3a1816; }
+
+/* ── a paused section: the compact card above a form or step ── */
+html body .svc-note {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 0 12px;
+  margin: 0 0 14px; padding: 12px 14px; box-sizing: border-box;
+  border: 1px solid var(--sv-line); border-radius: 16px; background: var(--sv-card);
+  font-family: Rabar, Arial, sans-serif; text-align: right; direction: rtl;
+}
+html body .svc-note .svc-note-mark {
+  display: flex; align-items: center; justify-content: center; gap: 4px;
+  width: 38px; height: 38px; border-radius: 12px; background: var(--sv-tone-soft); color: var(--sv-tone);
+}
+html body .svc-note .svc-note-mark i { display: block; width: 4px; height: 14px; border-radius: 2px; background: currentColor; }
+html body .svc-note .svc-note-body { min-width: 0; }
+html body .svc-note b { display: block; margin: 0; color: var(--sv-ink); font-size: 14.5px; font-weight: 600; line-height: 1.6; }
+html body .svc-note p { margin: 1px 0 0; color: var(--sv-text); font-size: 13.5px; font-weight: 400; line-height: 1.7; overflow-wrap: anywhere; }
+html body .svc-note .svc-note-actions { display: none; }
 /* on the sign-in card the notice sits above the step's own title */
 html body #authWrap .auth-view > .svc-note,
 html body #authWrap #forgotStep > .svc-note { margin: 0 0 16px; }
 
-/* a paused screen keeps its header and the notice; a paused form hides only the form
+/* ── a paused screen: the card fills the room the screen's content had, between
+   the header and the bottom bar, its content centred — no empty half-screen ── */
+html body #mainApp .page.svc-paused > .svc-note {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: calc(100dvh - 184px); margin: 4px 0 0; padding: 28px 20px; border-radius: 20px; text-align: center;
+}
+html body #mainApp .page.svc-paused:has(> .page-head) > .svc-note { min-height: calc(100dvh - 237px); }
+html body #mainApp .page.svc-paused:has(> .pfx-bar) > .svc-note { min-height: calc(100dvh - 177px); }
+html body #mainApp .page.svc-paused > .svc-note .svc-note-mark { width: 64px; height: 64px; margin: 0 0 20px; border-radius: 20px; gap: 6px; }
+html body #mainApp .page.svc-paused > .svc-note .svc-note-mark i { width: 6px; height: 22px; border-radius: 3px; }
+html body #mainApp .page.svc-paused > .svc-note .svc-note-body { display: flex; flex-direction: column; align-items: center; }
+html body #mainApp .page.svc-paused > .svc-note b { font-size: 18px; line-height: 1.55; }
+html body #mainApp .page.svc-paused > .svc-note p { max-width: 30ch; margin-top: 6px; font-size: 14.5px; line-height: 1.8; }
+html body #mainApp .page.svc-paused > .svc-note .svc-note-actions {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 320px; margin: 28px 0 0;
+}
+html body #mainApp .page.svc-paused > .svc-note[data-svc="home"] .svc-note-actions { grid-template-columns: 1fr; max-width: 200px; }
+html body #mainApp .page.svc-paused > .svc-note[data-svc="home"] [data-act="home"] { display: none; }
+/* wide screens: no bottom bar, and a card the height of the window would only be empty */
+@media (min-width: 900px) {
+  html body #mainApp .page.svc-paused > .svc-note,
+  html body #mainApp .page.svc-paused:is(:has(> .page-head), :has(> .pfx-bar)) > .svc-note { min-height: min(calc(100dvh - 180px), 560px); }
+}
+html body .svc-note .svc-note-btn {
+  display: flex; align-items: center; justify-content: center; height: 44px; margin: 0; padding: 0 12px;
+  border: 1px solid var(--sv-line); border-radius: 12px; background: transparent; color: var(--sv-ink);
+  font-family: inherit; font-size: 14.5px; font-weight: 400; line-height: 1; cursor: pointer; box-shadow: none;
+}
+html body .svc-note .svc-note-btn.is-soft { border-color: transparent; background: var(--sv-tone-soft); color: var(--sv-tone); }
+html body .svc-note .svc-note-btn:active { background: var(--sv-tone-soft); }
+html body .svc-note .svc-note-btn:disabled { opacity: .6; cursor: default; }
+html body .svc-note .svc-note-btn:focus-visible { outline: 2px solid var(--sv-btn); outline-offset: 2px; }
+
+/* a paused screen keeps its header and the state; a paused form hides only the form
    (the repeated ids outrank the screens' own "display" rules, which use #mainApp#mainApp #page…) */
 html body #mainApp#mainApp#mainApp#mainApp .page.svc-paused > :not(.pfx-bar):not(.page-head):not(.svc-note) { display: none !important; }
 html body #mainApp#mainApp#mainApp#mainApp #pageSupport.svc-paused-form > .support-form-card { display: none !important; }
 
-/* the whole site */
+/* ── full screen: the whole site paused, or a banned account ── */
 html.svc-site-on, html.svc-site-on body { overflow: hidden !important; }
 .svc-site {
-  --sv-page: #fafafa; --sv-ink: #1f2d44; --sv-text: #5f6f86; --sv-btn: #0265ff; --sv-btn-press: #0052d6;
   position: fixed; inset: 0; z-index: 2147483000;
-  display: flex; align-items: center; justify-content: center;
-  padding: 24px 16px calc(24px + env(safe-area-inset-bottom));
-  background: var(--sv-page); color: var(--sv-ink);
+  display: flex; flex-direction: column; align-items: center;
+  padding: max(28px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+  overflow-y: auto; background: var(--sv-page); color: var(--sv-ink);
   font-family: Rabar, Arial, sans-serif; direction: rtl; text-align: center;
 }
-html[data-theme="dark"] .svc-site { --sv-page: #0b1220; --sv-ink: #e8edf6; --sv-text: #acb6c3; --sv-btn: #3b8cff; --sv-btn-press: #2563eb; }
-.svc-site-box { width: 100%; max-width: 360px; display: flex; flex-direction: column; align-items: center; }
-.svc-site-logo { display: block; height: 28px; width: auto; margin: 0 0 28px; }
-.svc-site h1 { margin: 0 0 8px; font-size: 19px; font-weight: 600; line-height: 1.6; color: var(--sv-ink); }
-.svc-site p { margin: 0 0 24px; font-size: 14.5px; font-weight: 400; line-height: 1.8; color: var(--sv-text); overflow-wrap: anywhere; }
+.svc-site-logo { display: block; height: 26px; width: auto; margin: 0 0 auto; flex-shrink: 0; }
+.svc-site-box { width: 100%; max-width: 380px; margin: 40px 0 auto; display: flex; flex-direction: column; align-items: center; }
+.svc-site-mark {
+  width: 76px; height: 76px; margin: 0 0 24px; border-radius: 24px;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  background: var(--sv-tone-soft); color: var(--sv-tone);
+}
+.svc-site-mark i { display: block; width: 7px; height: 26px; border-radius: 4px; background: currentColor; }
+.svc-site-mark svg { width: 34px; height: 34px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.svc-site h1 { margin: 0 0 8px; font-size: 21px; font-weight: 600; line-height: 1.55; color: var(--sv-ink); }
+.svc-site p { margin: 0; max-width: 34ch; font-size: 15px; font-weight: 400; line-height: 1.8; color: var(--sv-text); overflow-wrap: anywhere; }
+.svc-site-info {
+  width: 100%; margin: 24px 0 0; padding: 4px 16px; border: 1px solid var(--sv-line); border-radius: 16px;
+  background: var(--sv-card); text-align: right;
+}
+.svc-site-info > div { display: flex; flex-direction: column; gap: 2px; padding: 12px 0; }
+.svc-site-info > div + div { border-top: 1px solid var(--sv-line); }
+.svc-site-info dt { margin: 0; font-size: 12.5px; font-weight: 400; color: var(--sv-text); }
+.svc-site-info dd { margin: 0; font-size: 15px; font-weight: 500; line-height: 1.7; color: var(--sv-ink); overflow-wrap: anywhere; }
+.svc-site-actions { width: 100%; display: grid; gap: 10px; margin: 28px 0 0; }
 .svc-site-btn {
-  width: 100%; height: 48px; padding: 0 16px; border: 0; border-radius: 12px;
-  background: var(--sv-btn); color: #fff; font-family: inherit; font-size: 15px; font-weight: 400; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; width: 100%; height: 48px; padding: 0 16px;
+  border: 0; border-radius: 12px; background: var(--sv-btn); color: #fff; text-decoration: none;
+  font-family: inherit; font-size: 15px; font-weight: 400; cursor: pointer;
 }
 .svc-site-btn:active { background: var(--sv-btn-press); }
+.svc-site-btn.is-ghost { background: var(--sv-card); color: var(--sv-ink); border: 1px solid var(--sv-line); }
+.svc-site-btn.is-ghost:active { background: var(--sv-tone-soft); }
 .svc-site-btn:disabled { opacity: .55; cursor: default; }
 .svc-site-btn:focus-visible { outline: 2px solid var(--sv-btn); outline-offset: 3px; }

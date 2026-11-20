@@ -29,9 +29,9 @@ test('admin toggles verify the customer number, update or create settings, and r
 test('super-admin panel explains the verified list and future-only customer order notifications', () => {
   assert.match(html, /ژمارە پشتڕاستکراوەکانی کڕیار/);
   assert.match(html, /کۆنترۆڵەکە تەنها بۆ نامەکانی داهاتووە/);
-  assert.match(html, /exchange-whatsapp-admin\.js\?v=4/);
+  assert.match(html, /exchange-whatsapp-admin\.js\?v=5/);
   assert.match(admin, /پشتڕاستکراوە/);
   assert.match(html, /data-wasf="on"/);
   assert.match(html, /data-wasf="off"/);
-  assert.match(workflow, /exchange-whatsapp-admin\.js\?v=4/);
+  assert.match(workflow, /exchange-whatsapp-admin\.js\?v=5/);
 });

@@ -8,8 +8,8 @@ const shellCss=read('assets/css/proxo-ui-v2.css');
 
 test('Customer design contract is loaded after every legacy stylesheet',()=>{
   const sheets=[...html.matchAll(/<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"/g)].map(m=>m[1]);
-  const legacyIndex=sheets.indexOf('/assets/css/proxo-dark.css?v=8');
-  const designIndex=sheets.indexOf('/assets/css/proxo-design-system.css?v=4');
+  const legacyIndex=sheets.indexOf('/assets/css/proxo-dark.css?v=10');
+  const designIndex=sheets.indexOf('/assets/css/proxo-design-system.css?v=5');
   assert(legacyIndex>=0 && designIndex>legacyIndex);
   assert(!read('exchange-admin.html').includes('proxo-design-system.css'));
 });
@@ -60,19 +60,19 @@ test('Design layer leaves hidden/route mechanics untouched and provides accessib
 
 test('Production smoke waits for the changed customer version and verifies its design contract',()=>{
   const workflow=read('.github/workflows/exchange-production-smoke.yml');
-  assert(workflow.includes('app.js?v=105'));
-  assert(workflow.includes('admin.js?v=38'));
+  assert(workflow.includes('app.js?v=109'));
+  assert(workflow.includes('admin.js?v=41'));
   assert(workflow.includes('receipt-access.js?v=1'));
   assert(workflow.includes('auth-phone.css?v=2'));
   assert(workflow.includes('auth-otp.css?v=1'));
   assert(workflow.includes('/assets/js/exchange-pricing.js?v=1'));
-  assert(html.includes('/assets/js/app.js?v=105'));
-  assert(html.includes('/assets/js/site-pause.js?v=2'));
+  assert(html.includes('/assets/js/app.js?v=109'));
+  assert(html.includes('/assets/js/site-pause.js?v=5'));
   assert(html.includes('/assets/js/banners.js?v=2'));
-  assert(html.includes('/assets/css/proxo-ui-v2.css?v=16'));
+  assert(html.includes('/assets/css/proxo-ui-v2.css?v=18'));
   assert(html.includes('/assets/js/proxo-ui-v2.js?v=4'));
   assert(html.includes('/assets/js/proxo-toast.js?v=1'));
-  assert(html.indexOf('proxo-toast.js?v=1') < html.indexOf('app.js?v=105'));
+  assert(html.indexOf('proxo-toast.js?v=1') < html.indexOf('app.js?v=109'));
   assert(shellCss.includes('.pxt-stack'));
   assert(shellCss.includes('.pxn-pill'));
   assert(shellCss.includes('.field-error.show'));
@@ -87,11 +87,11 @@ test('Production smoke waits for the changed customer version and verifies its d
   assert(html.includes('id="savedRecipientsShortcut"'));
   assert(shellCss.includes('.xc-step-head .xc-saved-recipients-btn'));
   assert(shellCss.includes('#usernameSheet .sheet-body'));
-  assert(html.includes('proxo-dark.css?v=8'));
+  assert(html.includes('proxo-dark.css?v=10'));
   for(const route of ['account-name','change-phone','change-password','change-email'])
     assert(html.includes(`data-route="${route}"`));
-  assert(html.includes('account-settings.css?v=4'));
-  assert(html.includes('profile-screens.css?v=1'));
+  assert(html.includes('account-settings.css?v=6'));
+  assert(html.includes('profile-screens.css?v=2'));
   assert(html.includes('whatsapp-notify.js?v=2'));
   assert(html.includes('id="savedRecipientsShortcut"'));
   assert(html.includes('بەبێ بەڵگەی ناردن داواکارییەکە ڕەت دەکرێتەوە.'));
