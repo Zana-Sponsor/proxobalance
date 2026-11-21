@@ -284,7 +284,7 @@ export function assertStaffAction(profile,action){
   if(profile.role==='super_admin' || profile.staff_permissions==null)return;
   const permissions={
     ping:'view',account_balances:'view',balance_dashboard:'view',balance_lookup_order:'view',
-    list_order_correction_history:'view',
+    list_order_correction_history:'view',receipt_read_get:'view',receipt_read_run:'approve_orders',
     approve_order:'approve_orders',reject_order:'approve_orders',request_order_correction:'approve_orders',
     save_order_note:'approve_orders',save_payout_receipt:'approve_orders',
     balance_credit_refund:'refunds',balance_credit_shortfall:'refunds',balance_refund_report:'refunds',
@@ -564,6 +564,36 @@ const actions = {
       .eq('order_id',order_id.toLowerCase()).order('created_at',{ascending:false}).limit(30);
     if(error)throw orderAdminError(error);
     return data||[];
+  },
+  // What the receipt reader (Supabase Edge Function receipt-read, with Gemini) found on the
+  // order's receipt; null until it is read. New receipts are read by the database itself.
+  async receipt_read_get({order_id},_ctx){
+    if(typeof order_id!=='string'||!UUID.test(order_id))
+      throw {status:400,code:'bad_input',message:'مامەڵەکە دروست نییە'};
+    const {data,error}=await db.from('ex_receipt_reads')
+      .select('order_id,status,is_receipt,wallet,success,status_text,amount,currency,fee,reference,paid_at,sender_name,sender_account,receiver_name,receiver_account,notes,amount_matches,duplicate_order_id,model,error,attempts,read_at')
+      .eq('order_id',order_id.toLowerCase()).maybeSingle();
+    if(error)throw {status:500,code:'db_error',message:error.message};
+    let duplicate=null;
+    if(data?.duplicate_order_id){
+      const {data:other}=await db.from('ex_orders').select('id,order_code,status,created_at').eq('id',data.duplicate_order_id).maybeSingle();
+      duplicate=other||null;
+    }
+    return {configured:true,read:data||null,duplicate};
+  },
+  // Reads the receipt again (an old order, or the first reading failed). It only queues it:
+  // the result arrives a few seconds later through ex_receipt_read_save.
+  async receipt_read_run({order_id},ctx){
+    if(typeof order_id!=='string'||!UUID.test(order_id))
+      throw {status:400,code:'bad_input',message:'مامەڵەکە دروست نییە'};
+    const {data:order,error}=await db.from('ex_orders')
+      .select('id,user_id,order_code,receipt_url').eq('id',order_id.toLowerCase()).maybeSingle();
+    if(error||!order)throw {status:404,code:'not_found',message:'Order not found'};
+    if(!order.receipt_url)throw {status:409,code:'no_receipt',message:'ئەم داواکارییە پسووڵەی نییە'};
+    const {data:requestId,error:queueError}=await db.rpc('ex_receipt_read_queue',{p_order_id:order.id});
+    if(queueError||!requestId)throw {status:502,code:'reader_unreachable',message:'خوێندنەوەی پسووڵە نەنێردرا'};
+    await audit(ctx.user.id,'receipt_read_run',order.user_id,order.order_code);
+    return {queued:true};
   },
   async save_order_note({order_id,admin_note},ctx){
     const note=String(admin_note||'').trim();

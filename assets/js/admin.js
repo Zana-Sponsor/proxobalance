@@ -1459,7 +1459,9 @@ function showOrderDetail(id){
   const attach=!canAttach?'':_payoutReceiptUploads.has(order.id)?
     `<button type="button" class="act-btn cy" id="podUploadLbl" onclick="uploadPayoutReceiptDirect(null,'${oid}')">پشکنینەوەی هەمان پسووڵەی پێشوو</button>`:
     `<label class="act-btn cy dx-file" id="podUploadLbl">${order.payout_receipt_url?'گۆڕینی پسووڵەی پارەدان':'ناردنی پسووڵەی پارەدان بۆ کڕیار'}<input type="file" accept="image/*" hidden onchange="uploadPayoutReceiptDirect(this,'${oid}')"></label>`;
-  const receipts=(shots.length?`<div class="dx-shots">${shots.join('')}</div>`:'')+
+  // what the receipt reader (Supabase + Gemini) found on the customer's receipt
+  const readBox=!order.balance_debit_journal_id&&order.receipt_url?'<div class="rr-box" id="odReceiptRead" aria-live="polite"><p class="rr-wait">خوێندنەوەی پسووڵە بار دەکرێت...</p></div>':'';
+  const receipts=(shots.length?`<div class="dx-shots">${shots.join('')}</div>`:'')+readBox+
     (!order.balance_debit_journal_id&&!order.receipt_url?'<p class="dx-quiet">پسووڵەی کڕیار بۆ تیلیگرامی ئادمین نێردراوە.</p>':'')+
     (attach?`<div class="dx-attach">${attach}</div>`:'');
 
@@ -1491,6 +1493,97 @@ function showOrderDetail(id){
   if(typeof ProxoOrderManual==='object') ProxoOrderManual.loadHistory(order.id);
   loadOrderCorrectionHistory(order.id);
   if(order.status===STATUS_APPROVED) loadAdminOrderFeedback(order.id);
+  if(readBox) loadReceiptRead(order);
+}
+
+// ── receipt reading (Supabase Edge Function receipt-read with Gemini; table ex_receipt_reads) ──
+// It only helps: the amount on the receipt against the order, another order with the same
+// transaction number, a receipt that does not show success. The admin still decides.
+// The app named on the receipt against the order's method, by the method's key and the first
+// word of its name in the wallets table, and by the initials of the receipt's name
+// ("First Iraqi Bank" → fib). Only Latin letters are compared: a name printed in Kurdish or
+// Arabic is never flagged, and neither is USDT, whose receipts name an exchange.
+function receiptWalletDiffers(method, wallet){
+  const norm=t=>String(t||'').toLowerCase().replace(/[^a-z0-9]/g,'');
+  const w=norm(wallet); if(!method||method==='USDT'||w.length<2) return false;
+  const keys=[norm(method),norm(String(walletName(method)).split(/\s+/)[0])].filter(k=>k.length>=2);
+  const initials=String(wallet).split(/[^A-Za-z0-9]+/).filter(Boolean).map(x=>x[0]).join('').toLowerCase();
+  return !!keys.length&&!keys.some(k=>w.includes(k)||k.includes(w)||(initials.length>=2&&k===initials));
+}
+function receiptReadHTML(order, info){
+  const read=info&&info.read, configured=!!(info&&info.configured);
+  const oid=esc(String(order.id));
+  const again=configured?`<button type="button" class="act-btn rr-again" onclick="runReceiptRead('${oid}')">${read?'دووبارە خوێندنەوە':'خوێندنەوەی پسووڵە'}</button>`:'';
+  if(!read){
+    if(!configured) return '';
+    return `<div class="rr-head"><b>خوێندنەوەی پسووڵە</b></div><p class="rr-line">هێشتا نەخوێندراوەتەوە.</p><div class="rr-foot">${again}</div>`;
+  }
+  const unit=order.from_method==='USDT'?' $':' IQD';
+  const ltr=t=>'<bdi dir="ltr">'+esc(t)+'</bdi>';
+  const flags=[];   // [tone, html]: every value inside is escaped
+  const busy=/^gemini_(429|50\d)/.test(read.error||'');
+  // a later reading failed, the earlier good reading is kept (ex_receipt_read_save)
+  if(read.status!=='error'&&read.error) flags.push(['warn','دوایین هەوڵی خوێندنەوە سەرنەکەوت؛ ئەمەی خوارەوە خوێندنەوەی پێشووە.']);
+  if(read.status==='error') flags.push(['bad',/^gemini_key_missing/.test(read.error||'')?'کلیلی Gemini لە Supabase دانەنراوە (Edge Functions → Secrets → GEMINI_API_KEY).':
+    busy?'Gemini ئێستا قەرەباڵغە؛ چەند خولەکێکی تر دووبارە بیخوێنەرەوە.':'نەتوانرا پسووڵەکە بخوێندرێتەوە.']);
+  else if(read.status==='not_receipt') flags.push(['bad','ئەم وێنەیە وەک پسووڵەی پارەدان نەناسرایەوە.']);
+  else{
+    if(info.duplicate) flags.push(['bad','ئەم ژمارەی مامەڵەیە پێشتر لە داواکاری '+ltr(info.duplicate.order_code||'')+' بەکارهاتووە.']);
+    else if(read.duplicate_order_id) flags.push(['bad','ئەم ژمارەی مامەڵەیە پێشتر لە داواکارییەکی تردا بەکارهاتووە.']);
+    if(read.amount_matches===true) flags.push(['ok','بڕ یەک دەگرێتەوە: '+ltr(formatNum(read.amount)+unit)]);
+    else if(read.amount_matches===false) flags.push(['bad','بڕ یەک ناگرێتەوە: پسووڵە '+ltr(formatNum(read.amount)+(read.currency?' '+read.currency:''))+'، داواکاری '+ltr(formatNum(order.amount)+unit)]);
+    else flags.push(['warn','بڕ لە پسووڵەکەدا نەدۆزرایەوە.']);
+    if(read.success===false) flags.push(['bad','پسووڵەکە سەرکەوتوو نیشان نادات'+(read.status_text?': '+esc(read.status_text):'.')]);
+    if(receiptWalletDiffers(order.from_method,read.wallet)) flags.push(['warn','پسووڵەکە هی '+ltr(read.wallet)+' دیارە، بەڵام داواکارییەکە بە '+ltr(walletName(order.from_method))+' تۆمارکراوە.']);
+    if(read.notes) flags.push(['warn',esc(read.notes)]);
+  }
+  const when=read.paid_at&&!isNaN(Date.parse(read.paid_at))?fmtDateTime(read.paid_at):read.paid_at;
+  const row=(label,value,dir)=>value?`<div class="detail-row"><span class="lbl">${label}</span><span class="val"${dir?` dir="${dir}"`:''}>${esc(value)}</span></div>`:'';
+  const person=(name,account)=>[name,account].filter(Boolean).join(' · ');
+  const rows=read.status==='ok'?row('ژمارەی مامەڵە',read.reference,'ltr')+row('کات',when,'ltr')+row('ئەپ',read.wallet,'auto')+
+    row('نێرەر',person(read.sender_name,read.sender_account),'auto')+row('وەرگر',person(read.receiver_name,read.receiver_account),'auto'):'';
+  const dupBtn=info.duplicate&&allOrders.some(x=>String(x.id)===String(info.duplicate.id))?
+    `<button type="button" class="act-btn" onclick="showOrderDetail('${esc(String(info.duplicate.id))}')">بینینی ${esc(info.duplicate.order_code||'داواکارییەکەی تر')}</button>`:'';
+  return `<div class="rr-head"><b>خوێندنەوەی پسووڵە</b><small dir="ltr">${esc(fmtDateTime(read.read_at))}</small></div>`+
+    flags.map(([tone,html])=>`<p class="rr-flag is-${tone}">${html}</p>`).join('')+
+    (rows?`<div class="dx-card rr-card">${rows}</div>`:'')+
+    `<div class="rr-foot">${dupBtn}${again}</div>`;
+}
+async function loadReceiptRead(order){
+  const box=document.getElementById('odReceiptRead'); if(!box) return null;
+  try{
+    const info=await adminApiRequest('receipt_read_get',{order_id:order.id});
+    const target=document.getElementById('odReceiptRead'); if(!target) return info;
+    const html=receiptReadHTML(order,info);
+    if(!html){ target.remove(); return info; }
+    target.innerHTML=html;
+    return info;
+  }catch(e){
+    const target=document.getElementById('odReceiptRead');
+    if(target) target.innerHTML='<p class="rr-line">خوێندنەوەی پسووڵە بار نەکرا: '+esc(e.message)+'</p>';
+    return null;
+  }
+}
+async function runReceiptRead(id){
+  const order=allOrders.find(x=>String(x.id)===String(id)); if(!order) return;
+  const box=document.getElementById('odReceiptRead');
+  const btn=box&&box.querySelector('.rr-again'); if(btn){ btn.disabled=true; btn.textContent='دەخوێندرێتەوە...'; }
+  try{
+    const current=await adminApiRequest('receipt_read_get',{order_id:order.id});
+    // a new reading changes read_at; a failure over a good reading only changes attempts
+    const mark=r=>r?String(r.read_at)+'|'+String(r.attempts):null;
+    const last=mark(current?.read);
+    await adminApiRequest('receipt_read_run',{order_id:order.id});
+    // the reading arrives a few seconds later (when Gemini is busy, up to two minutes); look again until it changes
+    for(let i=0;i<45;i++){
+      await new Promise(r=>setTimeout(r,3000));
+      if(!document.getElementById('odReceiptRead')) return;
+      const info=await adminApiRequest('receipt_read_get',{order_id:order.id});
+      if(info?.read && mark(info.read)!==last){ document.getElementById('odReceiptRead').innerHTML=receiptReadHTML(order,info); return; }
+    }
+    showToast('خوێندنەوەکە هێشتا تەواو نەبووە؛ دواتر سەیری بکەرەوە');
+  }catch(e){ showToast(e.message||'هەڵەیەک ڕوویدا','rd'); }
+  const b=document.getElementById('odReceiptRead')?.querySelector('.rr-again'); if(b){ b.disabled=false; b.textContent='دووبارە خوێندنەوە'; }
 }
 
 async function loadAdminOrderFeedback(orderId){

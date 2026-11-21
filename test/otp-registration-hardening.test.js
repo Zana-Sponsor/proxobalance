@@ -49,3 +49,12 @@ test('database hardening serializes issuance, locks verification rows, and denie
   assert.match(migration, /purpose = p_purpose/);
   assert.match(migration, /TOO_MANY_CODES/);
 });
+
+test('super-admin account-creation modal retains the email OTP request and verification controls', () => {
+  const adminHtml = read('../exchange-admin.html');
+  assert.match(adminHtml, /id="cuOtp"/);
+  assert.match(adminHtml, /id="cuSendOtpBtn" onclick="requestCreateUserOtp\(\)"/);
+  assert.match(adminHtml, /id="cuOtpMsg"/);
+  assert.match(adminHtml, /کۆدی پشتڕاستکردنەوە بۆ ئیمەیڵەکە دەنێردرێت/);
+  assert.match(adminUi, /action:'create'.*otp_code/s);
+});

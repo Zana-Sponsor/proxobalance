@@ -195,7 +195,7 @@ test('profile: username and creation date are rows of the account list; verified
 
 test('panel details: the order, account and identity windows use the lists\' card language', () => {
   const js = read('assets/js/admin.js'), css = read('assets/css/admin-details.css'), html = read('exchange-admin.html');
-  assert.match(html, /admin-lists\.css\?v=1">\n<link rel="stylesheet" href="assets\/css\/admin-details\.css\?v=1">/);
+  assert.match(html, /admin-lists\.css\?v=1">\n<link rel="stylesheet" href="assets\/css\/admin-details\.css\?v=2">/);
   assert.match(js, /function dxGroup\(title, rows, cls\)\{/);
   assert.match(js, /document\.getElementById\('odTitle'\)\.textContent = 'وردەکاری مامەڵە';/);
   assert.match(js, /dxGroup\('بڕ',money\)\+dxGroup\('نێرەر',sender\)\+dxGroup\('وەرگر',receiver\)\+dxGroup\('مامەڵە',facts\)/);
@@ -344,4 +344,72 @@ test('transaction details: one card per block in the exchange\'s values, the rou
   assert.match(app, /<button class="tf-info" type="button" onclick="openSummaryInfo\(\)" aria-haspopup="dialog">بۆچی؟<\/button>/);
   assert.match(info, /<button class="ts-info-ok" type="button" onclick="closeSummaryInfo\(\)">باشە، تێگەیشتم<\/button>/);
   assert.match(xf, /html body :is\(#roundingInfoSheet, #summaryInfoBackdrop\) \.ri-hero \{/);
+});
+
+test('receipt reading: the database sends each new receipt to the Edge Function, the result helps the admin and never blocks an order', () => {
+  const orders = read('api-handlers/orders.js'), admin = read('api-handlers/admin.js'), fn = read('supabase/functions/receipt-read/index.ts');
+  const ui = read('assets/js/admin.js'), css = read('assets/css/admin-details.css');
+  const save = read('supabase/migrations/20261121080000_receipt_reads.sql'), trigger = read('supabase/migrations/20261121090000_receipt_read_trigger.sql');
+  // the database, not Vercel: a trigger after the order is saved, through pg_net; every failure swallowed
+  assert.match(trigger, /create trigger trg_ex_orders_zz_receipt_read\n  after insert or update of receipt_url on public\.ex_orders/);
+  assert.match(trigger, /exception when others then\n  return null;/);
+  assert.match(trigger, /grant execute on function public\.ex_receipt_read_queue\(uuid\) to service_role;/);
+  assert.doesNotMatch(orders, /queueReceiptRead|RECEIPT_READ_WEBHOOK_URL/);
+  // no key in the code: the reader key is in Vault, Gemini's in the function's secrets
+  assert.match(trigger, /vault\.decrypted_secrets where name = 'receipt_read_key'/);
+  assert.match(fn, /Deno\.env\.get\('GEMINI_API_KEY'\)/);
+  assert.doesNotMatch(trigger + save + fn, /rk_[0-9a-f]{20,}|AIza[0-9A-Za-z_-]{20,}/);
+  // the function checks the key against its sha256 and only reads our own receipts bucket
+  assert.match(fn, /\.from\('ex_receipt_read_keys'\)\.select\('id'\)\.eq\('key_hash', await sha256Hex\(key\)\)\.eq\('active', true\)/);
+  assert.match(fn, /startsWith\(RECEIPTS\)/);
+  assert.match(fn, /responseMimeType: 'application\/json', responseSchema: SCHEMA/);
+  // the database compares, the function only reads; its own key table, never the backup key
+  assert.match(save, /create table if not exists public\.ex_receipt_read_keys/);
+  assert.match(save, /when v_order\.from_method = 'USDT' then abs\(v_amount - v_order\.amount\) < 0\.01/);
+  assert.match(save, /and \(o\.status <> 'ڕەتکرا' or o\.user_id <> v_order\.user_id\)/);
+  // the panel: read it, read it again; staff need view / approve_orders
+  assert.match(admin, /receipt_read_get:'view',receipt_read_run:'approve_orders'/);
+  assert.match(admin, /db\.rpc\('ex_receipt_read_queue',\{p_order_id:order\.id\}\)/);
+  assert.match(ui, /if\(readBox\) loadReceiptRead\(order\);/);
+  assert.match(css, /html body #moOrderDetail \.rr-flag\.is-bad \{/);
+});
+
+test('receipt reading: the fast model first, the stronger one when it is busy or unsure; a failure never wipes a good reading', () => {
+  const fn = read('supabase/functions/receipt-read/index.ts'), ui = read('assets/js/admin.js');
+  const keep = read('supabase/migrations/20261121100000_receipt_read_keep_good.sql');
+  assert.match(fn, /const MODEL = Deno\.env\.get\('RECEIPT_READ_MODEL'\) \|\| 'gemini-3\.5-flash-lite';/);
+  assert.match(fn, /const FALLBACK = Deno\.env\.get\('RECEIPT_READ_FALLBACK_MODEL'\) \|\| 'gemini-3\.5-flash';/);
+  assert.match(fn, /const BUSY = new Set\(\[429, 500, 502, 503, 504\]\);/);
+  assert.match(fn, /if \(BUSY\.has\(status\) && FALLBACK && FALLBACK !== MODEL\) \{/);
+  assert.match(fn, /\(result\.is_receipt === false \|\| result\.amount == null\)/);
+  // the private bucket is read with the service key; a save failure is logged, not thrown
+  assert.match(fn, /await db\.storage\.from\('receipts'\)\.download\(path\)/);
+  assert.match(fn, /const save = async \(result: Record<string, unknown>, model = MODEL\) => \{/);
+  // the whole reading fits in the Edge Function's time
+  assert.match(fn, /ask\(MODEL, gemini, mime, data, 40000\)/);
+  assert.doesNotMatch(fn, /AbortSignal\.timeout\((1[0-9]{5}|[2-9][0-9]{5})\)/);
+  assert.match(keep, /if v_status = 'error' then\n    update public\.ex_receipt_reads\n       set error = nullif\(left\(r->>'error', 300\), ''\), attempts = attempts \+ 1\n     where order_id = p_order_id and status <> 'error';/);
+  assert.match(keep, /if tg_op = 'UPDATE' and new\.receipt_url is distinct from old\.receipt_url then\n    delete from public\.ex_receipt_reads where order_id = new\.id;/);
+  // the panel waits for read_at or attempts to change and says when the last try failed
+  assert.match(ui, /const mark=r=>r\?String\(r\.read_at\)\+'\|'\+String\(r\.attempts\):null;/);
+  // the app on the receipt against the order's method, Latin names only
+  assert.match(ui, /if\(receiptWalletDiffers\(order\.from_method,read\.wallet\)\) flags\.push\(\['warn',/);
+  assert.match(ui, /if\(!method\|\|method==='USDT'\|\|w\.length<2\) return false;/);
+  assert.match(ui, /if\(read\.status!=='error'&&read\.error\) flags\.push\(\['warn','دوایین هەوڵی خوێندنەوە سەرنەکەوت؛ ئەمەی خوارەوە خوێندنەوەی پێشووە\.'\]\);/);
+});
+
+test('receipt reader: JWT config, RPC privileges, owner paths and stale reads are guarded', () => {
+  const config = read('supabase/config.toml');
+  const fn = read('supabase/functions/receipt-read/index.ts');
+  const base = read('supabase/migrations/20261121080000_receipt_reads.sql');
+  const keep = read('supabase/migrations/20261121100000_receipt_read_keep_good.sql');
+  assert.match(config, /\[functions\.receipt-read\]\s+verify_jwt\s*=\s*false/);
+  assert.match(fn, /segments\[0\] !== order\.user_id/);
+  assert.match(fn, /receipt_url: sourceReceiptUrl/);
+  for (const sql of [base, keep]) {
+    assert.match(sql, /revoke all on function public\.ex_receipt_read_save\(text, uuid, jsonb\) from public, anon, authenticated/);
+    assert.match(sql, /grant execute on function public\.ex_receipt_read_save\(text, uuid, jsonb\) to service_role/);
+    assert.match(sql, /where id = p_order_id for update/);
+    assert.match(sql, /v_order\.receipt_url is distinct from r->>'receipt_url'/);
+  }
 });

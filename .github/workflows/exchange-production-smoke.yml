@@ -25,14 +25,14 @@ jobs:
                grep -q 'exchange-form.css?v=5' current-index.html &&
                grep -q 'auth-progress.css?v=1' current-index.html &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin' -o current-admin.html &&
-               grep -q 'admin.js?v=42' current-admin.html &&
-               grep -q 'admin-details.css?v=1' current-admin.html &&
+               grep -q 'admin.js?v=43' current-admin.html &&
+               grep -q 'admin-details.css?v=2' current-admin.html &&
                grep -q 'exchange-whatsapp-admin.js?v=5' current-admin.html; then
               exit 0
             fi
             sleep 6
           done
-          echo 'FAIL: the expected v68 customer bundle and OTP-secured admin assets were not published within the deployment window.'
+          echo 'FAIL: the expected v71 admin assets were not published within the deployment window.'
           exit 1
       - name: Verify the live customer page and admin panel
         shell: bash
