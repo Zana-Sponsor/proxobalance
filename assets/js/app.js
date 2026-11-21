@@ -5441,7 +5441,6 @@ function renderVerifyPage(){
     if(nameEl && !nameEl.value && curProfile && curProfile.full_name){
       nameEl.value=String(curProfile.full_name).replace(/\s+/g,' ').trim();
     }
-    kycUpdateNameNote();
     kycUpdateSteps();
   }
 }
@@ -5479,52 +5478,6 @@ function kycSelectDoc(type, silent){
     const info=document.getElementById('kycSecInfo');
     if(info && window.matchMedia('(max-width: 640px)').matches) info.scrollIntoView({behavior:'smooth',block:'start'});
   }
-}
-
-// Same rules as public.ex_normalize_person_name in the database: only harmless
-// differences (NFC, invisible characters, tatweel, spacing, Latin case, and the
-// Arabic-keyboard forms ي ى ك ھ) are ignored.
-function kycNormName(s){
-  const v=String(s??'').normalize('NFC')
-    .replace(/[\u200B-\u200F\u202A-\u202E\u2066-\u2069\u0640\uFEFF]/g,'')
-    .replace(/[\u00A0\u2000-\u200A\u202F\u205F\u3000]/g,' ')
-    .replace(/[\u064A\u0649]/g,'\u06CC').replace(/\u0643/g,'\u06A9').replace(/\u06BE/g,'\u0647')
-    .replace(/\s+/g,' ').trim().toLowerCase();
-  return v || null;
-}
-const KYC_AR2LAT = {
-  'ا':'a','آ':'a','أ':'a','إ':'a','ء':'','ئ':'','ؤ':'w','ة':'h',
-  'ب':'b','پ':'p','ت':'t','ث':'s','ج':'j','چ':'C','ح':'h','خ':'x','د':'d','ذ':'z',
-  'ر':'r','ڕ':'r','ز':'z','ژ':'j','س':'s','ش':'S','ص':'s','ض':'z','ط':'t','ظ':'z',
-  'ع':'','غ':'g','ف':'f','ڤ':'v','ق':'q','ك':'k','ک':'k','گ':'g','ل':'l','ڵ':'l',
-  'م':'m','ن':'n','ه':'h','ھ':'h','ە':'e','و':'w','ۆ':'o','ی':'i','ي':'i','ى':'i','ێ':'e'
-};
-function kycScriptOf(s){
-  const t=String(s||'');
-  const ar=/[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/.test(t);
-  const la=/[A-Za-z]/.test(t);
-  return (ar&&la) ? 'mixed' : ar ? 'arabic' : la ? 'latin' : 'other';
-}
-function kycSkeleton(token){
-  let s=String(token||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-  s=s.replace(/[\u0600-\u06FF]/g, ch => (KYC_AR2LAT[ch] !== undefined ? KYC_AR2LAT[ch] : ' '));
-  // Latin digraphs collapse to the single letters the Kurdish map produces
-  s=s.replace(/tch|ch/g,'C').replace(/sh/g,'S').replace(/kh/g,'x').replace(/zh/g,'j')
-     .replace(/gh/g,'g').replace(/th/g,'s').replace(/ph/g,'f').replace(/ck/g,'k');
-  s=s.replace(/[^bptsjChxdrzSgfvqklmn]/g,'');   // drop vowels, hamza, punctuation
-  return s.replace(/(.)\1+/g,'$1');             // doubled consonants are spelling noise
-}
-// 'same' | 'same_translit' | 'similar' | 'different_script' | 'different' | 'unknown'
-function kycNameRelation(accountName, legalName){
-  const a=kycNormName(accountName), b=kycNormName(legalName);
-  if(!a || !b) return 'unknown';
-  if(a===b) return 'same';
-  const sa=kycScriptOf(a), sb=kycScriptOf(b);
-  const ta=a.split(' ').map(kycSkeleton), tb=b.split(' ').map(kycSkeleton);
-  const enough=ta.join('').length>=4 && tb.join('').length>=4;
-  const equal=ta.length===tb.length && ta.every((t,i)=>t && t===tb[i]);
-  if(equal && enough) return (sa!==sb) ? 'same_translit' : 'similar';
-  return (sa!==sb && sa!=='other' && sb!=='other') ? 'different_script' : 'different';
 }
 
 function kycNameLocked(){ return !!(_kyc && _kyc.data && _kyc.data.name_locked); }
@@ -5565,28 +5518,6 @@ function showKycExchangeBlocked(){
     onPrimary:()=>openVerifyPage(),
     secondaryText:'داخستن'
   });
-}
-
-function kycUpdateNameNote(){
-  const note=document.getElementById('kycNameNote');
-  const input=document.getElementById('kycName');
-  if(!note || !input) return;
-  const account=(curProfile && curProfile.full_name) || '';
-  const typed=input.value||'';
-  const rel=kycNameRelation(account, typed);
-  if(!account || !kycNormName(typed) || rel==='same' || rel==='unknown'){
-    note.hidden=true; note.textContent=''; note.classList.remove('ok'); return;
-  }
-  note.hidden=false;
-  const acc=account.replace(/\s+/g,' ').trim();
-  if(rel==='same_translit'){
-    // English account name + Kurdish document name (or the reverse) — same name.
-    note.classList.add('ok');
-    note.textContent='ناوی هەژمارەکەت («'+acc+'») بە ئەلفوبێیەکی جیاوازە بەڵام هەمان ناوە. دوای پەسەندکردن ناوی هەژمارەکەت وەک سەر ناسنامەکە دەنووسرێتەوە.';
-  }else{
-    note.classList.remove('ok');
-    note.textContent='ئەم ناوە جیاوازە لە ناوی هەژمارەکەت («'+acc+'»). ئەگەر پشتڕاستکردنەوەکە پەسەند بکرێت، ناوی هەژمارەکەت دەگۆڕدرێت بۆ ناوی سەر ناسنامەکەت.';
-  }
 }
 
 function kycFormatNumber(el){

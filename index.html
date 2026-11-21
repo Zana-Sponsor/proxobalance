@@ -1518,9 +1518,8 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
       <section class="kv-card kv-sec" id="kycSecInfo" data-locked="true">
         <h3 class="kv-h">زانیارییەکانی بەڵگەنامە</h3>
         <label class="kv-label" for="kycName">ناوی تەواوی یاسایی</label>
-        <input type="text" class="kv-input" id="kycName" maxlength="120" autocomplete="name" oninput="clearFieldError('kycName'); kycUpdateNameNote(); kycUpdateSteps()">
+        <input type="text" class="kv-input" id="kycName" maxlength="120" autocomplete="name" oninput="clearFieldError('kycName'); kycUpdateSteps()">
         <span class="kv-err" id="kycNameError"></span>
-        <p class="kv-note-line" id="kycNameNote" hidden></p>
         <label class="kv-label" for="kycDob">بەرواری لەدایکبوون</label>
         <input type="date" class="kv-input" id="kycDob" dir="ltr" min="1900-01-01" onchange="clearFieldError('kycDob'); kycUpdateSteps()">
         <span class="kv-err" id="kycDobError"></span>
