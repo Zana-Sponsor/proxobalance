@@ -1162,13 +1162,26 @@ const actions = {
       profileMap = Object.fromEntries((profiles || []).map(profile => [profile.id, profile]));
     }
 
+    // the transaction each case is about, so the case shows it and opens it; only when it is the
+    // customer's own (the app offers only those, and support-cases.js checks it when a case is sent)
+    const orderCodes = [...new Set((cases || []).map(row => row.order_code).filter(Boolean))];
+    let orderMap = {};
+    if (orderCodes.length) {
+      const { data: orders, error: orderError } = await db.from('ex_orders').select('*').in('order_code', orderCodes);
+      if (orderError) throw { status: 500, code: 'db_error', message: orderError.message };
+      orderMap = Object.fromEntries((orders || []).map(order => [order.order_code, order]));
+    }
+
     return Promise.all((cases || []).map(async row => {
       let imageUrl = null;
       if (row.image_path) {
         const { data } = await db.storage.from('support-case-images').createSignedUrl(row.image_path, 600);
         imageUrl = data?.signedUrl || null;
       }
-      return { ...row, profile: profileMap[row.user_id] || null, image_url: imageUrl };
+      const found = row.order_code ? orderMap[row.order_code] || null : null;
+      const order = found && found.user_id === row.user_id ? found : null;
+      const orderState = !row.order_code ? null : order ? 'linked' : found ? 'other_customer' : 'missing';
+      return { ...row, profile: profileMap[row.user_id] || null, image_url: imageUrl, order, order_state: orderState };
     }));
   },
 

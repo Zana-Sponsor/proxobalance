@@ -410,8 +410,8 @@ function renderSupportCasesAdmin(){
       <div class="support-admin-facts">
         <span><i class="fas fa-user"></i><b>${esc(profile.full_name||'بێ ناو')}</b><small>${esc(profile.email||'—')}</small></span>
         <span><i class="fas fa-phone"></i><b dir="ltr">${esc(profile.phone||'—')}</b><small>${esc(supportCaseCategoryLabel(row.category))}</small></span>
-        ${row.order_code?`<span><i class="fas fa-receipt"></i><b dir="ltr">${esc(row.order_code)}</b><small>ئایدی مامەڵە</small></span>`:''}
       </div>
+      ${supportCaseOrderHTML(row)}
       <div class="support-admin-description">${esc(row.description)}</div>
       ${row.image_url?`<button type="button" class="support-image-btn" onclick='showImg(${safeAttr(row.image_url)})'><i class="fas fa-image"></i> بینینی وێنەی کێشە</button>`:''}
       <div class="support-admin-controls">
@@ -428,6 +428,38 @@ function renderSupportCasesAdmin(){
       </div>
     </article>`;
   }).join('')+'</div>';
+}
+
+// the transaction a case is about (the customer chose it from their own): route, state, amount,
+// code and date; one tap opens it in the order window, with its actions
+function supportCaseOrderHTML(row){
+  if(!row.order_code) return '';
+  const o=row.order;
+  if(!o){
+    const why=row.order_state==='other_customer'?'ئەم مامەڵەیە هی کڕیارێکی ترە':'ئەم مامەڵەیە نەدۆزرایەوە';
+    return `<div class="support-admin-order is-missing"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i><b dir="ltr">${esc(row.order_code)}</b><small>${why}</small></div>`;
+  }
+  const amount=formatNum(o.amount)+(o.from_method==='USDT'?' $':' IQD');
+  return `<button type="button" class="support-admin-order" onclick="showSupportCaseOrder('${esc(String(row.id))}')"
+      aria-label="${esc('بینینی مامەڵەی '+(o.order_code||'')+': '+walletName(o.from_method)+' بۆ '+walletName(o.to_method)+'، '+amount)}">
+    <span class="sao-top">
+      <span class="sao-route"><span class="lv-w">${walletMark(o.from_method)}<span>${esc(walletName(o.from_method))}</span></span><i class="fas fa-arrow-left lv-arrow" aria-hidden="true"></i><span class="lv-w">${walletMark(o.to_method)}<span>${esc(walletName(o.to_method))}</span></span></span>
+      ${orderBadgeHTML(o)}
+    </span>
+    <span class="sao-meta"><b dir="ltr">${esc(amount)}</b><span dir="ltr">${esc(o.order_code||'')}</span><span>${esc(fmtDateTime(o.created_at))}</span></span>
+    <span class="sao-open">بینینی مامەڵە<i class="fas fa-arrow-left" aria-hidden="true"></i></span>
+  </button>`;
+}
+async function showSupportCaseOrder(caseId){
+  const row=_supportCasesAdmin.find(r=>String(r.id)===String(caseId));
+  const o=row?.order; if(!o) return;
+  // the order window reads allOrders: put this one there, with the customer's full profile
+  let profile=row.profile||null;
+  try{ profile=(await loadProfilesFor([o.user_id]))[o.user_id]||profile; }catch(_){}
+  const order={...o,profile};
+  const i=allOrders.findIndex(x=>String(x.id)===String(o.id));
+  if(i>-1) allOrders[i]={...allOrders[i],...order}; else allOrders.push(order);
+  showOrderDetail(o.id);
 }
 
 async function saveSupportCaseAdmin(id){

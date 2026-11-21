@@ -92,6 +92,7 @@ test('verifies that an attached image exists in the customer private folder', as
   let storageChecked = false;
   installBaseFetch(t, async (url, options) => {
     if (url.pathname === '/rest/v1/ex_support_cases' && (options.method || 'GET') === 'GET') return response([]);
+    if (url.pathname === '/rest/v1/ex_orders') return response([{ id: 'order-1' }]);
     if (url.pathname === '/storage/v1/object/list/support-case-images') {
       storageChecked = true;
       assert.deepEqual(JSON.parse(options.body), {
@@ -161,4 +162,37 @@ test('rejects an image path that belongs to another customer', async (t) => {
 
   assert.equal(recorder.res.statusCode, 422);
   assert.equal(recorder.json().error, 'Invalid support image path');
+});
+
+test('a case\'s transaction must be one of the customer\'s own', async (t) => {
+  let orderQuery = null, inserted = null;
+  installBaseFetch(t, async (url, options) => {
+    if (url.pathname === '/rest/v1/ex_support_cases' && (options.method || 'GET') === 'GET') return response([]);
+    if (url.pathname === '/rest/v1/ex_orders') {
+      orderQuery = url.searchParams;
+      // another customer's code finds nothing for this account
+      return response(orderQuery.get('order_code') === 'eq.P00000000001' ? [{ id: 'order-1' }] : []);
+    }
+    if (url.pathname === '/rest/v1/ex_support_cases' && options.method === 'POST') {
+      inserted = JSON.parse(options.body);
+      return response([{ id: 'case-3', status: 'open', ...inserted }], 201);
+    }
+    throw new Error(`Unexpected request: ${options.method || 'GET'} ${url.pathname}${url.search}`);
+  });
+
+  const refused = responseRecorder();
+  await supportCasesHandler(request({
+    category: 'order', description: 'This order is not mine but I picked it anyway.', order_code: 'P99999999999'
+  }), refused.res);
+  assert.equal(refused.res.statusCode, 422);
+  assert.equal(refused.json().code, 'ORDER_NOT_FOUND');
+  assert.equal(orderQuery.get('user_id'), 'eq.user-1');
+  assert.equal(inserted, null);
+
+  const accepted = responseRecorder();
+  await supportCasesHandler(request({
+    category: 'order', description: 'My own order has not arrived yet.', order_code: 'P00000000001'
+  }), accepted.res);
+  assert.equal(accepted.res.statusCode, 201);
+  assert.equal(inserted.order_code, 'P00000000001');
 });

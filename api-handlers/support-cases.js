@@ -45,6 +45,16 @@ async function imageExists(imagePath, userId) {
   return Array.isArray(rows) && rows.some(row => row?.name === filename);
 }
 
+// the transaction a case is about must be one of this customer's own (the app only offers those)
+async function orderBelongsTo(orderCode, userId) {
+  if (!orderCode) return true;
+  const rows = await serviceFetch(
+    `/rest/v1/ex_orders?order_code=eq.${encodeURIComponent(orderCode)}` +
+    `&user_id=eq.${encodeURIComponent(userId)}&select=id&limit=1`
+  );
+  return Array.isArray(rows) && rows.length > 0;
+}
+
 function isCaseNumberCollision(error) {
   return Number(error?.status) === 409 && (
     error?.details?.code === '23505' || /duplicate|unique/i.test(String(error?.message || ''))
@@ -125,6 +135,9 @@ export default withSecurity(async (req, res, { user }) => {
   }
   if (imagePath && !(await imageExists(imagePath, user.id))) {
     return json(res, 422, { error: 'Support image was not found' });
+  }
+  if (!(await orderBelongsTo(orderCode, user.id))) {
+    return json(res, 422, { error: 'Order not found for this account', code: 'ORDER_NOT_FOUND' });
   }
 
   const createdCase = await insertSupportCase({

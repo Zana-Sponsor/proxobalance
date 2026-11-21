@@ -3132,6 +3132,7 @@ function renderHistory(rows){
   maybePromptHomeFeedback();
   renderTxPage();
   updateNavBadge();
+  try{ refreshSupportOrderPick(); }catch(_){}
 }
 
 function pendingHomeFeedbackOrder(){
@@ -3556,6 +3557,7 @@ function resetSupportForm(){
   const cat=document.getElementById('supportCategory'); if(cat) cat.selectedIndex=0;
   try{ syncSupportCategoryChips(); }catch(_){}
   ['supportOrderCode','supportDescription'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  try{ setSupportOrder(null); }catch(_){}
   clearFieldError('supportDescription');
   try{ updateSupportDescriptionCount(); }catch(_){}
   try{ removeSupportImage(); }catch(_){}
@@ -4724,6 +4726,101 @@ function closeSupportImage(){
   document.body.style.overflow=correction?.style.display==='flex'?'hidden':'';
 }
 
+// ── «مامەڵەی پەیوەندیدار»: the customer chooses one of the account's own transactions ──────────────
+// No typing: the sheet lists _orders (the same list as /transactions, newest first) and one tap
+// chooses. The hidden #supportOrderCode carries the code; the server checks that it is this
+// account's, and the admin sees the transaction itself in the case.
+let _supportOrderSheetOpen=false;
+function supportOrderOf(code){ return code?_orders.find(o=>orderCodeOf(o)===code)||null:null; }
+// one transaction as a row: status icon · route, date and code · amount and status
+function supportOrderRowHTML(o,attrs){
+  const tone=tfToneOf(o);
+  const refunded=!!o.balance_refunded_at;
+  const payout=typeof ProxoPayoutRounding==='object'?ProxoPayoutRounding.forOrder(o):null;
+  const amount=refunded?txAmount(o.amount,'AccountBalance'):txAmount(payout?payout.display_amount:o.total,o.to_method);
+  return '<span class="tx-item-ico" aria-hidden="true">'+TF_ICONS[tone]+'</span>'
+    + '<span class="tx-item-main">'
+      + '<span class="tx-item-route" dir="ltr">'+txRouteInner(o.from_method,refunded?'AccountBalance':o.to_method)+'</span>'
+      + '<span class="tx-item-when">'+txWhenHTML(o.created_at,true)+'</span>'
+      + '<span class="tx-item-code" dir="ltr">'+escHtml(orderCodeOf(o))+'</span>'
+    + '</span>'
+    + '<span class="tx-item-end">'
+      + '<strong class="tx-item-amount" dir="ltr">'+escHtml(amount)+'</strong>'
+      + '<span class="tx-item-status">'+escHtml(txShortLabelOf(o))+'</span>'
+    + '</span>';
+}
+function supportOrderLabel(o){
+  const refunded=!!o.balance_refunded_at;
+  return methodLabel(o.from_method)+' بۆ '+methodLabel(refunded?'AccountBalance':o.to_method)+'، '+orderCodeOf(o)+'، '+txWhen(o.created_at,true)+'، '+txLabelOf(o);
+}
+// the form's field: «مامەڵەیەک هەڵبژێرە», or the chosen transaction with a × to remove it
+function refreshSupportOrderPick(){
+  const input=document.getElementById('supportOrderCode'), pick=document.getElementById('supportOrderPick'), clear=document.getElementById('supportOrderClear');
+  if(!input||!pick) return;
+  const code=input.value, o=supportOrderOf(code);
+  if(code&&o){
+    pick.className='sc-order-pick tx-item is-'+tfToneOf(o);
+    pick.innerHTML=supportOrderRowHTML(o);
+    pick.setAttribute('aria-label','مامەڵەی پەیوەندیدار: '+supportOrderLabel(o)+'. بۆ گۆڕین دەستی لێبدە');
+  }else{
+    pick.className='sc-order-pick is-empty';
+    pick.innerHTML='<span class="sc-order-pick-ico" aria-hidden="true">'+scIcon('order')+'</span>'
+      + '<span class="sc-order-pick-txt">مامەڵەیەک هەڵبژێرە</span>'
+      + '<span class="sc-order-pick-go" aria-hidden="true"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></span>';
+    pick.removeAttribute('aria-label');
+  }
+  if(clear) clear.hidden=!(code&&o);
+  document.getElementById('supportOrderField')?.classList.toggle('has-order',!!(code&&o));
+  if(_supportOrderSheetOpen) renderSupportOrderSheet();
+}
+function setSupportOrder(code){
+  const input=document.getElementById('supportOrderCode');
+  if(input) input.value=code&&supportOrderOf(code)?code:'';
+  refreshSupportOrderPick();
+}
+function renderSupportOrderSheet(){
+  const body=document.getElementById('supportOrderSheetBody'); if(!body) return;
+  if(!_ordersLoaded){
+    body.setAttribute('aria-busy','true');
+    body.innerHTML=window.PXS?'<div class="sc-order-list">'+PXS.txItems(4)+'</div>':'';
+    return;
+  }
+  body.removeAttribute('aria-busy');
+  if(!_orders.length){
+    body.innerHTML='<div class="sc-order-empty">'+scIcon('order')+'<b>هێشتا هیچ مامەڵەیەکت نییە</b></div>';
+    return;
+  }
+  const chosen=document.getElementById('supportOrderCode')?.value||'';
+  body.innerHTML='<div class="sc-order-list">'+_orders.map(o=>{
+    const code=orderCodeOf(o), on=code===chosen;
+    return '<button type="button" class="tx-item sc-order-row is-'+tfToneOf(o)+(on?' is-picked':'')+'" role="option" aria-selected="'+(on?'true':'false')+'"'
+      + ' aria-label="'+escHtml(supportOrderLabel(o))+'" data-code="'+escHtml(code)+'" onclick="pickSupportOrder(this.dataset.code)">'
+      + supportOrderRowHTML(o)+'</button>';
+  }).join('')+'</div>';
+}
+async function openSupportOrderPicker(){
+  const sheet=document.getElementById('supportOrderSheet'); if(!sheet) return;
+  _supportOrderSheetOpen=true;
+  renderSupportOrderSheet();
+  openSheet(sheet);
+  // the chosen one in view
+  requestAnimationFrame(()=>{ document.querySelector('#supportOrderSheetBody .sc-order-row.is-picked')?.scrollIntoView({block:'nearest'}); });
+  if(!_ordersLoaded && curUser){ try{ await loadHistory(); }catch(_){} renderSupportOrderSheet(); }
+}
+function closeSupportOrderPicker(){
+  const sheet=document.getElementById('supportOrderSheet'); if(!sheet) return;
+  _supportOrderSheetOpen=false;
+  closeSheet(sheet);
+  document.getElementById('supportOrderPick')?.focus({preventScroll:true});
+}
+function pickSupportOrder(code){
+  setSupportOrder(code);
+  // an order's case is most often about the order
+  const sel=document.getElementById('supportCategory');
+  if(sel&&sel.value==='general') setSupportCategory('order');
+  closeSupportOrderPicker();
+}
+
 async function submitSupportCase(){
   if(!curUser || !activeSession?.access_token){ showToast('تکایە دووبارە بچۆ ژوورەوە','error'); return; }
   const category=document.getElementById('supportCategory')?.value||'general';
@@ -4767,7 +4864,7 @@ async function submitSupportCase(){
     let payload={}; try{ payload=await response.json(); }catch(_){}
     if(!response.ok || !payload.ok){
       const err=new Error(payload.error||'Support case submission failed');
-      err.status=response.status; err.code='SUPPORT_CASE_HTTP_'+response.status;
+      err.status=response.status; err.code='SUPPORT_CASE_HTTP_'+response.status; err.reason=payload.code||'';
       throw err;
     }
 
@@ -4777,7 +4874,7 @@ async function submitSupportCase(){
     if(number) number.textContent=supportCaseNumber(row);
     if(success) success.style.display='flex';
     document.getElementById('supportDescription').value='';
-    document.getElementById('supportOrderCode').value='';
+    setSupportOrder(null);
     document.getElementById('supportCategory').value='order';
     syncSupportCategoryChips();
     updateSupportDescriptionCount();
@@ -4786,7 +4883,8 @@ async function submitSupportCase(){
     await loadSupportCases();
   }catch(e){
     reportAppError(e,{operation:'support_case_submission',stage:supportStage,file_size:_supportImageSnapshot?.size,file_type:_supportImageSnapshot?.type,filename:_supportImageSnapshot?.name});
-    const msg=e?.status===429?'لە کاتژمێرێکدا زۆر کەیست ناردووە؛ تکایە دواتر هەوڵبدەوە'
+    const msg=e?.reason==='ORDER_NOT_FOUND'?'ئەو مامەڵەیە لە هەژمارەکەتدا نەدۆزرایەوە؛ مامەڵەیەکی تر هەڵبژێرە'
+      :e?.status===429?'لە کاتژمێرێکدا زۆر کەیست ناردووە؛ تکایە دواتر هەوڵبدەوە'
       :e?.status===409?'تکایە چاوەڕێی وەڵامی کەیسە کراوەکانت بکە'
       :e?.message==='FILE_READ_PERMISSION'?kuErr('FILE_READ_PERMISSION')
       :e?.code==='SUPPORT_IMAGE_UPLOAD'?'وێنەکە بارنەکرا؛ تکایە دووبارە هەوڵبدەوە'
@@ -5920,6 +6018,7 @@ document.addEventListener('keydown', (e)=>{
   const usernameS=document.getElementById('usernameSheet'); if(usernameS && usernameS.classList.contains('open')){ closeUsernameSheet(); return; }
   const feedbackS=document.getElementById('feedbackSheet'); if(feedbackS && feedbackS.classList.contains('open')){ closeFeedbackSheet(); return; }
   const roundingS=document.getElementById('roundingInfoSheet'); if(roundingS && roundingS.classList.contains('open')){ closeRoundingInfo(); return; }
+  const supportOrderS=document.getElementById('supportOrderSheet'); if(supportOrderS && supportOrderS.classList.contains('open')){ closeSupportOrderPicker(); return; }
   const confirmS=document.getElementById('confirmSheet'); if(confirmS.classList.contains('open')){ closeOrderConfirm(); return; }
   const result=document.getElementById('resultModal'); if(result.style.display==='flex'){ closeResultModal(); return; }
   const supportImage=document.getElementById('supportImageModal'); if(supportImage?.style.display==='flex'){ closeSupportImage(); return; }

@@ -126,7 +126,7 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
 <link rel="stylesheet" href="/assets/css/auth-otp.css?v=1">
 <link rel="stylesheet" href="/assets/css/app-dark.css?v=7">
 <link rel="stylesheet" href="/assets/css/app-icons.css?v=2">
-<link rel="stylesheet" href="/assets/css/support-case.css?v=2">
+<link rel="stylesheet" href="/assets/css/support-case.css?v=3">
 <link rel="stylesheet" href="/assets/css/skeletons.css?v=3">
 <link rel="stylesheet" href="/assets/css/dashboard.css?v=10">
 <link rel="stylesheet" href="/assets/css/account-delete.css?v=4">
@@ -273,6 +273,19 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
       </button>
     </div>
     <div class="sheet-body" id="pickerSheetBody"></div>
+  </div>
+</div>
+
+<!-- The support form's «مامەڵەی پەیوەندیدار»: the account's own transactions, newest first; one tap chooses -->
+<div id="supportOrderSheet" class="sheet-overlay" role="dialog" aria-modal="true" aria-labelledby="supportOrderSheetTitle" aria-hidden="true" onclick="if(event.target===this) closeSupportOrderPicker()">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h3 id="supportOrderSheetTitle">مامەڵەیەک هەڵبژێرە</h3>
+      <button type="button" class="sheet-close" onclick="closeSupportOrderPicker()" aria-label="داخستن">
+        <span class="icn icn-sm icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="sheet-body" id="supportOrderSheetBody" role="listbox" aria-labelledby="supportOrderSheetTitle"></div>
   </div>
 </div>
 
@@ -1628,11 +1641,18 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
         </div>
       </div>
 
+      <!-- the transaction this case is about: chosen from the account's own transactions, never typed;
+           the hidden input carries its code to submitSupportCase() -->
       <div class="field sc-field">
-        <label class="field-label sc-label" for="supportOrderCode">ئایدی مامەڵە <small>ئارەزوومەندانە</small></label>
-        <div class="sc-input-wrap">
-          <span class="sc-input-ico"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9h16"/><path d="M4 15h16"/><path d="M10 3 8 21"/><path d="M16 3l-2 18"/></svg></span>
-          <input type="text" class="input sc-input" id="supportOrderCode" maxlength="12" dir="ltr" autocomplete="off" placeholder="PXXXXXXXXXXX" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,12)">
+        <span class="field-label sc-label" id="supportOrderLabel">مامەڵەی پەیوەندیدار <small>ئارەزوومەندانە</small></span>
+        <input type="hidden" id="supportOrderCode" value="">
+        <div class="sc-order-field" id="supportOrderField">
+          <button type="button" class="sc-order-pick is-empty" id="supportOrderPick" onclick="openSupportOrderPicker()" aria-haspopup="dialog" aria-labelledby="supportOrderLabel supportOrderPick">
+            <span class="sc-order-pick-ico" aria-hidden="true"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M14 8H8"/><path d="M16 12H8"/></svg></span>
+            <span class="sc-order-pick-txt">مامەڵەیەک هەڵبژێرە</span>
+            <span class="sc-order-pick-go" aria-hidden="true"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></span>
+          </button>
+          <button type="button" class="sc-order-clear" id="supportOrderClear" onclick="setSupportOrder(null)" aria-label="لابردنی مامەڵەکە" hidden><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
         </div>
       </div>
 
@@ -1733,7 +1753,7 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
 <script src="/assets/js/exchange-live.js?v=1"></script>
 <script src="/assets/js/proxo-toast.js?v=1"></script>
 <script src="/assets/js/skeletons.js?v=2"></script>
-<script src="/assets/js/app.js?v=116"></script>
+<script src="/assets/js/app.js?v=122"></script>
 <script src="/assets/js/activity-tracker.js?v=1"></script>
 <script src="/assets/js/site-pause.js?v=5"></script>
 <script src="/assets/js/banners.js?v=2"></script>

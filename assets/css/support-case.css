@@ -102,6 +102,34 @@ html body #mainApp#mainApp #pageSupport :is(.sc-input, .sc-textarea):focus { out
 html body #mainApp#mainApp #pageSupport :is(.sc-input, .sc-textarea).has-error { border-color: var(--sc-bad) !important; }
 html body #mainApp#mainApp #pageSupport .sc-field .field-error { color: var(--sc-bad) !important; font-size: 12.5px !important; margin: 0 !important; }
 
+/* «مامەڵەی پەیوەندیدار» (v84): chosen, never typed. Empty: a field like the others with a chevron.
+   Chosen: the transaction as it reads in /transactions (status icon · route, date, code · amount, state)
+   with a × on its end to remove it. */
+html body #mainApp#mainApp #pageSupport .sc-order-field { position: relative !important; }
+html body #mainApp#mainApp #pageSupport .sc-order-pick {
+  width: 100% !important; margin: 0 !important; font-family: var(--sc-font) !important; cursor: pointer;
+  background: var(--sc-field) !important; border: 1px solid var(--sc-field-line) !important; border-radius: 12px !important; box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent; transition: border-color .15s ease, box-shadow .15s ease;
+}
+html body #mainApp#mainApp #pageSupport .sc-order-pick:focus-visible { outline: 0 !important; border-color: var(--sc-accent) !important; box-shadow: 0 0 0 4px var(--sc-ring) !important; }
+html body #mainApp#mainApp #pageSupport .sc-order-pick.is-empty {
+  display: flex !important; align-items: center !important; gap: 10px !important; height: 48px !important; padding: 0 14px !important; text-align: start !important;
+}
+html body #mainApp#mainApp #pageSupport .sc-order-pick-ico { display: grid !important; flex: 0 0 18px !important; color: var(--sc-muted) !important; }
+html body #mainApp#mainApp #pageSupport .sc-order-pick-ico svg, html body #mainApp#mainApp #pageSupport .sc-order-pick-go svg { width: 18px !important; height: 18px !important; }
+html body #mainApp#mainApp #pageSupport .sc-order-pick-txt { flex: 1 1 auto !important; color: var(--sc-muted) !important; font-size: 15px !important; font-weight: 400 !important; line-height: 1.5 !important; }
+html body #mainApp#mainApp #pageSupport .sc-order-pick-go { display: grid !important; flex: 0 0 18px !important; color: var(--sc-muted) !important; }
+/* chosen: room on the end for the × */
+html body #mainApp#mainApp #pageSupport .sc-order-field.has-order .sc-order-pick { padding-inline-end: 56px !important; }
+html body #mainApp#mainApp #pageSupport .sc-order-clear {
+  position: absolute !important; top: 50% !important; inset-inline-end: 10px !important; transform: translateY(-50%) !important;
+  width: 36px !important; height: 36px !important; display: grid !important; place-items: center !important; margin: 0 !important; padding: 0 !important;
+  border: 0 !important; border-radius: 50% !important; background: var(--sc-gray-soft) !important; color: var(--sc-muted) !important; cursor: pointer;
+}
+html body #mainApp#mainApp #pageSupport .sc-order-clear[hidden] { display: none !important; }
+html body #mainApp#mainApp #pageSupport .sc-order-clear svg { width: 16px !important; height: 16px !important; stroke-width: 2.4 !important; }
+html body #mainApp#mainApp #pageSupport .sc-order-clear:focus-visible { outline: 2px solid var(--sc-accent) !important; outline-offset: 2px !important; }
+
 /* image picker */
 html body #mainApp#mainApp #pageSupport .sc-picker {
   display: flex !important; align-items: center !important; gap: 12px !important; margin: 0 !important; padding: 12px !important; min-height: 0 !important;
@@ -239,3 +267,48 @@ html body #mainApp#mainApp #pageSupport .sc-field .field-error .fe-ico svg { wid
 html body #mainApp#mainApp #pageSupport .sc-field .field-error .fe-txt { color: inherit !important; background: transparent !important; }
 /* "0.84 MB" reads left-to-right */
 html body #mainApp#mainApp #pageSupport #supportImageMeta { unicode-bidi: plaintext !important; text-align: right !important; }
+
+/* ── the sheet of the account's transactions (#supportOrderSheet, v84): a title, the close, then
+   the transactions as /transactions lists them, with their code; the chosen one is outlined ── */
+html body #supportOrderSheet {
+  --so-sheet: #ffffff; --so-line: #e3e7f0; --so-ink: #0f172a; --so-muted: #64748b;
+  --so-accent: #0265ff; --so-accent-soft: #eff4fe;
+  --so-close: #f6f7f9; --so-close-ink: #64748b; --so-close-line: transparent;
+}
+html[data-theme="dark"] body #supportOrderSheet {
+  --so-sheet: #131c2e; --so-line: #25324a; --so-ink: #e8edf6; --so-muted: #a3b1c7;
+  --so-accent: #3b8cff; --so-accent-soft: #10223d;
+  --so-close: #0e1725; --so-close-ink: #c4cee0; --so-close-line: #25324a;
+}
+html body #supportOrderSheet#supportOrderSheet > .sheet {
+  padding: 20px 0 max(20px, env(safe-area-inset-bottom)) !important; font-family: Rabar, Arial, sans-serif;
+  background: var(--so-sheet) !important; color: var(--so-ink) !important;
+  border: 1px solid var(--so-line) !important; border-bottom: 0 !important; border-radius: 16px 16px 0 0 !important; box-shadow: none !important;
+}
+html body #supportOrderSheet#supportOrderSheet .sheet-grabber { display: none !important; }
+html body #supportOrderSheet#supportOrderSheet .sheet-head {
+  display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 12px !important;
+  margin: 0 !important; padding: 0 18px !important; border: 0 !important; background: none !important;
+}
+html body #supportOrderSheet#supportOrderSheet .sheet-head h3 { margin: 0 !important; color: var(--so-ink) !important; font-size: 18px !important; font-weight: 500 !important; line-height: 1.5 !important; }
+html body #supportOrderSheet#supportOrderSheet .sheet-close {
+  width: 44px !important; height: 44px !important; min-height: 44px !important; flex: 0 0 44px; border-radius: 14px !important;
+  border: 1px solid var(--so-close-line) !important; background: var(--so-close) !important; color: var(--so-close-ink) !important;
+}
+html body #supportOrderSheet#supportOrderSheet .sheet-body { padding: 14px 18px 4px !important; scrollbar-gutter: auto !important; }
+html body #supportOrderSheet .sc-order-list { display: flex; flex-direction: column; gap: 8px; }
+html body #supportOrderSheet .sc-order-row { font-family: inherit; }
+/* the chosen one */
+html body #supportOrderSheet .sc-order-row.is-picked { border-color: var(--so-accent); box-shadow: inset 0 0 0 1px var(--so-accent); background: var(--so-accent-soft); }
+html body #supportOrderSheet .sc-order-empty {
+  display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 28px 12px 24px; text-align: center; color: var(--so-muted);
+}
+html body #supportOrderSheet .sc-order-empty svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+html body #supportOrderSheet .sc-order-empty b { color: var(--so-ink); font-size: 14px; font-weight: 500; }
+/* the code: the third line under route and date, wherever a transaction row is shown with it */
+html body :is(#supportOrderSheet, #pageSupport) .tx-item-code {
+  height: 20px; line-height: 20px; font-size: 12px; color: var(--tf-muted); letter-spacing: .04em; white-space: nowrap; unicode-bidi: isolate;
+}
+@media (min-width: 640px) {
+  html body #supportOrderSheet#supportOrderSheet > .sheet { border-radius: 16px !important; border-bottom: 1px solid var(--so-line) !important; max-width: 480px; }
+}
