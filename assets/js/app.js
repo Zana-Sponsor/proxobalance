@@ -238,7 +238,7 @@ function setFieldError(inputId, msg){
 function clearFieldError(inputId){
   const inp=document.getElementById(inputId); const err=document.getElementById(inputId+'Error');
   if(inp) inp.classList.remove('has-error');
-  if(err){ err.classList.remove('show'); }
+  if(err){ err.classList.remove('show'); err.removeAttribute('role'); err.textContent=''; }
 }
 function clearAllOrderFieldErrors(){ ['amt','userSenderName','userSenderPhone','userPhone','fileInput'].forEach(clearFieldError); }
 
@@ -246,24 +246,37 @@ let _receiptFileSnapshot=null;
 let _receiptFileSnapshotPromise=null;
 let _receiptFileSnapshotToken=0;
 
+function readFileWithReader(file){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>resolve(reader.result);
+    reader.onerror=()=>reject(reader.error||new Error('FileReader failed'));
+    reader.readAsArrayBuffer(file);
+  });
+}
 async function readSelectedFileSnapshot(file){
   if(!file) throw new Error('FILE_READ_PERMISSION');
-  try{
-    // Read while the picker permission is fresh. Android document providers
-    // can revoke the original File handle after the change event.
-    const bytes=await file.arrayBuffer();
-    if(file.size>0 && bytes.byteLength!==file.size) throw new Error('Incomplete file read');
-    return {
-      bytes,
-      name:String(file.name||'receipt.jpg'),
-      type:String(file.type||'image/jpeg'),
-      size:Number(file.size||bytes.byteLength)
-    };
-  }catch(cause){
-    const error=new Error('FILE_READ_PERMISSION');
-    error.cause=cause;
-    throw error;
+  // Read while the picker permission is fresh. Android document providers
+  // can revoke the original File handle after the change event, and some
+  // fail the first read (NotReadableError); a second read a moment later,
+  // through FileReader, often works.
+  const ways=[()=>file.arrayBuffer(), ()=>new Promise(r=>setTimeout(r,250)).then(()=>readFileWithReader(file))];
+  let cause=null;
+  for(const read of ways){
+    try{
+      const bytes=await read();
+      if(!bytes || (file.size>0 && bytes.byteLength!==file.size)) throw new Error('Incomplete file read');
+      return {
+        bytes,
+        name:String(file.name||'receipt.jpg'),
+        type:String(file.type||'image/jpeg'),
+        size:Number(file.size||bytes.byteLength)
+      };
+    }catch(error){ cause=error; }
   }
+  const error=new Error('FILE_READ_PERMISSION');
+  error.cause=cause;
+  throw error;
 }
 
 function onFileSelected(input){
@@ -286,6 +299,8 @@ function onFileSelected(input){
       return snapshot;
     }).catch(()=>{
       if(token===_receiptFileSnapshotToken){
+        // Do not report the browser's raw exception text; log only a safe code and file metadata.
+        try{ reportAppError(new Error('FILE_READ_PERMISSION'),{operation:'receipt_pick',stage:'file_read',file_size:file.size||null,file_type:file.type||null}); }catch(_){}
         _receiptFileSnapshot=null;
         if(input) input.value='';
         picker.classList.remove('selected');

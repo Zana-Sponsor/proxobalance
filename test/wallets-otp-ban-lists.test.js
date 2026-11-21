@@ -398,6 +398,14 @@ test('receipt reading: the fast model first, the stronger one when it is busy or
   assert.match(ui, /if\(read\.status!=='error'&&read\.error\) flags\.push\(\['warn','دوایین هەوڵی خوێندنەوە سەرنەکەوت؛ ئەمەی خوارەوە خوێندنەوەی پێشووە\.'\]\);/);
 });
 
+test('receipt picker: clears stale field errors, retries a failed first read, and reports no raw browser error', () => {
+  const app = read('assets/js/app.js');
+  assert.match(read('assets/css/exchange-light-panel.css'), /\.field-error:not\(:empty\)/);
+  assert.match(app, /if\(err\)\{ err\.classList\.remove\('show'\); err\.removeAttribute\('role'\); err\.textContent=''; \}/);
+  assert.match(app, /const ways=\[\(\)=>file\.arrayBuffer\(\), \(\)=>new Promise\(r=>setTimeout\(r,250\)\)\.then\(\(\)=>readFileWithReader\(file\)\)\];/);
+  assert.match(app, /reportAppError\(new Error\('FILE_READ_PERMISSION'\),\{operation:'receipt_pick',stage:'file_read',file_size:file\.size\|\|null,file_type:file\.type\|\|null\}\)/);
+});
+
 test('receipt reader: JWT config, RPC privileges, owner paths and stale reads are guarded', () => {
   const config = read('supabase/config.toml');
   const fn = read('supabase/functions/receipt-read/index.ts');
