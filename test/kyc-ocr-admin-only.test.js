@@ -7,7 +7,7 @@ const app = read('../assets/js/app.js');
 const html = read('../index.html');
 const admin = read('../assets/js/admin.js');
 const edge = read('../supabase/functions/receipt-read/index.ts');
-const migration = read('../supabase/migrations/20261121225900_identity_verification_ocr.sql');
+const migration = read('../supabase/migrations/20261121230833_identity_verification_ocr.sql');
 
 test('customer KYC UI contains no account-name comparison note or OCR result call', () => {
   assert.doesNotMatch(html, /kycNameNote|kycUpdateNameNote/);
@@ -17,11 +17,20 @@ test('customer KYC UI contains no account-name comparison note or OCR result cal
 
 test('admin KYC review loads OCR through an admin RPC and compares every submitted field', () => {
   assert.match(admin, /sb\.rpc\('ex_admin_kyc_ocr_result',\{p_verification_id:it\.id\}\)/);
-  assert.match(admin, /OCR بەرامبەر ناوی هەژمار/);
-  assert.match(admin, /OCR بەرامبەر ناوی نووسراو/);
-  assert.match(admin, /OCR بەرامبەر بەرواری نووسراو/);
-  assert.match(admin, /OCR بەرامبەر ژمارەی نووسراو/);
+  assert.match(admin, /ناو · هەژمار/);
+  assert.match(admin, /ناو · زانیاریی نێردراو/);
+  assert.match(admin, /بەرواری لەدایکبوون/);
+  assert.match(admin, /ژمارەی بەڵگەنامە/);
   assert.match(admin, /تەنها یارمەتیی پشکنینی ئادمینە و خۆکارانە پەسەند یان ڕەت ناکاتەوە/);
+});
+
+test('admin gets a concise OCR mismatch summary and an editable rejection suggestion without auto-rejection', () => {
+  assert.match(admin, /function kycOcrReviewSummary\(o,it\)/);
+  assert.match(admin, /ناگونجانی دیاریکراو/);
+  assert.match(admin, /if\(reasonEl && !reasonEl\.value\.trim\(\) && review\.suggestion\) reasonEl\.value=review\.suggestion/);
+  assert.match(admin, /هۆکاری ڕەتکردنەوە پێشنیار کراوە و لە خانەکەدا پڕکراوەتەوە/);
+  assert.match(admin, /p_decision:decision/);
+  assert.doesNotMatch(app, /kycOcrReviewSummary|review\.suggestion|ex_admin_kyc_ocr_result/);
 });
 
 test('identity OCR table is inaccessible to customers and admin RPC checks administrator status', () => {

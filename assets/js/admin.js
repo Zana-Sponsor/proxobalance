@@ -3509,12 +3509,52 @@ function kycOcrNumber(value){
 function kycOcrValueRow(label,value,dir='auto'){
   return `<div class="detail-row"><span class="lbl">${esc(label)}</span><span class="val" dir="${dir}">${esc(value||'—')}</span></div>`;
 }
-function kycOcrMatchRow(label,extracted,baseline,relation){
+function kycOcrMatchResult(extracted,baseline,relation){
   let match='unknown';
   if(relation==='name') match=kycNameRelation(baseline,extracted);
   else if(relation==='date' && extracted && baseline) match=extracted===baseline?'same':'different';
   else if(relation==='number' && extracted && baseline) match=kycOcrNumber(extracted)===kycOcrNumber(baseline)?'same':'different';
-  return `<div class="detail-row"><span class="lbl">${esc(label)}</span><span class="val">${kycOcrBadge(match)}</span></div>`;
+  return match;
+}
+function kycOcrComparisonRow(label,extracted,baseline,relation){
+  const match=kycOcrMatchResult(extracted,baseline,relation);
+  return `<div class="detail-row"><span class="lbl">${esc(label)}</span><span class="val">${kycOcrBadge(match)}<small dir="auto">OCR: ${esc(extracted||'—')} · بەراورد: ${esc(baseline||'—')}</small></span></div>`;
+}
+function kycOcrReviewSummary(o,it){
+  const name=o.extracted_full_legal_name||'';
+  const account=o.account_name||it.account_name||it.user?.full_name||'';
+  const typedName=o.submitted_full_legal_name||it.full_legal_name||'';
+  const typedDob=o.submitted_date_of_birth||it.date_of_birth||'';
+  const typedNumber=o.submitted_document_number||it.document_number||'';
+  const comparisons=[
+    {key:'account_name',label:'ناو · هەژمار',extracted:name,baseline:account,relation:'name'},
+    {key:'submitted_name',label:'ناو · زانیاریی نێردراو',extracted:name,baseline:typedName,relation:'name'},
+    {key:'date_of_birth',label:'بەرواری لەدایکبوون',extracted:o.extracted_date_of_birth||'',baseline:typedDob,relation:'date'},
+    {key:'document_number',label:'ژمارەی بەڵگەنامە',extracted:o.extracted_document_number||'',baseline:typedNumber,relation:'number'}
+  ].map(row=>({...row,result:kycOcrMatchResult(row.extracted,row.baseline,row.relation)}));
+  const mismatches=comparisons.filter(row=>row.result==='different');
+  const uncertain=comparisons.filter(row=>row.result==='similar'||row.result==='different_script');
+  const complete=comparisons.filter(row=>row.result!=='unknown').length;
+  let summary='OCR و زانیارییە بەراوردکراوەکان ناگونجانی دیاریکراویان نیشان نادەن.';
+  if(o.is_identity_document===false) summary='وێنەکە وەک بەڵگەنامەی ناسنامە نەناسێنراوە.';
+  else if(mismatches.length) summary='ناگونجانی دیاریکراو: '+[...new Set(mismatches.map(row=>row.label.split(' · ')[0]))].join('، ')+'.';
+  else if(uncertain.length) summary='بەراوردی ناو یەکسانی دڵنیا نادات؛ پشکنینی مرۆیی پێویستە.';
+  else if(!complete) summary='زانیاریی پێویست بۆ بەراورد تەواو نییە؛ بە دەست پشکنە.';
+
+  const nameAccount=mismatches.some(row=>row.key==='account_name');
+  const nameSubmitted=mismatches.some(row=>row.key==='submitted_name');
+  const reasonParts=[];
+  if(o.is_identity_document===false) reasonParts.push('وێنەی نێردراو ناسنامە نییە');
+  if(nameAccount||nameSubmitted){
+    const target=nameAccount&&nameSubmitted?'ناوی هەژمار و ناوی نێردراو':nameAccount?'ناوی هەژمار':'ناوی نێردراو';
+    reasonParts.push('ناوی ناسنامە لەگەڵ '+target+' ناگونجێت');
+  }
+  if(mismatches.some(row=>row.key==='date_of_birth')) reasonParts.push('بەرواری لەدایکبوون لەگەڵ زانیاریی نێردراو ناگونجێت');
+  if(mismatches.some(row=>row.key==='document_number')) reasonParts.push('ژمارەی بەڵگەنامە لەگەڵ زانیاریی نێردراو ناگونجێت');
+  const suggestion=reasonParts.length
+    ? reasonParts.join('؛ ')+'؛ تکایە زانیارییەکان و وێنەی ناسنامەکەت بپشکنە و دووبارە بنێرە.'
+    : '';
+  return {comparisons,summary,suggestion,mismatches,uncertain};
 }
 function refreshKycOcrReview(){ if(_kycReviewItem) loadKycOcrReview(_kycReviewItem); }
 async function retryKycOcrReview(){
@@ -3562,23 +3602,16 @@ async function loadKycOcrReview(it){
   const typedName=o.submitted_full_legal_name||it.full_legal_name||'';
   const typedDob=o.submitted_date_of_birth||it.date_of_birth||'';
   const typedNumber=o.submitted_document_number||it.document_number||'';
+  const review=kycOcrReviewSummary(o,it);
+  const reasonEl=document.getElementById('kycRvReason');
+  if(reasonEl && !reasonEl.value.trim() && review.suggestion) reasonEl.value=review.suggestion;
   const title=o.is_identity_document===false?'وێنەکە وەک بەڵگەنامەی ناسنامە نەنێردراوەتەوە.':'OCR تەواو بوو؛ ئەمە تەنها یارمەتیی پشکنینی ئادمینە و خۆکارانە پەسەند یان ڕەت ناکاتەوە.';
-  box.innerHTML=`<div class="kyc-admin-note">${esc(title)}${o.model?` <small dir="ltr">${esc(o.model)}</small>`:''}</div>
+  box.innerHTML=`<div class="kyc-admin-note ${review.mismatches.length||o.is_identity_document===false?'danger':review.uncertain.length?'':'ok'}"><b>پوختە:</b> ${esc(review.summary)} ${o.model?`<small dir="ltr">${esc(o.model)}</small>`:''}<small>${esc(title)}</small></div>
     <div class="dx-card">
-      ${kycOcrValueRow('ناوی خوێندراوەوە لە ناسنامە',name)}
-      ${kycOcrValueRow('بەرواری لەدایکبوونی خوێندراوەوە',o.extracted_date_of_birth,'ltr')}
-      ${kycOcrValueRow('ژمارەی بەڵگەنامەی خوێندراوەوە',o.extracted_document_number,'ltr')}
+      ${review.comparisons.map(row=>kycOcrComparisonRow(row.label,row.extracted,row.baseline,row.relation)).join('')}
       ${kycOcrValueRow('جۆری بەڵگەنامەی خوێندراوەوە',o.extracted_document_type)}
-      ${kycOcrValueRow('ناوی هەژمار',account)}
-      ${kycOcrMatchRow('OCR بەرامبەر ناوی هەژمار',name,account,'name')}
-      ${kycOcrValueRow('ناوی بەکارهێنەر نووسیویەتی',typedName)}
-      ${kycOcrMatchRow('OCR بەرامبەر ناوی نووسراو',name,typedName,'name')}
-      ${kycOcrValueRow('بەرواری بەکارهێنەر نووسیویەتی',typedDob,'ltr')}
-      ${kycOcrMatchRow('OCR بەرامبەر بەرواری نووسراو',o.extracted_date_of_birth,typedDob,'date')}
-      ${kycOcrValueRow('ژمارەی بەکارهێنەر نووسیویەتی',typedNumber,'ltr')}
-      ${kycOcrMatchRow('OCR بەرامبەر ژمارەی نووسراو',o.extracted_document_number,typedNumber,'number')}
       ${o.processed_at?kycOcrValueRow('کاتی خوێندنەوە',fmtDateTime(o.processed_at),'ltr'):''}
-    </div><button type="button" class="act-btn" onclick="retryKycOcrReview()">دووبارە خوێندنەوە</button>`;
+    </div>${review.suggestion?'<div class="kyc-admin-note">هۆکاری ڕەتکردنەوە پێشنیار کراوە و لە خانەکەدا پڕکراوەتەوە؛ ئادمین دەتوانێت دەستکاری بکات. بڕیار تەنها بە کلیکی ئادمین دەدرێت.</div>':''}<button type="button" class="act-btn" onclick="retryKycOcrReview()">دووبارە خوێندنەوە</button>`;
 }
 async function syncKycProfileName(){
   const it=_kycReviewItem;
