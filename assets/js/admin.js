@@ -3416,54 +3416,9 @@ function kycBadgeHTML(status){
   const m=KYC_ADMIN_STATUS[status]||KYC_ADMIN_STATUS.none;
   return `<span class="badge ${m.cls}">${esc(m.label)}</span>`;
 }
-// ── Cross-script name recognition ────────────────────────────────────────
-// An account name written in English and a legal name written in Kurdish are
-// compared through a deterministic consonant skeleton: each script is mapped
-// to the same small alphabet, vowels (which carry no information across
-// scripts) are dropped, and the result must match token for token.
-// No fuzzy distance, no OCR, no external service — the same input always
-// gives the same answer, and genuinely different names stay different.
-function kycNormName(s){
-  const v=String(s??'').normalize('NFC')
-    .replace(/[\u200B-\u200F\u202A-\u202E\u2066-\u2069\u0640\uFEFF]/g,'')
-    .replace(/[\u00A0\u2000-\u200A\u202F\u205F\u3000]/g,' ')
-    .replace(/[\u064A\u0649]/g,'\u06CC').replace(/\u0643/g,'\u06A9').replace(/\u06BE/g,'\u0647')
-    .replace(/\s+/g,' ').trim().toLowerCase();
-  return v || null;
-}
-const KYC_AR2LAT = {
-  'ا':'a','آ':'a','أ':'a','إ':'a','ء':'','ئ':'','ؤ':'w','ة':'h',
-  'ب':'b','پ':'p','ت':'t','ث':'s','ج':'j','چ':'C','ح':'h','خ':'x','د':'d','ذ':'z',
-  'ر':'r','ڕ':'r','ز':'z','ژ':'j','س':'s','ش':'S','ص':'s','ض':'z','ط':'t','ظ':'z',
-  'ع':'','غ':'g','ف':'f','ڤ':'v','ق':'q','ك':'k','ک':'k','گ':'g','ل':'l','ڵ':'l',
-  'م':'m','ن':'n','ه':'h','ھ':'h','ە':'e','و':'w','ۆ':'o','ی':'i','ي':'i','ى':'i','ێ':'e'
-};
-function kycScriptOf(s){
-  const t=String(s||'');
-  const ar=/[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/.test(t);
-  const la=/[A-Za-z]/.test(t);
-  return (ar&&la) ? 'mixed' : ar ? 'arabic' : la ? 'latin' : 'other';
-}
-function kycSkeleton(token){
-  let s=String(token||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-  s=s.replace(/[\u0600-\u06FF]/g, ch => (KYC_AR2LAT[ch] !== undefined ? KYC_AR2LAT[ch] : ' '));
-  // Latin digraphs collapse to the single letters the Kurdish map produces
-  s=s.replace(/tch|ch/g,'C').replace(/sh/g,'S').replace(/kh/g,'x').replace(/zh/g,'j')
-     .replace(/gh/g,'g').replace(/th/g,'s').replace(/ph/g,'f').replace(/ck/g,'k');
-  s=s.replace(/[^bptsjChxdrzSgfvqklmn]/g,'');   // drop vowels, hamza, punctuation
-  return s.replace(/(.)\1+/g,'$1');             // doubled consonants are spelling noise
-}
-// 'same' | 'same_translit' | 'similar' | 'different_script' | 'different' | 'unknown'
+// Shared customer/admin comparator; the exact three-part rule lives in one module.
 function kycNameRelation(accountName, legalName){
-  const a=kycNormName(accountName), b=kycNormName(legalName);
-  if(!a || !b) return 'unknown';
-  if(a===b) return 'same';
-  const sa=kycScriptOf(a), sb=kycScriptOf(b);
-  const ta=a.split(' ').map(kycSkeleton), tb=b.split(' ').map(kycSkeleton);
-  const enough=ta.join('').length>=4 && tb.join('').length>=4;
-  const equal=ta.length===tb.length && ta.every((t,i)=>t && t===tb[i]);
-  if(equal && enough) return (sa!==sb) ? 'same_translit' : 'similar';
-  return (sa!==sb && sa!=='other' && sb!=='other') ? 'different_script' : 'different';
+  return window.KycName ? window.KycName.relation(accountName,legalName) : 'unknown';
 }
 
 const KYC_EXCHANGE_BLOCKED_BADGE='<span class="badge banned" title="تا پەسەندکردنی ناسنامە ناتوانێت ئاڵوگۆڕی نوێ بکات">ئاڵوگۆڕ ڕاگیراوە</span>';
@@ -3544,7 +3499,9 @@ function kycOcrReviewSummary(o,it){
     {key:'account_name',label:'ناو · هەژمار',extracted:name,baseline:account,relation:'name'},
     {key:'submitted_name',label:'ناو · زانیاریی نێردراو',extracted:name,baseline:typedName,relation:'name'},
     {key:'date_of_birth',label:'بەرواری لەدایکبوون',extracted:o.extracted_date_of_birth||'',baseline:typedDob,relation:'date'},
-    {key:'document_number',label:'ژمارەی بەڵگەنامە',extracted:o.extracted_document_number||'',baseline:typedNumber,relation:'number'}
+    {key:'document_number',label:'ژمارەی بەڵگەنامە',extracted:o.extracted_document_number||'',baseline:typedNumber,relation:'number'},
+    {key:'document_issue_date',label:'بەرواری دەرچوون',extracted:o.extracted_document_issue_date||'',baseline:o.submitted_document_issue_date||it.document_issue_date||'',relation:'date'},
+    {key:'document_expiry_date',label:'بەرواری بەسەرچوون',extracted:o.extracted_document_expiry_date||'',baseline:o.submitted_document_expiry_date||it.document_expiry_date||'',relation:'date'}
   ].map(row=>({...row,result:kycOcrMatchResult(row.extracted,row.baseline,row.relation)}));
   const mismatches=comparisons.filter(row=>row.result==='different');
   const uncertain=comparisons.filter(row=>row.result==='similar'||row.result==='different_script');
@@ -3565,6 +3522,8 @@ function kycOcrReviewSummary(o,it){
   }
   if(mismatches.some(row=>row.key==='date_of_birth')) reasonParts.push('بەرواری لەدایکبوون لەگەڵ زانیاریی نێردراو ناگونجێت');
   if(mismatches.some(row=>row.key==='document_number')) reasonParts.push('ژمارەی بەڵگەنامە لەگەڵ زانیاریی نێردراو ناگونجێت');
+  if(mismatches.some(row=>row.key==='document_issue_date')) reasonParts.push('بەرواری دەرچوونی ناسنامە ناگونجێت');
+  if(mismatches.some(row=>row.key==='document_expiry_date')) reasonParts.push('بەرواری بەسەرچوونی ناسنامە ناگونجێت');
   const suggestion=reasonParts.length
     ? reasonParts.join('؛ ')+'؛ تکایە زانیارییەکان و وێنەی ناسنامەکەت بپشکنە و دووبارە بنێرە.'
     : '';
@@ -3616,18 +3575,24 @@ async function loadKycOcrReview(it){
   const typedName=o.submitted_full_legal_name||it.full_legal_name||'';
   const typedDob=o.submitted_date_of_birth||it.date_of_birth||'';
   const typedNumber=o.submitted_document_number||it.document_number||'';
+  const typedIssue=o.submitted_document_issue_date||it.document_issue_date||'';
+  const typedExpiry=o.submitted_document_expiry_date||it.document_expiry_date||'';
   const review=kycOcrReviewSummary(o,it);
   const matchFor=key=>review.comparisons.find(row=>row.key===key)?.result||'unknown';
   const submittedCard=kycOcrDataCard('submitted','زانیاریی نووسراو','ئەو زانیارییانەی بەکارهێنەر ناردوویەتی','fa-keyboard',[
     {label:'ناوی تەواوی یاسایی',value:typedName,dir:'auto',match:matchFor('submitted_name')},
     {label:'بەرواری لەدایکبوون',value:typedDob,dir:'ltr',match:matchFor('date_of_birth')},
     {label:'ژمارەی بەڵگەنامە',value:typedNumber,dir:'ltr',match:matchFor('document_number')},
+    {label:'بەرواری دەرچوون',value:typedIssue,dir:'ltr',match:matchFor('document_issue_date')},
+    {label:'بەرواری بەسەرچوون',value:typedExpiry,dir:'ltr',match:matchFor('document_expiry_date')},
     {label:'جۆری بەڵگەنامە',value:KYC_ADMIN_DOC[it.document_type]||it.document_type||'—',dir:'auto',match:null}
   ]);
   const ocrCard=kycOcrDataCard('extracted','زانیاریی خوێندراوەوە','ئەوەی OCR لە وێنەی ناسنامە خوێندوویەتی','fa-id-card',[
     {label:'ناوی تەواوی یاسایی',value:o.extracted_full_legal_name,dir:'auto',match:matchFor('submitted_name')},
     {label:'بەرواری لەدایکبوون',value:o.extracted_date_of_birth,dir:'ltr',match:matchFor('date_of_birth')},
     {label:'ژمارەی بەڵگەنامە',value:o.extracted_document_number,dir:'ltr',match:matchFor('document_number')},
+    {label:'بەرواری دەرچوون',value:o.extracted_document_issue_date,dir:'ltr',match:matchFor('document_issue_date')},
+    {label:'بەرواری بەسەرچوون',value:o.extracted_document_expiry_date,dir:'ltr',match:matchFor('document_expiry_date')},
     {label:'جۆری بەڵگەنامە',value:o.extracted_document_type,dir:'auto',match:null}
   ]);
   const accountCard=document.getElementById('kycAccountNameCompare');

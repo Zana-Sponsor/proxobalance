@@ -5170,8 +5170,12 @@ const KYC_ERRORS = {
   KYC_DUPLICATE_SUBMISSION:'ئەم داواکارییە پێشتر نێردراوە',
   KYC_RATE_LIMIT:'لە 24 کاتژمێردا زۆر داواکاریت ناردووە؛ تکایە دواتر هەوڵبدەوە',
   KYC_DOCUMENT_TYPE_INVALID:'جۆری بەڵگەنامە هەڵبژێرە',
-  KYC_NAME_INVALID:'ناوی تەواو بە لانیکەم دوو بەش و بەبێ ژمارە یان هێما بنووسە',
+  KYC_NAME_INVALID:'ناوی سیانی بە سێ بەش و بەبێ ژمارە یان هێما بنووسە',
   KYC_DOB_INVALID:'بەرواری لەدایکبوون دروست نییە',
+  KYC_ISSUE_DATE_INVALID:'بەرواری دەرچوون دروست نییە',
+  KYC_EXPIRY_DATE_INVALID:'بەرواری بەسەرچوون دروست نییە',
+  KYC_DOCUMENT_DATES_INVALID:'بەرواری بەسەرچوون دەبێت دوای بەرواری دەرچوون بێت',
+  KYC_DRAFT_RATE_LIMIT:'زۆر هەوڵی خوێندنەوەی ناسنامەت داوە؛ تکایە دواتر هەوڵبدەوە',
   KYC_NUMBER_INVALID:'ژمارەی بەڵگەنامە دەبێت 4 بۆ 30 پیت/ژمارەی ئینگلیزی بێت',
   KYC_FRONT_PATH_INVALID:'وێنەی ڕووی پێشەوە دروست نییە؛ دووبارە هەڵیبژێرە',
   KYC_BACK_PATH_INVALID:'وێنەی ڕووی دواوە دروست نییە؛ دووبارە هەڵیبژێرە',
@@ -5193,8 +5197,10 @@ let _kyc = { status:'loading', data:null, loadedAt:0 };
 let _kycLoadPromise = null;
 let _kycDocType = null;
 let _kycDraftId = null;          // one storage folder per attempt; reused on retry
+let _kycDraftImagesUploaded = false;
 let _kycSubmitting = false;
 let _kycPrefilledFor = null;
+let _kycOcrToken = 0, _kycOcrPromise = null, _kycOcrResult = null;
 const _kycImages = { front:null, back:null };   // { prepared, url, name, promise, token }
 const _kycImageTokens = { front:0, back:0 };
 
@@ -5445,10 +5451,11 @@ function renderVerifyPage(){
   }
 }
 
-// Local calendar date (YYYY-MM-DD) — date of birth may not be in the future.
+// Baghdad calendar date (YYYY-MM-DD), aligned with the KYC database validation.
 function kycToday(){
-  const d=new Date();
-  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Baghdad',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
+  const values=Object.fromEntries(parts.map(part=>[part.type,part.value]));
+  return values.year+'-'+values.month+'-'+values.day;
 }
 function kycIsRealDate(value){
   if(!/^\d{4}-\d{2}-\d{2}$/.test(value||'')) return false;
@@ -5676,6 +5683,7 @@ function kycSideEls(side){
 
 const KYC_PICK_HINT='';   // the box shows only its title until a photo is being checked
 function kycRemoveImage(side){
+  kycResetOcrDraft();
   _kycImageTokens[side]++;
   const cur=_kycImages[side];
   if(cur?.url) URL.revokeObjectURL(cur.url);
@@ -5697,6 +5705,7 @@ function kycOnImage(side, input){
   clearFieldError(el.errId);
   const file=input?.files?.[0]||null;
   if(!file) return;   // picker cancelled: keep the current image
+  kycResetOcrDraft();
   // Keep the input populated until the file has been read. Clearing it first can
   // revoke the file handle on some Android camera providers.
   let token=null;
@@ -5731,6 +5740,7 @@ function kycOnImage(side, input){
       if(el.box){ el.box.classList.remove('busy'); el.box.classList.add('ready'); }
       clearFieldError(el.errId);
       kycUpdateSteps();
+      void kycMaybeReadIdentity();
       return prepared;
     })
     .catch(err=>{
@@ -5796,6 +5806,46 @@ async function kycUpload(path, prepared){
   throw err;
 }
 
+async function kycMaybeReadIdentity(){
+  if(_kycOcrPromise || !curUser || !_kycDocType) return _kycOcrPromise;
+  const needsBack=KYC_DOC_TYPES[_kycDocType].needsBack;
+  const front=_kycImages.front?.prepared, back=needsBack?_kycImages.back?.prepared:null;
+  if(!front || (needsBack&&!back)) return null;
+  const cleared=img=>!!(img?.clarity && !kycClarityVerdict(img.clarity));
+  if(!cleared(front) || (back&&!cleared(back))) return null;
+  const token=++_kycOcrToken, draftId=_kycDraftId||(_kycDraftId=kycUuid());
+  const base=curUser.id+'/'+draftId+'/';
+  const frontPath=base+'front.'+front.ext, backPath=back?base+'back.'+back.ext:null;
+  kycSetOcrStatus('working','وێنەکان بار دەکرێن و ناسنامەکە بەخۆکار دەخوێندرێتەوە...');
+  _kycOcrPromise=(async()=>{
+    try{
+      await getOrderSession();
+      const {error:startError}=await sb.rpc('ex_kyc_ocr_draft_start',{p_draft_id:draftId,p_document_type:_kycDocType});
+      if(startError) throw startError;
+      await Promise.all([kycUpload(frontPath,front), ...(back?[kycUpload(backPath,back)]:[])]);
+      _kycDraftImagesUploaded=true;
+      const {error:queueError}=await sb.rpc('ex_kyc_ocr_draft_queue',{p_draft_id:draftId,p_front_path:frontPath,p_back_path:backPath});
+      if(queueError) throw queueError;
+      for(let i=0;i<50 && token===_kycOcrToken;i++){
+        const {data,error}=await sb.rpc('ex_kyc_ocr_draft_result',{p_draft_id:draftId});
+        if(error) throw error;
+        if(data?.status==='complete'){ if(token===_kycOcrToken) kycApplyOcrResult(data); return data; }
+        if(data?.status==='error'||data?.status==='expired'||data?.status==='not_found') throw new Error('KYC_OCR_UNAVAILABLE');
+        await new Promise(resolve=>setTimeout(resolve,1800));
+      }
+      if(token===_kycOcrToken) kycSetOcrStatus('error','خوێندنەوەکە درێژ بوو؛ زانیارییەکان دەتوانیت بە دەست پڕبکەیتەوە.');
+      return null;
+    }catch(error){
+      if(token===_kycOcrToken){
+        kycSetOcrStatus('error','نەتوانرا زانیارییەکان بخوێندرێنەوە؛ تکایە خانەکان بە دەست پڕبکەرەوە و وێنەکان دڵنیابکەرەوە.');
+        try{ void reportAppError(new Error('KYC_OCR_DRAFT_FAILED'),{operation:'kyc_ocr_draft',stage:'customer_ocr'}).catch(()=>{}); }catch(_){}
+      }
+      return null;
+    }finally{ if(token===_kycOcrToken) _kycOcrPromise=null; }
+  })();
+  return _kycOcrPromise;
+}
+
 function kycShowFormError(msg){
   const box=document.getElementById('kycFormError');
   if(!box) return;
@@ -5807,31 +5857,83 @@ function kycShowFormError(msg){
 function kycValidate(){
   let ok=true, first=null;
   const fail=(id,msg,focusId)=>{ setFieldError(id,msg); ok=false; if(!first) first=document.getElementById(focusId||id); };
-  ['kycDocType','kycName','kycDob','kycNumber','kycFront','kycBack','kycConsent'].forEach(clearFieldError);
+  ['kycDocType','kycName','kycDob','kycNumber','kycIssueDate','kycExpiryDate','kycFront','kycBack','kycConsent'].forEach(clearFieldError);
   if(!_kycDocType) fail('kycDocType','تکایە جۆری بەڵگەنامە هەڵبژێرە','kycSecType');
   const name=(document.getElementById('kycName').value||'').trim().replace(/\s+/g,' ');
-  if(name.length<5 || !name.includes(' ')) fail('kycName','ناوی تەواو بە لانیکەم دوو بەش بنووسە (ناو و ناوی باوک)');
+  if(!window.KycName?.validThreePartName(name)) fail('kycName','ناوی ناسنامە دەبێت سێ بەش هەبێت (ناوی یەکەم، باوک و باپیر)');
   else if(/[0-9٠-٩۰-۹<>{}\[\]\\\/@#$%^*=+_|~]/.test(name)) fail('kycName','ناو نابێت ژمارە یان هێمای تێدابێت');
   const dob=document.getElementById('kycDob').value;
   if(!dob) fail('kycDob','بەرواری لەدایکبوون دیاری بکە');
   else if(!kycIsRealDate(dob) || dob<'1900-01-01' || dob>kycToday()) fail('kycDob','بەرواری لەدایکبوون دروست نییە');
   const num=(document.getElementById('kycNumber').value||'').trim();
   if(!/^[A-Z0-9-]{4,30}$/.test(num)) fail('kycNumber','ژمارەی بەڵگەنامە دەبێت 4 بۆ 30 پیت/ژمارەی ئینگلیزی بێت');
+  const issue=document.getElementById('kycIssueDate')?.value||'';
+  const expiry=document.getElementById('kycExpiryDate')?.value||'';
+  if(issue && (!kycIsRealDate(issue) || issue>kycToday())) fail('kycIssueDate','بەرواری دەرچوون دروست نییە');
+  if(expiry && (!kycIsRealDate(expiry) || expiry<'1900-01-01')) fail('kycExpiryDate','بەرواری بەسەرچوون دروست نییە');
+  if(issue && expiry && expiry<=issue) fail('kycExpiryDate','بەرواری بەسەرچوون دەبێت دوای بەرواری دەرچوون بێت');
   if(!_kycImages.front?.prepared && !_kycImages.front?.promise) fail('kycFront','وێنەی ڕووی پێشەوە پێویستە','kycFrontBox');
   if(_kycDocType && KYC_DOC_TYPES[_kycDocType].needsBack && !_kycImages.back?.prepared && !_kycImages.back?.promise)
     fail('kycBack','وێنەی ڕووی دواوە پێویستە','kycBackBox');
   if(!document.getElementById('kycConsent').checked) fail('kycConsent','تکایە ڕاستی زانیارییەکان پشتڕاست بکەرەوە');
   if(first && first.scrollIntoView) first.scrollIntoView({behavior:'smooth',block:'center'});
-  return ok ? { name, dob, num } : null;
+  return ok ? { name, dob, num, issue:issue||null, expiry:expiry||null } : null;
 }
 
-async function submitKyc(){
+function kycSetOcrStatus(state,message){
+  const el=document.getElementById('kycOcrStatus'); if(!el) return;
+  el.dataset.state=state||'idle'; el.textContent=message||''; el.hidden=!message;
+}
+function kycResetOcrDraft(){
+  _kycOcrToken++; _kycOcrPromise=null; _kycOcrResult=null; _kycDraftId=null; _kycDraftImagesUploaded=false;
+  kycSetOcrStatus('idle','');
+}
+function kycOcrFill(inputId,value){
+  if(!value) return;
+  const input=document.getElementById(inputId); if(!input) return;
+  if(!input.value || input.dataset.ocrValue===input.value){ input.value=String(value); input.dataset.ocrValue=String(value); }
+}
+function kycApplyOcrResult(result){
+  if(!result || result.status!=='complete') return;
+  _kycOcrResult=result;
+  if(result.is_identity_document===false){ kycSetOcrStatus('error','ئەم وێنەیە وەک ناسنامە نەناسێنرا؛ دەتوانیت زانیارییەکان بە دەست بنووسیت.'); return; }
+  kycOcrFill('kycName',result.full_legal_name);
+  kycOcrFill('kycDob',result.date_of_birth);
+  kycOcrFill('kycNumber',result.document_number);
+  kycOcrFill('kycIssueDate',result.issue_date);
+  kycOcrFill('kycExpiryDate',result.expiry_date);
+  ['kycName','kycDob','kycNumber','kycIssueDate','kycExpiryDate'].forEach(clearFieldError);
+  kycSetOcrStatus('complete','خوێندنەوە تەواو بوو؛ خانەکان پڕکرانەوە. تکایە پێش ناردن وردییان بپشکنە.');
+  kycUpdateSteps();
+}
+
+async function submitKyc(mismatchConfirmed=false){
   if(_kycSubmitting) return;               // double-click guard (DB also enforces it)
   kycShowFormError(null);
   if(!curUser){ showToast('تکایە دووبارە بچۆ ژوورەوە','error'); return; }
   if(!_kyc.data?.can_submit){ showToast(kycErrorMessage(_kyc.status==='pending'?'KYC_ALREADY_PENDING':'KYC_ALREADY_APPROVED'),'warning'); return; }
+  if(_kycOcrPromise){
+    const waitBtn=document.getElementById('kycSubmitBtn'), waitHtml=waitBtn?.innerHTML;
+    _kycSubmitting=true;
+    if(waitBtn){ waitBtn.disabled=true; waitBtn.innerHTML=ICON.spin+' چاوەڕێی خوێندنەوە...'; }
+    kycSetProgress(8,'چاوەڕێی تەواوبوونی خوێندنەوەی ناسنامە...');
+    try{ await _kycOcrPromise; }
+    finally{
+      _kycSubmitting=false;
+      if(waitBtn){ waitBtn.disabled=false; waitBtn.innerHTML=waitHtml; }
+      kycSetProgress(null);
+    }
+    return submitKyc(mismatchConfirmed);
+  }
   const fields=kycValidate();
   if(!fields) return;
+  const accountName=_kyc.data?.account_name||curProfile?.full_name||'';
+  const identityName=fields.name;
+  const relation=window.KycName?.relation(accountName,identityName)||'unknown';
+  if(!mismatchConfirmed && relation!=='same' && relation!=='same_translit'){
+    showResultModal({tone:'warning',title:'ناوی ھەژمار و ناوی سەر ناسنامە ھاوتا نین!',message:'ناوی هەژمار و ناوی سەر ناسنامە هاوتا نین! تکایە سێ بەشی ناو بە وردی بپشکنە. دەتوانیت پێداچوونەوە بکەیت یان بەردەوام بیت؛ بڕیاری کۆتایی لەلایەن ئادمینەوە دەدرێت.',primaryText:'بەردەوامبوون',onPrimary:()=>submitKyc(true),secondaryText:'پێداچوونەوە'});
+    return;
+  }
 
   const btn=document.getElementById('kycSubmitBtn');
   const btnHtml=btn.innerHTML;
@@ -5861,13 +5963,16 @@ async function submitKyc(){
     const frontPath=base+'front.'+front.ext;
     const backPath=back ? base+'back.'+back.ext : null;
 
-    stage='upload_front';
-    kycSetProgress(25,'بارکردنی '+KYC_DOC_TYPES[_kycDocType].front+'...');
-    await kycUpload(frontPath, front);
-    if(back){
-      stage='upload_back';
-      kycSetProgress(55,'بارکردنی '+KYC_DOC_TYPES[_kycDocType].back+'...');
-      await kycUpload(backPath, back);
+    if(!_kycDraftImagesUploaded){
+      stage='upload_front';
+      kycSetProgress(25,'بارکردنی '+KYC_DOC_TYPES[_kycDocType].front+'...');
+      await kycUpload(frontPath, front);
+      if(back){
+        stage='upload_back';
+        kycSetProgress(55,'بارکردنی '+KYC_DOC_TYPES[_kycDocType].back+'...');
+        await kycUpload(backPath, back);
+      }
+      _kycDraftImagesUploaded=true;
     }
 
     // Only after both files are stored is the request created.
@@ -5880,7 +5985,9 @@ async function submitKyc(){
       p_date_of_birth:fields.dob,
       p_document_number:fields.num,
       p_front_path:frontPath,
-      p_back_path:backPath
+      p_back_path:backPath,
+      p_document_issue_date:fields.issue,
+      p_document_expiry_date:fields.expiry
     });
     if(error) throw error;
 
@@ -5898,7 +6005,7 @@ async function submitKyc(){
     loadKycStatus(true);
   }catch(e){
     const raw=String(e?.message||'');
-    if(/KYC_DUPLICATE_SUBMISSION/.test(raw)) _kycDraftId=null;
+    if(/KYC_DUPLICATE_SUBMISSION/.test(raw)){ _kycDraftId=null; _kycDraftImagesUploaded=false; }
     if(/KYC_ALREADY_PENDING|KYC_ALREADY_APPROVED/.test(raw)) loadKycStatus(true);
     if(!e?.handled){
       // Only codes and sizes are reported — never the name, number or images.
@@ -5916,9 +6023,10 @@ async function submitKyc(){
 }
 
 function kycResetForm(){
+  kycResetOcrDraft();
   kycRemoveImage('front');
   kycRemoveImage('back');
-  ['kycName','kycDob','kycNumber'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  ['kycName','kycDob','kycNumber','kycIssueDate','kycExpiryDate'].forEach(id=>{ const el=document.getElementById(id); if(el){ el.value=''; delete el.dataset.ocrValue; } });
   const c=document.getElementById('kycConsent'); if(c) c.checked=false;
   _kycDocType=null;
   document.querySelectorAll('.kv-doc').forEach(b=>{ b.classList.remove('on'); b.setAttribute('aria-checked','false'); });

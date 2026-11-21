@@ -119,6 +119,12 @@ html body #mainApp#mainApp #pageVerify .kv-input:is(:focus, :focus-visible) {
 }
 html body #mainApp#mainApp #pageVerify .kv-input.has-error { border-color: var(--kv-err) !important; }
 html[data-theme="dark"] body #mainApp#mainApp #pageVerify .kv-input[type="date"] { color-scheme: dark; }
+html body #mainApp#mainApp #pageVerify .kv-dates-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+html body #mainApp#mainApp #pageVerify .kv-dates-grid .kv-label { margin-top: 14px; }
+html body #mainApp#mainApp #pageVerify .kv-ocr-status { padding: 12px 14px; border: 1px solid var(--kv-line); border-radius: 14px; background: var(--kv-card); color: var(--kv-text); font-size: 13px; line-height: 1.7; }
+html body #mainApp#mainApp #pageVerify .kv-ocr-status[data-state="working"] { border-color: rgba(2,101,255,.35); background: var(--kv-accent-soft); color: var(--kv-title); }
+html body #mainApp#mainApp #pageVerify .kv-ocr-status[data-state="complete"] { border-color: rgba(20,108,53,.3); color: var(--kv-ok-ink); }
+html body #mainApp#mainApp #pageVerify .kv-ocr-status[data-state="error"] { border-color: var(--kv-err-line); background: var(--kv-err-soft); color: var(--kv-err-ink); }
 
 /* errors (setFieldError adds .show; its small icon is not used here) */
 html body #mainApp#mainApp #pageVerify .kv-err { display: none; margin: 6px 0 0; padding: 0 2px; color: var(--kv-err); font-family: var(--kv-font); font-size: 12px; font-weight: 400; line-height: 1.7; }
@@ -208,6 +214,7 @@ html body #mainApp#mainApp #pageVerify :is(.kv-doc, .kv-src, .kv-mini, .kv-btn, 
 @media (min-width: 560px) {
   html body #mainApp#mainApp #pageVerify .kv-uploads { grid-template-columns: 1fr 1fr; }
 }
+@media (max-width: 420px) { html body #mainApp#mainApp #pageVerify .kv-dates-grid { grid-template-columns: 1fr; gap: 0; } }
 @media (prefers-reduced-motion: reduce) {
   html body #mainApp#mainApp #pageVerify :is(.kv-doc, .kv-input, .kv-btn, .kv-progress-track span) { transition: none !important; }
   html body #mainApp#mainApp #pageVerify .kv-btn:active { transform: none !important; }

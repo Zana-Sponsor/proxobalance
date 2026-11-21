@@ -56,6 +56,8 @@ const IDENTITY_PROMPT = [
   'Convert Arabic-Indic and Persian digits to Western digits.',
   'full_legal_name: copy the holder name exactly as written, preserving its script and word order; do not transliterate.',
   'date_of_birth: use YYYY-MM-DD only when the printed date is unambiguous; otherwise null.',
+  'issue_date: the date the identity document was issued (Arabic/Kurdish labels include تاريخ الإصدار/دەرچوون); return YYYY-MM-DD only when unambiguous, otherwise null.',
+  'expiry_date: the date the identity document expires (Arabic/Kurdish labels include تاريخ الانتهاء/بەسەرچوون); return YYYY-MM-DD only when unambiguous, otherwise null.',
   'document_number: copy the identity-card or licence number exactly, preserving letters and internal hyphens but omitting surrounding labels.',
   'document_type: use a short type label only when it is clearly identifiable; otherwise null.',
   'is_identity_document: false if the images are not an identity card or driving licence.'
@@ -63,7 +65,7 @@ const IDENTITY_PROMPT = [
 const IDENTITY_SCHEMA = {
   type: 'OBJECT', required: ['is_identity_document'], properties: {
     is_identity_document: { type: 'BOOLEAN' }, full_legal_name: S, date_of_birth: S,
-    document_number: S, document_type: S
+    issue_date: S, expiry_date: S, document_number: S, document_type: S
   }
 };
 
@@ -174,23 +176,28 @@ async function readReceipt(key: string, orderId: string) {
   }
 }
 
-async function readIdentity(verificationId: string) {
+async function readIdentity(verificationId: string, isDraft = false) {
+  const table = isDraft ? 'ex_identity_verification_ocr_drafts' : 'ex_identity_verification_ocr';
+  const idColumn = isDraft ? 'draft_id' : 'verification_id';
   const fail = async (code: string, model: string | null = null) => {
-    await db.from('ex_identity_verification_ocr').update({
+    await db.from(table).update({
       status: 'error', error_code: code, model, processed_at: new Date().toISOString(), updated_at: new Date().toISOString()
-    }).eq('verification_id', verificationId);
+    }).eq(idColumn, verificationId);
   };
   try {
-    const { data: claim, error: claimError } = await db.from('ex_identity_verification_ocr')
+    const { data: claim, error: claimError } = await db.from(table)
       .update({ status: 'processing', error_code: null, updated_at: new Date().toISOString() })
-      .eq('verification_id', verificationId).in('status', ['queued', 'error'])
-      .select('verification_id').maybeSingle();
+      .eq(idColumn, verificationId).in('status', isDraft ? ['queued'] : ['queued', 'error'])
+      .select(idColumn).maybeSingle();
     if (claimError || !claim) return;
 
-    const { data: verification, error: verificationError } = await db.from('ex_identity_verifications')
-      .select('id,user_id,front_image_path,back_image_path')
-      .eq('id', verificationId).maybeSingle();
+    const sourceTable = isDraft ? 'ex_identity_verification_ocr_drafts' : 'ex_identity_verifications';
+    const sourceId = isDraft ? 'draft_id' : 'id';
+    const { data: verification, error: verificationError } = await db.from(sourceTable)
+      .select(isDraft ? 'user_id,front_image_path,back_image_path,expires_at' : 'user_id,front_image_path,back_image_path')
+      .eq(sourceId, verificationId).maybeSingle();
     if (verificationError || !verification) { await fail('verification_not_found'); return; }
+    if (isDraft && verification.expires_at && new Date(verification.expires_at).getTime() <= Date.now()) { await fail('draft_expired'); return; }
 
     const expectedPrefix = `${verification.user_id}/${verificationId}/`;
     const allowedFront = ['jpg', 'png', 'webp'].map(ext => `${expectedPrefix}front.${ext}`);
@@ -247,13 +254,17 @@ async function readIdentity(verificationId: string) {
       return clean && clean.length <= max ? clean : null;
     };
     const westernDigits = (value: string) => value.replace(/[٠-٩۰-۹]/g, c => String(c.charCodeAt(0) >= 0x6f0 ? c.charCodeAt(0) - 0x6f0 : c.charCodeAt(0) - 0x660));
-    const dob = cleanText(result.date_of_birth, 10);
-    const validDob = (() => {
-      if (!dob || !/^\d{4}-\d{2}-\d{2}$/.test(dob)) return null;
-      const [year, month, day] = dob.split('-').map(Number);
-      const date = new Date(Date.UTC(year, month - 1, day));
-      return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day ? dob : null;
-    })();
+    const validDate = (raw: unknown) => {
+      const dateText = cleanText(westernDigits(String(raw || '')), 10);
+      if (!dateText || !/^\d{4}-\d{2}-\d{2}$/.test(dateText)) return null;
+      const [year, month, day] = dateText.split('-').map(Number);
+      const parsedDate = new Date(Date.UTC(year, month - 1, day));
+      if (parsedDate.getUTCFullYear() !== year || parsedDate.getUTCMonth() !== month - 1 || parsedDate.getUTCDate() !== day) return null;
+      return `${String(year).padStart(4,'0')}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    };
+    const validDob = validDate(result.date_of_birth);
+    const validIssueDate = validDate(result.issue_date);
+    const validExpiryDate = validDate(result.expiry_date);
     const documentNumber = cleanText(westernDigits(String(result.document_number || '')), 30);
     const payload = {
       status: 'complete',
@@ -262,12 +273,14 @@ async function readIdentity(verificationId: string) {
       extracted_date_of_birth: validDob,
       extracted_document_number: documentNumber,
       extracted_document_type: cleanText(result.document_type, 40),
+      extracted_document_issue_date: validIssueDate,
+      extracted_document_expiry_date: validExpiryDate,
       error_code: null,
       model,
       processed_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
-    await db.from('ex_identity_verification_ocr').update(payload).eq('verification_id', verificationId);
+    await db.from(table).update(payload).eq(idColumn, verificationId);
   } catch {
     await fail('processing_failed').catch(() => {});
   }
@@ -282,7 +295,8 @@ Deno.serve(async (req) => {
   const body = await req.json().catch(() => ({}));
   const orderId = String(body?.order_id || '');
   const verificationId = String(body?.verification_id || '');
-  if (orderId && verificationId) return reply(422, { error: 'invalid_request' });
+  const identityDraftId = String(body?.identity_draft_id || '');
+  if ([orderId, verificationId, identityDraftId].filter(Boolean).length > 1) return reply(422, { error: 'invalid_request' });
   // answer now; the reading takes a few seconds and is saved by itself
   // deno-lint-ignore no-explicit-any
   const runtime = (globalThis as any).EdgeRuntime;
@@ -290,6 +304,12 @@ Deno.serve(async (req) => {
     if (!UUID.test(verificationId)) return reply(422, { error: 'bad_verification' });
     if (runtime?.waitUntil) runtime.waitUntil(readIdentity(verificationId));
     else await readIdentity(verificationId);
+    return reply(202, { queued: true });
+  }
+  if (identityDraftId) {
+    if (!UUID.test(identityDraftId)) return reply(422, { error: 'bad_identity_draft' });
+    if (runtime?.waitUntil) runtime.waitUntil(readIdentity(identityDraftId, true));
+    else await readIdentity(identityDraftId, true);
     return reply(202, { queued: true });
   }
   if (!UUID.test(orderId)) return reply(422, { error: 'bad_order' });

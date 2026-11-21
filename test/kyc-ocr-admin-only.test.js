@@ -10,77 +10,90 @@ const adminHtml = read('../exchange-admin.html');
 const admin = read('../assets/js/admin.js');
 const adminDetailsCss = read('../assets/css/admin-details.css');
 const edge = read('../supabase/functions/receipt-read/index.ts');
-const migration = read('../supabase/migrations/20261121230833_identity_verification_ocr.sql');
-const comparatorStart = admin.indexOf('function kycNormName(s){');
-const comparatorEnd = admin.indexOf('\nconst KYC_EXCHANGE_BLOCKED_BADGE', comparatorStart);
-const kycNameRelationForTest = runInNewContext(`${admin.slice(comparatorStart, comparatorEnd)}\nkycNameRelation;`);
+const oldMigration = read('../supabase/migrations/20261121230833_identity_verification_ocr.sql');
+const migration = read('../supabase/migrations/20261121233709_kyc_customer_ocr_drafts.sql');
+const nameModule = read('../assets/js/kyc-name.js');
+const KycName = runInNewContext(`${nameModule}\nwindow.KycName;`, { window: {} });
 
-test('customer KYC UI contains no account-name comparison note or OCR result call', () => {
-  assert.doesNotMatch(html, /kycNameNote|kycUpdateNameNote/);
-  assert.doesNotMatch(app, /kycNameNote|kycUpdateNameNote|kycNameRelation|kycOcrResult|ex_admin_kyc_ocr_result/);
+test('customer sees issue/expiry fields and a live status, without direct OCR-table access', () => {
+  assert.match(html, /id="kycIssueDate"/);
+  assert.match(html, /id="kycExpiryDate"/);
+  assert.match(html, /id="kycOcrStatus"[^>]*aria-live="polite"/);
+  assert.match(app, /sb\.rpc\('ex_kyc_ocr_draft_result'/);
   assert.doesNotMatch(app, /ex_identity_verification_ocr/);
+  assert.doesNotMatch(app, /ex_admin_kyc_ocr_result/);
 });
 
-test('admin KYC review loads OCR through an admin RPC and compares every submitted field', () => {
-  assert.match(admin, /sb\.rpc\('ex_admin_kyc_ocr_result',\{p_verification_id:it\.id\}\)/);
-  assert.match(admin, /ناو · هەژمار/);
-  assert.match(admin, /ناو · زانیاریی نێردراو/);
-  assert.match(admin, /بەرواری لەدایکبوون/);
-  assert.match(admin, /ژمارەی بەڵگەنامە/);
-  assert.match(admin, /تەنها یارمەتیی پشکنینی ئادمینە و خۆکارانە پەسەند یان ڕەت ناکاتەوە/);
+test('photos are pre-read before submission, OCR prefills only untouched fields, and final submission sends dates', () => {
+  assert.match(app, /sb\.rpc\('ex_kyc_ocr_draft_start'/);
+  assert.match(app, /sb\.rpc\('ex_kyc_ocr_draft_queue'/);
+  assert.match(app, /kycApplyOcrResult\(data\)/);
+  assert.match(app, /if\(!input\.value \|\| input\.dataset\.ocrValue===input\.value\)/);
+  assert.match(app, /p_document_issue_date:fields\.issue/);
+  assert.match(app, /p_document_expiry_date:fields\.expiry/);
+  assert.match(app, /if\(!_kycDraftImagesUploaded\)\{[\s\S]*?await kycUpload\(frontPath, front\)/);
+  assert.match(app, /try\{ await _kycOcrPromise; \}/);
+  assert.match(app, /ناوی ھەژمار و ناوی سەر ناسنامە ھاوتا نین!/);
+  assert.match(app, /const identityName=fields\.name/);
 });
 
-test('admin gets a concise OCR mismatch summary and an editable rejection suggestion without auto-rejection', () => {
-  assert.match(admin, /function kycOcrReviewSummary\(o,it\)/);
-  assert.match(admin, /ناگونجانی دیاریکراو/);
-  assert.match(admin, /if\(reasonEl && !reasonEl\.value\.trim\(\) && review\.suggestion\) reasonEl\.value=review\.suggestion/);
-  assert.match(admin, /هۆکاری ڕەتکردنەوە پێشنیار کراوە و لە خانەکەدا پڕکراوەتەوە/);
-  assert.match(admin, /p_decision:decision/);
-  assert.doesNotMatch(app, /kycOcrReviewSummary|review\.suggestion|ex_admin_kyc_ocr_result/);
+test('full three-part English, Arabic, and Kurdish spellings are accepted; incomplete names are not', () => {
+  assert.equal(KycName.validThreePartName('Zana Ahmed Hassan'), true);
+  assert.equal(KycName.validThreePartName('زانا ئەحمەد حەسەن'), true);
+  assert.equal(KycName.validThreePartName('أحمد علي حسن'), true);
+  assert.equal(KycName.validThreePartName('Zana Ahmed'), false);
+  assert.equal(KycName.validThreePartName('Zana'), false);
+  assert.equal(KycName.relation('Zana Ahmed Hassan', 'زانا ئەحمەد حەسەن'), 'same_translit');
+  assert.equal(KycName.relation('Ahmed Ali Hasan', 'أحمد علي حسن'), 'same_translit');
+  assert.equal(KycName.relation('Zana Ahmed Hassan', 'زانا سەعید حەسەن'), 'different_script');
 });
 
-test('admin sees separate entered/OCR cards and requires a complete name or its full English transliteration', () => {
+test('admin review compares submitted and extracted dates and keeps approval/rejection manual', () => {
+  assert.match(admin, /submitted_document_issue_date/);
+  assert.match(admin, /submitted_document_expiry_date/);
+  assert.match(admin, /extracted_document_issue_date/);
+  assert.match(admin, /extracted_document_expiry_date/);
   assert.match(admin, /kycOcrDataCard\('submitted'/);
   assert.match(admin, /kycOcrDataCard\('extracted'/);
-  assert.match(admin, /const equal=ta\.length===tb\.length && ta\.every/);
-  assert.match(admin, /ناوی یەکەم یان بەشێکی ناو بە تەنها گونجاو دانانرێت/);
+  assert.match(admin, /p_decision:decision/);
+  assert.match(admin, /if\(reasonEl && !reasonEl\.value\.trim\(\) && review\.suggestion\) reasonEl\.value=review\.suggestion/);
+  assert.match(admin, /kyc-ocr-card-grid/);
   assert.match(adminDetailsCss, /\.kyc-ocr-card-grid/);
-  assert.match(adminDetailsCss, /@media \(max-width: 520px\)[\s\S]*?kyc-ocr-card-grid/);
-  assert.match(adminHtml, /admin-details\.css\?v=3/);
-  assert.match(adminHtml, /admin\.js\?v=45/);
+  assert.match(adminHtml, /assets\/js\/kyc-name\.js\?v=1/);
+  assert.match(adminHtml, /admin\.js\?v=46/);
 });
 
-test('full English transliteration matches the complete Kurdish name, while partial names do not', () => {
-  assert.equal(kycNameRelationForTest('Zana Ahmed', 'زانا ئەحمەد'), 'same_translit');
-  assert.equal(kycNameRelationForTest('Zana', 'زانا ئەحمەد'), 'different_script');
-  assert.equal(kycNameRelationForTest('Zana Ahmed', 'زانا'), 'different_script');
-  assert.equal(kycNameRelationForTest('Ahmed Zana', 'زانا ئەحمەد'), 'different_script');
-});
-
-test('identity OCR table is inaccessible to customers and admin RPC checks administrator status', () => {
-  assert.match(migration, /alter table public\.ex_identity_verification_ocr enable row level security/i);
-  assert.match(migration, /revoke all on table public\.ex_identity_verification_ocr from public, anon, authenticated/i);
-  assert.match(migration, /grant all on table public\.ex_identity_verification_ocr to service_role/i);
+test('OCR remains private; customer draft RPCs are owner-scoped and storage uploads are draft-aware', () => {
+  assert.match(oldMigration, /alter table public\.ex_identity_verification_ocr enable row level security/i);
+  assert.match(oldMigration, /revoke all on table public\.ex_identity_verification_ocr from public, anon, authenticated/i);
+  assert.match(migration, /revoke all on table public\.ex_identity_verification_ocr_drafts from public, anon, authenticated/i);
+  assert.match(migration, /grant all on table public\.ex_identity_verification_ocr_drafts to service_role/i);
+  assert.match(migration, /where d\.draft_id=p_draft_id and d\.user_id=auth\.uid\(\)/);
+  assert.match(migration, /d\.draft_id=p_folder::uuid and d\.user_id=v_uid and d\.expires_at>now\(\)/);
+  assert.match(migration, /ocr_attempts<3/);
+  assert.match(migration, /grant execute on function public\.ex_kyc_ocr_draft_result\(uuid\) to authenticated/i);
+  assert.match(migration, /revoke all on function public\.ex_admin_kyc_ocr_result\(uuid\) from public,anon/i);
   assert.match(migration, /perform public\.ex_kyc_assert_admin\(\)/);
-  assert.match(migration, /grant execute on function public\.ex_admin_kyc_ocr_result\(uuid\) to authenticated/i);
-  assert.match(migration, /create or replace function public\.ex_admin_kyc_ocr_retry\(p_verification_id uuid\)[\s\S]*?perform public\.ex_kyc_assert_admin\(\)/);
-  assert.match(migration, /grant execute on function public\.ex_admin_kyc_ocr_retry\(uuid\) to authenticated/i);
-  assert.doesNotMatch(migration, /grant select on table public\.ex_identity_verification_ocr to authenticated/i);
+  assert.doesNotMatch(migration, /grant select on table public\.ex_identity_verification_ocr(?:_drafts)? to authenticated/i);
 });
 
-test('identity submissions queue the existing receipt-read function using the private Vault key', () => {
-  assert.match(migration, /vault\.decrypted_secrets[\s\S]*name = 'receipt_read_key'/);
-  assert.match(migration, /functions\/v1\/receipt-read/);
-  assert.match(migration, /jsonb_build_object\('verification_id', new\.id\)/);
-  assert.match(migration, /after insert on public\.ex_identity_verifications/i);
+test('draft OCR uses private Edge authentication and reads only validated owner-path files', () => {
+  assert.match(migration, /vault\.decrypted_secrets[\s\S]*name='receipt_read_key'/);
+  assert.match(migration, /jsonb_build_object\('identity_draft_id',p_draft_id\)/);
+  assert.match(edge, /if \(identityDraftId\)[\s\S]*readIdentity\(identityDraftId, true\)/);
   assert.match(edge, /if \(verificationId\)[\s\S]*readIdentity\(verificationId\)/);
-  assert.match(edge, /if \(!UUID\.test\(orderId\)\)[\s\S]*readReceipt\(key, orderId\)/);
+  assert.match(edge, /storage\.from\(KYC_BUCKET\)\.download\(path\)/);
+  assert.match(edge, /extracted_document_issue_date: validIssueDate/);
+  assert.match(edge, /extracted_document_expiry_date: validExpiryDate/);
+  assert.match(edge, /issue_date: S, expiry_date: S/);
+  assert.doesNotMatch(edge, /console\.(log|info|warn)\([^\n]*(result|text|full_legal_name|document_number)/i);
 });
 
-test('identity photos are downloaded privately and only structured fields are retained without OCR text logging', () => {
-  assert.match(edge, /storage\.from\(KYC_BUCKET\)\.download\(path\)/);
-  assert.match(edge, /extracted_full_legal_name/);
-  assert.match(edge, /extracted_date_of_birth/);
-  assert.match(edge, /extracted_document_number/);
-  assert.doesNotMatch(edge, /console\.(log|info|warn)\([^\n]*(result|text|full_legal_name|document_number)/i);
+test('final submit requires three name parts and validates dates while preserving pending/manual-review behavior', () => {
+  assert.match(migration, /array_length\(regexp_split_to_array\(v_name,' '\),1\)<>3/);
+  assert.match(migration, /p_document_issue_date>\(now\(\) at time zone 'Asia\/Baghdad'\)::date/);
+  assert.match(migration, /p_document_expiry_date<=p_document_issue_date/);
+  assert.match(migration, /values\(p_verification_id,v_uid,v_req_id,p_document_type,v_name,p_date_of_birth,v_number,p_front_path,p_back_path,p_document_issue_date,p_document_expiry_date,'pending',now\(\)\)/);
+  assert.match(migration, /grant execute on function public\.ex_kyc_submit\(uuid,text,text,date,text,text,text,date,date\) to authenticated/i);
+  assert.match(migration, /ex_identity_ocr_enqueue/);
 });
