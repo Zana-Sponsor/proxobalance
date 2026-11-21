@@ -406,6 +406,16 @@ test('receipt picker: clears stale field errors, retries a failed first read, an
   assert.match(app, /reportAppError\(new Error\('FILE_READ_PERMISSION'\),\{operation:'receipt_pick',stage:'file_read',file_size:file\.size\|\|null,file_type:file\.type\|\|null\}\)/);
 });
 
+test('identity photos: keep the picker input until read completes and report only safe diagnostic codes', () => {
+  const app = read('assets/js/app.js');
+  const fn = app.slice(app.indexOf('function kycOnImage('), app.indexOf('// The Camera / Gallery choices'));
+  assert.doesNotMatch(fn, /if\(input\) input\.value='';\s*\/\/ lets the same photo be chosen again/);
+  assert.match(fn, /const release=\(\)=>\{ if\(token!==null && token!==_kycImageTokens\[side\]\) return; try\{ if\(input\) input\.value=''; \}catch\(_\)\{\} \};/);
+  assert.match(fn, /\.then\(snapshot=>\{ release\(\); return kycPrepareImage\(snapshot\); \}\)/);
+  assert.match(fn, /reportAppError\(new Error\(failure\[0\]\),\{operation:'kyc_image_pick',stage:failure\[0\]\+'_'.*file_size:file\.size\|\|null,file_type:file\.type\|\|null\}\)/);
+  assert.doesNotMatch(fn, /reportAppError\(err\.cause\|\|err/);
+});
+
 test('receipt reader: JWT config, RPC privileges, owner paths and stale reads are guarded', () => {
   const config = read('supabase/config.toml');
   const fn = read('supabase/functions/receipt-read/index.ts');

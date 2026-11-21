@@ -300,7 +300,7 @@ function onFileSelected(input){
     }).catch(()=>{
       if(token===_receiptFileSnapshotToken){
         // Do not report the browser's raw exception text; log only a safe code and file metadata.
-        try{ reportAppError(new Error('FILE_READ_PERMISSION'),{operation:'receipt_pick',stage:'file_read',file_size:file.size||null,file_type:file.type||null}); }catch(_){}
+        try{ void reportAppError(new Error('FILE_READ_PERMISSION'),{operation:'receipt_pick',stage:'file_read',file_size:file.size||null,file_type:file.type||null}).catch(()=>{}); }catch(_){}
         _receiptFileSnapshot=null;
         if(input) input.value='';
         picker.classList.remove('selected');
@@ -5482,22 +5482,27 @@ function kycOnImage(side, input){
   clearFieldError(el.errId);
   const file=input?.files?.[0]||null;
   if(!file) return;   // picker cancelled: keep the current image
-  if(input) input.value='';   // lets the same photo be chosen again
+  // Keep the input populated until the file has been read. Clearing it first can
+  // revoke the file handle on some Android camera providers.
+  let token=null;
+  const release=()=>{ if(token!==null && token!==_kycImageTokens[side]) return; try{ if(input) input.value=''; }catch(_){} };
   if(file.type && !/^image\//i.test(file.type)){
+    release();
     kycRemoveImage(side);
     setFieldError(el.errId, KYC_ERRORS.KYC_IMAGE_TYPE);
     return;
   }
   if(file.size>KYC_MAX_INPUT_BYTES){
+    release();
     kycRemoveImage(side);
     setFieldError(el.errId, KYC_ERRORS.KYC_IMAGE_TOO_LARGE);
     return;
   }
-  const token=++_kycImageTokens[side];
+  token=++_kycImageTokens[side];
   if(el.box) el.box.classList.add('busy');
   if(el.hint) el.hint.textContent='پشکنینی ڕوونی وێنە...';
   const promise=readSelectedFileSnapshot(file)
-    .then(snapshot=>kycPrepareImage(snapshot))
+    .then(snapshot=>{ release(); return kycPrepareImage(snapshot); })
     .then(prepared=>{
       if(token!==_kycImageTokens[side]) return null;
       const old=_kycImages[side];
@@ -5514,7 +5519,11 @@ function kycOnImage(side, input){
       return prepared;
     })
     .catch(err=>{
+      release();
       if(token!==_kycImageTokens[side]) return null;
+      // Report a fixed diagnostic code only; never send the raw browser error or filename.
+      const failure=String(err?.code||err?.message||'').match(/FILE_READ_PERMISSION|KYC_IMAGE_DECODE|KYC_IMAGE_ENCODE/);
+      if(failure){ try{ void reportAppError(new Error(failure[0]),{operation:'kyc_image_pick',stage:failure[0]+'_'+side,file_size:file.size||null,file_type:file.type||null}).catch(()=>{}); }catch(_){} }
       // A rejected photo replaces whatever was there: the side goes back to
       // the Camera / Gallery choice so nothing unclear can be submitted.
       kycRemoveImage(side);
