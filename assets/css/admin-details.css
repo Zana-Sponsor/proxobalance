@@ -324,3 +324,41 @@ html body #moOrderDetail .rr-card { margin: 0; }
 html body #moOrderDetail .rr-foot { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 html body #moOrderDetail .rr-foot:empty { display: none; }
 html body #moOrderDetail .rr-foot .act-btn { min-height: 36px; padding: 0 14px; font-size: 12.5px; }
+
+
+/* KYC: compare what the customer entered with the values read from the identity image. */
+html body #moKycReview .kyc-ocr-card-grid {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px;
+}
+html body #moKycReview .kyc-ocr-data-card {
+  min-width: 0; overflow: hidden; border: 1px solid var(--dx-line); border-radius: 14px; background: var(--dx-paper);
+}
+html body #moKycReview .kyc-ocr-card-head {
+  display: flex; align-items: center; gap: 10px; min-height: 64px; padding: 10px 13px; border-bottom: 1px solid var(--dx-line); background: var(--dx-info-soft);
+}
+html body #moKycReview .kyc-ocr-data-card.extracted .kyc-ocr-card-head { border-bottom-color: #e4dcfb; background: #f7f4ff; }
+html body #moKycReview .kyc-ocr-card-icon {
+  display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; flex: 0 0 34px;
+  border-radius: 11px; background: #e6f1ff; color: var(--dx-info); font-size: 14px;
+}
+html body #moKycReview .kyc-ocr-data-card.extracted .kyc-ocr-card-icon { background: #ece5ff; color: #6941c6; }
+html body #moKycReview .kyc-ocr-card-head b { display: block; color: var(--dx-ink); font-size: 13px; font-weight: 600; line-height: 1.5; }
+html body #moKycReview .kyc-ocr-card-head small { display: block; margin-top: 2px; color: var(--dx-muted); font-size: 11px; line-height: 1.5; }
+html body #moKycReview .kyc-ocr-card-fields { padding: 0 12px; }
+html body #moKycReview .kyc-ocr-field { min-width: 0; padding: 10px 0; border-top: 1px solid var(--dx-rule); }
+html body #moKycReview .kyc-ocr-field:first-child { border-top: 0; }
+html body #moKycReview .kyc-ocr-field > small,
+html body #moKycReview .kyc-account-name-value > small { display: block; margin-bottom: 4px; color: var(--dx-muted); font-size: 11.5px; line-height: 1.5; }
+html body #moKycReview .kyc-ocr-field-value { display: flex; align-items: center; justify-content: space-between; gap: 7px; min-width: 0; }
+html body #moKycReview .kyc-ocr-field-value b { min-width: 0; color: var(--dx-ink); font-size: 13px; font-weight: 500; line-height: 1.65; overflow-wrap: anywhere; }
+html body #moKycReview .kyc-ocr-field-value > span { flex: 0 0 auto; }
+html body #moKycReview .kyc-account-name-card {
+  padding: 4px 14px 12px; border: 1px solid var(--dx-line); border-radius: 14px; background: var(--dx-soft);
+}
+html body #moKycReview .kyc-account-name-value { padding: 10px 0; border-bottom: 1px solid var(--dx-rule); }
+html body #moKycReview .kyc-account-name-value b { display: block; color: var(--dx-ink); font-size: 14px; font-weight: 600; line-height: 1.7; overflow-wrap: anywhere; }
+html body #moKycReview .kyc-account-name-value > span { display: inline-flex; margin-top: 6px; }
+html body #moKycReview .kyc-full-name-guidance { margin: 10px 0 0; color: var(--dx-muted); font-size: 12px; line-height: 1.8; }
+@media (max-width: 520px) {
+  html body #moKycReview .kyc-ocr-card-grid { grid-template-columns: 1fr; gap: 9px; }
+}

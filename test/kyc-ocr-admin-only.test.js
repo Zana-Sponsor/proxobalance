@@ -1,13 +1,19 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
+import { runInNewContext } from 'node:vm';
 
 const read = p => readFileSync(new URL(p, import.meta.url), 'utf8');
 const app = read('../assets/js/app.js');
 const html = read('../index.html');
+const adminHtml = read('../exchange-admin.html');
 const admin = read('../assets/js/admin.js');
+const adminDetailsCss = read('../assets/css/admin-details.css');
 const edge = read('../supabase/functions/receipt-read/index.ts');
 const migration = read('../supabase/migrations/20261121230833_identity_verification_ocr.sql');
+const comparatorStart = admin.indexOf('function kycNormName(s){');
+const comparatorEnd = admin.indexOf('\nconst KYC_EXCHANGE_BLOCKED_BADGE', comparatorStart);
+const kycNameRelationForTest = runInNewContext(`${admin.slice(comparatorStart, comparatorEnd)}\nkycNameRelation;`);
 
 test('customer KYC UI contains no account-name comparison note or OCR result call', () => {
   assert.doesNotMatch(html, /kycNameNote|kycUpdateNameNote/);
@@ -31,6 +37,24 @@ test('admin gets a concise OCR mismatch summary and an editable rejection sugges
   assert.match(admin, /هۆکاری ڕەتکردنەوە پێشنیار کراوە و لە خانەکەدا پڕکراوەتەوە/);
   assert.match(admin, /p_decision:decision/);
   assert.doesNotMatch(app, /kycOcrReviewSummary|review\.suggestion|ex_admin_kyc_ocr_result/);
+});
+
+test('admin sees separate entered/OCR cards and requires a complete name or its full English transliteration', () => {
+  assert.match(admin, /kycOcrDataCard\('submitted'/);
+  assert.match(admin, /kycOcrDataCard\('extracted'/);
+  assert.match(admin, /const equal=ta\.length===tb\.length && ta\.every/);
+  assert.match(admin, /ناوی یەکەم یان بەشێکی ناو بە تەنها گونجاو دانانرێت/);
+  assert.match(adminDetailsCss, /\.kyc-ocr-card-grid/);
+  assert.match(adminDetailsCss, /@media \(max-width: 520px\)[\s\S]*?kyc-ocr-card-grid/);
+  assert.match(adminHtml, /admin-details\.css\?v=3/);
+  assert.match(adminHtml, /admin\.js\?v=45/);
+});
+
+test('full English transliteration matches the complete Kurdish name, while partial names do not', () => {
+  assert.equal(kycNameRelationForTest('Zana Ahmed', 'زانا ئەحمەد'), 'same_translit');
+  assert.equal(kycNameRelationForTest('Zana', 'زانا ئەحمەد'), 'different_script');
+  assert.equal(kycNameRelationForTest('Zana Ahmed', 'زانا'), 'different_script');
+  assert.equal(kycNameRelationForTest('Ahmed Zana', 'زانا ئەحمەد'), 'different_script');
 });
 
 test('identity OCR table is inaccessible to customers and admin RPC checks administrator status', () => {
