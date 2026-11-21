@@ -113,3 +113,17 @@ test('Production smoke waits for the changed customer version and verifies its d
   const build=read('scripts/prepare-vercel.mjs');
   assert(build.includes("join(output, 'exchange-admin-balance.html')"));
 });
+
+test('request form uses separate visible wallet labels without changing quote or recipient behavior',()=>{
+  const formCss=read('assets/css/exchange-form.css');
+  const app=read('assets/js/app.js');
+  const workflow=read('.github/workflows/exchange-production-smoke.yml');
+  assert(html.includes('/assets/css/exchange-form.css?v=6'));
+  assert(workflow.includes('exchange-form.css?v=6'));
+  assert(html.includes('field-label xc-pick-label" aria-hidden="true">ڕێگای ناردن'));
+  assert(html.includes('field-label xc-pick-label" aria-hidden="true">ڕێگای وەرگرتن'));
+  assert(html.includes('id="savedRecipientsShortcut"'));
+  assert(formCss.includes('v86 request-form presentation only'));
+  assert(formCss.includes('.picker-trigger-label {'));
+  assert(!app.includes('ex_order_quote_preview'));
+});
