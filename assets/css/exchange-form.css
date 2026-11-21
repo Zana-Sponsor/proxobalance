@@ -434,6 +434,16 @@ html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-receipt-clear .px
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-receipt-clear:hover { background: var(--xf-chip) !important; color: var(--xf-ink) !important; }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-receipt-clear:focus-visible { outline: 2px solid var(--xf-accent); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-receipt-opt { transition: none !important; } }
+/* the «!» beside the title: what a receipt is (v94); the title keeps to its words so the «!» sits by them */
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #grpProof .xc-step-head h3 { flex: 0 1 auto !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-help-btn {
+  flex: 0 0 auto; display: inline-grid !important; place-items: center; width: 32px; height: 32px; margin: 0 !important; margin-inline-start: -2px !important; padding: 0 !important;
+  border: 0 !important; border-radius: 999px !important; background: transparent !important; box-shadow: none !important; color: var(--xf-accent) !important; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-help-btn .pxi { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-help-btn:hover, html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-help-btn:active { background: var(--xf-accent-soft) !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-help-btn:focus-visible { outline: 2px solid var(--xf-accent); outline-offset: 1px; }
 
 /* ── send: the identity screen's button, and its bar under it while sending ── */
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-submit-wrap {
@@ -585,4 +595,63 @@ html body :is(#roundingInfoSheet, #summaryInfoBackdrop) .ri-text b { color: var(
 }
 @media (prefers-reduced-motion: reduce) {
   html body #roundingInfoSheet#roundingInfoSheet > .sheet { transition: none; }
+}
+
+/* ── «پسووڵەی پارەدان چییە؟» (#receiptHelpSheet, v94): the same sheet as «بڕی گەڕێندراو» — the title,
+   the close, one paragraph — with two example receipts above the words. In the examples everything
+   but the amount is hidden (names, numbers, the time).
+     ╭────────────────────────────────────╮
+     │ [×]           پسووڵەی پارەدان چییە؟ │   title 18/500 ink
+     │ ┌───────────────┐ ┌───────────────┐ │   two screenshots side by side, 3:4, radius 12, a hairline
+     │ │               │ │               │ │
+     │ └───────────────┘ └───────────────┘ │   14
+     │ کاتێک ڕێگای ناردن و وەرگرتن …       │   one paragraph 15/400 grey, 1.9
+     ╰────────────────────────────────────╯ */
+html body #receiptHelpSheet {
+  --ri-sheet: #ffffff; --ri-line: #e3e7f0;
+  --ri-ink: #0f172a; --ri-text: #5f6f86; --ri-accent: #0265ff;
+  --ri-close: #f6f7f9; --ri-close-ink: #64748b; --ri-close-line: transparent;
+}
+html[data-theme="dark"] body #receiptHelpSheet {
+  --ri-sheet: #131c2e; --ri-line: #25324a;
+  --ri-ink: #e8edf6; --ri-text: #a3b1c7; --ri-accent: #3b8cff;
+  --ri-close: #0e1725; --ri-close-ink: #c4cee0; --ri-close-line: #25324a;
+}
+html body #receiptHelpSheet#receiptHelpSheet > .sheet {
+  padding: 20px 0 max(28px, calc(env(safe-area-inset-bottom) + 16px)) !important;
+  background: var(--ri-sheet) !important; color: var(--ri-ink) !important; font-family: Rabar, Arial, sans-serif;
+  border: 1px solid var(--ri-line) !important; border-bottom: 0 !important; border-radius: 16px 16px 0 0 !important; box-shadow: none !important;
+}
+html body #receiptHelpSheet#receiptHelpSheet .sheet-head {
+  display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 12px !important;
+  margin: 0 !important; padding: 0 18px !important; border: 0 !important; background: none !important;
+}
+html body #receiptHelpSheet#receiptHelpSheet .sheet-head h3 {
+  color: var(--ri-ink) !important; font-size: 18px !important; font-weight: 500 !important; line-height: 1.5 !important; margin: 0 !important;
+}
+html body #receiptHelpSheet#receiptHelpSheet .sheet-close {
+  width: 44px !important; height: 44px !important; min-height: 44px !important; flex: 0 0 44px; border-radius: 14px !important;
+  border: 1px solid var(--ri-close-line) !important; background: var(--ri-close) !important; color: var(--ri-close-ink) !important;
+}
+html body #receiptHelpSheet#receiptHelpSheet .sheet-close:focus-visible { outline: 2px solid var(--ri-accent) !important; outline-offset: 2px; }
+html body #receiptHelpSheet#receiptHelpSheet .sheet-body { padding: 14px 18px 0 !important; overflow-y: auto; scrollbar-gutter: auto; }
+html body #receiptHelpSheet .rh-shots { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 0 14px; }
+html body #receiptHelpSheet .rh-shots img {
+  display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; object-position: top center;
+  border: 1px solid var(--ri-line); border-radius: 12px; background: #ffffff;
+}
+html body #receiptHelpSheet .ri-text {
+  margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important;
+  color: var(--ri-text) !important; font-family: Rabar, Arial, sans-serif; font-size: 15px !important; font-weight: 400 !important; line-height: 1.9 !important;
+  text-align: start; text-wrap: pretty;
+}
+@media (min-width: 640px) {
+  html body #receiptHelpSheet#receiptHelpSheet { align-items: flex-end !important; }
+  html body #receiptHelpSheet#receiptHelpSheet > .sheet {
+    max-width: 480px; opacity: 1; transform: translateY(100%); transition: transform .24s cubic-bezier(.2, .8, .2, 1);
+  }
+  html body #receiptHelpSheet#receiptHelpSheet.open > .sheet { transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  html body #receiptHelpSheet#receiptHelpSheet > .sheet { transition: none; }
 }

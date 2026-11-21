@@ -231,7 +231,7 @@ test('exchange screen: the identity screen\'s values, and its bar while sending'
   assert.doesNotMatch(html, /class="page-head support-page-head ex-head"/);
   // the bar sits under the button, the same markup as #kycProgress
   assert.match(html, /<div class="kv-progress xc-progress" id="orderProgress" hidden aria-live="polite">\n\s*<div class="kv-progress-track"><span id="orderProgressFill"><\/span><\/div>\n\s*<small id="orderProgressText">/);
-  assert.match(html, /\/assets\/css\/profile-head\.css\?v=1">\n<link rel="stylesheet" href="\/assets\/css\/exchange-form\.css\?v=13">/);
+  assert.match(html, /\/assets\/css\/profile-head\.css\?v=1">\n<link rel="stylesheet" href="\/assets\/css\/exchange-form\.css\?v=14">/);
   // the site header steps aside on phones, as on every inner screen; wide screens keep it
   assert.match(css, /html body #mainApp:has\(#pageHome\.active\) #siteHeader\.pxh \{ display: none !important; \}\n@media \(min-width: 1024px\) \{\n  html body #mainApp:has\(#pageHome\.active\) #siteHeader\.pxh \{ display: block !important; \}/);
   // and the same values as kyc-screen.css's .kv-progress
@@ -256,7 +256,7 @@ test('sign-in, sign-up and the code screen: the identity screen\'s bar under the
     const after = html.slice(at, at + 700);
     assert.match(after, new RegExp(`</button>\\n\\s*<div class="kv-progress au-progress" id="${id}" hidden aria-live="polite">\\n\\s*<div class="kv-progress-track"><span></span></div>\\n\\s*<small>`), id);
   }
-  assert.match(html, /\/assets\/css\/exchange-form\.css\?v=13">\n<link rel="stylesheet" href="\/assets\/css\/auth-progress\.css\?v=1">/);
+  assert.match(html, /\/assets\/css\/exchange-form\.css\?v=14">\n<link rel="stylesheet" href="\/assets\/css\/auth-progress\.css\?v=1">/);
   // kyc-screen.css's .kv-progress, value for value, on the sign-in screen's tokens
   assert.match(css, /\.au-progress \.kv-progress-track \{ height: 6px; overflow: hidden; border-radius: 999px; background: var\(--au-line\); \}/);
   assert.match(css, /\.au-progress \.kv-progress-track span \{ display: block; width: 0; height: 100%; border-radius: inherit; background: var\(--au-accent\); transition: width \.3s ease; \}/);

@@ -2015,6 +2015,15 @@ function closeRoundingInfo(){
   const sheet=document.getElementById('roundingInfoSheet');
   if(sheet) closeSheet(sheet);
 }
+// «پسووڵەی پارەدان چییە؟» (v94): the «!» beside the receipt's title
+function openReceiptHelp(){
+  const sheet=document.getElementById('receiptHelpSheet');
+  if(sheet) openSheet(sheet);
+}
+function closeReceiptHelp(){
+  const sheet=document.getElementById('receiptHelpSheet');
+  if(sheet) closeSheet(sheet);
+}
 function closeOrderConfirm(){
   closeSheet(document.getElementById('confirmSheet'));
 }
@@ -3726,6 +3735,7 @@ function resetHomeForm(){
   try{ clearReceipt(); }catch(_){}
   clearAllOrderFieldErrors();
   try{ closeRoundingInfo(); }catch(_){}
+  try{ closeReceiptHelp(); }catch(_){}
   try{ closeFeedbackSheet(); }catch(_){}
   calc();
 }
