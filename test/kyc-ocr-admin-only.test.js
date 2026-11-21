@@ -24,17 +24,30 @@ test('customer sees issue/expiry fields and a live status, without direct OCR-ta
   assert.doesNotMatch(app, /ex_admin_kyc_ocr_result/);
 });
 
-test('photos are pre-read before submission, OCR prefills only untouched fields, and final submission sends dates', () => {
+test('photos are pre-read before submission, OCR replaces existing fields, and final submission sends dates', () => {
   assert.match(app, /sb\.rpc\('ex_kyc_ocr_draft_start'/);
   assert.match(app, /sb\.rpc\('ex_kyc_ocr_draft_queue'/);
   assert.match(app, /kycApplyOcrResult\(data\)/);
-  assert.match(app, /if\(!input\.value \|\| input\.dataset\.ocrValue===input\.value\)/);
+  assert.match(app, /if\(value==null \|\| String\(value\)\.trim\(\)===''\) return;[\s\S]*?input\.value=String\(value\); input\.dataset\.ocrValue=String\(value\);/);
+  assert.match(app, /وێنەکان دەخوێنرێنەوە چاوەڕوان بە\.\.\./);
+  assert.doesNotMatch(app, /وێنەکان بار دەکرێن و ناسنامەکە بەخۆکار دەخوێندرێتەوە/);
+  assert.match(app, /پڕۆسەی خوێندنەوە بەسەرکەوتوویی تەواوبوو، تکایە دووبارە زانیاریەکان بپشکنەوە\./);
+  assert.match(app, /kv-ocr-progress[\s\S]*?setAttribute\('role','progressbar'\)[\s\S]*?aria-valuetext/);
+  assert.match(app, /aria-busy',currentState==='working'\?'true':'false'/);
+  assert.match(html, /kyc-screen\.css\?v=5/);
+  assert.match(html, /app\.js\?v=131/);
   assert.match(app, /p_document_issue_date:fields\.issue/);
   assert.match(app, /p_document_expiry_date:fields\.expiry/);
   assert.match(app, /if\(!_kycDraftImagesUploaded\)\{[\s\S]*?await kycUpload\(frontPath, front\)/);
   assert.match(app, /try\{ await _kycOcrPromise; \}/);
   assert.match(app, /ناوی ھەژمار و ناوی سەر ناسنامە ھاوتا نین!/);
   assert.match(app, /const identityName=fields\.name/);
+});
+
+test('OCR progress is indeterminate, smooth, and respects reduced motion', () => {
+  const css = read('../assets/css/kyc-screen.css');
+  assert.match(css, /\.kv-ocr-progress-indicator[^\n]*animation: kv-ocr-sweep/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.kv-ocr-progress-indicator \{ animation: none/);
 });
 
 test('full three-part English, Arabic, and Kurdish spellings are accepted; incomplete names are not', () => {

@@ -125,6 +125,13 @@ html body #mainApp#mainApp #pageVerify .kv-ocr-status { padding: 12px 14px; bord
 html body #mainApp#mainApp #pageVerify .kv-ocr-status[data-state="working"] { border-color: rgba(2,101,255,.35); background: var(--kv-accent-soft); color: var(--kv-title); }
 html body #mainApp#mainApp #pageVerify .kv-ocr-status[data-state="complete"] { border-color: rgba(20,108,53,.3); color: var(--kv-ok-ink); }
 html body #mainApp#mainApp #pageVerify .kv-ocr-status[data-state="error"] { border-color: var(--kv-err-line); background: var(--kv-err-soft); color: var(--kv-err-ink); }
+html body #mainApp#mainApp #pageVerify .kv-ocr-message { margin: 0; }
+html body #mainApp#mainApp #pageVerify .kv-ocr-progress { margin-top: 12px; }
+html body #mainApp#mainApp #pageVerify .kv-ocr-progress-track { display: block; position: relative; height: 6px; overflow: hidden; border-radius: 999px; background: var(--kv-line); }
+html body #mainApp#mainApp #pageVerify .kv-ocr-progress-indicator { position: absolute; inset-block: 0; inset-inline-start: 0; width: 38%; border-radius: inherit; background: linear-gradient(90deg, var(--kv-accent), #72adff); animation: kv-ocr-sweep 1.45s cubic-bezier(.4,0,.2,1) infinite; }
+@keyframes kv-ocr-sweep { 0% { transform: translateX(-120%); } 100% { transform: translateX(365%); } }
+html[dir="rtl"] body #mainApp#mainApp #pageVerify .kv-ocr-progress-indicator { animation-name: kv-ocr-sweep-rtl; }
+@keyframes kv-ocr-sweep-rtl { 0% { transform: translateX(365%); } 100% { transform: translateX(-120%); } }
 
 /* errors (setFieldError adds .show; its small icon is not used here) */
 html body #mainApp#mainApp #pageVerify .kv-err { display: none; margin: 6px 0 0; padding: 0 2px; color: var(--kv-err); font-family: var(--kv-font); font-size: 12px; font-weight: 400; line-height: 1.7; }
@@ -217,5 +224,6 @@ html body #mainApp#mainApp #pageVerify :is(.kv-doc, .kv-src, .kv-mini, .kv-btn, 
 @media (max-width: 420px) { html body #mainApp#mainApp #pageVerify .kv-dates-grid { grid-template-columns: 1fr; gap: 0; } }
 @media (prefers-reduced-motion: reduce) {
   html body #mainApp#mainApp #pageVerify :is(.kv-doc, .kv-input, .kv-btn, .kv-progress-track span) { transition: none !important; }
+  html body #mainApp#mainApp #pageVerify .kv-ocr-progress-indicator { animation: none !important; transform: none; inset-inline: 0; width: 100%; }
   html body #mainApp#mainApp #pageVerify .kv-btn:active { transform: none !important; }
 }

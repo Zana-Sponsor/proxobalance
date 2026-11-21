@@ -5816,7 +5816,7 @@ async function kycMaybeReadIdentity(){
   const token=++_kycOcrToken, draftId=_kycDraftId||(_kycDraftId=kycUuid());
   const base=curUser.id+'/'+draftId+'/';
   const frontPath=base+'front.'+front.ext, backPath=back?base+'back.'+back.ext:null;
-  kycSetOcrStatus('working','وێنەکان بار دەکرێن و ناسنامەکە بەخۆکار دەخوێندرێتەوە...');
+  kycSetOcrStatus('working','وێنەکان دەخوێنرێنەوە چاوەڕوان بە...');
   _kycOcrPromise=(async()=>{
     try{
       await getOrderSession();
@@ -5882,16 +5882,32 @@ function kycValidate(){
 
 function kycSetOcrStatus(state,message){
   const el=document.getElementById('kycOcrStatus'); if(!el) return;
-  el.dataset.state=state||'idle'; el.textContent=message||''; el.hidden=!message;
+  const currentState=state||'idle';
+  el.dataset.state=currentState;
+  el.replaceChildren();
+  el.hidden=!message;
+  el.setAttribute('aria-busy',currentState==='working'?'true':'false');
+  if(!message) return;
+  const text=document.createElement('p');
+  text.className='kv-ocr-message'; text.textContent=message; el.appendChild(text);
+  if(currentState==='working'){
+    const progress=document.createElement('div');
+    progress.className='kv-ocr-progress'; progress.setAttribute('role','progressbar');
+    progress.setAttribute('aria-label','خوێندنەوەی ناسنامە');
+    progress.setAttribute('aria-valuetext','لە پڕۆسەی خوێندنەوەدایە');
+    const track=document.createElement('span'); track.className='kv-ocr-progress-track';
+    const indicator=document.createElement('span'); indicator.className='kv-ocr-progress-indicator';
+    track.appendChild(indicator); progress.appendChild(track); el.appendChild(progress);
+  }
 }
 function kycResetOcrDraft(){
   _kycOcrToken++; _kycOcrPromise=null; _kycOcrResult=null; _kycDraftId=null; _kycDraftImagesUploaded=false;
   kycSetOcrStatus('idle','');
 }
 function kycOcrFill(inputId,value){
-  if(!value) return;
+  if(value==null || String(value).trim()==='') return;
   const input=document.getElementById(inputId); if(!input) return;
-  if(!input.value || input.dataset.ocrValue===input.value){ input.value=String(value); input.dataset.ocrValue=String(value); }
+  input.value=String(value); input.dataset.ocrValue=String(value);
 }
 function kycApplyOcrResult(result){
   if(!result || result.status!=='complete') return;
@@ -5903,7 +5919,7 @@ function kycApplyOcrResult(result){
   kycOcrFill('kycIssueDate',result.issue_date);
   kycOcrFill('kycExpiryDate',result.expiry_date);
   ['kycName','kycDob','kycNumber','kycIssueDate','kycExpiryDate'].forEach(clearFieldError);
-  kycSetOcrStatus('complete','خوێندنەوە تەواو بوو؛ خانەکان پڕکرانەوە. تکایە پێش ناردن وردییان بپشکنە.');
+  kycSetOcrStatus('complete','پڕۆسەی خوێندنەوە بەسەرکەوتوویی تەواوبوو، تکایە دووبارە زانیاریەکان بپشکنەوە.');
   kycUpdateSteps();
 }
 
