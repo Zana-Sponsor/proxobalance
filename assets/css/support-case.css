@@ -103,8 +103,7 @@ html body #mainApp#mainApp #pageSupport :is(.sc-input, .sc-textarea).has-error {
 html body #mainApp#mainApp #pageSupport .sc-field .field-error { color: var(--sc-bad) !important; font-size: 12.5px !important; margin: 0 !important; }
 
 /* «مامەڵەی پەیوەندیدار» (v84): chosen, never typed. Empty: a field like the others with a chevron.
-   Chosen: the transaction as it reads in /transactions (status icon · route, date, code · amount, state)
-   with a × on its end to remove it. */
+   Chosen: the transaction as its card reads in /transactions (txCardInner, v85); «لابردن» on the label's row. */
 html body #mainApp#mainApp #pageSupport .sc-order-field { position: relative !important; }
 html body #mainApp#mainApp #pageSupport .sc-order-pick {
   width: 100% !important; margin: 0 !important; font-family: var(--sc-font) !important; cursor: pointer;
@@ -119,16 +118,15 @@ html body #mainApp#mainApp #pageSupport .sc-order-pick-ico { display: grid !impo
 html body #mainApp#mainApp #pageSupport .sc-order-pick-ico svg, html body #mainApp#mainApp #pageSupport .sc-order-pick-go svg { width: 18px !important; height: 18px !important; }
 html body #mainApp#mainApp #pageSupport .sc-order-pick-txt { flex: 1 1 auto !important; color: var(--sc-muted) !important; font-size: 15px !important; font-weight: 400 !important; line-height: 1.5 !important; }
 html body #mainApp#mainApp #pageSupport .sc-order-pick-go { display: grid !important; flex: 0 0 18px !important; color: var(--sc-muted) !important; }
-/* chosen: room on the end for the × */
-html body #mainApp#mainApp #pageSupport .sc-order-field.has-order .sc-order-pick { padding-inline-end: 56px !important; }
+/* «لابردن» sits on the label's row, so the chosen card keeps its whole width */
+html body #mainApp#mainApp #pageSupport .sc-order-head { display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 12px !important; }
 html body #mainApp#mainApp #pageSupport .sc-order-clear {
-  position: absolute !important; top: 50% !important; inset-inline-end: 10px !important; transform: translateY(-50%) !important;
-  width: 36px !important; height: 36px !important; display: grid !important; place-items: center !important; margin: 0 !important; padding: 0 !important;
-  border: 0 !important; border-radius: 50% !important; background: var(--sc-gray-soft) !important; color: var(--sc-muted) !important; cursor: pointer;
+  display: inline-flex !important; align-items: center !important; height: 28px !important; margin: 0 !important; padding: 0 4px !important;
+  border: 0 !important; background: none !important; color: var(--sc-accent) !important; cursor: pointer;
+  font-family: var(--sc-font) !important; font-size: 13px !important; font-weight: 600 !important; line-height: 1 !important;
 }
 html body #mainApp#mainApp #pageSupport .sc-order-clear[hidden] { display: none !important; }
-html body #mainApp#mainApp #pageSupport .sc-order-clear svg { width: 16px !important; height: 16px !important; stroke-width: 2.4 !important; }
-html body #mainApp#mainApp #pageSupport .sc-order-clear:focus-visible { outline: 2px solid var(--sc-accent) !important; outline-offset: 2px !important; }
+html body #mainApp#mainApp #pageSupport .sc-order-clear:focus-visible { outline: 2px solid var(--sc-accent) !important; outline-offset: 2px !important; border-radius: 6px !important; }
 
 /* image picker */
 html body #mainApp#mainApp #pageSupport .sc-picker {
@@ -305,10 +303,6 @@ html body #supportOrderSheet .sc-order-empty {
 }
 html body #supportOrderSheet .sc-order-empty svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 html body #supportOrderSheet .sc-order-empty b { color: var(--so-ink); font-size: 14px; font-weight: 500; }
-/* the code: the third line under route and date, wherever a transaction row is shown with it */
-html body :is(#supportOrderSheet, #pageSupport) .tx-item-code {
-  height: 20px; line-height: 20px; font-size: 12px; color: var(--tf-muted); letter-spacing: .04em; white-space: nowrap; unicode-bidi: isolate;
-}
 @media (min-width: 640px) {
   html body #supportOrderSheet#supportOrderSheet > .sheet { border-radius: 16px !important; border-bottom: 1px solid var(--so-line) !important; max-width: 480px; }
 }

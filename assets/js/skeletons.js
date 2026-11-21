@@ -19,16 +19,21 @@
 
   // ── transaction card (home preview + /transactions) ──
   function txItems(n){
+    // the card's v85 shape: two wallet tiles · route and date · amounts · status pill and its line
     return repeat(n || 4, i =>
       '<article class="tx-item is-skel" aria-hidden="true">'
-      + '<span class="tx-item-ico"></span>'
+      + '<span class="tx-item-pair"><span class="method-icon sz-sm is-skel-tile"></span><span class="method-icon sz-sm is-skel-tile"></span></span>'
       + '<span class="tx-item-main">'
         + '<span class="tx-item-route">' + bar(pick([96, 84, 104], i), 12) + '</span>'
         + '<span class="tx-item-when">' + bar(pick([112, 100, 118], i), 10) + '</span>'
       + '</span>'
       + '<span class="tx-item-end">'
-        + '<strong class="tx-item-amount">' + bar(pick([66, 58, 72], i), 12) + '</strong>'
-        + '<span class="tx-item-status">' + bar(pick([46, 54, 40], i), 10) + '</span>'
+        + '<strong class="tx-item-amount">' + bar(pick([70, 62, 76], i), 12) + '</strong>'
+        + '<span class="tx-item-sub">' + bar(pick([84, 78, 90], i), 10) + '</span>'
+      + '</span>'
+      + '<span class="tx-item-foot">'
+        + '<span class="tx-item-status is-skel-pill">' + bar(pick([52, 60, 46], i), 10, true) + '</span>'
+        + '<span class="tx-item-note">' + bar(pick([88, 72, 96], i), 10) + '</span>'
       + '</span>'
       + '</article>');
   }

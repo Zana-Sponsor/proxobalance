@@ -158,6 +158,35 @@ html body .tf-flow .tf-copy {
 html body .tf-flow .tf-copy svg { width: 16px; height: 16px; flex: 0 0 auto; fill: none; stroke: var(--tf-muted); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 html body .tf-flow .tf-copy.is-copied { color: var(--tf-ok); }
 
+/* «پوختەی نرخ» (v87): the exchange's price summary, on the transaction's screen
+     پوختەی نرخ
+     بڕی پارەی ناردراو                    60,000 د.ع     13 grey / 14 ink, 36 a line
+     کرێی خزمەتگوزاری                        900 د.ع
+     بڕی گەڕێندراو (!)                        100 د.ع     the «!» opens why
+     ───────────────────────────────────────────     1px, the soft line
+     کۆی گشتی نرخ                         59,000 د.ع     14/600 ink · 18/700 blue, 48 high */
+html body .tf-flow .tf-price .tf-sec-title { margin-bottom: 6px; }
+html body .tf-flow .tf-price-rows { display: flex; flex-direction: column; }
+html body .tf-flow .tf-price-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 36px; padding: 0 2px; }
+html body .tf-flow .tf-price-k { display: inline-flex; align-items: center; gap: 6px; min-width: 0; color: var(--tf-muted); font-size: 13px; font-weight: 400; line-height: 1.6; }
+html body .tf-flow .tf-price-v {
+  color: var(--tf-ink); font-size: 14px; font-weight: 500; line-height: 1.6; white-space: nowrap;
+  font-variant-numeric: tabular-nums; unicode-bidi: isolate;
+}
+html body .tf-flow .tf-price-total { margin-top: 8px; padding-top: 4px; border-top: 1px solid var(--tf-line); }
+html body .tf-flow .tf-price-total .tf-price-row { min-height: 48px; }
+html body .tf-flow .tf-price-total .tf-price-k { color: var(--tf-ink); font-size: 14px; font-weight: 600; }
+html body .tf-flow .tf-price-total .tf-price-v { color: var(--tf-accent); font-size: 18px; font-weight: 700; line-height: 1.4; }
+html body .tf-flow .tf-price-info {
+  position: relative; display: inline-grid; place-items: center; flex: 0 0 auto; width: 16px; height: 16px; margin: 0; padding: 0;
+  border: 0; border-radius: 50%; background: none; color: var(--tf-muted); cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+/* a 44px target around a 16px mark */
+html body .tf-flow .tf-price-info::after { content: ""; position: absolute; inset: -14px; }
+html body .tf-flow .tf-price-info svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+html body .tf-flow .tf-price-info:active { color: var(--tf-accent); }
+html body .tf-flow .tf-price-info:focus-visible { outline: 2px solid var(--tf-accent); outline-offset: 2px; }
+
 /* notes */
 html body .tf-flow .tf-note p { margin: 0; color: var(--tf-text); font-size: 14px; line-height: 1.9; white-space: pre-line; overflow-wrap: anywhere; }
 html body :is(#mainApp, #transactionSummaryPage) .tf-flow .tf-note.is-bad > .tf-sec-title { color: var(--tf-bad) !important; }
@@ -224,13 +253,17 @@ html body #feedbackSheet .tf-flow .tf-fb { padding-top: 8px; border-top: 0; }
 html[data-theme="dark"] body #feedbackSheet .sheet-head h3 { color: var(--tf-ink) !important; }
 html[data-theme="dark"] body #feedbackSheet .sheet-head { border-color: var(--tf-line) !important; }
 
-/* ── transaction list item ─────────────────────────────────────────
-   [icon]  route ............... amount
-           date ................ status
-   Both columns share the same two line-heights so they sit level.   */
+/* ── transaction list item (v85) ────────────────────────────────────
+   The card itself (edge, corners, surface, padding) is as it was. Inside, every state has
+   the same three parts, so no state is heavier than another:
+     [from·to]  route ............................ what arrives      14/600 · 15/700
+      logos     date — time ................ نێردراو <sent>         12 muted · 12 muted
+     ─────────────────────────────────────────────────────────────  hairline
+     (● status)                         this state's line, or code   pill 12/600 · 12
+   The status colour is in the pill only; the line takes it only when it asks or answers. */
 html body .tx-item {
   box-sizing: border-box; position: relative;
-  display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; grid-template-areas: "ico main end" "hint hint hint";
+  display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; grid-template-areas: "ico main end" "foot foot foot";
   align-items: center; column-gap: 12px;
   width: 100%; min-height: 72px; margin: 0 !important; padding: 14px 16px;
   border: 1px solid var(--tf-line); border-radius: 16px; background: var(--tf-surface); color: var(--tf-ink);
@@ -238,31 +271,57 @@ html body .tx-item {
 }
 html body .tx-item:active { transform: scale(.99); }
 html body .tx-item:focus-visible { outline: 2px solid var(--tf-accent); outline-offset: 2px; }
-html body .tx-item-ico { grid-area: ico; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; }
-html body .tx-item-ico svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-html body .tx-item.is-ok   .tx-item-ico { background: var(--tf-ok-soft);   color: var(--tf-ok); }
-html body .tx-item.is-bad  .tx-item-ico { background: var(--tf-bad-soft);  color: var(--tf-bad); }
-html body .tx-item.is-warn .tx-item-ico { background: var(--tf-warn-soft); color: var(--tf-warn); }
-html body .tx-item.is-wait .tx-item-ico { background: var(--tf-wait-soft); color: var(--tf-wait); }
-html body .tx-item.is-info .tx-item-ico { background: var(--tf-info-soft); color: var(--tf-info); }
+
+/* the two wallets: where it left from (behind, top) and where it went (in front, bottom) */
+html body .tx-item-pair { grid-area: ico; position: relative; width: 44px; height: 44px; }
+html body .tx-item-pair .method-icon {
+  position: absolute; width: 30px; height: 30px; margin: 0; border-radius: 9px; overflow: hidden;
+  box-shadow: 0 0 0 2px var(--tf-surface) !important;
+}
+html body .tx-item-pair .method-icon:first-child { top: 0; left: 0; }
+html body .tx-item-pair .method-icon:last-child { right: 0; bottom: 0; z-index: 1; }
+html body .tx-item-pair .method-icon svg, html body .tx-item-pair .method-icon .icon--solar { width: 16px; height: 16px; }
+html body .tx-item-pair .tx-mark-letter { display: grid; place-items: center; background: var(--tf-wait-soft); color: var(--tf-muted); font-size: 13px; font-weight: 700; }
+
 html body .tx-item-main, html body .tx-item-end { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 html body .tx-item-main { grid-area: main; align-items: flex-start; overflow: hidden; }
 html body .tx-item-end { grid-area: end; align-items: flex-end; text-align: left; }
-html body .tx-item-route, html body .tx-item-amount { height: 22px; line-height: 22px !important; font-size: 14px !important; white-space: nowrap; color: var(--tf-ink) !important; }
-html body .tx-item-route { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; overflow: hidden; font-weight: 500 !important; }
+html body .tx-item-route, html body .tx-item-amount { height: 22px; line-height: 22px !important; white-space: nowrap; color: var(--tf-ink) !important; }
+html body .tx-item-route { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; overflow: hidden; font-size: 14px !important; font-weight: 600 !important; }
 html body .tx-item-route .tx-route-end { overflow: hidden; text-overflow: ellipsis; }
-html body .tx-item-amount { font-weight: 600 !important; font-variant-numeric: tabular-nums; unicode-bidi: isolate; }
-html body .tx-item-when, html body .tx-item-status { height: 20px; line-height: 20px; font-size: 12px; white-space: nowrap; }
-html body .tx-item-when { max-width: 100%; overflow: hidden; text-overflow: ellipsis; color: var(--tf-muted); }
-html body .tx-item.is-ok   .tx-item-status { color: var(--tf-ok); }
-html body .tx-item.is-bad  .tx-item-status { color: var(--tf-bad); }
-html body .tx-item.is-warn .tx-item-status { color: var(--tf-warn); }
-html body .tx-item.is-wait .tx-item-status { color: var(--tf-wait); }
-html body .tx-item.is-info .tx-item-status { color: var(--tf-info); }
-html body .tx-item-hint {
-  grid-area: hint; margin-top: 12px; padding: 8px 12px; border-radius: 10px; background: var(--tf-warn-soft);
-  color: var(--tf-warn); font-size: 12px; line-height: 20px;
+html body .tx-item-amount { font-size: 15px !important; font-weight: 700 !important; font-variant-numeric: tabular-nums; unicode-bidi: isolate; }
+html body .tx-item-when, html body .tx-item-sub { height: 20px; line-height: 20px; font-size: 12px; white-space: nowrap; color: var(--tf-muted); }
+html body .tx-item-when { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+html body .tx-item-sub bdi { font-variant-numeric: tabular-nums; }
+
+/* the footer: a hairline, the status, then this state's one line */
+html body .tx-item-foot {
+  grid-area: foot; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-width: 0;
+  margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--tf-line);
 }
+html body .tx-item-status {
+  flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px;
+  font-size: 12px; font-weight: 600; line-height: 1; white-space: nowrap;
+  background: var(--tf-wait-soft); color: var(--tf-wait);
+}
+html body .tx-item-status i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+html body .tx-item.is-ok   .tx-item-status { background: var(--tf-ok-soft);   color: var(--tf-ok); }
+html body .tx-item.is-bad  .tx-item-status { background: var(--tf-bad-soft);  color: var(--tf-bad); }
+html body .tx-item.is-warn .tx-item-status { background: var(--tf-warn-soft); color: var(--tf-warn); }
+html body .tx-item.is-info .tx-item-status { background: var(--tf-info-soft); color: var(--tf-info); }
+html body .tx-item-note {
+  flex: 1 1 auto; min-width: 0; display: inline-flex; align-items: center; justify-content: flex-end; gap: 2px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left;
+  font-size: 12px; line-height: 20px; color: var(--tf-muted);
+}
+html body .tx-item-note bdi { unicode-bidi: isolate; font-variant-numeric: tabular-nums; }
+html body .tx-item-note.is-code { display: block; letter-spacing: .04em; }
+html body .tx-item-note.is-warn { color: var(--tf-warn); font-weight: 600; }
+html body .tx-item-note.is-ok   { color: var(--tf-ok); }
+html body .tx-item-note.is-info { color: var(--tf-info); }
+html body .tx-item-note .pxi { flex: 0 0 16px; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+/* a refusal's reason is read, not alarmed: the pill already says it */
+html body .tx-item-note.is-bad { display: block; color: var(--tf-text); }
 /* list containers: one even rhythm between items */
 html body :is(#txList, #historyPreview):has(> .tx-item) { display: flex !important; flex-direction: column !important; gap: 8px !important; }
 
@@ -273,9 +332,11 @@ html body :is(#txList, #historyPreview):has(> .tx-item) { display: flex !importa
   html body .tf-flow .tf-k { font-size: 12.5px; }
   html body .tf-flow .tf-v { font-size: 13px; max-width: 64%; }
   html body .tf-flow .tf-hero-amount { font-size: 24px; line-height: 32px; }
-  html body .tx-item { grid-template-columns: 36px minmax(0, 1fr) auto; column-gap: 10px; padding: 12px; }
-  html body .tx-item-ico { width: 36px; height: 36px; }
-  html body .tx-item-route, html body .tx-item-amount { font-size: 13px !important; }
+  html body .tx-item { grid-template-columns: 40px minmax(0, 1fr) auto; column-gap: 10px; padding: 12px; }
+  html body .tx-item-pair { width: 40px; height: 40px; }
+  html body .tx-item-pair .method-icon { width: 27px; height: 27px; border-radius: 8px; }
+  html body .tx-item-route { font-size: 13px !important; }
+  html body .tx-item-amount { font-size: 14px !important; }
 }
 
 /* info sheet (amount returned to the balance) */
@@ -283,7 +344,6 @@ html body :is(#txList, #historyPreview):has(> .tx-item) { display: flex !importa
 .ts-info-backdrop[hidden] { display: none !important; }
 .ts-info-sheet { box-sizing: border-box; width: min(100%, 560px); max-height: min(78dvh, 620px); margin: 0 auto; padding: 12px 20px max(24px, env(safe-area-inset-bottom)); overflow-y: auto; border-radius: 20px 20px 0 0; background: var(--tf-surface); color: var(--tf-ink); font-family: Rabar, Arial, sans-serif; transform: translateY(100%); transition: transform .24s ease; }
 .ts-info-backdrop.is-open .ts-info-sheet { transform: translateY(0); }
-.ts-info-grip { width: 36px; height: 4px; margin: 0 auto 16px; border-radius: 99px; background: var(--tf-line-strong); }
 .ts-info-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
 .ts-info-head h2 { margin: 0; font-size: 16px; font-weight: 600; }
 .ts-info-close { width: 36px; height: 36px; border: 1px solid var(--tf-line); border-radius: 12px; background: transparent; color: var(--tf-muted); font-size: 20px; cursor: pointer; }
@@ -407,24 +467,25 @@ html body #mainApp#mainApp #pageSummary .tf-flow .tf-media img { margin-top: 10p
 /* while it loads: the same cards, empty */
 html body #mainApp#mainApp #pageSummary .tf-flow.is-skel > :is(.tf-hero, .tf-sec) { box-shadow: none !important; }
 
-/* ── «گەڕاوە بۆ باڵانس» (#summaryInfoBackdrop): the exchange's explanation sheet — the amount
-   box and the points share its values (exchange-form.css); the frame is the same here ── */
+/* ── «بڕی گەڕاوە بۆ باڵانس» (#summaryInfoBackdrop): the exchange's «بڕی گەڕێندراو» sheet — a title,
+   the close and one paragraph; its values and the paragraph's style are in exchange-form.css ── */
 html body #summaryInfoBackdrop .ts-info-sheet {
-  width: min(100%, 480px); padding: 10px 0 max(18px, env(safe-area-inset-bottom)); border: 1px solid var(--ri-line); border-bottom: 0;
+  width: min(100%, 480px); padding: 20px 0 max(28px, calc(env(safe-area-inset-bottom) + 16px)); border: 1px solid var(--ri-line); border-bottom: 0;
   border-radius: 16px 16px 0 0; background: var(--ri-sheet); color: var(--ri-ink); box-shadow: none;
 }
-html body #summaryInfoBackdrop .ts-info-grip { width: 38px; height: 4px; margin: 0 auto 14px; background: var(--ri-line); }
-html body #summaryInfoBackdrop .ts-info-head { margin: 0 0 6px; padding: 0 18px 12px; border-bottom: 1px solid var(--ri-line); }
-html body #summaryInfoBackdrop .ts-info-head h2 { color: var(--ri-ink); font-size: 18px; font-weight: 500; line-height: 1.5; }
+html body #summaryInfoBackdrop .ts-info-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0; padding: 0 18px; border: 0; }
+html body #summaryInfoBackdrop .ts-info-head h2 { margin: 0; color: var(--ri-ink); font-size: 18px; font-weight: 500; line-height: 1.5; }
 html body #summaryInfoBackdrop .ts-info-close {
-  display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--ri-close-line); border-radius: 14px;
+  display: grid; place-items: center; flex: 0 0 44px; width: 44px; height: 44px; padding: 0; border: 1px solid var(--ri-close-line); border-radius: 14px;
   background: var(--ri-close); color: var(--ri-close-ink); font-size: 0; cursor: pointer;
 }
-html body #summaryInfoBackdrop .ts-info-body { display: flex; flex-direction: column; gap: 10px; padding: 6px 18px 0; }
-html body #summaryInfoBackdrop .ts-info-ok {
-  display: block; width: calc(100% - 36px); min-height: 48px; margin: 16px 18px 4px; padding: 11px 14px;
-  border: 1px solid var(--ri-btn); border-radius: 12px; background: var(--ri-btn); color: #fff;
-  font: inherit; font-family: Rabar, Arial, sans-serif; font-size: 14px; font-weight: 500; line-height: 1.6; cursor: pointer;
+html body #summaryInfoBackdrop .ts-info-close:focus-visible { outline: 2px solid var(--ri-accent); outline-offset: 2px; }
+html body #summaryInfoBackdrop .ts-info-body { padding: 12px 18px 0; }
+
+/* ── dinars read right to left (v90): every «N د.ع» on the site has «د.ع» to the left of the number,
+   as in «پوختەی نرخ». app.js gives these figures dir="rtl" (amtDir); two older sheets set
+   direction: ltr on them by class, so the attribute wins here. Dollars keep dir="ltr". ── */
+html body :is(.fb-v, .bh-amt, .tx-item-amount, .tf-hero-amount, .fbx-amt, .dbr-amt, .fa-val, .rate-in, .rate-out, .cf-amount, .confirm-row-value, #bxAmount)[dir="rtl"] {
+  direction: rtl !important; unicode-bidi: isolate !important;
 }
-html body #summaryInfoBackdrop .ts-info-ok:active { border-color: var(--ri-btn-press); background: var(--ri-btn-press); }
-html body #summaryInfoBackdrop .ts-info-ok:focus-visible { outline: 2px solid var(--ri-accent); outline-offset: 2px; }
+html body #mainApp #pageProfile .pfx-card.pfx-balance .bx-amount .bx-cur { letter-spacing: 0 !important; text-transform: none !important; }

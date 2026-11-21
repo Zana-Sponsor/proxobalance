@@ -223,7 +223,7 @@ test('profile head: the photo, the name with the identity mark after it, the num
   assert.match(css, /html\[data-theme="dark"\] body #usernameSheet \{\n  --un-ink: #e8edf6;/);
 });
 
-test('exchange screen: one card per step on the identity screen\'s values, and its bar while sending', () => {
+test('exchange screen: the identity screen\'s values, and its bar while sending', () => {
   const html = read('index.html'), css = read('assets/css/exchange-form.css'), app = read('assets/js/app.js');
   // the top is the inner screens' toolbar: back, the title alone, no line under it
   assert.match(html, /<section class="page" id="pageHome" data-route="exchange">\n\s*<div class="pfx-bar"><button type="button" class="pfx-bar-btn" onclick="navigate\('home'\)" aria-label="گەڕانەوە بۆ سەرەکی">/);
@@ -231,7 +231,7 @@ test('exchange screen: one card per step on the identity screen\'s values, and i
   assert.doesNotMatch(html, /class="page-head support-page-head ex-head"/);
   // the bar sits under the button, the same markup as #kycProgress
   assert.match(html, /<div class="kv-progress xc-progress" id="orderProgress" hidden aria-live="polite">\n\s*<div class="kv-progress-track"><span id="orderProgressFill"><\/span><\/div>\n\s*<small id="orderProgressText">/);
-  assert.match(html, /\/assets\/css\/profile-head\.css\?v=1">\n<link rel="stylesheet" href="\/assets\/css\/exchange-form\.css\?v=5">/);
+  assert.match(html, /\/assets\/css\/profile-head\.css\?v=1">\n<link rel="stylesheet" href="\/assets\/css\/exchange-form\.css\?v=13">/);
   // the site header steps aside on phones, as on every inner screen; wide screens keep it
   assert.match(css, /html body #mainApp:has\(#pageHome\.active\) #siteHeader\.pxh \{ display: none !important; \}\n@media \(min-width: 1024px\) \{\n  html body #mainApp:has\(#pageHome\.active\) #siteHeader\.pxh \{ display: block !important; \}/);
   // and the same values as kyc-screen.css's .kv-progress
@@ -241,7 +241,7 @@ test('exchange screen: one card per step on the identity screen\'s values, and i
   for (const step of ["orderSetProgress(6,'پشکنینی هەژمار...')", "orderSetProgress(32,'بارکردنی پسووڵە...')", "orderSetProgress(78,'ناردنی داواکاری...')", "orderSetProgress(100,'تەواو بوو')"])
     assert(app.includes(step), step);
   assert.match(app, /setTimeout\(\(\)=>\{ if\(btn\.dataset\.submitting!=='1'\) orderSetProgress\(null\); \}, 900\);/);
-  // what the app hides stays hidden under the new cards
+  // what the app hides stays hidden
   assert.match(css, /:is\(\.xc-step, #xcBreakdown, \.xc-sum-row, \.xc-badge, \.field\)\[hidden\]:not\(#_shown\) \{ display: none !important; \}/);
   assert.match(css, /#exchangeCard\.kyc-locked > :not\(\.xc-head\):not\(#exchangeKycGate\):not\(#balanceSendSection\) \{ display: none !important; \}/);
   // the number hint no longer names a country
@@ -256,7 +256,7 @@ test('sign-in, sign-up and the code screen: the identity screen\'s bar under the
     const after = html.slice(at, at + 700);
     assert.match(after, new RegExp(`</button>\\n\\s*<div class="kv-progress au-progress" id="${id}" hidden aria-live="polite">\\n\\s*<div class="kv-progress-track"><span></span></div>\\n\\s*<small>`), id);
   }
-  assert.match(html, /\/assets\/css\/exchange-form\.css\?v=5">\n<link rel="stylesheet" href="\/assets\/css\/auth-progress\.css\?v=1">/);
+  assert.match(html, /\/assets\/css\/exchange-form\.css\?v=13">\n<link rel="stylesheet" href="\/assets\/css\/auth-progress\.css\?v=1">/);
   // kyc-screen.css's .kv-progress, value for value, on the sign-in screen's tokens
   assert.match(css, /\.au-progress \.kv-progress-track \{ height: 6px; overflow: hidden; border-radius: 999px; background: var\(--au-line\); \}/);
   assert.match(css, /\.au-progress \.kv-progress-track span \{ display: block; width: 0; height: 100%; border-radius: inherit; background: var\(--au-accent\); transition: width \.3s ease; \}/);
@@ -291,30 +291,33 @@ test('home: «داواکاری نوێ بکە!» types over the new-order card on
   assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\n  html body #mainApp#mainApp #pageDash \.db-new-tip\[data-state\] \{ animation: none; \}/);
 });
 
-test('exchange: «بۆچی بڕێک دەخرێتە سەر باڵانسەکەت؟» — the amount, then plain sentences shared with the summary, in the exchange sheets\' frame', () => {
+test('exchange: «بڕی گەڕێندراو» — a bottom sheet with the line\'s name, the close and one paragraph, shared with the summary', () => {
   const html = read('index.html'), css = read('assets/css/exchange-form.css'), app = read('assets/js/app.js');
   const sheet = html.slice(html.indexOf('<div id="roundingInfoSheet"'), html.indexOf('<!-- ══', html.indexOf('<div id="roundingInfoSheet"')));
-  assert.match(sheet, /<b class="ri-amount" id="roundingInfoAmount" dir="ltr" hidden><\/b>/);
-  // sentences, not icons: no icon in the sheet's body, the text comes from one function
-  assert.match(sheet, /<h3 id="roundingInfoTitle">بۆچی بڕێک دەخرێتە سەر باڵانسەکەت؟<\/h3>/);
-  assert.match(sheet, /<div class="ri-text" id="roundingInfoText"><\/div>/);
+  // the line's name and the close; then one paragraph — no amount box, card, grabber or button
+  assert.match(sheet, /<h3 id="roundingInfoTitle">بڕی گەڕێندراو<\/h3>/);
+  assert.match(sheet, /<div class="sheet-body">\n\s*<p class="ri-text" id="roundingInfoText"><\/p>\n\s*<\/div>/);
+  assert.doesNotMatch(sheet, /ri-hero|ri-amount|sheet-grabber|confirm-actions|باشە، تێگەیشتم|xc-info-body/);
   assert.doesNotMatch(sheet.slice(sheet.indexOf('<div class="sheet-body">')), /<svg|ri-ico|ri-points/);
-  assert.doesNotMatch(sheet, /xc-info-body/);
+  // one paragraph: the sentences run on, in «د.ع», with no <p> of their own
   const explain = app.slice(app.indexOf('function roundingExplainHTML(n){'), app.indexOf('function fillRoundingExplain('));
-  for (const words of ['بۆ وەرگر تەنها بڕی تەواو بە هەزار دەنێرین', 'ئەم بڕە نافەوتێت', 'لە مێژووی باڵانسدا دەیبینیت', 'FIB و Qi&nbsp;Card'])
+  for (const words of ['بۆ وەرگر تەنها هەزارە تەواوەکان دەنێرین', 'FIB و Qi&nbsp;Card', 'خۆکارانە دەگەڕێتەوە سەر باڵانسەکەت', "' د.ع</b>'"])
     assert(explain.includes(words), words);
+  assert.doesNotMatch(explain, /<p>|IQD/);
   // the figures of this request: what the split says
-  assert.match(app, /fillRoundingExplain\('roundingInfoAmount','roundingInfoText',n\);/);
-  // under the split: one sentence and «بۆچی؟» in words, not an (i)
-  assert.match(html, /<button type="button" class="xc-why" id="payoutWhyBtn" onclick="openRoundingInfo\(\)" aria-haspopup="dialog">بۆچی؟<\/button>/);
-  assert.match(html, /<span class="lbl">وەرگر وەریدەگرێت<\/span>\n\s*<span class="v" id="payoutDisplay" dir="ltr">/);
-  assert.match(html, /<span class="lbl">دەخرێتە سەر باڵانسەکەت<\/span>\n\s*<span class="v" id="roundingDisplay" dir="ltr">/);
-  assert.doesNotMatch(html, /class="xc-info-btn"/);
-  assert.match(css, /#xcBreakdown \.xc-sum-result \{\n  display: grid !important; grid-template-columns: repeat\(2, minmax\(0, 1fr\)\); gap: 8px;/);
+  assert.match(app, /fillRoundingExplain\('roundingInfoText',n\);/);
+  // the price summary (v81): a small «!» after «بڕی گەڕێندراو» opens the sheet; no sentence or link in the section
+  assert.match(html, /<span class="lbl">بڕی گەڕێندراو<button type="button" class="xc-info" id="payoutWhyBtn" onclick="openRoundingInfo\(\)" aria-haspopup="dialog" aria-label="بۆچی بڕێک دەگەڕێندرێتەوە؟"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"\/><path d="M12 7\.5v5\.5"\/><path d="M12 16\.4v\.1"\/><\/svg><\/button><\/span>\n\s*<span class="v" id="roundingDisplay" dir="rtl">/);
+  assert.match(html, /<span class="lbl">کۆی گشتی نرخ<\/span>\n\s*<span class="v" id="payoutDisplay" dir="rtl">/);
+  assert.doesNotMatch(html, /class="xc-info-btn"|class="xc-why"|xc-why-line/);
+  assert.match(css, /#xcBreakdown \.xc-sum-result \{\n  display: flex !important; flex-direction: column !important; gap: 0 !important;/);
   // the frame of the exchange's other sheets: title 18/500 in ink, a 44px close, the blue button in light and dark
   assert.match(css, /#roundingInfoSheet#roundingInfoSheet \.sheet-head h3 \{\n  color: var\(--ri-ink\) !important; font-size: 18px !important; font-weight: 500 !important;/);
   assert.match(css, /#roundingInfoSheet#roundingInfoSheet \.sheet-close \{\n  width: 44px !important; height: 44px !important;/);
-  assert.match(css, /--ri-close: #f6f7f9; --ri-close-ink: #64748b; --ri-close-line: transparent; --ri-btn: #0265ff;/);
+  assert.match(css, /--ri-close: #f6f7f9; --ri-close-ink: #64748b; --ri-close-line: transparent;\n\}/);
+  // no line under the title; the paragraph 15/400, 1.9
+  assert.match(css, /#roundingInfoSheet#roundingInfoSheet \.sheet-head \{\n  display: flex !important;[^}]*margin: 0 !important; padding: 0 18px !important; border: 0 !important;/);
+  assert.match(css, /:is\(#roundingInfoSheet, #summaryInfoBackdrop\) \.ri-text \{\n[^}]*font-size: 15px !important; font-weight: 400 !important; line-height: 1\.9 !important;/);
   // a bottom sheet on every screen: on wide screens too it rises from the bottom edge
   assert.match(css, /@media \(min-width: 640px\) \{\n  html body :is\(#pickerSheet, #recipientSheet, #confirmSheet\):not\(#_x\) > \.sheet \{ border-radius: 16px !important; \}/);
   assert.match(css, /html body #roundingInfoSheet#roundingInfoSheet \{ align-items: flex-end !important; \}/);
@@ -323,7 +326,7 @@ test('exchange: «بۆچی بڕێک دەخرێتە سەر باڵانسەکەت؟
 
 test('transaction details: one card per block in the exchange\'s values, the route with its wallets in the top card', () => {
   const html = read('index.html'), css = read('assets/css/transaction-summary.css'), xf = read('assets/css/exchange-form.css'), app = read('assets/js/app.js');
-  assert.match(html, /\/assets\/css\/transaction-summary\.css\?v=9"/);
+  assert.match(html, /\/assets\/css\/transaction-summary\.css\?v=13"/);
   // the site header steps aside on phones, as on every inner screen
   assert.match(css, /body #mainApp:has\(#pageSummary\.active\) #siteHeader\.pxh \{ display: none !important; \}/);
   // cards: radius 20, border, the exchange's shadow; titles without the marker
@@ -334,16 +337,15 @@ test('transaction details: one card per block in the exchange\'s values, the rou
   assert.match(app, /hero\.route=tfRouteIconsHTML\(o\.from_method,refundedSheet\?'AccountBalance':o\.to_method\);/);
   assert.match(app, /\+ \(opts\.route\?'<div class="tf-hero-route" dir="ltr">'\+opts\.route\+'<\/div>':''\)/);
   assert.doesNotMatch(app.slice(app.indexOf('function txDetailHTML'), app.indexOf('function closeTxDetail')), /tfRow\('ڕێگای گواستنەوە'/);
-  // the summary's sheet is the exchange's: the same title, amount box and sentences
+  // the summary's sheet is the exchange's: the line's name, the close and the same paragraph
   const info = html.slice(html.indexOf('<div id="summaryInfoBackdrop"'), html.indexOf('</div>\n\n\n<script', html.indexOf('<div id="summaryInfoBackdrop"')));
-  assert.match(info, /<b class="ri-amount" id="summaryInfoAmount" dir="ltr" hidden><\/b>/);
-  assert.match(info, /<h2 id="summaryInfoTitle">بۆچی بڕێک دەخرێتە سەر باڵانسەکەت؟<\/h2>/);
-  assert.match(info, /<div class="ri-text" id="summaryInfoText"><\/div>/);
-  assert.doesNotMatch(info.slice(info.indexOf('<div class="ts-info-body">')), /<svg|ri-ico/);
-  assert.match(app, /fillRoundingExplain\('summaryInfoAmount','summaryInfoText',n\);/);
+  assert.match(info, /<h2 id="summaryInfoTitle">بڕی گەڕێندراو<\/h2>/);
+  assert.match(info, /<div class="ts-info-body"><p class="ri-text" id="summaryInfoText"><\/p><\/div>/);
+  assert.doesNotMatch(info, /ri-hero|ri-amount|ts-info-grip|ts-info-ok|باشە، تێگەیشتم/);
+  assert.match(app, /fillRoundingExplain\('summaryInfoText',n\);/);
+  assert.match(app, /if\(title\) title\.textContent='بڕی گەڕێندراو';/);
   assert.match(app, /<button class="tf-info" type="button" onclick="openSummaryInfo\(\)" aria-haspopup="dialog">بۆچی؟<\/button>/);
-  assert.match(info, /<button class="ts-info-ok" type="button" onclick="closeSummaryInfo\(\)">باشە، تێگەیشتم<\/button>/);
-  assert.match(xf, /html body :is\(#roundingInfoSheet, #summaryInfoBackdrop\) \.ri-hero \{/);
+  assert.doesNotMatch(xf, /\.ri-hero|--ri-btn/);
 });
 
 test('receipt reading: the database sends each new receipt to the Edge Function, the result helps the admin and never blocks an order', () => {
@@ -430,4 +432,75 @@ test('receipt reader: JWT config, RPC privileges, owner paths and stale reads ar
     assert.match(sql, /where id = p_order_id for update/);
     assert.match(sql, /v_order\.receipt_url is distinct from r->>'receipt_url'/);
   }
+});
+
+test('exchange screen: no cards — the steps lie on the page, parted by lines with the swap\'s room', () => {
+  const css = read('assets/css/exchange-form.css');
+  // the steps have no card: no border, background, radius or shadow, no padding
+  assert.match(css, /#exchangeCard :is\(#grpSend, #grpRecv, #grpProof, #xcBreakdown\) \{\n  display: flex !important; flex-direction: column !important; margin: 0 !important; padding: 0 !important; box-sizing: border-box;\n  border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important;\n\}/);
+  assert.doesNotMatch(css, /--xf-shadow|border-radius: 20px/);
+  // after the swap, the figures and the receipt each start under a hairline in the swap line's colour
+  assert.match(css, /#exchangeCard :is\(#xcBreakdown, #grpProof\) \{\n  border-top: 1px solid var\(--xf-line\) !important; padding-top: var\(--xf-after-line\) !important;\n\}/);
+  // every chooser has its label above it, like every field; the words inside stay for screen readers
+  assert.match(read('index.html'), /<span class="field-label xc-pick-label" aria-hidden="true">ڕێگای ناردن<\/span>\n\s*<div class="select-wrap">\n\s*<select id="from"/);
+  assert.match(read('index.html'), /<span class="field-label xc-pick-label" aria-hidden="true">ڕێگای وەرگرتن<\/span>\n\s*<div class="select-wrap">\n\s*<select id="receiveVia"/);
+  assert.match(css, /#exchangeCard \.picker-trigger-label \{\n  position: absolute !important; width: 1px !important; height: 1px !important;/);
+  // split: «دوای کرێ» is not repeated; a closed route or a small amount in the warning colour
+  assert.match(css, /#xcBreakdown \.xc-sum-result\.has-payout > #bdExpectedRow \{ display: none !important; \}/);
+  assert.match(css, /\.xc-sum-result :is\(\.total-value, #payoutDisplay\)\.warn-text \{\n  direction: rtl; white-space: normal; text-align: start; color: var\(--xf-warn\) !important;/);
+  assert.doesNotMatch(css, /xc-split-tile:not\(\[hidden\]\)/);
+  // the last line is «کۆی گشتی نرخ», also when a closed route or a small amount says so in its place
+  assert.match(read('assets/js/app.js'), /const resultLabel=document\.getElementById\('bdExpectedLabel'\);\n  if\(resultLabel\)resultLabel\.textContent='کۆی گشتی نرخ';/);
+  // the swap itself is left as it was
+  assert.match(css, /#exchangeCard \.xc-swap \{ align-self: stretch !important; margin: 6px 0 !important; \}/);
+  // an error with nothing to say takes no room; wide screens: no line above the figures, which open their column
+  assert.match(css, /#exchangeCard \.field-error:empty \{ display: none !important; \}/);
+  assert.match(css, /@media \(min-width: 1024px\) \{[\s\S]*#exchangeCard #xcBreakdown \{ border-top: 0 !important; padding-top: 0 !important; \}/);
+});
+
+test('exchange screen: one hierarchy and one control height — the same colours', () => {
+  const css = read('assets/css/exchange-form.css');
+  // the scale: 8, 14, 16 and 26 (the swap's room)
+  assert.match(css, /--xf-s-attach: 8px; --xf-s-tie: 8px; --xf-s-group: 16px; --xf-s-title: 14px;\n  --xf-title-size: 15px;\n  --xf-gap: 26px; --xf-after-line: 25px;[^\n]*\n  --xf-title-h: 24px;/);
+  // the same colours; the fields have no line (blue only on focus)
+  assert.match(css, /--xf-field: #f2f5f9; --xf-field-line: transparent; --xf-field-focus: #ffffff;/);
+  assert.match(css, /--xf-field: #131c2e; --xf-field-line: transparent; --xf-field-focus: #131c2e;/);
+  assert.match(css, /\.xc-input-wrap \.input:is\(:focus, :focus-visible\) \{\n  outline: 0 !important; border-color: var\(--xf-accent\) !important;/);
+  // the hierarchy: section titles 15/700 ink, labels 12/500 grey, content 14/500
+  assert.match(css, /:is\(\.xc-step-head, \.xc-summary-head\) h3 \{\n  flex: 1 1 auto; margin: 0 !important; color: var\(--xf-ink\) !important; font-family: var\(--xf-font\) !important;\n  font-size: var\(--xf-title-size\) !important; font-weight: 700 !important;/);
+  assert.match(css, /#exchangeCard \.field-label \{[^}]*color: var\(--xf-label\) !important; font-family: var\(--xf-font\) !important; font-size: 12px !important; font-weight: 500 !important;/);
+  assert.match(css, /\.picker-trigger-value \{ color: var\(--xf-ink\) !important; font-size: 16px !important; font-weight: 600 !important;/);
+  // the minimum is words: no small box in the title row; the saved-recipients bookmark is gone (v80)
+  assert.match(css, /\.xc-step-head \.xc-badge:not\(#etaBadge\) \{[^}]*border: 0 !important; border-radius: 0 !important; background: none !important; color: var\(--xf-label\) !important;/);
+  assert.doesNotMatch(read('index.html'), /savedRecipientsShortcut|class="xc-saved-recipients-btn"/);
+  // choosers, receipt and button 48 high, radius 12; the figures you type sit in panels (v89):
+  // the number to pay into and the phones 64 / radius 14, the amount 80 / radius 16 (v90: 26/700)
+  assert.match(css, /#exchangeCard \.picker-trigger \{\n  width: 100% !important; min-height: 48px !important; height: 48px !important;[^}]*border-radius: 12px !important;/);
+  assert.match(css, /#exchangeCard \.wallet-row-line \{[^}]*min-height: 64px; height: 64px;[^}]*border-radius: 14px !important;/);
+  assert.match(css, /\.xc-amount-field \.xc-input-wrap #amt \{\n  height: 80px !important; min-height: 80px !important;[^}]*border-radius: 16px !important; font-size: 26px !important; font-weight: 700 !important;/);
+  assert.match(css, /\.xc-panel \.xc-input-wrap \.input \{\n  height: 64px !important; min-height: 64px !important;[^}]*border-radius: 14px !important;[^}]*font-size: 16px !important; font-weight: 600 !important;/);
+  assert.match(css, /\.xc-input-wrap \.input \{\n  width: 100% !important; height: 48px !important; min-height: 48px !important;[^}]*border-radius: 12px !important;[^}]*font-size: 16px !important;/);
+  // the receipt (v93): two options, camera and gallery, 64 / radius 14 like the panels
+  assert.match(css, /\.xc-receipt-opt \{\n  display: flex !important;[^}]*height: 64px; min-height: 64px;[^}]*border-radius: 14px !important;[^}]*font-size: 16px !important; font-weight: 600 !important;/);
+  assert.match(css, /#submitBtn \{\n  width: 100% !important; height: 48px !important; min-height: 48px !important;[^}]*border-radius: 12px !important;/);
+  // copy is a soft blue pill; quick amounts outlined pills from the start, the typed one blue
+  assert.match(css, /\.wallet-row-line \.copy-btn \{[^}]*border: 0 !important; border-radius: 999px !important; background: var\(--xf-accent-soft\) !important;\n  color: var\(--xf-accent\) !important;/);
+  assert.match(css, /\.quick-amount-btn \{\n  flex: 0 0 auto; width: auto !important; height: 32px !important; min-height: 32px !important;[^}]*border-radius: 999px !important;/);
+  assert.match(css, /\.quick-amount-btn:is\(\.is-selected, \[aria-pressed="true"\], :active\) \{/);
+  // the figures: 13 grey names, 14 ink values, 36 a line; a soft line, then the total 48 high, 18/700 blue, no band
+  assert.match(css, /#xcBreakdown \.xc-sum-row \{\n  display: flex !important;[^}]*min-height: 36px !important;/);
+  assert.match(css, /#xcBreakdown \.xc-sum-result \{\n[^}]*border-top: 1px solid var\(--xf-rule\) !important;\n  border-radius: 0 !important; background: none !important;/);
+  assert.match(css, /#xcBreakdown \.xc-sum-result > \.xc-sum-row \{ min-height: 48px !important; \}/);
+  assert.match(css, /#xcBreakdown \.xc-sum-result > \.xc-sum-row \.v \{\n  color: var\(--xf-accent\) !important; font-size: 18px !important; font-weight: 700 !important;/);
+  assert.doesNotMatch(css, /background: var\(--xf-accent-soft\) !important;\n\}/);
+  // the first title 26 under the top bar; title rows hold the chip and bookmark without being pushed
+  assert.match(css, /#exchangeCard \{\n  display: flex !important; flex-direction: column !important; gap: var\(--xf-gap\) !important;\n  margin: 0 !important; padding: 12px 0 0 !important;/);
+  // no size above 20 in the form, but the amount (26, v90)
+  const form = css.slice(css.indexOf('═════ */'), css.indexOf('/* ── send: the identity screen'));
+  assert.deepEqual(form.match(/font-size: (2[1-9]|[3-9]\d)px/g), ['font-size: 26px', 'font-size: 26px']);
+  assert.match(form, /#amt::placeholder \{ font-size: 26px;/);
+  // wide screens and the identity notice
+  assert.match(css, /row-gap: 0 !important;/);
+  assert.match(css, /#exchangeCard > \.xc-submit-wrap \{ margin-top: var\(--xf-gap\) !important; \}/);
+  assert.match(css, /#exchangeCard > \.xc-kyc-gate:not\(\[hidden\]\) \{ margin: 0 !important; padding: 24px 16px !important; border-radius: 12px !important; \}/);
 });

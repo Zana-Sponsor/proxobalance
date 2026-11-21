@@ -52,7 +52,7 @@ try{
     await page.addScriptTag({content:read('assets/js/exchange-balance.js')});
     await page.evaluate(()=>loadMyBalance());
     assert.equal(await page.locator('#balanceSendSection').isVisible(),true);
-    assert.equal(await page.locator('#savedRecipientsShortcut').isVisible(),true,'Saved recipients remain discoverable in the Send heading');
+    assert.equal(await page.locator('#savedRecipientsShortcut').count(),0,'The saved-recipients bookmark is no longer in the receive title (v80)');
     assert.equal(await page.locator('#balanceAvailable').textContent(),'40,000 د.ع');
     assert.equal(await page.locator('#balanceHeld').textContent(),'10,000 د.ع');
     assert.equal(await page.locator('#grpSend').isVisible(),false,'KYC still locks the exchange form');
@@ -136,7 +136,7 @@ try{
     await page.locator('[data-new-wallet="Extra14"]').scrollIntoViewIfNeeded();
     await page.waitForFunction(()=>fixtureBadgeViews.some(v=>v.wallet_id==='Extra14'));
     await page.evaluate(()=>closePicker());
-    await page.locator('#savedRecipientsShortcut').click();
+    await page.evaluate(()=>openSavedRecipients());
     await page.locator('#recipientLabel').fill('Fixture Recipient');
     await page.locator('#recipientPhone').fill('07700000001');
     await page.locator('#recipientSave').click();

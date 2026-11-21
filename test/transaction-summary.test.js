@@ -73,19 +73,17 @@ test('signed-out visitors log in first and then land on the same transaction', (
   assert.match(app, /sessionStorage\.removeItem\('px_pending_summary'\)/);
 });
 
-test('summary details keep amount, split and transaction sections in order', () => {
+test('summary details: «پوختەی نرخ» (the exchange\'s price summary), then the transaction\'s details', () => {
   const body = functionBody(app, 'txDetailHTML');
-  const rows = ['بڕی نێردراو', 'کرێی خزمەتگوزاری', 'کۆی گشتی دوای کرێ'];
   assert.doesNotMatch(body, /داشکاندن|discount/i);
-  const positions = rows.map(label => body.indexOf(`tfRow('${label}'`));
-  assert.ok(positions.every(position => position >= 0), 'all amount rows exist');
+  // one money section in place of «وردەکاری بڕ» and «دابەشکردنی بڕ»
+  assert.match(body, /tfHeroHTML\(o,hero\)\+tfPriceHTML\(o\)\+tfSection\('زانیاری مامەڵە',info\)/);
+  assert.doesNotMatch(app, /tfSection\('وردەکاری بڕ'|tfSection\('دابەشکردنی بڕ'|function tfSplitRows|کۆی گشتی دوای کرێ/);
+  const price = functionBody(app, 'tfPriceHTML');
+  const rows = ['بڕی پارەی ناردراو', 'کرێی خزمەتگوزاری', 'بڕی گەڕێندراو', 'کۆی گشتی نرخ'];
+  const positions = rows.map(label => price.indexOf(`'${label}`));
+  assert.ok(positions.every(position => position >= 0), 'all price rows exist');
   assert.deepEqual(positions, [...positions].sort((a, b) => a - b));
-  const sections = ["tfSection('وردەکاری بڕ'", "tfSection('دابەشکردنی بڕ'", "tfSection('زانیاری مامەڵە'"].map(s => body.indexOf(s));
-  assert.ok(sections.every(position => position >= 0), 'all sections exist');
-  assert.deepEqual(sections, [...sections].sort((a, b) => a - b));
-  const split = functionBody(app, 'tfSplitRows');
-  assert.match(split, /بڕی نێردراو بۆ وەرگر/);
-  assert.match(split, /بڕی گەڕاوە بۆ باڵانس/);
   assert.match(body, /renderOrderFeedback\(o\)/);
   assert.match(body, /downloadTransactionReceipt/);
 });

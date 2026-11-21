@@ -38,7 +38,9 @@ html body .kyc-ico.is-skel-tile { width: 40px; height: 40px; flex: 0 0 40px; bor
 
 /* a skeleton is not a button: no tap, no hover, neutral card colours */
 html body .is-skel { pointer-events: none !important; cursor: default !important; user-select: none !important; }
-html body .is-skel :is(.tx-item-route, .tx-item-when, .tx-item-amount, .tx-item-status, .tf-k, .tf-v, .rate-in, .rate-out, .rate-fee, .chg-vals, .bh-amt) { color: transparent !important; }
+html body .is-skel :is(.tx-item-route, .tx-item-when, .tx-item-amount, .tx-item-sub, .tx-item-status, .tx-item-note, .tf-k, .tf-v, .rate-in, .rate-out, .rate-fee, .chg-vals, .bh-amt) { color: transparent !important; }
+/* the transaction card's status pill while it loads: only its bar, no tint */
+html body .tx-item.is-skel .tx-item-status.is-skel-pill { padding: 0 !important; background: none !important; }
 html body #mainApp .tx-item.is-skel::before, html body #mainApp .tx-item.is-skel::after { display: none !important; }
 
 /* inline value placeholders (profile name, balance, wallet number …) */

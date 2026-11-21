@@ -119,15 +119,15 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
 <link rel="stylesheet" href="/assets/css/proxo-ui-v2.css?v=18">
 <link rel="stylesheet" href="/assets/css/proxo-dark.css?v=10">
 <link rel="stylesheet" href="/assets/css/proxo-design-system.css?v=5">
-<link rel="stylesheet" href="/assets/css/transaction-summary.css?v=9">
+<link rel="stylesheet" href="/assets/css/transaction-summary.css?v=13">
 <link rel="stylesheet" href="/assets/css/whatsapp-notify.css?v=1">
 <link rel="stylesheet" href="/assets/css/auth-balance.css?v=6">
 <link rel="stylesheet" href="/assets/css/auth-phone.css?v=2">
 <link rel="stylesheet" href="/assets/css/auth-otp.css?v=1">
 <link rel="stylesheet" href="/assets/css/app-dark.css?v=7">
 <link rel="stylesheet" href="/assets/css/app-icons.css?v=2">
-<link rel="stylesheet" href="/assets/css/support-case.css?v=3">
-<link rel="stylesheet" href="/assets/css/skeletons.css?v=3">
+<link rel="stylesheet" href="/assets/css/support-case.css?v=4">
+<link rel="stylesheet" href="/assets/css/skeletons.css?v=4">
 <link rel="stylesheet" href="/assets/css/dashboard.css?v=10">
 <link rel="stylesheet" href="/assets/css/account-delete.css?v=4">
 <link rel="stylesheet" href="/assets/css/account-settings.css?v=6">
@@ -137,7 +137,7 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
 <link rel="stylesheet" href="/assets/css/site-pause.css?v=5">
 <link rel="stylesheet" href="/assets/css/banners.css?v=2">
 <link rel="stylesheet" href="/assets/css/profile-head.css?v=1">
-<link rel="stylesheet" href="/assets/css/exchange-form.css?v=6">
+<link rel="stylesheet" href="/assets/css/exchange-form.css?v=13">
 <link rel="stylesheet" href="/assets/css/auth-progress.css?v=1">
 </head>
 
@@ -389,25 +389,17 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
   </div>
 </div>
 
-<div id="roundingInfoSheet" class="sheet-overlay" role="dialog" aria-modal="true" aria-labelledby="roundingInfoTitle" aria-hidden="true" onclick="if(event.target===this) closeRoundingInfo()">
+<div id="roundingInfoSheet" class="sheet-overlay" role="dialog" aria-modal="true" aria-labelledby="roundingInfoTitle" aria-describedby="roundingInfoText" aria-hidden="true" onclick="if(event.target===this) closeRoundingInfo()">
   <div class="sheet">
-    <div class="sheet-grabber"></div>
     <div class="sheet-head">
-      <h3 id="roundingInfoTitle">بۆچی بڕێک دەخرێتە سەر باڵانسەکەت؟</h3>
+      <h3 id="roundingInfoTitle">بڕی گەڕێندراو</h3>
       <button type="button" class="sheet-close" onclick="closeRoundingInfo()" aria-label="داخستن">
         <span class="icn icn-sm icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>
       </button>
     </div>
+    <!-- a title, the close, and one paragraph (app.js roundingExplainHTML), the same as the summary's sheet -->
     <div class="sheet-body">
-      <!-- the amount, then the same sentences as the summary's sheet (app.js roundingExplainHTML) -->
-      <div class="ri-hero">
-        <b class="ri-amount" id="roundingInfoAmount" dir="ltr" hidden></b>
-        <small>دەخرێتە سەر باڵانسی هەژمارەکەت</small>
-      </div>
-      <div class="ri-text" id="roundingInfoText"></div>
-    </div>
-    <div class="confirm-actions">
-      <button type="button" class="btn btn-primary btn-block" onclick="closeRoundingInfo()">باشە، تێگەیشتم</button>
+      <p class="ri-text" id="roundingInfoText"></p>
     </div>
   </div>
 </div>
@@ -457,7 +449,7 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
       <p>بەخێربێیت بۆ هەژمارەکەت</p>
       <div class="auth-proof" hidden aria-label="ئامارەکانی پلاتفۆرم">
         <div><b id="authProofCount">—</b><span>مامەڵەی سەرکەوتوو</span></div>
-        <div><b id="authProofVolume">—</b><span>قەبارەی ئاڵوگۆڕ (IQD)</span></div>
+        <div><b id="authProofVolume">—</b><span>قەبارەی ئاڵوگۆڕ (د.ع)</span></div>
         <div><b id="authProofUsers">—</b><span>بەکارهێنەر</span></div>
       </div>
     </div>
@@ -847,9 +839,9 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
         </div>
 
         <!-- Show the actual transfer destination next to the selected method. -->
-        <div class="wallet-row ux-payment-destination">
+        <div class="wallet-row ux-payment-destination xc-panel">
           <div class="ux-wallet-head">
-            <span class="wallet-label">ژمارەی هەژماری ناردن</span>
+            <span class="wallet-label">بینێرە بۆ ئەم ژمارەیە:</span>
           </div>
           <div class="wallet-row-line">
             <span class="wallet-value" id="myNum" dir="ltr"><span class="skb-w" style="width:116px" aria-hidden="true"><span class="skb" style="height:13px"></span>&#8203;</span></span>
@@ -860,17 +852,18 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
           </div>
         </div>
 
-        <div class="field">
-          <label class="field-label" for="amt">بڕی پارە</label>
+        <!-- the figures you type sit in panels that hold their own label (.xc-panel, v89); the amount is the big one -->
+        <div class="field xc-panel xc-amount-field">
+          <label class="field-label" for="amt">چەند دەنێری؟</label>
           <div class="xc-input-wrap">
             <input type="text" inputmode="decimal" id="amt" class="input" placeholder="0" dir="ltr"
-                   aria-describedby="amtHint" oninput="formatAmtField(this); calc(); clearFieldError('amt');">
-            <span class="xc-in-suffix" id="amtSuffix">IQD</span>
+                   aria-describedby="amtHint amtSuffix" oninput="formatAmtField(this); calc(); clearFieldError('amt');">
+            <span class="xc-in-unit" id="amtSuffix">د.ع</span>
           </div>
-          <div class="quick-amounts">
-            <button type="button" class="quick-amount-btn" onclick="setQuickAmount(10000)">10,000</button>
-            <button type="button" class="quick-amount-btn" onclick="setQuickAmount(50000)">50,000</button>
-            <button type="button" class="quick-amount-btn" onclick="setQuickAmount(100000)">100,000</button>
+          <div class="quick-amounts" role="group" aria-label="بڕە خێراکان">
+            <button type="button" class="quick-amount-btn" aria-pressed="false" onclick="setQuickAmount(10000)">10,000 <span class="qa-unit">د.ع</span></button>
+            <button type="button" class="quick-amount-btn" aria-pressed="false" onclick="setQuickAmount(50000)">50,000 <span class="qa-unit">د.ع</span></button>
+            <button type="button" class="quick-amount-btn" aria-pressed="false" onclick="setQuickAmount(100000)">100,000 <span class="qa-unit">د.ع</span></button>
           </div>
           <div class="xc-hint" id="amtHint">
             <span>بڕەکە لەگەڵ ئەو پارەیەی دەنێریت یەکسان بێت.</span>
@@ -879,7 +872,7 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
           <span class="field-error" id="amtError"></span>
         </div>
 
-        <div class="field xc-locked" id="senderNameField">
+        <div class="field xc-panel xc-locked" id="senderNameField">
           <label class="field-label" for="userSenderName">
             ناوی خاوەنی هەژماری نێرەر
             <span class="xc-locked-tag" id="senderNameHint">
@@ -893,10 +886,10 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
           <span class="field-error" id="userSenderNameError"></span>
         </div>
 
-        <div class="field" id="senderPhoneField" style="display:none">
+        <div class="field xc-panel" id="senderPhoneField" style="display:none">
           <label class="field-label" for="userSenderPhone">ژمارەی نێرەر</label>
           <div class="xc-input-wrap">
-            <input type="tel" id="userSenderPhone" class="input" placeholder="07xxxxxxxxx" dir="ltr" maxlength="11" inputmode="numeric"
+            <input type="tel" id="userSenderPhone" class="input xc-num" placeholder="07xxxxxxxxx" dir="ltr" maxlength="11" inputmode="numeric"
                    aria-describedby="senderPhoneHint"
                    oninput="this.value=this.value.replace(/[^0-9]/g,''); clearFieldError('userSenderPhone');">
           </div>
@@ -920,7 +913,6 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
         <div class="xc-step-head">
           <span class="xc-step-ico" aria-hidden="true"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M17 7 7 17"/><path d="M16 17H7V8"/></svg></span>
           <h3>زانیاری وەرگرتن</h3>
-          <button type="button" class="xc-saved-recipients-btn" id="savedRecipientsShortcut" onclick="openSavedRecipients()" aria-label="وەرگرە پاشەکەوتکراوەکان" title="وەرگرە پاشەکەوتکراوەکان"><span class="icn icon--solar icon--solar--bookmark-linear" aria-hidden="true"></span></button>
           <span class="xc-badge" id="etaBadge">5–30 خولەک</span>
         </div>
 
@@ -939,12 +931,14 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
           </button>
         </div>
 
-        <div class="field">
+        <div class="field xc-panel">
           <label class="field-label" for="userPhone" id="phoneLabel">ژمارەی وەرگرە</label>
           <div class="xc-input-wrap">
-            <input type="tel" id="userPhone" class="input" placeholder="07xxxxxxxxx" dir="ltr" maxlength="19"
+            <input type="tel" id="userPhone" class="input xc-num" placeholder="07xxxxxxxxx" dir="ltr" maxlength="19"
                    aria-describedby="phoneHint"
                    oninput="this.value = this.value.replace(/[^0-9]/g, ''); clearFieldError('userPhone'); validatePhoneLive();">
+            <!-- shown when the number is whole and right (validatePhoneLive adds .ok) -->
+            <span class="xc-in-ok" aria-hidden="true"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m7 12.5 3.2 3.2L17 9"/></svg></span>
           </div>
           <div class="xc-hint" id="phoneHint">
             <span id="phoneHintText">ژمارەکە بە <b>07</b> دەست پێدەکات و <b>11</b> ژمارەیە.</span>
@@ -959,14 +953,14 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
     <!-- ── SUMMARY ───────────────────────────────────────────── -->
     <div class="xc-summary" id="xcBreakdown" aria-live="polite">
       <div class="xc-summary-head">
-        <h3>وردەکاری مامەڵە</h3>
+        <h3>پوختەی نرخ</h3>
       </div>
 
-      <!-- what you pay and what is taken off -->
+      <!-- the lines: what is sent, the fee, and what goes back to the balance (under a whole thousand) -->
       <div class="xc-sum-group">
         <div class="xc-sum-row" id="bdSentRow">
-          <span class="lbl">دەینێریت</span>
-          <span class="v" id="bdSent" dir="ltr">—</span>
+          <span class="lbl">بڕی پارەی ناردراو</span>
+          <span class="v" id="bdSent" dir="rtl">—</span>
         </div>
         <div class="xc-sum-row" id="bdRateRow" hidden>
           <span class="lbl">نرخی ئاڵوگۆڕ</span>
@@ -974,35 +968,32 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
         </div>
         <div class="xc-sum-row" id="bdFeeRow">
           <span class="lbl">کرێی خزمەتگوزاری</span>
-          <span class="v" id="bdFee" dir="ltr">—</span>
+          <span class="v" id="bdFee" dir="rtl">—</span>
         </div>
         <div class="xc-sum-row" id="bdTierRow" hidden>
           <span class="lbl">ڕێژەی لێبڕین بۆ ئەم بڕە</span>
           <span class="v" id="bdTierPct" dir="ltr">—</span>
         </div>
         <div class="xc-tier-hint" id="bdTierHint" hidden></div>
+        <div class="xc-sum-row xc-sum-unsent" id="bdRoundingRow" hidden>
+          <span class="lbl">بڕی گەڕێندراو<button type="button" class="xc-info" id="payoutWhyBtn" onclick="openRoundingInfo()" aria-haspopup="dialog" aria-label="بۆچی بڕێک دەگەڕێندرێتەوە؟"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5"/><path d="M12 16.4v.1"/></svg></button></span>
+          <span class="v" id="roundingDisplay" dir="rtl">—</span>
+        </div>
       </div>
 
-      <!-- what comes out of it: after the fee, then where it goes — the recipient, and what is
-           under a whole thousand to the customer's balance — then one sentence and «بۆچی؟» -->
+      <!-- a soft line, then the total: what the recipient gets -->
       <div class="xc-sum-result" id="xcSumResult">
         <div class="xc-sum-row" id="bdExpectedRow">
-          <span class="lbl" id="bdExpectedLabel">دوای کرێ</span>
-          <span class="v"><span id="totalDisplay" class="total-value">0 IQD</span></span>
+          <span class="lbl" id="bdExpectedLabel">کۆی گشتی نرخ</span>
+          <span class="v"><span id="totalDisplay" class="total-value">0 د.ع</span></span>
         </div>
-        <div class="xc-sum-row total xc-split-tile is-recipient" id="bdPayoutRow" hidden>
-          <span class="lbl">وەرگر وەریدەگرێت</span>
-          <span class="v" id="payoutDisplay" dir="ltr">—</span>
-        </div>
-        <div class="xc-sum-row xc-sum-unsent xc-split-tile is-balance" id="bdRoundingRow" hidden>
-          <span class="lbl">دەخرێتە سەر باڵانسەکەت</span>
-          <span class="v" id="roundingDisplay" dir="ltr">—</span>
+        <div class="xc-sum-row total" id="bdPayoutRow" hidden>
+          <span class="lbl">کۆی گشتی نرخ</span>
+          <span class="v" id="payoutDisplay" dir="rtl">—</span>
         </div>
       </div>
-      <div class="xc-why-line">
-        <p class="payout-rounding-note" id="payoutRoundingNote" hidden></p>
-        <button type="button" class="xc-why" id="payoutWhyBtn" onclick="openRoundingInfo()" aria-haspopup="dialog">بۆچی؟</button>
-      </div>
+      <!-- only when something stops the order (an amount that cannot be split, nothing to send) -->
+      <p class="payout-rounding-note" id="payoutRoundingNote" hidden></p>
       <div id="feeDisplay" class="fee-note" hidden></div>
     </div>
 
@@ -1014,21 +1005,19 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
           <span class="xc-step-ico" aria-hidden="true"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M14 8H8"/><path d="M16 12H8"/><path d="M13 16H8"/></svg></span>
           <h3>پسووڵەی پارەدان</h3>
         </div>
-        <div class="file-field">
+        <!-- the receipt (v93): two ways to add it, the camera or the gallery; once chosen, the picture and a way to take it off -->
+        <div class="file-field xc-receipt">
           <input type="file" id="fileInput" class="file-input-native" accept="image/jpeg,image/png,image/webp" onchange="onFileSelected(this)">
-          <label class="file-picker" for="fileInput">
-            <span class="file-picker-icon" aria-hidden="true">
-              <svg class="receipt-plus-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-            </span>
-            <span class="file-picker-copy">
-              <b id="filePickerName">وێنەی پسووڵە هەڵبژێرە</b>
-              <small id="filePickerMeta">JPG، PNG یان WEBP</small>
-            </span>
-            <span class="file-picker-action" aria-hidden="true">
-              <span class="icn icon--solar icon--solar--upload-linear" aria-hidden="true"></span>
-            </span>
-          </label>
-          <div class="xc-hint"><span>بەبێ بەڵگەی ناردن داواکارییەکە ڕەت دەکرێتەوە.</span></div>
+          <input type="file" id="fileInputCamera" class="file-input-native" accept="image/*" capture="environment" onchange="onCameraSelected(this)">
+          <div class="xc-receipt-opts" id="receiptOpts">
+            <label class="xc-receipt-opt is-camera" for="fileInputCamera"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg><span>کامێرا</span></label>
+            <label class="xc-receipt-opt" for="fileInput"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg><span>گەلەری</span></label>
+          </div>
+          <div class="xc-receipt-picked" id="receiptPicked" hidden>
+            <img id="receiptThumb" alt="">
+            <b>پسووڵە زیاد کرا</b>
+            <button type="button" class="xc-receipt-clear" onclick="clearReceipt()" aria-label="لابردنی پسووڵە"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+          </div>
           <span class="field-error" id="fileInputError"></span>
         </div>
     </section>
@@ -1227,7 +1216,7 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
         <span class="bx-ico"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></span>
         <span class="bx-title">باڵانسی هەژمار</span>
       </div>
-      <div class="bx-amount" aria-live="polite"><strong id="bxAmount" dir="ltr"><span class="skb-w" style="width:140px" aria-hidden="true"><span class="skb" style="height:24px"></span>&#8203;</span></strong></div>
+      <div class="bx-amount" aria-live="polite"><strong id="bxAmount" dir="rtl"><span class="skb-w" style="width:140px" aria-hidden="true"><span class="skb" style="height:24px"></span>&#8203;</span></strong></div>
       <div class="bx-actions">
         <button type="button" class="bx-btn" id="bxRefreshBtn" onclick="pxBalanceRefresh()">
           <svg class="pxi bx-spin" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
@@ -1646,7 +1635,10 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
       <!-- the transaction this case is about: chosen from the account's own transactions, never typed;
            the hidden input carries its code to submitSupportCase() -->
       <div class="field sc-field">
-        <span class="field-label sc-label" id="supportOrderLabel">مامەڵەی پەیوەندیدار <small>ئارەزوومەندانە</small></span>
+        <div class="sc-order-head">
+          <span class="field-label sc-label" id="supportOrderLabel">مامەڵەی پەیوەندیدار <small>ئارەزوومەندانە</small></span>
+          <button type="button" class="sc-order-clear" id="supportOrderClear" onclick="setSupportOrder(null)" aria-label="لابردنی مامەڵەکە" hidden>لابردن</button>
+        </div>
         <input type="hidden" id="supportOrderCode" value="">
         <div class="sc-order-field" id="supportOrderField">
           <button type="button" class="sc-order-pick is-empty" id="supportOrderPick" onclick="openSupportOrderPicker()" aria-haspopup="dialog" aria-labelledby="supportOrderLabel supportOrderPick">
@@ -1654,7 +1646,6 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
             <span class="sc-order-pick-txt">مامەڵەیەک هەڵبژێرە</span>
             <span class="sc-order-pick-go" aria-hidden="true"><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></span>
           </button>
-          <button type="button" class="sc-order-clear" id="supportOrderClear" onclick="setSupportOrder(null)" aria-label="لابردنی مامەڵەکە" hidden><svg class="pxi" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
         </div>
       </div>
 
@@ -1728,22 +1719,14 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
 <!-- The transaction summary is an in-app screen now (#pageSummary). -->
 
 <div id="summaryInfoBackdrop" class="ts-info-backdrop" hidden onclick="if(event.target===this)closeSummaryInfo()">
-  <section class="ts-info-sheet" role="dialog" aria-modal="true" aria-labelledby="summaryInfoTitle" onclick="event.stopPropagation()">
-    <div class="ts-info-grip" aria-hidden="true"></div>
-    <div class="ts-info-head"><h2 id="summaryInfoTitle">بۆچی بڕێک دەخرێتە سەر باڵانسەکەت؟</h2>
+  <section class="ts-info-sheet" role="dialog" aria-modal="true" aria-labelledby="summaryInfoTitle" aria-describedby="summaryInfoText" onclick="event.stopPropagation()">
+    <div class="ts-info-head"><h2 id="summaryInfoTitle">بڕی گەڕێندراو</h2>
       <button class="ts-info-close" type="button" onclick="closeSummaryInfo()" aria-label="داخستن">
         <span class="icn icn-sm icon--solar icon--solar--close-circle-linear" aria-hidden="true"></span>
       </button>
     </div>
-    <!-- the same sheet as the exchange's (#roundingInfoSheet): the amount, then the same sentences -->
-    <div class="ts-info-body">
-      <div class="ri-hero">
-        <b class="ri-amount" id="summaryInfoAmount" dir="ltr" hidden></b>
-        <small>دەخرێتە سەر باڵانسی هەژمارەکەت</small>
-      </div>
-      <div class="ri-text" id="summaryInfoText"></div>
-    </div>
-    <button class="ts-info-ok" type="button" onclick="closeSummaryInfo()">باشە، تێگەیشتم</button>
+    <!-- the same sheet as the exchange's (#roundingInfoSheet): a title, the close, one paragraph -->
+    <div class="ts-info-body"><p class="ri-text" id="summaryInfoText"></p></div>
   </section>
 </div>
 
@@ -1754,8 +1737,8 @@ html body.app-entering :is(#mainApp,#authWrap){animation:pxAppIn .35s cubic-bezi
 <script src="/assets/js/transaction-summary-financials.js?v=2"></script>
 <script src="/assets/js/exchange-live.js?v=1"></script>
 <script src="/assets/js/proxo-toast.js?v=1"></script>
-<script src="/assets/js/skeletons.js?v=2"></script>
-<script src="/assets/js/app.js?v=122"></script>
+<script src="/assets/js/skeletons.js?v=3"></script>
+<script src="/assets/js/app.js?v=128"></script>
 <script src="/assets/js/activity-tracker.js?v=1"></script>
 <script src="/assets/js/site-pause.js?v=5"></script>
 <script src="/assets/js/banners.js?v=2"></script>

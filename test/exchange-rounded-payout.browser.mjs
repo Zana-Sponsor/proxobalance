@@ -24,7 +24,7 @@ const adminSource = read('assets/js/admin.js');
 const approval = adminSource.slice(adminSource.indexOf('let _apFile=null'), adminSource.indexOf('async function uploadPayoutReceiptDirect'));
 const appSource = read('assets/js/app.js');
 const quote = appSource.slice(appSource.indexOf('function calc(){'), appSource.indexOf('function closeOrderConfirm(){'));
-const cards = appSource.slice(appSource.indexOf('const TX_STATE = {'), appSource.indexOf('let _txSheetId=null'));
+const cards = appSource.slice(appSource.indexOf('function orderCodeOf('), appSource.indexOf('let _txSheetId=null'));
 assert.ok(approval.length > 5000 && quote.length > 5000 && cards.length > 2000);
 const browser = await chromium.launch({ headless: true,
   ...(process.env.PROXO_BROWSER_EXECUTABLE ? { executablePath: process.env.PROXO_BROWSER_EXECUTABLE } : {}),
@@ -223,7 +223,7 @@ try {
         return calc();
       }, { principal, fee });
       assert.equal(result.expected_iqd, expected); assert.equal(result.payout_iqd, payout); assert.equal(result.remainder_iqd, remainder);
-      assert.equal(await customer.page.locator('#payoutDisplay').textContent(), payout.toLocaleString('en-US') + ' IQD');
+      assert.equal(await customer.page.locator('#payoutDisplay').textContent(), payout.toLocaleString('en-US') + ' د.ع');
       assert.equal(await customer.page.locator('#bdRoundingRow').isVisible(), remainder > 0);
       await customer.page.evaluate(() => openOrderConfirm());
       assert.match(await customer.page.locator('#confirmSummary').textContent(), /بڕی ناردن بۆ وەرگر/);
@@ -241,8 +241,8 @@ try {
       return { legacy: orderCardHTML(common), settled: orderCardHTML({ ...common,
         payout_settlement_id: crypto.randomUUID(), payout_iqd: 10000, payout_rounding_iqd: 500 }) };
     });
-    assert.match(history.legacy, /10,500 IQD/); assert.doesNotMatch(history.legacy, /گەڕاوەتەوە بۆ باڵانست/);
-    assert.match(history.settled, /10,000 IQD/); assert.match(history.settled, /500 IQD/);
+    assert.match(history.legacy, /10,500 د\.ع/); assert.doesNotMatch(history.legacy, /گەڕاوەتەوە بۆ باڵانست/);
+    assert.match(history.settled, /10,000 د\.ع/); assert.match(history.settled, /500 د\.ع/);
     assert.deepEqual(await customer.page.evaluate(() => fixture.errors), []);
     assert.deepEqual(customer.errors, []);
     await customer.page.close();

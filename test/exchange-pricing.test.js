@@ -63,10 +63,10 @@ test('the customer calculation charges the full configured fee and shows no disc
   assert.ok(start >= 0 && end > start);
   vm.runInContext(app.slice(start, end), c);
   c.calc();
-  assert.equal(element('bdFee').textContent, '1,200 IQD');
-  assert.equal(element('totalDisplay').innerText, '58,800 IQD');
+  assert.equal(element('bdFee').textContent, '1,200 د.ع');
+  assert.equal(element('totalDisplay').innerText, '58,800 د.ع');
   c.RATES['Korek>FIB'] = { type: 'fee_percent', value: 20 };
   element('from').value = 'Korek'; c.calc();
-  assert.equal(element('bdFee').textContent, '12,000 IQD');
-  assert.equal(element('totalDisplay').innerText, '48,000 IQD');
+  assert.equal(element('bdFee').textContent, '12,000 د.ع');
+  assert.equal(element('totalDisplay').innerText, '48,000 د.ع');
 });

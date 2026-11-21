@@ -12,9 +12,8 @@ const adminApi=read('api-handlers/admin.js'), css=read('assets/css/support-case.
 test('the form has no code to type: a picker, the chosen code in a hidden field, and a sheet of transactions', () => {
   assert.doesNotMatch(html, /<input type="text"[^>]*id="supportOrderCode"/);
   assert.doesNotMatch(html, /PXXXXXXXXXXX/);
-  assert.match(html, /<span class="field-label sc-label" id="supportOrderLabel">مامەڵەی پەیوەندیدار <small>ئارەزوومەندانە<\/small><\/span>\n\s*<input type="hidden" id="supportOrderCode" value="">/);
+  assert.match(html, /<span class="field-label sc-label" id="supportOrderLabel">مامەڵەی پەیوەندیدار <small>ئارەزوومەندانە<\/small><\/span>\n\s*<button type="button" class="sc-order-clear" id="supportOrderClear" onclick="setSupportOrder\(null\)" aria-label="لابردنی مامەڵەکە" hidden>لابردن<\/button>\n\s*<\/div>\n\s*<input type="hidden" id="supportOrderCode" value="">/);
   assert.match(html, /<button type="button" class="sc-order-pick is-empty" id="supportOrderPick" onclick="openSupportOrderPicker\(\)" aria-haspopup="dialog"/);
-  assert.match(html, /<button type="button" class="sc-order-clear" id="supportOrderClear" onclick="setSupportOrder\(null\)" aria-label="لابردنی مامەڵەکە" hidden>/);
   const sheet=html.slice(html.indexOf('<div id="supportOrderSheet"'),html.indexOf('ORDER CONFIRM SHEET'));
   assert.match(sheet, /role="dialog" aria-modal="true" aria-labelledby="supportOrderSheetTitle"/);
   assert.match(sheet, /<h3 id="supportOrderSheetTitle">مامەڵەیەک هەڵبژێرە<\/h3>/);
@@ -42,13 +41,16 @@ function pickerContext(orders){
     curUser:{id:'u'},_orders:orders,_ordersLoaded:true,
     orderCodeOf:o=>o.order_code,tfToneOf:o=>o.status==='ڕەتکرا'?'bad':'ok',TF_ICONS:{ok:'<svg/>',bad:'<svg/>'},
     ProxoPayoutRounding:{forOrder:o=>({display_amount:o.total})},
-    txAmount:(v,m)=>Number(v).toLocaleString('en-US')+(m==='USDT'?' $':' IQD'),
+    txAmount:(v,m)=>Number(v).toLocaleString('en-US')+(m==='USDT'?' $':' د.ع'),amtDir:t=>/\$\s*$/.test(String(t).trim())?'ltr':'rtl',
     txRouteInner:(a,b)=>a+'→'+b,txWhenHTML:()=>'<bdi>21 - 11 - 2026</bdi>',txWhen:()=>'21 - 11 - 2026',
     txShortLabelOf:o=>o.status,txLabelOf:o=>o.status,methodLabel:k=>k,
     escHtml:v=>String(v).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch])),
     scIcon:()=>'<svg/>',setSupportCategory:v=>{ node('supportCategory').value=v; },
-    openSheet:s=>opened.push(s.id),closeSheet:s=>closed.push(s.id),loadHistory:async()=>{}
+    openSheet:s=>opened.push(s.id),closeSheet:s=>closed.push(s.id),loadHistory:async()=>{},
+    tfSplitOf:()=>({recipient:0,returned:0,pending:true})
   });
+  // the chooser shows the list's own card (txCardInner)
+  vm.runInContext(app.slice(app.indexOf('// One transaction in a list (v85).'),app.indexOf('// ── transaction details')),c);
   vm.runInContext(app.slice(app.indexOf('// ── «مامەڵەی پەیوەندیدار»'),app.indexOf('async function submitSupportCase(){')),c);
   return {c,node,opened,closed};
 }
@@ -63,12 +65,14 @@ test('the sheet lists the account\'s transactions with their code; one tap choos
   assert.deepEqual([...opened],['supportOrderSheet']);
   const body=node('supportOrderSheetBody').innerHTML;
   assert.equal((body.match(/class="tx-item sc-order-row/g)||[]).length,2);
-  assert.match(body, /<span class="tx-item-code" dir="ltr">PAAAAAAAAAA1<\/span>/);
+  // the list's card: logos, route and date, amounts, status and the code in its footer
+  assert.match(body, /<span class="tx-item-pair" aria-hidden="true">/);
+  assert.match(body, /<span class="tx-item-note is-code" dir="ltr">PAAAAAAAAAA1<\/span>/);
   assert.match(body, /role="option" aria-selected="false"/);
   c.pickSupportOrder('PBBBBBBBBBB2');
   assert.equal(node('supportOrderCode').value,'PBBBBBBBBBB2');
   assert.deepEqual([...closed],['supportOrderSheet']);
-  // the field shows the chosen transaction and its ×; a general case becomes an order case
+  // the field shows the chosen transaction and «لابردن»; a general case becomes an order case
   assert.match(node('supportOrderPick').className, /^sc-order-pick tx-item is-bad$/);
   assert.match(node('supportOrderPick').innerHTML, /PBBBBBBBBBB2/);
   assert.equal(node('supportOrderClear').hidden,false);
@@ -77,7 +81,7 @@ test('the sheet lists the account\'s transactions with their code; one tap choos
   // opened again, the chosen one is marked
   await c.openSupportOrderPicker();
   assert.match(node('supportOrderSheetBody').innerHTML, /is-picked" role="option" aria-selected="true"[^>]*data-code="PBBBBBBBBBB2"/);
-  // × empties it again
+  // «لابردن» empties it again
   c.setSupportOrder(null);
   assert.equal(node('supportOrderCode').value,'');
   assert.equal(node('supportOrderPick').className,'sc-order-pick is-empty');
@@ -144,10 +148,11 @@ test('the admin sees the case\'s transaction and opens it in the order window', 
   assert.doesNotMatch(admin, /<small>ئایدی مامەڵە<\/small>/);
 });
 
-test('styles: the empty field like the others, the chosen row with room for its ×, and the sheet\'s frame', () => {
+test('styles: the empty field like the others, «لابردن» on the label row, and the sheet\'s frame', () => {
   assert.match(css, /#pageSupport \.sc-order-pick\.is-empty \{\n  display: flex !important; align-items: center !important; gap: 10px !important; height: 48px !important;/);
-  assert.match(css, /#pageSupport \.sc-order-field\.has-order \.sc-order-pick \{ padding-inline-end: 56px !important; \}/);
-  assert.match(css, /#pageSupport \.sc-order-clear \{\n  position: absolute !important; top: 50% !important; inset-inline-end: 10px !important;/);
+  assert.match(css, /#pageSupport \.sc-order-head \{ display: flex !important; align-items: center !important; justify-content: space-between !important;/);
+  assert.match(css, /#pageSupport \.sc-order-clear \{\n  display: inline-flex !important;[^}]*color: var\(--sc-accent\) !important;/);
+  assert.doesNotMatch(css, /padding-inline-end: 56px/);
   assert.match(css, /html body #supportOrderSheet \.sc-order-row\.is-picked \{ border-color: var\(--so-accent\);/);
   assert.match(css, /html\[data-theme="dark"\] body #supportOrderSheet \{\n  --so-sheet: #131c2e;/);
   assert.match(read('assets/css/admin.css'), /\.support-admin-order\{display:block;width:100%;/);

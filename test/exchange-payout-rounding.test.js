@@ -92,15 +92,15 @@ function quoteContext(){
 }
 test('customer quote keeps fee math while separately displaying payout and automatic credit',()=>{
   const {c,element}=quoteContext();c.calc();
-  assert.equal(element('totalDisplay').innerText,'58,800 IQD');
-  assert.equal(element('payoutDisplay').textContent,'58,000 IQD');
-  assert.equal(element('roundingDisplay').textContent,'800 IQD');
-  assert.equal(element('bdFee').textContent,'1,200 IQD');
+  assert.equal(element('totalDisplay').innerText,'58,800 د.ع');
+  assert.equal(element('payoutDisplay').textContent,'58,000 د.ع');
+  assert.equal(element('roundingDisplay').textContent,'800 د.ع');
+  assert.equal(element('bdFee').textContent,'1,200 د.ع');
   assert.match(element('payoutRoundingNote').textContent,/دوای پەسەندکردن/);
   c.amount='11000';c.RATES['FastPay>FIB']={type:'fee_fixed',value:9400};c.calc();
-  assert.equal(element('payoutDisplay').textContent,'1,000 IQD');assert.equal(element('roundingDisplay').textContent,'600 IQD');
+  assert.equal(element('payoutDisplay').textContent,'1,000 د.ع');assert.equal(element('roundingDisplay').textContent,'600 د.ع');
   c.RATES['FastPay>FIB'].value=10400;c.calc();
-  assert.equal(element('payoutDisplay').textContent,'0 IQD');assert.equal(element('roundingDisplay').textContent,'600 IQD');
+  assert.equal(element('payoutDisplay').textContent,'0 د.ع');assert.equal(element('roundingDisplay').textContent,'600 د.ع');
   assert.match(element('payoutRoundingNote').textContent,/هیچ بڕێک بۆ وەرگر نانێردرێت/);
 });
 test('fractional IQD principal is rejected while the USDT source display preserves decimals',()=>{

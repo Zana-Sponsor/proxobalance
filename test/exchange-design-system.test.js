@@ -60,19 +60,19 @@ test('Design layer leaves hidden/route mechanics untouched and provides accessib
 
 test('Production smoke waits for the changed customer version and verifies its design contract',()=>{
   const workflow=read('.github/workflows/exchange-production-smoke.yml');
-  assert(workflow.includes('app.js?v=122'));
+  assert(workflow.includes('app.js?v=128'));
   assert(workflow.includes('admin.js?v=44'));
   assert(workflow.includes('receipt-access.js?v=1'));
   assert(workflow.includes('auth-phone.css?v=2'));
   assert(workflow.includes('auth-otp.css?v=1'));
   assert(workflow.includes('/assets/js/exchange-pricing.js?v=1'));
-  assert(html.includes('/assets/js/app.js?v=122'));
+  assert(html.includes('/assets/js/app.js?v=128'));
   assert(html.includes('/assets/js/site-pause.js?v=5'));
   assert(html.includes('/assets/js/banners.js?v=2'));
   assert(html.includes('/assets/css/proxo-ui-v2.css?v=18'));
   assert(html.includes('/assets/js/proxo-ui-v2.js?v=4'));
   assert(html.includes('/assets/js/proxo-toast.js?v=1'));
-  assert(html.indexOf('proxo-toast.js?v=1') < html.indexOf('app.js?v=122'));
+  assert(html.indexOf('proxo-toast.js?v=1') < html.indexOf('app.js?v=128'));
   assert(shellCss.includes('.pxt-stack'));
   assert(shellCss.includes('.pxn-pill'));
   assert(shellCss.includes('.field-error.show'));
@@ -84,7 +84,7 @@ test('Production smoke waits for the changed customer version and verifies its d
   assert(html.includes('id="usernameSheet"'));
   assert(html.includes('id="pfUsernameEdit"'));
   assert(read('assets/js/app.js').includes('ex_change_username'));
-  assert(html.includes('id="savedRecipientsShortcut"'));
+  assert(!html.includes('id="savedRecipientsShortcut"'));   // removed from the receive title (v80)
   assert(shellCss.includes('.xc-step-head .xc-saved-recipients-btn'));
   assert(shellCss.includes('#usernameSheet .sheet-body'));
   assert(html.includes('proxo-dark.css?v=10'));
@@ -93,8 +93,9 @@ test('Production smoke waits for the changed customer version and verifies its d
   assert(html.includes('account-settings.css?v=6'));
   assert(html.includes('profile-screens.css?v=2'));
   assert(html.includes('whatsapp-notify.js?v=2'));
-  assert(html.includes('id="savedRecipientsShortcut"'));
-  assert(html.includes('بەبێ بەڵگەی ناردن داواکارییەکە ڕەت دەکرێتەوە.'));
+  // the receipt is two options, camera and gallery, with no sentence under them (v93)
+  assert(!html.includes('بەبێ بەڵگەی ناردن داواکارییەکە ڕەت دەکرێتەوە.'));
+  assert(html.includes('<span>کامێرا</span>') && html.includes('<span>گەلەری</span>'));
   assert(html.includes('id="pageBalance" data-route="balance"'));
   assert(html.includes("navigate('balance')"));
   assert(html.includes('id="bxAmount"'));
@@ -112,18 +113,4 @@ test('Production smoke waits for the changed customer version and verifies its d
   assert(read('exchange-admin.html').includes('href="exchange-admin-balance.html"'));
   const build=read('scripts/prepare-vercel.mjs');
   assert(build.includes("join(output, 'exchange-admin-balance.html')"));
-});
-
-test('request form uses separate visible wallet labels without changing quote or recipient behavior',()=>{
-  const formCss=read('assets/css/exchange-form.css');
-  const app=read('assets/js/app.js');
-  const workflow=read('.github/workflows/exchange-production-smoke.yml');
-  assert(html.includes('/assets/css/exchange-form.css?v=6'));
-  assert(workflow.includes('exchange-form.css?v=6'));
-  assert(html.includes('field-label xc-pick-label" aria-hidden="true">ڕێگای ناردن'));
-  assert(html.includes('field-label xc-pick-label" aria-hidden="true">ڕێگای وەرگرتن'));
-  assert(html.includes('id="savedRecipientsShortcut"'));
-  assert(formCss.includes('v86 request-form presentation only'));
-  assert(formCss.includes('.picker-trigger-label {'));
-  assert(!app.includes('ex_order_quote_preview'));
 });

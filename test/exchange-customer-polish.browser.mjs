@@ -56,8 +56,8 @@ try{
     // No discount anywhere: the full configured fee is charged and no discount UI exists.
     for(const id of ['#welcomeReward','#rewardBanner','#bdDiscountRow','#bdDiscount'])
       assert.equal(await page.locator(id).count(),0,id);
-    assert.equal(await page.locator('#bdFee').textContent(),'1,200 IQD');
-    assert.equal(await page.locator('#totalDisplay').innerText(),'58,800 IQD');
+    assert.equal(await page.locator('#bdFee').textContent(),'1,200 د.ع');
+    assert.equal(await page.locator('#totalDisplay').innerText(),'58,800 د.ع');
     assert.equal(await page.locator('#feeDisplay').isVisible(),false,'No duplicated fee row');
     if(process.env.PROXO_SCREENSHOT_DIR && width===390)
       await page.locator('#xcBreakdown').screenshot({path:process.env.PROXO_SCREENSHOT_DIR+'/exchange-price-mobile.png'});
@@ -68,7 +68,7 @@ try{
     assert.equal(await page.locator('#txSummary').count(),0);
     assert.equal(await page.locator('#txList .tx-money').count(),0);
     assert.equal(await page.locator('#txList .tx-card').count(),2);
-    assert.equal(await page.locator('#txList .tx-card').nth(1).locator('.tx-amount').textContent(),'40,000 IQD');
+    assert.equal(await page.locator('#txList .tx-card').nth(1).locator('.tx-amount').textContent(),'40,000 د.ع');
     await page.locator('#txList .tx-card').first().focus();await page.keyboard.press('Enter');
     assert.equal(await page.evaluate(()=>openedOrder),_uuid());
     if(process.env.PROXO_SCREENSHOT_DIR && width===390)
