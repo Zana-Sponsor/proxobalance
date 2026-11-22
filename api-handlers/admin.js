@@ -279,7 +279,7 @@ async function audit(adminId, action, targetUserId, detail) {
 // Fresh database profile rights, never browser/JWT user_metadata claims.
 export function assertStaffAction(profile,action){
   // account mutations are super-admin only (ordinary admins get read-only account controls)
-  if(['set_ban','account_set_password','account_contact_update'].includes(action) && profile.role!=='super_admin')throw {status:403,code:'super_admin_required',message:'SUPER_ADMIN_REQUIRED'};
+  if(['set_ban','account_set_password','account_contact_update','order_update'].includes(action) && profile.role!=='super_admin')throw {status:403,code:'super_admin_required',message:'SUPER_ADMIN_REQUIRED'};
   if(['error_log_summary','list_error_logs','resolve_error_log','resolve_all_error_logs','activity_overview','activity_user','whatsapp_subscribers','whatsapp_set','site_controls','site_control_set','site_schedule_save','site_schedule_delete','admin_alert_phones','admin_alert_phone_save','admin_alert_phone_delete'].includes(action)&&profile.role!=='super_admin')throw {status:403,code:'super_admin_required',message:'SUPER_ADMIN_REQUIRED'};
   if(profile.role==='super_admin' || profile.staff_permissions==null)return;
   const permissions={
@@ -319,7 +319,7 @@ function manualBalanceError(error){
 }
 
 const ORDER_ADMIN_STATUSES=['چاوەڕوانە','لەژێر پێداچوونەوەدایە','پێویستی بە ڕاستکردنەوەیە','ڕاستکراوەتەوە','پەسەندکرا','ڕەتکرا','هەڵوەشێنرایەوە'];
-const ORDER_EDIT_FIELDS=['from_method','to_method','amount','total','phone','sender_name','sender_phone','receipt_url','receipt_hash',
+const ORDER_EDIT_FIELDS=['amount','phone','sender_name','sender_phone','receipt_url','receipt_hash',
   'payout_receipt_url','transaction_reference','extra_info','admin_note','order_code','created_at','decided_at'];
 const ORDER_FIELD_LABELS={from_method:'ڕێگای ناردن',to_method:'ڕێگای وەرگرتن',amount:'بڕ',total:'کۆی وەرگیراو',phone:'ژمارەی وەرگر',
   sender_name:'ناوی نێرەر',sender_phone:'ژمارەی نێرەر',receipt_url:'وێنەی وەسڵ',receipt_hash:'هاشی وەسڵ',payout_receipt_url:'وەسڵی پارەدان',
@@ -351,6 +351,14 @@ const ORDER_ADMIN_ERRORS=[
   ['FIELD_TOO_LONG',400,'field_too_long','تێکستەکە زۆر درێژە'],
   ['FIELD_INVALID',400,'invalid_field','یەکێک لە بەهاکان دروست نییە'],
   ['FIELD_NOT_ALLOWED',400,'field_not_allowed','ئەم خانەیە ناگۆڕدرێت'],
+  ['SUPER_ADMIN_REQUIRED',403,'super_admin_required','تەنها سوپەر ئادمین دەتوانێت مامەڵە دەستکاری بکات'],
+  ['ORDER_CORRECTION_STALE',409,'order_correction_stale','مامەڵەکە گۆڕاوە؛ نوێی بکەرەوە و دووبارە هەوڵ بدەرەوە'],
+  ['ORDER_CORRECTION_REQUEST_KEY_CONFLICT',409,'order_correction_request_conflict','ئەم داواکارییە پێشتر بە زانیارییەکی جیاواز تۆمار کراوە؛ لاپەڕەکە نوێ بکەرەوە'],
+  ['ORDER_CORRECTION_PROTECTED_STATE',409,'order_correction_protected_state','مامەڵەی تەواوبوو، ڕیفاوندکراو یان shortfallـی تۆمارکراو دەستکاریی دارایی ناکرێت'],
+  ['EXTERNAL_ORDER_FINANCIAL_EDIT_DENIED',409,'external_order_financial_edit_denied','بڕی مامەڵەی سەرچاوەی دەرەکی بە شێوەی خۆکار ناگۆڕدرێت'],
+  ['INSUFFICIENT_BALANCE',409,'insufficient_balance','باڵانسی بەردەست بۆ ئەم کەمکردنەوەیە بەشی ناکات؛ هیچ گۆڕانکارییەک تۆمار نەکرا'],
+  ['BALANCE_ORDER_CORRECTION_SCOPE_VIOLATION',409,'balance_order_correction_scope_violation','گۆڕینی دارایی لە سنووری ڕێگەپێدراو دەرچوو'],
+  ['INVALID_AMOUNT',400,'invalid_amount','بڕ دەبێت ژمارەی تەواو و لانیکەم ١٠,٠٠٠ دینار بێت'],
   ['ALREADY_HIDDEN',409,'already_hidden','ئەم مامەڵەیە پێشتر لای بەکارھێنەر شاردراوەتەوە'],
   ['NOT_HIDDEN',409,'not_hidden','ئەم مامەڵەیە لای بەکارھێنەر شاردراوە نییە'],
   ['MODE_INVALID',400,'invalid_mode','جۆری کردارەکە دروست نییە'],
@@ -525,7 +533,11 @@ const actions = {
     if(error)throw orderAdminError(error);
     return data;
   },
-  async order_update({order_id,fields,reason},ctx){
+  async order_update({order_id,fields,reason,request_key,expected_updated_at},ctx){
+    if(ctx.profile?.role!=='super_admin'||ctx.profile?.is_banned||!ctx.profile?.is_admin)
+      throw {status:403,code:'super_admin_required',message:'SUPER_ADMIN_REQUIRED'};
+    if(!isUuid(request_key))throw {status:400,code:'bad_input',message:'request_key must be a UUID'};
+    if(!validApprovalTimestamp(expected_updated_at))throw {status:400,code:'bad_input',message:'expected_updated_at must be an ISO timestamp'};
     if(typeof order_id!=='string'||!UUID.test(order_id))
       throw {status:400,code:'bad_input',message:'مامەڵەکە دروست نییە'};
     if(!fields||typeof fields!=='object'||Array.isArray(fields))
@@ -535,11 +547,14 @@ const actions = {
       if(!ORDER_EDIT_FIELDS.includes(k))throw {status:400,code:'field_not_allowed',message:'ئەم خانەیە ناگۆڕدرێت'};
       if(v!==null&&!['string','number'].includes(typeof v))throw {status:400,code:'invalid_field',message:'بەهای خانەیەک دروست نییە'};
       if(typeof v==='number'&&!Number.isFinite(v))throw {status:400,code:'invalid_field',message:'بەهای خانەیەک دروست نییە'};
+      if(k==='amount'&&(!Number.isSafeInteger(Number(v))||Number(v)<10000))throw {status:400,code:'invalid_amount',message:'بڕ دەبێت ژمارەی تەواو و لانیکەم ١٠,٠٠٠ دینار بێت'};
       clean[k]=v;
     }
-    const text=typeof reason==='string'?reason.trim().slice(0,500):'';
-    const {data,error}=await db.rpc('ex_admin_order_update',{
-      p_order:order_id.toLowerCase(),p_fields:clean,p_reason:text||null,p_admin_id:ctx.user.id
+    const text=typeof reason==='string'?reason.trim():'';
+    if(text.length<5||text.length>500)throw {status:400,code:'invalid_reason',message:'هۆکاری دەستکاری دەبێت لە ٥ بۆ ٥٠٠ پیت بێت'};
+    const {data,error}=await db.rpc('ex_admin_order_update_atomic',{
+      p_order_id:order_id.toLowerCase(),p_fields:clean,p_reason:text,p_admin_id:ctx.user.id,
+      p_request_key:request_key.toLowerCase(),p_expected_updated_at:expected_updated_at
     });
     if(error)throw orderAdminError(error);
     return data;

@@ -1,0 +1,13 @@
+# TODO — سادەکردنی پانێڵ و order edit
+
+- [x] **پانێڵی باڵانس بە screenی تایبەت دابەش بکە.** داواکاری: «بەشی باڵانس و شت ھی پانێڵ زۆر زۆر ئاڵۆزە جیای بکەوە بەشەکان بیکە سکرینی تایبەت تا ئاسانتر بێت». Screenەکان: پوختەی باڵانس و هەژمارەکان؛ ڕیفاوند و shortfall؛ payout؛ دەستکاریی دەستی و log؛ ئاگاداریی مەترسی. هەمان function/API/permission ـەکان و DOM ID ـە پێویستەکان بمێننەوە. تاقیکردنەوەی screen و routing سەرکەوتوو بوو.
+
+- [x] **دەستکاریی order بە roleی super_admin وەکو پێویست چالاک بکە.** داواکاری: «دەستکاریکردنی داواکاریەکان لەلایەن سوپەر ئادمینەوە بکرێت جاری وایە کێشەیەک ھەیە تا ئادمین بتوانێت دەستکاری بکات». UI، API و database RPC هەرسێکیان roleی ڕاستەقینەی `super_admin` بپشکنن؛ مۆڵەتی گشتیی legacy یان هەڵبژاردەی frontend بەس نییە. UI/API/RPC invariant testەکان سەرکەوتوون؛ migration هێشتا draft ـە.
+
+- [x] **گۆڕینی amountی orderی AccountBalance بە order، باڵانس و مێژووی یەکگرتوو جێبەجێ بکە.** داواکاری: «ڕاستەوخۆ بڕی گەڕێندراو و باڵانسی ھەژماریش لەگەڵ دەستکاری کردنی داواکاریەکە بگۆڕدرێت وە لەمێژووی مامەڵەش». ڕێسای پەسەندکراو: `balance_delta = old_amount - new_amount`; positive = credit، negative = debit بە مەرجی بەشی کردنی باڵانس. نموونە: 100,000 → 95,000، +5,000 IQD. Order، balance cache، balanced immutable journal/entries، correction history و audit لە یەک database transactionدا. تاقیکردنەوەی دڵتا/rollback/idempotency/stale-state لە migration invariantەکان هەیە؛ migration جێبەجێ نەکراوە.
+
+- [x] **دۆخە دارایییە ناپارێزراوەکان ڕەت بکەوە و جبرانی نوێ بەکاربهێنە.** financial edit بۆ sourceی دەرەکی، payout/settlementی تەواوبوو، refundی تەواوبوو یان shortfallی تۆمارکراو ڕەت بکرێتەوە. هەر گۆڕانکارییەک reason، idempotency key و expected revision/`updated_at`ی هەبێت. Journal/refund historyی کۆن overwrite یان delete نەکرێت؛ staleness، duplicate retry و concurrent edits لە RPCدا پارێزراو بن. پشکنینی سەرچاوەی production ڕوون دەکات `ex_balance_post` signing/nonnegative safeguards و append-only history بەکاردێت؛ migration local ـە.
+
+- [x] **تاقیکردنەوە و auditی read-onlyی local ئەنجام بدە.** test بۆ role gate، fields، orderی AccountBalance و deltaی مثبت/نێگەتیڤ، insufficient balance/rollback، stale update، idempotency، protected financial states و screen routing. Node tests و گەڕانی static migration پێش production؛ هیچ testێک production write ناکات. 16/16 focused tests، JS syntax، HTML parse/unique IDs و `git diff --check` سەرکەوتوون. `npm test` بە 397 pass و 86 fail دەرچوو؛ failureەکان لە تستە گشتییەکانن و production یان ئەم migrationە ناتاقی دەکەن.
+
+- [ ] **Migrationی production و deploy لە push جیاواز بهێڵەوە.** push بۆ GitHub بە داواکاریی ئێستای بەکارهێنەر ڕێگەپێدراوە؛ بەڵام migration تەنها لە repository draft دەمێنێتەوە و جێبەجێکردنی production یان deploy پێویستی بە داواکاری/ڕێگەپێدانی جیاوازە.

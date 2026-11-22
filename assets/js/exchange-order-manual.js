@@ -2,7 +2,7 @@
    change status (any of the five), edit every editable field, hide an order for the customer
    or delete it permanently. Nothing here notifies the customer unless the admin ticks the
    "send notification" box on a status change. Every rule is enforced again by the database
-   (ex_admin_order_set_status / ex_admin_order_update / ex_admin_order_delete). */
+   (ex_admin_order_set_status / ex_admin_order_update_atomic / ex_admin_order_delete). */
 (function(){
   'use strict';
   var STATUSES=['چاوەڕوانە','لەژێر پێداچوونەوەدایە','پێویستی بە ڕاستکردنەوەیە','ڕاستکراوەتەوە','پەسەندکرا','ڕەتکرا','هەڵوەشێنرایەوە'];
@@ -25,7 +25,11 @@
     {k:'decided_at',l:'کاتی بڕیار',t:'date'}
   ];
   var ACTION_LABEL={status:'گۆڕینی دۆخ',edit:'دەستکاری',hide:'شاردنەوە لای بەکارھێنەر',unhide:'گێڕانەوە بۆ بەکارھێنەر','delete':'سڕینەوەی هەمیشەیی'};
-  var busy=false;
+  var busy=false,editRetry=null;
+  function isSuper(){return typeof isSuperAdmin==='function'&&isSuperAdmin();}
+  function amountEligible(o){return !!(o&&o.from_method==='AccountBalance'&&o.status!=='پەسەندکرا'&&!o.payout_settlement_id&&!o.balance_refunded_at&&!o.balance_refund_case_id&&Number(o.shortfall_refunded_iqd||0)<=0);}
+  function amountDelta(o,n){return Number(o.amount||0)-Number(n||0);}
+  function money(n){return Number(n||0).toLocaleString('en-US');}
 
   function $(id){return document.getElementById(id);}
   function E(s){return typeof esc==='function'?esc(s):String(s==null?'':s);}
@@ -37,7 +41,8 @@
     if(o.payout_settlement_id){open=['extra_info','admin_note','created_at'];why='پارەدانی ئەم مامەڵەیە ئەنجامدراوە؛ تەنها تێبینی، زانیاری زیادە و کاتی دروستکردن دەگۆڕدرێن.';}
     else if(o.balance_refunded_at){open=['extra_info','admin_note','created_at','decided_at','sender_name','sender_phone','transaction_reference','payout_receipt_url','order_code'];why='ئەم مامەڵەیە گەڕاندنەوەی تێدا کراوە؛ زانیارییە دارایییەکان ناگۆڕدرێن.';}
     else if(Number(o.shortfall_refunded_iqd||0)>0){open=['extra_info','admin_note','created_at','decided_at','sender_name','sender_phone','payout_receipt_url'];why='قەرەبووی کەمی نێردراوی تێدا کراوە؛ زانیارییە دارایییەکان ناگۆڕدرێن.';}
-    else if(o.from_method==='AccountBalance'){open=all.filter(function(k){return ['from_method','to_method','amount','total'].indexOf(k)<0;});why='ئەم مامەڵەیە لە باڵانسی هەژمار نێردراوە؛ بڕ و ڕێگاکان ناگۆڕدرێن.';}
+    else if(o.from_method==='AccountBalance'){open=all.filter(function(k){return ['from_method','to_method','total'].indexOf(k)<0&&(k!=='amount'||(isSuper()&&amountEligible(o)));});why='ئەم مامەڵەیە لە باڵانسی هەژمار نێردراوە؛ تەنها سوپەر ئادمین دەتوانێت بڕی نێردراو بگۆڕێت.';}
+    else {open=all.filter(function(k){return ['amount','total','from_method','to_method'].indexOf(k)<0;});why='بۆ سەرچاوەی دەرەکی، خانە دارایییەکان ناگۆڕدرێن.';}
     return {locked:all.filter(function(k){return open.indexOf(k)<0;}),why:why};
   }
   function statusLocked(o){
@@ -65,7 +70,7 @@
       (isHidden(o)?note('warn','<i class="fas fa-eye-slash"></i> ئەم مامەڵەیە لای بەکارھێنەر شاردراوەتەوە ('+E(typeof fmtDateTime==='function'?fmtDateTime(o.user_deleted_at):o.user_deleted_at)+').'):'')+
       '<div class="om-btns">'+
       '<button type="button" class="act-btn cy" onclick="ProxoOrderManual.open(\'status\',\''+id+'\')"><i class="fas fa-shuffle"></i> گۆڕینی دۆخ</button>'+
-      '<button type="button" class="act-btn yw" onclick="ProxoOrderManual.open(\'edit\',\''+id+'\')"><i class="fas fa-pen"></i> دەستکاری</button>'+
+      (isSuper()?'<button type="button" class="act-btn yw" onclick="ProxoOrderManual.open(\'edit\',\''+id+'\')"><i class="fas fa-pen"></i> دەستکاری</button>':'')+
       (isHidden(o)?'<button type="button" class="act-btn dark" onclick="ProxoOrderManual.restore(\''+id+'\')"><i class="fas fa-eye"></i> پیشاندانەوە بۆ بەکارھێنەر</button>':'')+
       '<button type="button" class="act-btn rd" onclick="ProxoOrderManual.open(\'delete\',\''+id+'\')"><i class="fas fa-trash"></i> سڕینەوە</button>'+
       '</div><p class="om-hint">هیچ ئاگادارکردنەوەیەک بۆ بەکارھێنەر نانێردرێت مەگەر خۆت لە گۆڕینی دۆخدا هەڵیبژێریت.</p>'+
@@ -73,13 +78,14 @@
   }
 
   function open(mode,id){
+    if(mode==='edit'&&!isSuper()){showToast('تەنها سوپەر ئادمین دەتوانێت مامەڵە دەستکاری بکات','rd');return;}
     var o=find(id);if(!o){showToast('مامەڵەکە نەدۆزرایەوە','rd');return;}
     ensureModal();
     var body=mode==='status'?statusForm(o):mode==='edit'?editForm(o):deleteForm(o);
     $('omTitle').textContent=({status:'گۆڕینی دۆخی ',edit:'دەستکاری ',delete:'سڕینەوەی '})[mode]+fmtCode(orderCodeOf(o));
     $('omBody').innerHTML=body;
     openMo('moOrderManual');
-    if(mode==='delete')bindDeleteForm();
+    if(mode==='delete')bindDeleteForm();if(mode==='edit')bindEditPreview(id);
   }
 
   // ── status ──
@@ -129,18 +135,23 @@
       else input='<input class="minp"'+(f.ltr?' dir="ltr"':'')+' id="'+id+'"'+dis+' value="'+E(v==null?'':v)+'">';
       return '<div class="om-field'+(f.t==='area'?' full':'')+'"><label class="modal-lbl">'+E(f.l)+'</label>'+input+'</div>';
     }).join('');
+    if(!isSuper())return note('warn','تەنها سوپەر ئادمین دەتوانێت مامەڵە دەستکاری بکات.');
+    var preview=amountEligible(o)?'<div id="omAmountPreview" class="om-note warn" role="status"></div>':'';
     return (L.why?note('warn','<i class="fas fa-lock"></i> '+E(L.why)):'')+
       note('info','<i class="fas fa-circle-info"></i> بڕی لێبڕین خۆکارانە دەژمێردرێت (بڕی نێردراو − بڕی وەرگیراو). تەنها ئەو خانانەی گۆڕاون دەنێردرێن. هیچ ئاگادارکردنەوەیەک نانێردرێت.')+
-      '<div class="om-grid">'+rows+'</div>'+
+      '<div class="om-grid">'+rows+'</div>'+preview+
       '<label class="modal-lbl">هۆکاری دەستکاری (بۆ تۆماری ناوخۆ)</label><textarea class="minp mta" id="omReason" maxlength="500" placeholder="بۆ نموونە: ڕاستکردنەوەی بڕ بەپێی وەسڵ"></textarea>'+
       '<div id="omErr" class="balance-credit-error" role="alert"></div>'+
       '<button type="button" class="modal-btn dark" id="omSubmit" onclick="ProxoOrderManual.saveEdit(\''+E(o.id)+'\')"><i class="fas fa-floppy-disk"></i> پاشەکەوتکردنی گۆڕانکارییەکان</button>';
   }
+  function previewAmount(id){var o=find(id),box=$('omAmountPreview'),el=$('omf_amount');if(!o||!box||!el)return;var n=Number(String(el.value||'').replace(/,/g,''));if(!isFinite(n))return;var d=amountDelta(o,n);box.textContent='پێشبینینی جبرانی باڵانس — کۆن: '+money(o.amount)+' IQD؛ نوێ: '+money(n)+' IQD؛ '+(d>=0?'کرێدیت':'دەبێت')+': '+money(Math.abs(d))+' IQD';}
+  function bindEditPreview(id){var el=$('omf_amount');if(el){el.addEventListener('input',function(){previewAmount(id);});previewAmount(id);}}
   function saveEdit(id){
-    if(busy)return;var o=find(id);if(!o)return;
+    if(busy)return;if(!isSuper()){showErr('تەنها سوپەر ئادمین دەتوانێت مامەڵە دەستکاری بکات');return;}var o=find(id);if(!o)return;
     var lockSet=locks(o).locked,fields={};
     FIELDS.forEach(function(f){
       if(lockSet.indexOf(f.k)>=0)return;
+      if(['amount','total','from_method','to_method'].indexOf(f.k)>=0&&!(f.k==='amount'&&amountEligible(o)))return;
       var el=$('omf_'+f.k);if(!el)return;
       var raw=el.value.trim(),old=o[f.k];
       if(f.t==='date'){
@@ -152,16 +163,24 @@
         if(raw===''){fields[f.k]=null;return;}
         var n=Number(raw.replace(/,/g,''));
         if(!isFinite(n)){showErr(f.l+': ژمارەکە دروست نییە');fields.__bad=1;return;}
+        if(f.k==='amount'&&(!Number.isSafeInteger(n)||n<10000)){showErr('بڕ دەبێت ژمارەی تەواو و لانیکەم ١٠,٠٠٠ دینار بێت');fields.__bad=1;return;}
         if(n!==Number(old))fields[f.k]=n;
       }else{
         if(raw!==String(old==null?'':old))fields[f.k]=raw===''?null:raw;
       }
     });
     if(fields.__bad)return;
+    Object.keys(fields).forEach(function(k){if(k==='__bad'||['amount','total','from_method','to_method'].indexOf(k)>=0&&!(k==='amount'&&amountEligible(o)))delete fields[k];});
     if(!Object.keys(fields).length){showErr('هیچ گۆڕانکارییەک نەکراوە');return;}
-    run('order_update',{order_id:id,fields:fields,reason:$('omReason').value.trim()},function(res){
-      if(res&&res.order)merge(res.order);
-      showToast('مامەڵەکە دەستکاری کرا (بێ ئاگادارکردنەوە)','gr');
+    var amountChanged=Object.prototype.hasOwnProperty.call(fields,'amount'),reason=$('omReason').value.trim();
+    if(reason.length<5){showErr('هۆکاری دەستکاری دەبێت لانیکەم ٥ پیت بێت');return;}
+    var payloadBase={order_id:id,fields:fields,reason:reason,expected_updated_at:o.updated_at};
+    if(amountChanged&&(!amountEligible(o)||Object.keys(fields).some(function(k){return k!=='amount'&&['amount','total','from_method','to_method'].indexOf(k)>=0;}))){showErr('گۆڕینی بڕ بۆ ئەم مامەڵەیە ڕێگەپێدراو نییە');return;}
+    var signature=JSON.stringify(payloadBase);if(!editRetry||editRetry.signature!==signature)editRetry={signature:signature,key:crypto.randomUUID()};
+    payloadBase.request_key=editRetry.key;
+    run('order_update',payloadBase,function(res){
+      editRetry=null;if(res&&res.order)merge(res.order);
+      var msg='مامەڵەکە دەستکاری کرا';if(amountChanged&&res&&typeof res.balance_delta==='number'){var d=res.balance_delta;msg+='؛ '+(d>0?'کرێدیت کرا':d<0?'دێبیت کرا':'هیچ گۆڕانکارییەک لە باڵانسدا نەکرا')+(d?' '+money(Math.abs(d))+' IQD':'');if(typeof res.balance_after_iqd==='number')msg+='؛ باڵانسی دوای گۆڕانکاری '+money(res.balance_after_iqd)+' IQD';}showToast(msg,'gr');
     },id);
   }
 
@@ -256,5 +275,5 @@
     }catch(err){var b2=$('omHistory');if(b2)b2.innerHTML='';}
   }
 
-  window.ProxoOrderManual={buttonsHTML:buttonsHTML,open:open,saveStatus:saveStatus,saveEdit:saveEdit,saveDelete:saveDelete,restore:restore,loadHistory:loadHistory,isHidden:isHidden,_locks:locks,_statusLocked:statusLocked};
+  window.ProxoOrderManual={buttonsHTML:buttonsHTML,open:open,saveStatus:saveStatus,saveEdit:saveEdit,saveDelete:saveDelete,restore:restore,loadHistory:loadHistory,isHidden:isHidden,_locks:locks,_statusLocked:statusLocked,_amountDelta:amountDelta,_amountEligible:amountEligible,_previewAmount:previewAmount};
 })();

@@ -72,7 +72,11 @@
     <div class="sb-item" onclick="goPage('orders')"><i class="fas fa-money-bill-transfer"></i> ئۆردەرەکان <span class="sb-badge yw" id="sbOrdersCount" style="display:none">0</span></div>
     <div class="sb-item" onclick="goPage('accounts')"><i class="fas fa-users"></i> هەژمارەکان</div>
     <div class="sb-item" onclick="goPage('activity')"><i class="fas fa-signal" style="color:#16a34a"></i> چالاکی بەکارهێنەران <span class="sb-badge gr" id="sbActiveNow" style="display:none">0</span></div>
-    <div class="sb-item" onclick="goPage('balance')"><i class="fas fa-wallet"></i> ڕیفاوند و باڵانس</div>
+    <div class="sb-item" onclick="goPage('balance')"><i class="fas fa-wallet"></i> پوختەی باڵانس</div>
+    <div class="sb-item" onclick="goPage('balanceRefunds')"><i class="fas fa-rotate-left"></i> ڕیفاوند و shortfall</div>
+    <div class="sb-item" onclick="goPage('balancePayouts')"><i class="fas fa-paper-plane"></i> داواکاری ناردنی باڵانس</div>
+    <div class="sb-item" onclick="goPage('balanceManual')"><i class="fas fa-sliders"></i> دەستکاریی دەستی</div>
+    <div class="sb-item" onclick="goPage('balanceRisk')"><i class="fas fa-triangle-exclamation"></i> ئاگاداریی مەترسی</div>
     <div class="sb-item" onclick="goPage('kyc')"><i class="fas fa-id-card" style="color:#0891b2"></i> پشتڕاستکردنەوەی ناسنامە <span class="sb-badge yw" id="sbKycCount" style="display:none">0</span></div>
     <div class="sb-section">ڕێکخستن</div>
     <div class="sb-item" onclick="goPage('wallets')"><i class="fas fa-wallet" style="color:#16a34a"></i> واڵێتەکان</div>
@@ -337,11 +341,103 @@
       </div>
     </div>
 
-    <!-- ══ REFUND AND BALANCE ADMIN BOARD ══ -->
+    <!-- Balance overview: financial totals/reconciliation and account balances -->
     <div class="pg" id="pgBalance">
-      <div class="sec-hdr"><h3>ڕیفاوند و باڵانسی بەکارهێنەران</h3>
-        <button type="button" class="act-btn dark" onclick="loadBalanceAdmin()"><i class="fas fa-rotate"></i> نوێکردنەوە</button></div>
-      <p style="margin:0 0 14px"><a href="exchange-admin-balance.html" class="act-btn dark" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none"><i class="fas fa-sliders" aria-hidden="true"></i> بەڕێوەبردنی وردی باڵانس</a></p>
+      <div class="sec-hdr"><h3>پوختەی باڵانس و حسابداری</h3><button type="button" class="act-btn dark" onclick="loadBalanceAdmin()"><i class="fas fa-rotate"></i> نوێکردنەوە</button></div>
+<div class="ex-rates" id="balanceAdminStats"><div class="ex-note">زانیارییەکان بار دەکرێن...</div></div>
+      <div class="sec-hdr" style="margin-top:16px"><h3>باڵانسی هەژمارەکان</h3></div>
+      <div class="tbl-wrap"><div class="tbl-scroll" id="balanceAccountList"><div class="loading">بارکردن...</div></div></div>
+    </div>
+
+    <!-- Refunds, order lookup, and refund history -->
+    <div class="pg" id="pgBalanceRefunds">
+      <div class="sec-hdr"><h3>ڕیفاوند و بڕی کەم نێردراو</h3><button type="button" class="act-btn dark" onclick="loadBalanceAdmin()"><i class="fas fa-rotate"></i> نوێکردنەوە</button></div>
+      <section class="balance-refund-report" aria-labelledby="balanceRefundReportTitle">
+        <div><h4 id="balanceRefundReportTitle">ڕاپۆرتی گەڕاندنەوەی پارە</h4>
+          <p>هەموو گەڕاندنەوە تەواوەکان و بڕە کەم نێردراوەکان لە ماوەی هەڵبژێردراودا دابگرە. بەتاڵ = هەموو مێژوو؛ بەروار بەپێی کاتی گەڕاندنەوەی پارە لە بەغدا.</p></div>
+        <div class="balance-refund-report-controls">
+          <div><label for="balanceRefundReportFrom">لە بەرواری</label><input class="minp" id="balanceRefundReportFrom" type="date" dir="ltr"></div>
+          <div><label for="balanceRefundReportTo">تا بەرواری</label><input class="minp" id="balanceRefundReportTo" type="date" dir="ltr"></div>
+          <button type="button" class="act-btn dark" id="balanceRefundReportBtn" onclick="exportBalanceRefundPdf()"><i class="fas fa-file-pdf" aria-hidden="true"></i> داگرتنی PDFـی گەڕاندنەوەکان</button>
+        </div>
+        <p id="balanceRefundReportStatus" class="balance-refund-report-status" role="status" aria-live="polite"></p>
+        <p id="balanceRefundReportError" class="balance-refund-report-error" role="alert"></p>
+      </section>
+      <section class="ex-sheet" style="padding:18px;margin:14px 0">
+        <div class="ex-head"><div><h3>گەڕاندنەوەی پارە بۆ باڵانس</h3>
+          <p>مامەڵەکە هەڵبژێرە بۆ گەڕاندنەوەی بڕی کەم نێردراو یان ڕەتکردنەوە و گەڕاندنەوەی تەواو.</p></div></div>
+        <label class="modal-lbl" for="balanceOrderSearch">ئایدی یان کۆدی مامەڵە</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <input class="minp" id="balanceOrderSearch" dir="ltr" placeholder="PXXXXXXXXXXX یان UUID" style="flex:1;min-width:170px">
+          <button type="button" class="act-btn dark" id="balanceOrderLookupBtn" onclick="lookupBalanceOrder()">دۆزینەوە</button>
+        </div>
+        <div id="balanceFoundOrder" class="ex-note" style="margin:12px 0" aria-live="polite">سەرەتا مامەڵە هەڵبژێرە.</div>
+        <section class="balance-credit-panel" id="balanceShortfallPanel" aria-labelledby="balanceShortfallTitle">
+          <h4 id="balanceShortfallTitle">گەڕاندنەوەی بڕی کەم نێردراو</h4>
+          <p class="balance-credit-help">ئەگەر لە مامەڵەیەکی پەسەندکراودا بڕێک کەم نێردراوە، ئەو بڕە بۆ باڵانسی هەژماری کڕیار بگەڕێنەوە. هەر جارێک بە وردەکاری تۆمار دەکرێت.</p>
+          <p id="balanceShortfallEligibility" class="balance-credit-help" role="status">سەرەتا مامەڵەیەکی پەسەندکراو هەڵبژێرە.</p>
+          <form id="balanceShortfallForm" onsubmit="creditOrderShortfall(event)" novalidate>
+            <fieldset id="balanceShortfallFields" disabled>
+              <label class="modal-lbl" for="balanceShortfallAmount">بڕی کەم نێردراو (دینار)</label>
+              <input class="minp" id="balanceShortfallAmount" type="text" inputmode="numeric" dir="ltr" autocomplete="off" maxlength="20" placeholder="150" aria-describedby="balanceShortfallEligibility balanceShortfallPreview" required>
+              <label class="modal-lbl" for="balanceShortfallReason">هۆکاری کەم ناردن و گەڕاندنەوە</label>
+              <textarea class="minp mta" id="balanceShortfallReason" minlength="10" maxlength="2000" rows="3" placeholder="بڕی نەنێردراو و هۆکارەکە بە ڕوونی بنووسە" required></textarea>
+              <div id="balanceShortfallPreview" class="balance-credit-preview" aria-live="polite"></div>
+              <label class="balance-credit-confirm" for="balanceShortfallConfirmed"><input type="checkbox" id="balanceShortfallConfirmed" required> پشتڕاستم کردووەتەوە کە ئەم بڕە نەگەیشتووەتە کڕیار و دەگەڕێتەوە بۆ باڵانسی هەژمار.</label>
+              <button type="submit" id="balanceShortfallBtn" class="modal-btn dark" disabled>گەڕاندنەوەی بڕی کەم نێردراو بۆ باڵانس</button>
+            </fieldset>
+          </form>
+          <div id="balanceShortfallError" class="balance-credit-error" role="alert"></div>
+          <div id="balanceShortfallSuccess" class="balance-credit-success" role="status" aria-live="polite"></div>
+          <details id="balanceShortfallOrderDetails" class="balance-credit-history" hidden>
+            <summary>مێژووی گەڕاندنەوەی بڕی کەم نێردراوی ئەم مامەڵەیە</summary>
+            <div id="balanceShortfallOrderHistory" class="tbl-scroll"></div>
+          </details>
+        </section>
+        <section class="balance-credit-panel balance-credit-full" aria-labelledby="balanceFullRefundTitle">
+        <h4 id="balanceFullRefundTitle">ڕەتکردنەوە و گەڕاندنەوەی تەواو</h4>
+        <p class="balance-credit-help">مامەڵەی تەواونەکراو ڕەت دەکرێتەوە و هەموو بڕی وەرگیراو بۆ باڵانسی کڕیار دەگەڕێتەوە.</p>
+        <label class="modal-lbl" for="balanceBankReference">ژمارەی پشتڕاستکردنەوەی پارە لە بانک / جزدان</label>
+        <input class="minp" id="balanceBankReference" maxlength="160" dir="ltr" autocomplete="off" placeholder="ژمارەی ڕاستەقینەی مامەڵەی پارەدان">
+        <label class="modal-lbl" for="balanceRefundReason">هۆکاری ڕەتکردنەوە و گەڕاندنەوەی پارە</label>
+        <textarea class="minp mta" id="balanceRefundReason" maxlength="2000" placeholder="هۆکار و بەڵگەکانی پشتڕاستکردنەوە" rows="3"></textarea>
+        <label style="display:block;margin-top:10px;font-size:12px"><input type="checkbox" id="balanceFundsVerified"> پشتڕاستم کردووەتەوە کە پارەکە بەڕاستی وەرگیراوە</label>
+        <div id="balanceRefundError" role="alert" style="color:#b91c1c;margin:10px 0;font-size:12px"></div>
+        <button type="button" id="balanceCreditBtn" class="modal-btn dark" style="max-width:280px" disabled onclick="creditVerifiedRefund()">
+          ڕەتکردنەوە و گەڕاندنەوە بۆ باڵانس</button>
+        </section>
+      </section>
+      <div class="sec-hdr"><h3>مێژووی گەڕاندنەوەی بڕی کەم نێردراو</h3></div>
+      <div class="tbl-wrap"><div class="tbl-scroll" id="balanceShortfallList"><div class="loading">بارکردن...</div></div></div>
+      <div class="sec-hdr" style="margin-top:16px"><h3>مێژووی ڕەتکردنەوە و گەڕاندنەوەی تەواو</h3></div>
+      <div class="tbl-wrap"><div class="tbl-scroll" id="balanceRefundList"><div class="loading">بارکردن...</div></div></div>
+    </div>
+
+    <!-- Payout queue and review workflow -->
+    <div class="pg" id="pgBalancePayouts">
+      <div class="sec-hdr"><h3>داواکاری ناردنی باڵانس</h3><button type="button" class="act-btn dark" onclick="loadBalanceAdmin()"><i class="fas fa-rotate"></i> نوێکردنەوە</button></div>
+      <div class="tbl-wrap"><div class="tbl-scroll" id="balancePayoutsList"><div class="loading">بارکردن...</div></div></div>
+      <section class="ex-sheet" id="balancePayReview" hidden style="padding:18px;margin:14px 0">
+        <div class="ex-head"><div><h3>پشتڕاستکردنەوەی ناردنی پارە</h3>
+          <p id="balanceReviewLabel"></p></div></div>
+        <input type="hidden" id="balanceReviewId">
+        <label class="modal-lbl" for="balanceTransferReference">ژمارەی مامەڵەی ناردنی پارە</label>
+        <input class="minp" id="balanceTransferReference" dir="ltr" maxlength="160">
+        <label class="modal-lbl" for="balanceDestVerification">بەڵگەی پشتڕاستکردنەوەی خاوەنی جزدان</label>
+        <input class="minp" id="balanceDestVerification" maxlength="160">
+        <label class="modal-lbl" for="balancePayoutReceipt">لینکی پسووڵەی ڕاستەقینە</label>
+        <input class="minp" id="balancePayoutReceipt" type="url" dir="ltr" placeholder="https://...">
+        <label class="modal-lbl" for="balancePayoutNote">تێبینیی بەڕێوەبەر</label>
+        <textarea class="minp mta" id="balancePayoutNote" rows="2" maxlength="500"></textarea>
+        <label style="display:block;margin:10px 0;font-size:12px"><input type="checkbox" id="balancePayConfirmed"> پارەکەم بەڕاستی ناردووە و پسووڵەم پشتڕاست کردووەتەوە</label>
+        <div id="balancePayError" style="color:#b91c1c;font-size:12px"></div>
+        <button type="button" class="modal-btn dark" onclick="completeBalancePayout()">تۆمارکردنی ناردنی سەرکەوتوو</button>
+      </section>
+    </div>
+
+    <!-- Manual balance adjustments and log -->
+    <div class="pg" id="pgBalanceManual">
+      <div class="sec-hdr"><h3>دەستکاریی دەستیی باڵانس و تۆمار</h3><button type="button" class="act-btn dark" onclick="loadBalanceAdmin()"><i class="fas fa-rotate"></i> نوێکردنەوە</button></div>
       <!-- Manual add / refund / deduct -->
       <section class="bm-panel" id="bmPanel" aria-labelledby="bmTitle">
         <div class="bm-head">
@@ -404,87 +500,11 @@
           <button type="button" class="act-btn dark" id="bmLogRefresh"><i class="fas fa-rotate" aria-hidden="true"></i> نوێکردنەوە</button></div>
         <div class="tbl-wrap"><div class="tbl-scroll" id="bmLog"><div class="loading">بارکردن...</div></div></div>
       </section>
-      <div class="ex-rates" id="balanceAdminStats"><div class="ex-note">زانیارییەکان بار دەکرێن...</div></div>
-      <section class="balance-refund-report" aria-labelledby="balanceRefundReportTitle">
-        <div><h4 id="balanceRefundReportTitle">ڕاپۆرتی گەڕاندنەوەی پارە</h4>
-          <p>هەموو گەڕاندنەوە تەواوەکان و بڕە کەم نێردراوەکان لە ماوەی هەڵبژێردراودا دابگرە. بەتاڵ = هەموو مێژوو؛ بەروار بەپێی کاتی گەڕاندنەوەی پارە لە بەغدا.</p></div>
-        <div class="balance-refund-report-controls">
-          <div><label for="balanceRefundReportFrom">لە بەرواری</label><input class="minp" id="balanceRefundReportFrom" type="date" dir="ltr"></div>
-          <div><label for="balanceRefundReportTo">تا بەرواری</label><input class="minp" id="balanceRefundReportTo" type="date" dir="ltr"></div>
-          <button type="button" class="act-btn dark" id="balanceRefundReportBtn" onclick="exportBalanceRefundPdf()"><i class="fas fa-file-pdf" aria-hidden="true"></i> داگرتنی PDFـی گەڕاندنەوەکان</button>
-        </div>
-        <p id="balanceRefundReportStatus" class="balance-refund-report-status" role="status" aria-live="polite"></p>
-        <p id="balanceRefundReportError" class="balance-refund-report-error" role="alert"></p>
-      </section>
-      <section class="ex-sheet" style="padding:18px;margin:14px 0">
-        <div class="ex-head"><div><h3>گەڕاندنەوەی پارە بۆ باڵانس</h3>
-          <p>مامەڵەکە هەڵبژێرە بۆ گەڕاندنەوەی بڕی کەم نێردراو یان ڕەتکردنەوە و گەڕاندنەوەی تەواو.</p></div></div>
-        <label class="modal-lbl" for="balanceOrderSearch">ئایدی یان کۆدی مامەڵە</label>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <input class="minp" id="balanceOrderSearch" dir="ltr" placeholder="PXXXXXXXXXXX یان UUID" style="flex:1;min-width:170px">
-          <button type="button" class="act-btn dark" id="balanceOrderLookupBtn" onclick="lookupBalanceOrder()">دۆزینەوە</button>
-        </div>
-        <div id="balanceFoundOrder" class="ex-note" style="margin:12px 0" aria-live="polite">سەرەتا مامەڵە هەڵبژێرە.</div>
-        <section class="balance-credit-panel" id="balanceShortfallPanel" aria-labelledby="balanceShortfallTitle">
-          <h4 id="balanceShortfallTitle">گەڕاندنەوەی بڕی کەم نێردراو</h4>
-          <p class="balance-credit-help">ئەگەر لە مامەڵەیەکی پەسەندکراودا بڕێک کەم نێردراوە، ئەو بڕە بۆ باڵانسی هەژماری کڕیار بگەڕێنەوە. هەر جارێک بە وردەکاری تۆمار دەکرێت.</p>
-          <p id="balanceShortfallEligibility" class="balance-credit-help" role="status">سەرەتا مامەڵەیەکی پەسەندکراو هەڵبژێرە.</p>
-          <form id="balanceShortfallForm" onsubmit="creditOrderShortfall(event)" novalidate>
-            <fieldset id="balanceShortfallFields" disabled>
-              <label class="modal-lbl" for="balanceShortfallAmount">بڕی کەم نێردراو (دینار)</label>
-              <input class="minp" id="balanceShortfallAmount" type="text" inputmode="numeric" dir="ltr" autocomplete="off" maxlength="20" placeholder="150" aria-describedby="balanceShortfallEligibility balanceShortfallPreview" required>
-              <label class="modal-lbl" for="balanceShortfallReason">هۆکاری کەم ناردن و گەڕاندنەوە</label>
-              <textarea class="minp mta" id="balanceShortfallReason" minlength="10" maxlength="2000" rows="3" placeholder="بڕی نەنێردراو و هۆکارەکە بە ڕوونی بنووسە" required></textarea>
-              <div id="balanceShortfallPreview" class="balance-credit-preview" aria-live="polite"></div>
-              <label class="balance-credit-confirm" for="balanceShortfallConfirmed"><input type="checkbox" id="balanceShortfallConfirmed" required> پشتڕاستم کردووەتەوە کە ئەم بڕە نەگەیشتووەتە کڕیار و دەگەڕێتەوە بۆ باڵانسی هەژمار.</label>
-              <button type="submit" id="balanceShortfallBtn" class="modal-btn dark" disabled>گەڕاندنەوەی بڕی کەم نێردراو بۆ باڵانس</button>
-            </fieldset>
-          </form>
-          <div id="balanceShortfallError" class="balance-credit-error" role="alert"></div>
-          <div id="balanceShortfallSuccess" class="balance-credit-success" role="status" aria-live="polite"></div>
-          <details id="balanceShortfallOrderDetails" class="balance-credit-history" hidden>
-            <summary>مێژووی گەڕاندنەوەی بڕی کەم نێردراوی ئەم مامەڵەیە</summary>
-            <div id="balanceShortfallOrderHistory" class="tbl-scroll"></div>
-          </details>
-        </section>
-        <section class="balance-credit-panel balance-credit-full" aria-labelledby="balanceFullRefundTitle">
-        <h4 id="balanceFullRefundTitle">ڕەتکردنەوە و گەڕاندنەوەی تەواو</h4>
-        <p class="balance-credit-help">مامەڵەی تەواونەکراو ڕەت دەکرێتەوە و هەموو بڕی وەرگیراو بۆ باڵانسی کڕیار دەگەڕێتەوە.</p>
-        <label class="modal-lbl" for="balanceBankReference">ژمارەی پشتڕاستکردنەوەی پارە لە بانک / جزدان</label>
-        <input class="minp" id="balanceBankReference" maxlength="160" dir="ltr" autocomplete="off" placeholder="ژمارەی ڕاستەقینەی مامەڵەی پارەدان">
-        <label class="modal-lbl" for="balanceRefundReason">هۆکاری ڕەتکردنەوە و گەڕاندنەوەی پارە</label>
-        <textarea class="minp mta" id="balanceRefundReason" maxlength="2000" placeholder="هۆکار و بەڵگەکانی پشتڕاستکردنەوە" rows="3"></textarea>
-        <label style="display:block;margin-top:10px;font-size:12px"><input type="checkbox" id="balanceFundsVerified"> پشتڕاستم کردووەتەوە کە پارەکە بەڕاستی وەرگیراوە</label>
-        <div id="balanceRefundError" role="alert" style="color:#b91c1c;margin:10px 0;font-size:12px"></div>
-        <button type="button" id="balanceCreditBtn" class="modal-btn dark" style="max-width:280px" disabled onclick="creditVerifiedRefund()">
-          ڕەتکردنەوە و گەڕاندنەوە بۆ باڵانس</button>
-        </section>
-      </section>
-      <div class="sec-hdr"><h3>داواکاری ناردنی باڵانس</h3></div>
-      <div class="tbl-wrap"><div class="tbl-scroll" id="balancePayoutsList"><div class="loading">بارکردن...</div></div></div>
-      <section class="ex-sheet" id="balancePayReview" hidden style="padding:18px;margin:14px 0">
-        <div class="ex-head"><div><h3>پشتڕاستکردنەوەی ناردنی پارە</h3>
-          <p id="balanceReviewLabel"></p></div></div>
-        <input type="hidden" id="balanceReviewId">
-        <label class="modal-lbl" for="balanceTransferReference">ژمارەی مامەڵەی ناردنی پارە</label>
-        <input class="minp" id="balanceTransferReference" dir="ltr" maxlength="160">
-        <label class="modal-lbl" for="balanceDestVerification">بەڵگەی پشتڕاستکردنەوەی خاوەنی جزدان</label>
-        <input class="minp" id="balanceDestVerification" maxlength="160">
-        <label class="modal-lbl" for="balancePayoutReceipt">لینکی پسووڵەی ڕاستەقینە</label>
-        <input class="minp" id="balancePayoutReceipt" type="url" dir="ltr" placeholder="https://...">
-        <label class="modal-lbl" for="balancePayoutNote">تێبینیی بەڕێوەبەر</label>
-        <textarea class="minp mta" id="balancePayoutNote" rows="2" maxlength="500"></textarea>
-        <label style="display:block;margin:10px 0;font-size:12px"><input type="checkbox" id="balancePayConfirmed"> پارەکەم بەڕاستی ناردووە و پسووڵەم پشتڕاست کردووەتەوە</label>
-        <div id="balancePayError" style="color:#b91c1c;font-size:12px"></div>
-        <button type="button" class="modal-btn dark" onclick="completeBalancePayout()">تۆمارکردنی ناردنی سەرکەوتوو</button>
-      </section>
-      <div class="sec-hdr"><h3>مێژووی گەڕاندنەوەی بڕی کەم نێردراو</h3></div>
-      <div class="tbl-wrap"><div class="tbl-scroll" id="balanceShortfallList"><div class="loading">بارکردن...</div></div></div>
-      <div class="sec-hdr" style="margin-top:16px"><h3>مێژووی ڕەتکردنەوە و گەڕاندنەوەی تەواو</h3></div>
-      <div class="tbl-wrap"><div class="tbl-scroll" id="balanceRefundList"><div class="loading">بارکردن...</div></div></div>
-      <div class="sec-hdr" style="margin-top:16px"><h3>باڵانسی هەژمارەکان</h3></div>
-      <div class="tbl-wrap"><div class="tbl-scroll" id="balanceAccountList"><div class="loading">بارکردن...</div></div></div>
-      <div class="sec-hdr" style="margin-top:16px"><h3>ئاگادارییە گوماناوییەکان</h3></div>
+    </div>
+
+    <!-- Risk alerts -->
+    <div class="pg" id="pgBalanceRisk">
+      <div class="sec-hdr"><h3>ئاگادارییە گوماناوییەکان</h3><button type="button" class="act-btn dark" onclick="loadBalanceAdmin()"><i class="fas fa-rotate"></i> نوێکردنەوە</button></div>
       <div class="tbl-wrap"><div class="tbl-scroll" id="balanceRiskList"><div class="loading">بارکردن...</div></div></div>
     </div>
 

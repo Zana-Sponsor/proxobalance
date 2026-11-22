@@ -13,9 +13,11 @@ function staffCan(permission){
 function staffFullAdmin(){return isSuperAdmin()||adminStaffPermissions==null;}
 function staffPageAllowed(page){
  if(['activity','security','errors','audit','pause'].includes(page))return isSuperAdmin();
+ if(page==='balanceRisk')return isSuperAdmin();
  if(staffFullAdmin())return true;
  const permission={dashboard:'view',orders:'view',accounts:'view',statistics:'view',profit:'view',
-  balance:'view',contracts:'view',whatsapp:'view',wallets:'manage_fees',rates:'manage_fees'}[page];
+  balance:'view',balanceRefunds:'refunds',balancePayouts:'view',balanceManual:'refunds',
+  contracts:'view',whatsapp:'view',wallets:'manage_fees',rates:'manage_fees'}[page];
  return !!permission&&staffCan(permission);
 }
 function applyStaffUI(){
