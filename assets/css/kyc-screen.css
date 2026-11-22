@@ -64,11 +64,21 @@ html[data-theme="dark"] body #mainApp#mainApp #pageVerify .kv-status[data-state=
 html[data-theme="dark"] body #mainApp#mainApp #pageVerify .kv-status[data-state="approved"] { --st-bg: #10223d; --st-line: #264a73; }
 html[data-theme="dark"] body #mainApp#mainApp #pageVerify .kv-status:is([data-state="rejected"], [data-state="error"]) { --st-bg: #3a1816; --st-line: #3a1816; }
 html[data-theme="dark"] body #mainApp#mainApp #pageVerify .kv-status[data-state="loading"] { --st-bg: var(--kv-card); --st-line: var(--kv-line); }
+html body #mainApp#mainApp #pageVerify .kv-status[data-state="rejected"] { --st-bg: #fffafa; --st-line: #efc7cb; padding: 10px 12px; }
+html[data-theme="dark"] body #mainApp#mainApp #pageVerify .kv-status[data-state="rejected"] { --st-bg: #211a22; --st-line: #57343b; }
 html body #mainApp#mainApp #pageVerify .kv-status > div { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 html body #mainApp#mainApp #pageVerify .kv-status b { color: var(--kv-title); font-size: 14.5px; font-weight: 600; line-height: 1.6; }
 html body #mainApp#mainApp #pageVerify .kv-status p { margin: 0; color: var(--kv-text); font-size: 14px; font-weight: 400; line-height: 1.75; overflow-wrap: anywhere; white-space: pre-wrap; }
 html body #mainApp#mainApp #pageVerify .kv-status p strong { color: var(--kv-title); font-weight: 600; }
 html body #mainApp#mainApp #pageVerify .kv-status .kv-mini { align-self: flex-start; margin-top: 8px; }
+html body #mainApp#mainApp #pageVerify .kv-rejected-compact { gap: 7px !important; }
+html body #mainApp#mainApp #pageVerify .kv-rejected-copy { display: flex; flex-direction: column; gap: 1px; }
+html body #mainApp#mainApp #pageVerify .kv-rejected-copy b { font-size: 13px; }
+html body #mainApp#mainApp #pageVerify .kv-rejected-copy span { color: var(--kv-text); font-size: 12px; line-height: 1.6; }
+html body #mainApp#mainApp #pageVerify .kv-rejection-details { border-top: 1px solid var(--st-line); padding-top: 6px; color: var(--kv-text); font-size: 12px; }
+html body #mainApp#mainApp #pageVerify .kv-rejection-details summary { width: fit-content; color: var(--kv-accent); cursor: pointer; font-weight: 500; }
+html body #mainApp#mainApp #pageVerify .kv-rejection-details[open] summary { margin-bottom: 5px; }
+html body #mainApp#mainApp #pageVerify .kv-rejection-details p { color: var(--kv-text); font-size: 12px; line-height: 1.65; }
 
 /* ── cards ── */
 html body #mainApp#mainApp #pageVerify .kv { display: flex; flex-direction: column; gap: 14px; }

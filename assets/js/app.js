@@ -5200,7 +5200,7 @@ let _kycDraftId = null;          // one storage folder per attempt; reused on re
 let _kycDraftImagesUploaded = false;
 let _kycSubmitting = false;
 let _kycPrefilledFor = null;
-let _kycOcrToken = 0, _kycOcrPromise = null, _kycOcrResult = null;
+let _kycOcrToken = 0, _kycOcrPromise = null, _kycOcrResult = null, _kycImageValidationError = false;
 const _kycImages = { front:null, back:null };   // { prepared, url, name, promise, token }
 const _kycImageTokens = { front:0, back:0 };
 
@@ -5426,8 +5426,10 @@ function renderVerifyPage(){
     banner.innerHTML=`<div><b>پشتڕاستکردنەوەی ناسنامە پێویستە</b>
       <p>${escHtml(req?.reason||'تکایە بۆ بەردەوامبوون لە بەکارهێنانی خزمەتگوزارییەکان ناسنامەکەت پشتڕاست بکەرەوە.')}</p></div>`;
   }else if(status==='rejected'){
-    banner.innerHTML=`<div><b>پێویستی بە دووبارە ناردنەوە هەیە</b>
-      <p><strong>هۆکار:</strong> ${escHtml(v?.rejection_reason||'—')}</p></div>`;
+    banner.innerHTML=`<div class="kv-rejected-compact">
+      <div class="kv-rejected-copy"><b>پشتڕاستکردنەوە ڕەتکرایەوە</b><span>زانیاری یان وێنەکان ڕاست بکەرەوە و دووبارە بینێرە.</span></div>
+      <details class="kv-rejection-details"><summary>بینینی زیاتر</summary><p><strong>هۆکاری ڕەتکردنەوە:</strong> ${escHtml(v?.rejection_reason||'هۆکارێکی تایبەت تۆمار نەکراوە.')}</p></details>
+    </div>`;
   }else{
     banner.innerHTML=`<div><b>پشتڕاست نەکراوەتەوە</b></div>`;
   }
@@ -5901,7 +5903,7 @@ function kycSetOcrStatus(state,message){
   }
 }
 function kycResetOcrDraft(){
-  _kycOcrToken++; _kycOcrPromise=null; _kycOcrResult=null; _kycDraftId=null; _kycDraftImagesUploaded=false;
+  _kycOcrToken++; _kycOcrPromise=null; _kycOcrResult=null; _kycImageValidationError=false; _kycDraftId=null; _kycDraftImagesUploaded=false;
   kycSetOcrStatus('idle','');
 }
 function kycOcrFill(inputId,value){
@@ -5912,7 +5914,12 @@ function kycOcrFill(inputId,value){
 function kycApplyOcrResult(result){
   if(!result || result.status!=='complete') return;
   _kycOcrResult=result;
-  if(result.is_identity_document===false){ kycSetOcrStatus('error','ئەم وێنەیە وەک ناسنامە نەناسێنرا؛ دەتوانیت زانیارییەکان بە دەست بنووسیت.'); return; }
+  if(result.error_code?.startsWith('KYC_IDENTITY_IMAGE_') || result.is_identity_document===false){
+    _kycImageValidationError=true;
+    kycSetOcrStatus('error','تکایە وێنەی ناسنامەی گونجاو باربکە');
+    return;
+  }
+  if(KYC_DOC_TYPES[result.document_type] && result.document_type!==_kycDocType) kycSelectDoc(result.document_type,true);
   kycOcrFill('kycName',result.full_legal_name);
   kycOcrFill('kycDob',result.date_of_birth);
   kycOcrFill('kycNumber',result.document_number);
@@ -5928,6 +5935,7 @@ async function submitKyc(mismatchConfirmed=false){
   kycShowFormError(null);
   if(!curUser){ showToast('تکایە دووبارە بچۆ ژوورەوە','error'); return; }
   if(!_kyc.data?.can_submit){ showToast(kycErrorMessage(_kyc.status==='pending'?'KYC_ALREADY_PENDING':'KYC_ALREADY_APPROVED'),'warning'); return; }
+  if(_kycImageValidationError){ kycSetOcrStatus('error','تکایە وێنەی ناسنامەی گونجاو باربکە'); return; }
   if(_kycOcrPromise){
     const waitBtn=document.getElementById('kycSubmitBtn'), waitHtml=waitBtn?.innerHTML;
     _kycSubmitting=true;

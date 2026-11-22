@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
+import { validateIdentityImages, KYC_IMAGE_ERRORS } from '../supabase/functions/receipt-read/identity-validation.js';
 
 const read = p => readFileSync(new URL(p, import.meta.url), 'utf8');
 const app = read('../assets/js/app.js');
@@ -34,8 +35,11 @@ test('photos are pre-read before submission, OCR replaces existing fields, and f
   assert.match(app, /پڕۆسەی خوێندنەوە بەسەرکەوتوویی تەواوبوو، تکایە دووبارە زانیاریەکان بپشکنەوە\./);
   assert.match(app, /kv-ocr-progress[\s\S]*?setAttribute\('role','progressbar'\)[\s\S]*?aria-valuetext/);
   assert.match(app, /aria-busy',currentState==='working'\?'true':'false'/);
-  assert.match(html, /kyc-screen\.css\?v=5/);
-  assert.match(html, /app\.js\?v=131/);
+  assert.match(html, /kyc-screen\.css\?v=6/);
+  assert.match(html, /app\.js\?v=132/);
+  assert.match(app, /kycSelectDoc\(result\.document_type,true\)/);
+  assert.match(app, /تکایە وێنەی ناسنامەی گونجاو باربکە/);
+  assert.match(app, /if\(_kycImageValidationError\)/);
   assert.match(app, /p_document_issue_date:fields\.issue/);
   assert.match(app, /p_document_expiry_date:fields\.expiry/);
   assert.match(app, /if\(!_kycDraftImagesUploaded\)\{[\s\S]*?await kycUpload\(frontPath, front\)/);
@@ -48,6 +52,45 @@ test('OCR progress is indeterminate, smooth, and respects reduced motion', () =>
   const css = read('../assets/css/kyc-screen.css');
   assert.match(css, /\.kv-ocr-progress-indicator[^\n]*animation: kv-ocr-sweep/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.kv-ocr-progress-indicator \{ animation: none/);
+});
+
+test('identity OCR classifies each front/back image and rejects mixed types or wrong sides', () => {
+  const valid = validateIdentityImages({
+    is_identity_document:true, document_type:'driving_license', image_checks:[
+      {document_type:'driving_license',side:'front',is_identity_document:true},
+      {document_type:'driving_license',side:'back',is_identity_document:true}
+    ]
+  }, ['front','back']);
+  assert.deepEqual(valid, {isIdentityDocument:true,documentType:'driving_license',errorCode:null});
+
+  const mixed = validateIdentityImages({
+    is_identity_document:true, document_type:'driving_license', image_checks:[
+      {document_type:'driving_license',side:'front',is_identity_document:true},
+      {document_type:'national_id',side:'back',is_identity_document:true}
+    ]
+  }, ['front','back']);
+  assert.equal(mixed.errorCode, KYC_IMAGE_ERRORS.mismatch);
+  assert.equal(mixed.isIdentityDocument, false);
+
+  const reversed = validateIdentityImages({
+    is_identity_document:true, document_type:'national_id', image_checks:[
+      {document_type:'national_id',side:'back',is_identity_document:true},
+      {document_type:'national_id',side:'front',is_identity_document:true}
+    ]
+  }, ['front','back']);
+  assert.equal(reversed.errorCode, KYC_IMAGE_ERRORS.mismatch);
+  assert.equal(validateIdentityImages({is_identity_document:false}, ['front']).errorCode, KYC_IMAGE_ERRORS.invalid);
+  assert.equal(validateIdentityImages({is_identity_document:true}, ['front']).errorCode, KYC_IMAGE_ERRORS.uncertain);
+  assert.match(edge, /validateIdentityImages\(result, imageSlots\.map\(slot => slot\.side\)\)/);
+  assert.match(edge, /image_checks: \{ type: 'ARRAY'/);
+});
+
+test('rejected status is compact and expands rejection details on demand', () => {
+  assert.match(app, /class="kv-rejected-compact"/);
+  assert.match(app, /class="kv-rejection-details"><summary>بینینی زیاتر<\/summary>/);
+  const css = read('../assets/css/kyc-screen.css');
+  assert.match(css, /\.kv-status\[data-state="rejected"\][^\n]*padding: 10px 12px/);
+  assert.match(css, /\.kv-rejection-details summary/);
 });
 
 test('full three-part English, Arabic, and Kurdish spellings are accepted; incomplete names are not', () => {
@@ -95,9 +138,9 @@ test('draft OCR uses private Edge authentication and reads only validated owner-
   assert.match(migration, /jsonb_build_object\('identity_draft_id',p_draft_id\)/);
   assert.match(edge, /if \(identityDraftId\)[\s\S]*readIdentity\(identityDraftId, true\)/);
   assert.match(edge, /if \(verificationId\)[\s\S]*readIdentity\(verificationId\)/);
-  assert.match(edge, /storage\.from\(KYC_BUCKET\)\.download\(path\)/);
-  assert.match(edge, /extracted_document_issue_date: validIssueDate/);
-  assert.match(edge, /extracted_document_expiry_date: validExpiryDate/);
+  assert.match(edge, /storage\.from\(KYC_BUCKET\)\.download\(slot\.path\)/);
+  assert.match(edge, /extracted_document_issue_date: imageValidation\.isIdentityDocument \? validIssueDate : null/);
+  assert.match(edge, /extracted_document_expiry_date: imageValidation\.isIdentityDocument \? validExpiryDate : null/);
   assert.match(edge, /issue_date: S, expiry_date: S/);
   assert.doesNotMatch(edge, /console\.(log|info|warn)\([^\n]*(result|text|full_legal_name|document_number)/i);
 });
