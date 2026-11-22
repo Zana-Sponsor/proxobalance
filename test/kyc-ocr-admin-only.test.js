@@ -91,6 +91,10 @@ test('rejected status is compact and expands rejection details on demand', () =>
   const css = read('../assets/css/kyc-screen.css');
   assert.match(css, /\.kv-status\[data-state="rejected"\][^\n]*padding: 10px 12px/);
   assert.match(css, /\.kv-rejection-details summary/);
+  const smoke = read('../.github/workflows/exchange-production-smoke.yml');
+  assert.match(smoke, /app\.js\?v=132/);
+  assert.match(smoke, /kyc-screen\.css\?v=6/);
+  assert.match(smoke, /kv-rejection-details/);
 });
 
 test('full three-part English, Arabic, and Kurdish spellings are accepted; incomplete names are not', () => {
