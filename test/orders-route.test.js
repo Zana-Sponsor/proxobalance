@@ -27,6 +27,7 @@ test('calculates the saved route fee tier, ignores forged rewards and returns th
       return response({ id: 'user-1', email: 'user@example.com', user_metadata: { full_name: 'Test User' } });
     }
     if (url.pathname === '/rest/v1/rpc/ex_record_event') return response(null);
+    if (url.pathname === '/rest/v1/rpc/ex_customer_receipt_preflight_claim') return response(true);
     if (url.pathname === '/rest/v1/ex_rates') {
       assert.equal(url.searchParams.get('from_method'), 'eq.NassWallet');
       assert.equal(url.searchParams.get('to_method'), 'eq.QiCard');
@@ -86,7 +87,8 @@ test('calculates the saved route fee tier, ignores forged rewards and returns th
       reward_original_fee_iqd: 99999999,
       phone: '07510070000',
       receipt_url: 'https://pycxuugoblkslvwebxuu.supabase.co/storage/v1/object/public/receipts/test.jpg',
-      receipt_hash: 'a'.repeat(64)
+      receipt_hash: 'a'.repeat(64),
+      receipt_preflight_id: '11111111-1111-4111-8111-111111111111'
     }
   };
   let body = '';
@@ -287,6 +289,7 @@ test('fractional USDT principal stays exact and an IQD creation preview never cr
     if (url.pathname === '/rest/v1/rpc/ex_ip_check') return response([{banned:false}]);
     if (url.pathname === '/auth/v1/user') return response({id:'user-1'});
     if (url.pathname === '/rest/v1/rpc/ex_record_event') return response(null);
+    if (url.pathname === '/rest/v1/rpc/ex_customer_receipt_preflight_claim') return response(true);
     if (url.pathname === '/rest/v1/ex_rates') return response([{rate_type:'multiplier',rate_value:1}]);
     if (url.pathname === '/rest/v1/ex_wallets') return response([
       {key:'USDT',is_locked:false,allow_from:true},{key:'FIB',is_locked:false,allow_receive:true}]);
@@ -303,7 +306,7 @@ test('fractional USDT principal stays exact and an IQD creation preview never cr
   const req = {method:'POST',url:'/api/orders',headers:{authorization:'Bearer fixture-token'},
     socket:{remoteAddress:'127.0.0.1'},body:{from_method:'USDT',to_method:'FIB',amount:10000.5,phone:'07700000001',
       receipt_url:'https://pycxuugoblkslvwebxuu.supabase.co/storage/v1/object/public/receipts/fixture.jpg',
-      receipt_hash:'c'.repeat(64),payout_iqd:1000,payout_rounding_iqd:9000,payout_settlement_id:'forged',
+      receipt_hash:'c'.repeat(64),receipt_preflight_id:'22222222-2222-4222-8222-222222222222',payout_iqd:1000,payout_rounding_iqd:9000,payout_settlement_id:'forged',
       payout_plan:{payout_iqd:1000,remainder_iqd:9000}}};
   let body;
   const res = {statusCode:0,setHeader(){},end(value){body = JSON.parse(value);}};

@@ -234,6 +234,7 @@ export default withSecurity(async (req, res, { context, user }) => {
   const receiptUrl = cleanReceiptUrl(retryOrder?.receipt_url || body.receipt_url);
   const rawReceiptHash = retryOrder?.receipt_hash || body.receipt_hash || '';
   const receiptHash = /^[a-f0-9]{64}$/i.test(rawReceiptHash) ? String(rawReceiptHash).toLowerCase() : null;
+  const receiptPreflightId = oneLine(body.receipt_preflight_id, 64);
   const transactionReference = oneLine(retryOrder?.transaction_reference || body.transaction_reference, 120) || null;
   const requestKey = retryOrder?.from_method === 'AccountBalance' ? randomUUID() : body.request_key;
 
@@ -319,6 +320,32 @@ export default withSecurity(async (req, res, { context, user }) => {
     return json(res, 409, RECEIPT_USED);
   }
 
+  // New customer receipt-backed orders are accepted only with the one-use OCR
+  // result bound to this user, route, amount, uploaded receipt, and wallet target.
+  // The rejected-order retry path retains its existing stored receipt behavior.
+  if (!balanceSource && !retryOrder) {
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(receiptPreflightId)) {
+      return json(res, 422, { code: 'RECEIPT_PREFLIGHT_REQUIRED', error: 'پێش ناردنی داواکاری پێویستە پسووڵەکە پشتڕاست بکرێتەوە' });
+    }
+    try {
+      await rpc('ex_customer_receipt_preflight_claim', {
+        p_check_id: receiptPreflightId,
+        p_user_id: user.id,
+        p_from_method: fromMethod,
+        p_to_method: toMethod,
+        p_amount: amount,
+        p_receipt_url: receiptUrl,
+        p_receipt_hash: receiptHash
+      });
+    } catch (error) {
+      await logThreat('customer_receipt_preflight_rejected', context, user, {
+        detail: 'New receipt-backed order was not backed by a valid one-use OCR preflight',
+        payload: { from_method: fromMethod, to_method: toMethod, reason: oneLine(error?.message, 120) }
+      });
+      return json(res, 409, { code: 'RECEIPT_PREFLIGHT_REQUIRED', error: 'پسووڵەکە پشتڕاست نەکراوەتەوە؛ تکایە دووبارە هەوڵ بدەرەوە' });
+    }
+  }
+
   const total = Math.floor(calculateTotal(amount, rate));
   const payload = {
     user_id: user.id,
@@ -331,6 +358,7 @@ export default withSecurity(async (req, res, { context, user }) => {
     extra_info: null,
     receipt_url: receiptUrl,
     receipt_hash: receiptHash,
+    receipt_preflight_id: !balanceSource && !retryOrder ? receiptPreflightId : null,
     transaction_reference: transactionReference,
     security_log_id: velocity?.log_id || null
   };

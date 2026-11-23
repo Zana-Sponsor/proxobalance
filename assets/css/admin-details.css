@@ -362,3 +362,42 @@ html body #moKycReview .kyc-full-name-guidance { margin: 10px 0 0; color: var(--
 @media (max-width: 520px) {
   html body #moKycReview .kyc-ocr-card-grid { grid-template-columns: 1fr; gap: 9px; }
 }
+
+
+/* Smart Receipt Verification in the final payout approval step. */
+html body #moApproveOrder .smart-receipt-card {
+  margin: 14px 0 0; padding: 14px; border: 1px solid #e8edf3; border-radius: 14px; background: #fff;
+}
+html body #moApproveOrder .smart-receipt-card[hidden],
+html body #moApproveOrder .smart-receipt-review[hidden] { display: none !important; }
+html body #moApproveOrder .smart-receipt-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+html body #moApproveOrder .smart-receipt-head > div { min-width: 0; }
+html body #moApproveOrder .smart-receipt-head b { display: block; color: #202c3c; font-size: 14px; font-weight: 650; line-height: 1.5; }
+html body #moApproveOrder .smart-receipt-head small { display: block; margin-top: 3px; color: #66768c; font-size: 11.5px; line-height: 1.6; }
+html body #moApproveOrder .smart-receipt-badge { flex: 0 0 auto; padding: 4px 9px; border: 1px solid #e2e8f0; border-radius: 999px; background: #f8fafc; color: #64748b; font-size: 11px; font-weight: 600; }
+html body #moApproveOrder .smart-receipt-badge.tone-ok { border-color: #c9ecd5; background: #f2fbf5; color: #15803d; }
+html body #moApproveOrder .smart-receipt-badge.tone-warn { border-color: #f3dfb8; background: #fffaf0; color: #b45309; }
+html body #moApproveOrder .smart-receipt-badge.tone-bad { border-color: #f2c9c9; background: #fef2f2; color: #b42318; }
+html body #moApproveOrder .smart-receipt-badge.tone-neutral { border-color: #e2e8f0; background: #f8fafc; color: #64748b; }
+html body #moApproveOrder .smart-receipt-body { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; margin-top: 12px; }
+html body #moApproveOrder .smart-receipt-fact { min-width: 0; padding: 9px 10px; border: 1px solid #eef2f6; border-radius: 10px; background: #fbfcfe; }
+html body #moApproveOrder .smart-receipt-fact small { display: block; margin-bottom: 3px; color: #66768c; font-size: 10.5px; line-height: 1.45; }
+html body #moApproveOrder .smart-receipt-fact b { display: block; color: #202c3c; font-size: 12.5px; font-weight: 550; line-height: 1.55; overflow-wrap: anywhere; }
+html body #moApproveOrder .smart-receipt-fact b[dir="ltr"] { text-align: left; font-family: Inter,system-ui,sans-serif; font-variant-numeric: tabular-nums; }
+html body #moApproveOrder .smart-receipt-fact.is-ok b { color: #15803d; }
+html body #moApproveOrder .smart-receipt-fact.is-warn b { color: #b45309; }
+html body #moApproveOrder .smart-receipt-fact.is-bad b { color: #b42318; }
+html body #moApproveOrder .smart-receipt-message { grid-column: 1/-1; margin: 0; padding: 9px 11px; border: 1px solid #e2e8f0; border-radius: 10px; background: #f8fafc; color: #64748b; font-size: 12px; line-height: 1.7; }
+html body #moApproveOrder .smart-receipt-message.tone-ok { border-color: #c9ecd5; background: #f2fbf5; color: #15803d; }
+html body #moApproveOrder .smart-receipt-message.tone-warn { border-color: #f3dfb8; background: #fffaf0; color: #b45309; }
+html body #moApproveOrder .smart-receipt-message.tone-bad { border-color: #f2c9c9; background: #fef2f2; color: #b42318; }
+html body #moApproveOrder .smart-receipt-scan { width: 100%; margin-top: 10px !important; }
+html body #moApproveOrder .smart-receipt-review { margin-top: 12px; padding-top: 12px; border-top: 1px solid #eef2f6; }
+html body #moApproveOrder .smart-receipt-review .modal-lbl { display: block; margin: 0 0 6px; color: #66768c; font-size: 12px; }
+html body #moApproveOrder .smart-receipt-review textarea { min-height: 60px; }
+html body #moApproveOrder #apSmartReceiptReviewBtn { width: 100%; margin-top: 8px !important; }
+@media (max-width: 520px) {
+  html body #moApproveOrder .smart-receipt-card { padding: 12px; }
+  html body #moApproveOrder .smart-receipt-head { flex-direction: column; }
+  html body #moApproveOrder .smart-receipt-body { gap: 6px; }
+}

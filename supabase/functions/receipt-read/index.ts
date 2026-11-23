@@ -32,10 +32,12 @@ const PROMPT = [
   'Convert Arabic-Indic and Persian digits to Western digits.',
   'wallet: the app, wallet or bank name, from its printed name or its logo.',
   'amount: the transferred amount as a plain number, without thousands separators or currency. If a fee is shown separately, the amount does not include it.',
+  'amount_confidence: a number from 0 to 1 reflecting only how clearly the full transferred amount is visible; do not raise confidence because the number seems plausible.',
   'currency: IQD for Iraqi dinar (IQD, د.ع, دينار, دینار), USD or USDT when printed.',
   'reference: the transaction / reference / operation number exactly as printed, letters and digits kept. Its label may be Transaction ID, Reference, Ref, ژمارەی مامەڵە, ژمارەی گواستنەوە, کۆدی مامەڵە, ناسنامەی مامەڵە, رقم العملية, رقم المعاملة, رقم المرجع.',
   'paid_at: the date and time as printed, as ISO 8601 when it is clear. Its label may be Date, Time, بەروار, کات, ڕێکەوت, التاريخ, الوقت.',
   'sender_* and receiver_*: the names and the account or phone numbers of the two sides as printed (labels such as From, To, نێرەر, وەرگر, لە, بۆ, المرسل, المستلم).',
+  'receiver_account_confidence: a number from 0 to 1 reflecting only how clearly the complete receiver account/phone is printed; return low confidence for hidden, masked, incomplete or ambiguous digits.',
   'status_text: the status words as printed (for example Successful, ناجحة).',
   'success: true when the receipt shows the transfer succeeded, false when it shows failed, pending or cancelled, null when it does not say.',
   'is_receipt: false when the image is not a payment receipt at all.',
@@ -46,7 +48,30 @@ const N = { type: 'NUMBER', nullable: true };
 const SCHEMA = {
   type: 'OBJECT', required: ['is_receipt'], properties: {
     is_receipt: { type: 'BOOLEAN' }, wallet: S, success: { type: 'BOOLEAN', nullable: true }, status_text: S,
-    amount: N, currency: S, fee: N, reference: S, paid_at: S,
+    amount: N, amount_confidence: N, currency: S, fee: N, reference: S, paid_at: S,
+    sender_name: S, sender_account: S, receiver_name: S, receiver_account: S,
+    receiver_account_confidence: N, notes: S
+  }
+};
+const PAYOUT_PROMPT = [
+  'You are checking an outgoing-transfer payment receipt uploaded by an administrator for a completed bank or wallet transfer in Iraq.',
+  'The receipt may be written in Central Kurdish (Sorani), Arabic or English. Read only what is visibly printed. Never guess; use null when a field is not readable.',
+  'This is an outbound-payment verification task, not an incoming customer receipt. Identify the transaction ID/reference printed on this exact receipt; do not use the amount as a substitute for the ID.',
+  'Convert Arabic-Indic and Persian digits to Western digits. Return amount as a plain integer number of IQD with no grouping separators; if the receipt shows another currency, return its printed currency and do not convert it.',
+  'reference: the transaction/reference/operation number exactly as printed, preserving every letter and digit. reference_confidence: 0 to 1, based only on how clearly the entire identifier is legible.',
+  'amount_confidence: 0 to 1, based only on the clarity of the amount and its currency.',
+  'wallet and bank_name: the app, wallet, or bank identified by its printed name or logo.',
+  'paid_at: the date and time as printed; use ISO 8601 only when unambiguous.',
+  'sender_* and receiver_*: names and account or phone numbers as printed. notes: one short sentence in Sorani only if text looks edited, pasted, misaligned, obscured, cut off, or otherwise suspicious; otherwise empty.',
+  'success: true only when the receipt explicitly indicates a successful/completed transfer, false when failed, pending or cancelled, null when status is not shown.',
+  'is_receipt: false if this is not a payment/transfer receipt.'
+].join('\n');
+const PAYOUT_SCHEMA = {
+  type: 'OBJECT', required: ['is_receipt'], properties: {
+    is_receipt: { type: 'BOOLEAN' }, wallet: S, bank_name: S,
+    success: { type: 'BOOLEAN', nullable: true }, status_text: S,
+    amount: N, amount_confidence: N, currency: S, fee: N,
+    reference: S, reference_confidence: N, description: S, paid_at: S,
     sender_name: S, sender_account: S, receiver_name: S, receiver_account: S, notes: S
   }
 };
@@ -82,6 +107,10 @@ const IDENTITY_SCHEMA = {
 
 async function sha256Hex(text: string) {
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+async function sha256BytesHex(bytes: Uint8Array) {
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
   return [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, '0')).join('');
 }
 const reply = (status: number, body: unknown) =>
@@ -120,6 +149,26 @@ async function askIdentity(model: string, gemini: string, images: { side: 'front
           ])
         ] }],
         generationConfig: { temperature: 0, mediaResolution: 'MEDIA_RESOLUTION_HIGH', responseMimeType: 'application/json', responseSchema: IDENTITY_SCHEMA }
+      }),
+      signal: AbortSignal.timeout(ms)
+    });
+    return { status: res.status, out: await res.json().catch(() => ({})) };
+  } catch (error) {
+    return { status: 504, out: { error: { status: 'TIMEOUT', message: String((error as Error)?.message || error) } } };
+  }
+}
+
+async function askPayout(model: string, gemini: string, mime: string, data: string, ms: number) {
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-goog-api-key': gemini },
+      body: JSON.stringify({
+        contents: [{ role: 'user', parts: [
+          { text: `${PAYOUT_PROMPT}\nToday is ${new Date().toISOString().slice(0, 10)} (UTC); only a later date is in the future.` },
+          { inlineData: { mimeType: mime, data } }
+        ] }],
+        generationConfig: { temperature: 0, mediaResolution: 'MEDIA_RESOLUTION_HIGH', responseMimeType: 'application/json', responseSchema: PAYOUT_SCHEMA }
       }),
       signal: AbortSignal.timeout(ms)
     });
@@ -187,6 +236,192 @@ async function readReceipt(key: string, orderId: string) {
     await save(result, model);
   } catch (error) {
     await save({ error: String((error as Error)?.message || error).slice(0, 300) }).catch(() => {});
+  }
+}
+
+// Customer preflight reads the already-uploaded image before an order exists. The
+// database supplies the amount and destination from the authenticated request and
+// the selected wallet configuration; the browser never supplies a receiver number.
+async function readCustomerReceiptPreflight(preflightId: string) {
+  let id: string | null = null;
+  const save = async (result: Record<string, unknown>, status: 'complete' | 'error' = 'error') => {
+    if (!id) return;
+    const { error } = await db.from('ex_customer_receipt_preflights').update({
+      ...result, status, updated_at: new Date().toISOString()
+    }).eq('id', id).eq('status', 'processing');
+    if (error) console.error('customer receipt preflight save failed', error.message);
+  };
+  try {
+    const { data: row, error: claimError } = await db.from('ex_customer_receipt_preflights')
+      .update({ status: 'processing', updated_at: new Date().toISOString() })
+      .eq('id', preflightId).eq('status', 'queued').gt('expires_at', new Date().toISOString())
+      .select('*').maybeSingle();
+    if (claimError || !row) return;
+    id = String(row.id);
+    const sourceReceiptUrl = String(row.receipt_url || '');
+    if (!sourceReceiptUrl.startsWith(RECEIPTS)) { await save({ error_code: 'invalid_receipt_path' }); return; }
+    const path = decodeURIComponent(sourceReceiptUrl.slice(RECEIPTS.length).split('?')[0]);
+    const segments = path.split('/');
+    if (segments[0] !== row.user_id || segments.length < 2 || segments.some(part => !part || part === '.' || part === '..')) {
+      await save({ error_code: 'invalid_receipt_path' }); return;
+    }
+    const { data: file, error: fileError } = await db.storage.from('receipts').download(path);
+    if (fileError || !file) { await save({ error_code: 'download_failed' }); return; }
+    if (file.size > 10 * 1024 * 1024) { await save({ error_code: 'file_too_large' }); return; }
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    if (await sha256BytesHex(bytes) !== String(row.receipt_hash || '').toLowerCase()) {
+      await save({ error_code: 'receipt_hash_mismatch' }); return;
+    }
+    const byName = /\.png$/i.test(path) ? 'image/png' : /\.webp$/i.test(path) ? 'image/webp' : 'image/jpeg';
+    const mime = (String(file.type || '').split(';')[0].trim() || byName).replace('application/octet-stream', byName);
+    if (!/^image\/(jpeg|png|webp)$/.test(mime)) { await save({ error_code: 'unsupported_file_type' }); return; }
+    const gemini = Deno.env.get('GEMINI_API_KEY') || '';
+    if (!gemini) { await save({ error_code: 'gemini_key_missing' }); return; }
+    const data = encodeBase64(bytes);
+    let model = MODEL;
+    let { status, out } = await ask(MODEL, gemini, mime, data, 40000);
+    if (BUSY.has(status) && FALLBACK && FALLBACK !== MODEL) {
+      await new Promise(r => setTimeout(r, 1500));
+      model = FALLBACK;
+      ({ status, out } = await ask(FALLBACK, gemini, mime, data, 90000));
+    }
+    let text = (out.candidates?.[0]?.content?.parts || []).map((p: { text?: string }) => p.text || '').join('').trim();
+    if (status >= 400 || out.error || !text) { await save({ error_code: `gemini_${status}`, model }); return; }
+    let result: Record<string, unknown>;
+    try { result = JSON.parse(text); } catch { await save({ error_code: 'unreadable_answer', model }); return; }
+    if (model === MODEL && FALLBACK && FALLBACK !== MODEL && (
+      result.is_receipt === false || result.amount == null || result.receiver_account == null
+      || Number(result.amount_confidence) < 0.8 || Number(result.receiver_account_confidence) < 0.8
+    )) {
+      const second = await ask(FALLBACK, gemini, mime, data, 90000);
+      const secondText = (second.out?.candidates?.[0]?.content?.parts || []).map((p: { text?: string }) => p.text || '').join('').trim();
+      if (second.status < 400 && !second.out?.error && secondText) {
+        try { result = JSON.parse(secondText); model = FALLBACK; } catch { /* keep first model's result */ }
+      }
+    }
+    const amount = Number(result.amount);
+    const amountConfidence = Number(result.amount_confidence);
+    const receiverConfidence = Number(result.receiver_account_confidence);
+    const amountUsable = Number.isFinite(amount) && amount > 0 && Number.isFinite(amountConfidence) && amountConfidence >= 0.8 && amountConfidence <= 1;
+    const receiver = String(result.receiver_account || '').trim();
+    const receiverUsable = receiver.length >= 6 && Number.isFinite(receiverConfidence) && receiverConfidence >= 0.8 && receiverConfidence <= 1;
+    if (result.is_receipt !== true || !amountUsable || !receiverUsable) {
+      await save({
+        error_code: result.is_receipt === false ? 'not_a_receipt' : 'ocr_uncertain',
+        is_receipt: result.is_receipt === true,
+        actual_amount: Number.isFinite(amount) && amount > 0 ? amount : null,
+        actual_currency: result.currency ? String(result.currency).toUpperCase().slice(0, 8) : null,
+        amount_confidence: Number.isFinite(amountConfidence) ? amountConfidence : null,
+        receiver_account: receiver || null,
+        receiver_account_confidence: Number.isFinite(receiverConfidence) ? receiverConfidence : null,
+        model
+      });
+      return;
+    }
+    const { data: saved, error: saveError } = await db.rpc('ex_customer_receipt_preflight_save', {
+      p_preflight_id: id,
+      p_result: {
+        is_receipt: true, success: result.success, actual_amount: amount,
+        actual_currency: result.currency || null, amount_confidence: amountConfidence,
+        receiver_account: receiver, receiver_account_confidence: receiverConfidence,
+        wallet: result.wallet || null, reference: result.reference || null, paid_at: result.paid_at || null,
+        sender_name: result.sender_name || null, sender_account: result.sender_account || null,
+        receiver_name: result.receiver_name || null, status_text: result.status_text || null,
+        notes: result.notes || null, model
+      }
+    });
+    if (saveError || saved !== true) await save({ error_code: 'result_save_failed', model });
+  } catch (error) {
+    await save({ error_code: String((error as Error)?.message || 'processing_failed').slice(0, 100) }).catch(() => {});
+  }
+}
+
+async function readPayoutReceipt(key: string, verificationId: string) {
+  let fingerprint: string | null = null;
+  const save = async (result: Record<string, unknown>, model = MODEL) => {
+    const { error } = await db.rpc('ex_payout_receipt_ocr_save', {
+      p_key: key, p_verification_id: verificationId, p_result: { ...result, model, receipt_fingerprint: fingerprint }
+    });
+    if (error) console.error('payout receipt OCR save failed', error.message);
+  };
+  try {
+    const { data: queued, error: claimError } = await db.from('ex_payout_receipt_verifications')
+      .update({ ocr_status: 'processing', updated_at: new Date().toISOString() })
+      .eq('id', verificationId).eq('ocr_status', 'queued')
+      .select('id,user_id,payout_receipt_url').maybeSingle();
+    if (claimError) { await save({ error: 'claim_failed' }); return; }
+    if (!queued) return;
+
+    const receiptUrl = String(queued.payout_receipt_url || '');
+    const expectedStart = `${RECEIPTS}${queued.user_id}/`;
+    if (!receiptUrl.startsWith(expectedStart) || /[?#\\\s\u0000-\u001f\u007f]/.test(receiptUrl)) {
+      await save({ error: 'invalid_receipt_path' }); return;
+    }
+    let path = '';
+    try { path = decodeURIComponent(receiptUrl.slice(RECEIPTS.length)); } catch { await save({ error: 'invalid_receipt_path' }); return; }
+    const segments = path.split('/');
+    if (segments.length !== 2 || segments[0] !== queued.user_id || segments.some(part => !part || part === '.' || part === '..') ||
+        !/^payout_[a-z0-9_-]{4,80}\.(?:jpg|jpeg|png|webp|heic|heif|pdf)$/i.test(segments[1])) {
+      await save({ error: 'invalid_receipt_path' }); return;
+    }
+
+    const { data: file, error: fileError } = await db.storage.from('receipts').download(path);
+    if (fileError || !file) { await save({ error: 'download_failed' }); return; }
+    if (file.size > MAX_BYTES) { await save({ error: 'file_too_large' }); return; }
+    const byName = /\.png$/i.test(path) ? 'image/png' : /\.webp$/i.test(path) ? 'image/webp' :
+      /\.pdf$/i.test(path) ? 'application/pdf' : /\.hei[cf]$/i.test(path) ? 'image/heic' : 'image/jpeg';
+    const mime = (String(file.type || '').split(';')[0].trim() || byName).replace('application/octet-stream', byName);
+    if (!/^(image\/(jpeg|png|webp|heic|heif)|application\/pdf)$/.test(mime)) { await save({ error: 'unsupported_file' }); return; }
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    if (!bytes.length || bytes.length > MAX_BYTES) { await save({ error: 'file_too_large' }); return; }
+    fingerprint = await sha256BytesHex(bytes);
+    const gemini = Deno.env.get('GEMINI_API_KEY') || '';
+    if (!gemini) { await save({ error: 'gemini_key_missing' }); return; }
+    const data = encodeBase64(bytes);
+    let model = MODEL;
+    let { status, out } = await askPayout(MODEL, gemini, mime, data, 40000);
+    if (BUSY.has(status) && FALLBACK && FALLBACK !== MODEL) {
+      await new Promise(r => setTimeout(r, 2000));
+      model = FALLBACK;
+      ({ status, out } = await askPayout(FALLBACK, gemini, mime, data, 90000));
+    }
+    if (status >= 400 || out.error) {
+      await save({ error: `gemini_${status}` }, model); return;
+    }
+    const text = (out.candidates?.[0]?.content?.parts || []).map((p: { text?: string }) => p.text || '').join('').trim();
+    if (!text) { await save({ error: 'empty_answer' }, model); return; }
+    let result: Record<string, unknown>;
+    try { result = JSON.parse(text); } catch { await save({ error: 'unreadable_answer' }, model); return; }
+
+    if (model === MODEL && FALLBACK && FALLBACK !== MODEL &&
+        (result.is_receipt === false || result.amount == null || !result.reference)) {
+      const second = await askPayout(FALLBACK, gemini, mime, data, 90000);
+      const secondText = (second.out?.candidates?.[0]?.content?.parts || []).map((p: { text?: string }) => p.text || '').join('').trim();
+      if (second.status < 400 && !second.out?.error && secondText) {
+        try { result = JSON.parse(secondText); model = FALLBACK; } catch { /* keep the primary result */ }
+      }
+    }
+
+    const clean = (value: unknown, max: number) => typeof value === 'string'
+      ? value.replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max) || null : null;
+    const westernDigits = (value: string) => value.replace(/[٠-٩۰-۹]/g, c => String(c.charCodeAt(0) >= 0x6f0 ? c.charCodeAt(0) - 0x6f0 : c.charCodeAt(0) - 0x660));
+    if (typeof result.is_receipt !== 'boolean') { await save({ error: 'invalid_model_answer' }, model); return; }
+    const amount = typeof result.amount === 'number' && Number.isFinite(result.amount)
+      ? result.amount : typeof result.amount === 'string' ? westernDigits(result.amount.trim()).slice(0, 40) : null;
+    const confidence = (value: unknown) => typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= 1 ? value : null;
+    await save({
+      is_receipt: result.is_receipt,
+      wallet: clean(result.wallet, 80), bank_name: clean(result.bank_name, 100),
+      success: typeof result.success === 'boolean' ? result.success : null,
+      status_text: clean(result.status_text, 120), amount, amount_confidence: confidence(result.amount_confidence),
+      currency: clean(result.currency, 20), reference: clean(result.reference, 120),
+      reference_confidence: confidence(result.reference_confidence), description: clean(result.description, 600),
+      paid_at: clean(result.paid_at, 80), sender_name: clean(result.sender_name, 120),
+      sender_account: clean(result.sender_account, 60), receiver_name: clean(result.receiver_name, 120),
+      receiver_account: clean(result.receiver_account, 60), notes: clean(result.notes, 500)
+    }, model);
+  } catch {
+    await save({ error: 'processing_failed' }).catch(() => {});
   }
 }
 
@@ -314,10 +549,24 @@ Deno.serve(async (req) => {
   const orderId = String(body?.order_id || '');
   const verificationId = String(body?.verification_id || '');
   const identityDraftId = String(body?.identity_draft_id || '');
-  if ([orderId, verificationId, identityDraftId].filter(Boolean).length > 1) return reply(422, { error: 'invalid_request' });
+  const payoutVerificationId = String(body?.payout_verification_id || '');
+  const customerPreflightId = String(body?.customer_preflight_id || '');
+  if ([orderId, verificationId, identityDraftId, payoutVerificationId, customerPreflightId].filter(Boolean).length > 1) return reply(422, { error: 'invalid_request' });
   // answer now; the reading takes a few seconds and is saved by itself
   // deno-lint-ignore no-explicit-any
   const runtime = (globalThis as any).EdgeRuntime;
+  if (payoutVerificationId) {
+    if (!UUID.test(payoutVerificationId)) return reply(422, { error: 'bad_payout_verification' });
+    if (runtime?.waitUntil) runtime.waitUntil(readPayoutReceipt(key, payoutVerificationId));
+    else await readPayoutReceipt(key, payoutVerificationId);
+    return reply(202, { queued: true });
+  }
+  if (customerPreflightId) {
+    if (!UUID.test(customerPreflightId)) return reply(422, { error: 'bad_customer_preflight' });
+    if (runtime?.waitUntil) runtime.waitUntil(readCustomerReceiptPreflight(customerPreflightId));
+    else await readCustomerReceiptPreflight(customerPreflightId);
+    return reply(202, { queued: true });
+  }
   if (verificationId) {
     if (!UUID.test(verificationId)) return reply(422, { error: 'bad_verification' });
     if (runtime?.waitUntil) runtime.waitUntil(readIdentity(verificationId));

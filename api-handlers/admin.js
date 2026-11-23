@@ -14,6 +14,7 @@
 // ─────────────────────────────────────────────────────────────
 import { createClient } from '@supabase/supabase-js';
 import { payoutPlan } from './_lib/payout-rounding.js';
+import { extractExpectedReference } from './_lib/receipt-verification.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://pycxuugoblkslvwebxuu.supabase.co';
 const SERVICE_KEY  = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -155,11 +156,43 @@ function validSettlementReceipt(order, value) {
     value.startsWith(prefix) && !/[\s\u0000-\u001f\u007f?#\\]/.test(value) && !/\.\.|%2e|%2f|%5c/i.test(value.slice(prefix.length));
 }
 
+function smartReceiptError(error) {
+  const message=String(error?.message||'');
+  const known=[
+    ['STAFF_PERMISSION_REQUIRED',403,'staff_permission_required','مۆڵەتی پشکنینی پسووڵەی پارەدانەت نییە'],
+    ['ORDER_NOT_FOUND',404,'not_found','Order not found'],
+    ['ORDER_NOT_ELIGIBLE_FOR_SMART_RECEIPT',409,'receipt_not_eligible','ئەم مامەڵەیە ئێستا بۆ پشکنینی پسووڵە ئامادە نییە'],
+    ['SMART_RECEIPT_STALE_AMOUNT',409,'receipt_amount_stale','بڕی مامەڵە گۆڕاوە؛ پەڕەکە نوێ بکەرەوە'],
+    ['SMART_RECEIPT_AMOUNT_MISMATCH',400,'receipt_amount_mismatch','بڕی چاوەڕوانکراوی پشکنین لەگەڵ پلانەکە ناگونجێت'],
+    ['SMART_RECEIPT_NOTE_STALE',409,'receipt_note_stale','تێبینی داواکاری گۆڕاوە؛ دووبارە پشکنین دەستپێبکە'],
+    ['INVALID_PAYOUT_RECEIPT',400,'invalid_receipt','شوێنی پسووڵەی پارەدان دروست نییە'],
+    ['INVALID_SMART_RECEIPT_REQUEST',400,'bad_input','زانیاریی پشکنینی پسووڵە تەواو یان دروست نییە'],
+    ['SMART_RECEIPT_REVIEW_REASON_REQUIRED',400,'review_reason_required','هۆکاری پشکنینی دەستی لە ١٠ تا ٣٠٠ پیت بنووسە'],
+    ['SMART_RECEIPT_NOT_REVIEWABLE',409,'receipt_not_reviewable','ئەم دەرئەنجامە ناتوانرێت بە پشکنینی دەستی تۆمار بکرێت'],
+    ['SMART_RECEIPT_ALREADY_REVIEWED',409,'receipt_already_reviewed','پشکنینی دەستی بۆ ئەم پسووڵەیە پێشتر تۆمار کراوە'],
+    ['SMART_RECEIPT_VERIFICATION_REQUIRED',409,'receipt_verification_required','پسووڵەی بارکراو دەبێت لە بەشی پشکنینی زیرەکدا پشکنرێت'],
+    ['SMART_RECEIPT_OCR_PENDING',409,'receipt_ocr_pending','خوێندنەوەی پسووڵە هێشتا تەواو نەبووە'],
+    ['SMART_RECEIPT_ID_MISMATCH',409,'receipt_id_mismatch','ژمارەی مامەڵەی پسووڵە لەگەڵ ژمارەی تێبینی بانکی ناگونجێت؛ پەسەندکردن ڕاگیراوە'],
+    ['SMART_RECEIPT_MANUAL_REVIEW_REQUIRED',409,'receipt_manual_review_required','پێش پەسەندکردن، پشکنینی دەستی لە بەشی پسووڵە تۆمار بکە'],
+    ['SMART_RECEIPT_STALE',409,'receipt_verification_stale','بڕ، تێبینی یان پسووڵە گۆڕاوە؛ دووبارە پشکنینی پسووڵە بکە']
+  ];
+  const match=known.find(([needle])=>message.includes(needle));
+  if(match)return {status:match[1],code:match[2],message:match[3]};
+  if(['PGRST202','42883','42703','42P01'].includes(error?.code))
+    return {status:503,code:'receipt_verification_unavailable',message:'پشکنینی پسووڵە بەردەست نییە؛ migration و خزمەتگوزارەکە دەبێت ئامادە بن'};
+  return {status:500,code:'receipt_verification_failed',message:'پشکنینی پسووڵە سەرکەوتوو نەبوو؛ دەرئەنجامی پشکنین پشتڕاست نەکرایەوە'};
+}
+
 function settlementError(error) {
   const message = String(error?.message || '');
   if (error?.code === '42501' || message.includes('STAFF_PERMISSION_REQUIRED'))
     return {status:403,code:'staff_permission_required',message:'مۆڵەتی پەسەندکردنی ئەم داواکارییەت نییە'};
   const known = [
+    ['SMART_RECEIPT_VERIFICATION_REQUIRED',409,'receipt_verification_required','پسووڵەی بارکراو دەبێت لە بەشی پشکنینی زیرەکدا پشکنرێت'],
+    ['SMART_RECEIPT_OCR_PENDING',409,'receipt_ocr_pending','خوێندنەوەی پسووڵە هێشتا تەواو نەبووە'],
+    ['SMART_RECEIPT_STALE',409,'receipt_verification_stale','بڕ، تێبینی یان پسووڵە گۆڕاوە؛ دووبارە پشکنینی پسووڵە بکە'],
+    ['SMART_RECEIPT_ID_MISMATCH',409,'receipt_id_mismatch','ژمارەی مامەڵەی پسووڵە لەگەڵ ژمارەی تێبینی بانکی ناگونجێت؛ پەسەندکردن ڕاگیراوە'],
+    ['SMART_RECEIPT_MANUAL_REVIEW_REQUIRED',409,'receipt_manual_review_required','پێش پەسەندکردن، پشکنینی دەستی لە بەشی پسووڵە تۆمار بکە'],
     ['ORDER_SETTLEMENT_STALE',409,'approval_stale','داواکارییەکە گۆڕاوە؛ نوێی بکەرەوە و بڕی ناردنەکە دووبارە بپشکنە'],
     ['ORDER_ALREADY_DECIDED',409,'already_decided','ئەم داواکارییە پێشتر بڕیاری لەسەر دراوە'],
     ['SETTLEMENT_REQUEST_KEY_CONFLICT',409,'approval_request_conflict','ئەم داواکارییەی پەسەندکردن پێشتر بە زانیارییەکی جیاواز تۆمار کراوە'],
@@ -285,6 +318,7 @@ export function assertStaffAction(profile,action){
   const permissions={
     ping:'view',account_balances:'view',balance_dashboard:'view',balance_lookup_order:'view',
     list_order_correction_history:'view',receipt_read_get:'view',receipt_read_run:'approve_orders',
+    payout_receipt_verify_get:'view',payout_receipt_verify_start:'approve_orders',payout_receipt_verify_review:'approve_orders',
     approve_order:'approve_orders',reject_order:'approve_orders',request_order_correction:'approve_orders',
     save_order_note:'approve_orders',save_payout_receipt:'approve_orders',
     balance_credit_refund:'refunds',balance_credit_shortfall:'refunds',balance_refund_report:'refunds',
@@ -579,6 +613,65 @@ const actions = {
       .eq('order_id',order_id.toLowerCase()).order('created_at',{ascending:false}).limit(30);
     if(error)throw orderAdminError(error);
     return data||[];
+  },
+  async payout_receipt_verify_start({order_id,payout_receipt_url,approval_refund_iqd=0},ctx){
+    if(typeof order_id!=='string'||!UUID.test(order_id)||typeof payout_receipt_url!=='string'||
+       !Number.isSafeInteger(approval_refund_iqd)||approval_refund_iqd<0||approval_refund_iqd>1000000000||approval_refund_iqd%1000!==0)
+      throw {status:400,code:'bad_input',message:'زانیاریی پشکنینی پسووڵە دروست نییە'};
+    order_id=order_id.toLowerCase();
+    const {data:order,error:readError}=await db.from('ex_orders')
+      .select('id,user_id,order_code,status,total,to_method,admin_note,balance_refunded_at,payout_settlement_id')
+      .eq('id',order_id).maybeSingle();
+    if(readError||!order)throw {status:404,code:'not_found',message:'Order not found'};
+    if(!REVIEWABLE_ORDER_STATUSES.has(order.status)||order.balance_refunded_at||order.payout_settlement_id)
+      throw {status:409,code:'receipt_not_eligible',message:'ئەم مامەڵەیە بۆ پشکنینی پسووڵە ئامادە نییە'};
+    const plan=payoutPlan(order.total,order.to_method);
+    if(!plan.valid||!plan.requires_payout||approval_refund_iqd>plan.payout_iqd)
+      throw {status:400,code:'receipt_amount_mismatch',message:'بڕی ناردنی دەرەکی بۆ ئەم مامەڵەیە دروست نییە'};
+    if(!validSettlementReceipt(order,payout_receipt_url.trim()))
+      throw {status:400,code:'invalid_receipt',message:'شوێنی پسووڵەی پارەدان دروست نییە'};
+    const expectedReference=extractExpectedReference(order.admin_note);
+    const {data,error}=await db.rpc('ex_admin_payout_receipt_start',{
+      p_order_id:order.id,p_admin_id:ctx.user.id,p_receipt_url:payout_receipt_url.trim(),
+      p_refund_iqd:approval_refund_iqd,p_expected_total:plan.expected_iqd,
+      p_expected_amount_iqd:plan.payout_iqd-approval_refund_iqd,
+      p_source_admin_note:order.admin_note,p_expected_reference:expectedReference
+    });
+    if(error)throw smartReceiptError(error);
+    await audit(ctx.user.id,'payout_receipt_verify_start',order.user_id,`verification:${data?.verification_id||''}`);
+    return {...data,expected_amount_iqd:plan.payout_iqd-approval_refund_iqd,
+      expected_reference:expectedReference,order_code:order.order_code};
+  },
+  async payout_receipt_verify_get({order_id,verification_id},_ctx){
+    if(typeof order_id!=='string'||!UUID.test(order_id)||
+       (verification_id!=null&&(typeof verification_id!=='string'||!UUID.test(verification_id))))
+      throw {status:400,code:'bad_input',message:'مامەڵە یان پشکنین دروست نییە'};
+    const normalizedOrderId=order_id.toLowerCase();
+    const {data:order,error:orderError}=await db.from('ex_orders').select('id,order_code').eq('id',normalizedOrderId).maybeSingle();
+    if(orderError||!order)throw {status:404,code:'not_found',message:'Order not found'};
+    let query=db.from('ex_payout_receipt_verifications')
+      .select('id,order_id,admin_id,payout_receipt_url,source_admin_note,expected_amount_iqd,expected_reference,ocr_status,is_receipt,wallet,bank_name,success,status_text,actual_amount_iqd,currency,extracted_reference,description,paid_at,sender_name,sender_account,receiver_name,receiver_account,notes,reference_confidence,amount_confidence,amount_status,difference_iqd,id_status,verification_status,duplicate_order_id,model,error_code,manual_review_by,manual_review_at,manual_review_reason,created_at,processed_at,updated_at')
+      .eq('order_id',normalizedOrderId).order('created_at',{ascending:false}).limit(1);
+    if(verification_id)query=query.eq('id',verification_id.toLowerCase());
+    const {data:verification,error}=await query.maybeSingle();
+    if(error)throw {status:503,code:'receipt_verification_unavailable',message:'دەرئەنجامی پشکنینی پسووڵە بار نەکرا'};
+    let duplicateOrder=null;
+    if(verification?.duplicate_order_id){
+      const {data:prior}=await db.from('ex_orders').select('id,order_code,created_at').eq('id',verification.duplicate_order_id).maybeSingle();
+      if(prior)duplicateOrder=prior;
+    }
+    return {verification:verification||null,duplicate_order:duplicateOrder};
+  },
+  async payout_receipt_verify_review({verification_id,reason},ctx){
+    const reviewReason=typeof reason==='string'?reason.trim():'';
+    if(typeof verification_id!=='string'||!UUID.test(verification_id)||reviewReason.length<10||reviewReason.length>300)
+      throw {status:400,code:'review_reason_required',message:'هۆکاری پشکنینی دەستی لە ١٠ تا ٣٠٠ پیت بنووسە'};
+    const {data,error}=await db.rpc('ex_admin_payout_receipt_review',{
+      p_verification_id:verification_id.toLowerCase(),p_admin_id:ctx.user.id,p_reason:reviewReason
+    });
+    if(error)throw smartReceiptError(error);
+    await audit(ctx.user.id,'payout_receipt_verify_review',null,`verification:${verification_id.toLowerCase()}`);
+    return data;
   },
   // What the receipt reader (Supabase Edge Function receipt-read, with Gemini) found on the
   // order's receipt; null until it is read. New receipts are read by the database itself.

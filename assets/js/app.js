@@ -2076,6 +2076,34 @@ async function uploadReceiptWithRetry(fileData,ext,contentType='image/jpeg'){
   throw new Error(isTransientNetworkError(lastError)?'RECEIPT_UPLOAD_NETWORK':'RECEIPT_UPLOAD_FAILED');
 }
 
+async function runCustomerReceiptPreflight({from,to,amount,receiptUrl,receiptHash}){
+  const checkId=crypto.randomUUID();
+  const {error:startError}=await sb.rpc('ex_customer_receipt_preflight_start',{
+    p_check_id:checkId,p_from_method:from,p_to_method:to,p_amount:amount,
+    p_receipt_url:receiptUrl,p_receipt_hash:receiptHash
+  });
+  if(startError) throw new Error('RECEIPT_PREFLIGHT_START_FAILED');
+  const {error:queueError}=await sb.rpc('ex_customer_receipt_preflight_queue',{p_check_id:checkId});
+  if(queueError) throw new Error('RECEIPT_PREFLIGHT_QUEUE_FAILED');
+  const deadline=Date.now()+125000;
+  while(Date.now()<deadline){
+    await new Promise(resolve=>setTimeout(resolve,1500));
+    const {data,error}=await sb.rpc('ex_customer_receipt_preflight_result',{p_check_id:checkId});
+    if(error) throw new Error('RECEIPT_PREFLIGHT_RESULT_FAILED');
+    if(data?.status==='complete'){
+      const messages=[];
+      if(data.is_receipt!==true) throw new Error('RECEIPT_PREFLIGHT_UNCERTAIN');
+      if(data.amount_matches!==true) messages.push('بڕی ناردراو یەکناگرێتەوە لەگەڵ بڕی نوسراو!');
+      if(data.receiver_matches!==true) messages.push('باڵانس بۆ ژمارەیەکی ھەڵە نێردراوە!');
+      if(messages.length) throw Object.assign(new Error(messages.join('<br>')),{code:'RECEIPT_PREFLIGHT_MISMATCH'});
+      return checkId;
+    }
+    if(data?.status==='error') throw new Error(data.error_code==='not_a_receipt'?'RECEIPT_NOT_A_RECEIPT':'RECEIPT_PREFLIGHT_UNCERTAIN');
+    if(data?.status==='expired'||data?.status==='not_found') throw new Error('RECEIPT_PREFLIGHT_EXPIRED');
+  }
+  throw new Error('RECEIPT_PREFLIGHT_TIMEOUT');
+}
+
 // Sending an order shows the identity screen's bar under the button (#orderProgress,
 // assets/css/exchange-form.css): the same track, fill and line of text, step by step.
 function orderSetProgress(pct, text){
@@ -2135,7 +2163,7 @@ async function processOrder(){
     if(kycNow && kycNow.exchange_blocked){
       throw Object.assign(new Error('KYC_REQUIRED_FOR_EXCHANGE'),{code:'KYC_REQUIRED_FOR_EXCHANGE'});
     }
-    let receiptUrl=null, receiptHash=null;
+    let receiptUrl=null, receiptHash=null, receiptPreflightId=null;
     if(selectedFile){
       orderStage='receipt_read';
       orderSetProgress(18,'ئامادەکردنی پسووڵە...');
@@ -2148,6 +2176,9 @@ async function processOrder(){
       orderStage='receipt_upload';
       orderSetProgress(32,'بارکردنی پسووڵە...');
       receiptUrl=await uploadReceiptWithRetry(file.bytes,ext,file.type);
+      orderStage='receipt_preflight';
+      orderSetProgress(48,'پشکنینی بڕ و ژمارەی وەرگر لەسەر پسووڵە...');
+      receiptPreflightId=await runCustomerReceiptPreflight({from,to,amount:Number(amtValue),receiptUrl,receiptHash});
     }
 
     orderStage='session';
@@ -2164,7 +2195,7 @@ async function processOrder(){
           from_method:from,to_method:to,amount:parseFloat(amtValue),phone,
           sender_name:needsSenderPhone(from)?null:senderName,
           sender_phone:needsSenderPhone(from)?senderPhone:null,
-          receipt_url:receiptUrl,receipt_hash:receiptHash,contact_reference:'',
+          receipt_url:receiptUrl,receipt_hash:receiptHash,receipt_preflight_id:receiptPreflightId,contact_reference:'',
           request_key:from==='AccountBalance'?(_balanceOrderKey=_balanceOrderKey||crypto.randomUUID()):undefined
         })
       });
@@ -2210,6 +2241,15 @@ async function processOrder(){
     clearAllOrderFieldErrors();
     calc();
   }catch(e){
+    if(e?.code==='RECEIPT_PREFLIGHT_MISMATCH'){
+      setFieldError('fileInput',e.message);
+      return;
+    }
+    if(/^RECEIPT_(?:PREFLIGHT|NOT_A_RECEIPT)/.test(String(e?.message||''))){
+      const message=e.message==='RECEIPT_NOT_A_RECEIPT'?'تکایە وێنەی پسووڵەی ڕاستەقینە باربکە':'نەتوانرا پسووڵەکە بە دڵنیایی پشتڕاست بکرێتەوە؛ تکایە وێنەیەکی ڕوونتر باربکە و دووبارە هەوڵ بدەرەوە';
+      setFieldError('fileInput',message);
+      return;
+    }
     if(e && (e.code==='KYC_REQUIRED_FOR_EXCHANGE' || /KYC_REQUIRED_FOR_EXCHANGE/.test(String(e.message||'')))){
       // Expected business rule, not an application error.
       await loadKycStatus(true);
