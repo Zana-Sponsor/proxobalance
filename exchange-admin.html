@@ -867,7 +867,7 @@
     <p id="apActionNote" class="payout-rounding-note"></p>
     <div id="apRefundWrap" style="margin-top:12px;padding:12px;border:1px solid rgba(217,119,6,.25);border-radius:14px;background:rgba(217,119,6,.06)">
       <label class="modal-lbl">بڕی ڕیفاوند بۆ باڵانسی کڕیار (IQD)</label>
-      <input class="minp" id="apRefundAmount" type="number" min="0" max="1000000000" step="1000" inputmode="numeric" placeholder="0">
+      <input class="minp" id="apRefundAmount" type="number" min="0" max="1000000000" step="1000" inputmode="numeric" placeholder="0" oninput="approvalRefundChanged()">
       <div class="fee-toggle-note" style="margin-top:5px">بۆ نموونە: ئەگەر 11,000 داواکراوە و تەنها 10,000 دەنێریت، لێرە 1,000 بنووسە.</div>
       <label class="modal-lbl" style="margin-top:9px">هۆکاری ڕیفاوند</label>
       <textarea class="minp mta" id="apRefundNote" maxlength="300" placeholder="بۆ نموونە: لە هەژماری FIB تەنها 10,000 دینار بەردەست بوو"></textarea>
@@ -882,6 +882,16 @@
         <div class="fee-toggle-note" id="apReceiptNote">هیچ وێنەیەک هەڵنەبژێردراوە</div>
       </div>
     </div>
+    <section class="smart-receipt-card" id="apSmartReceipt" hidden aria-live="polite">
+      <div class="smart-receipt-head"><div><b>پشکنینی زیرەکی پسووڵە</b><small>Gemini ـی هەمان سیستەمی خوێندنەوە؛ بڕیار و پەسەندکردن هەر لەلایەن ئادمینەوەیە</small></div><span class="smart-receipt-badge tone-neutral" id="apSmartReceiptBadge">پشکنین نەکراوە</span></div>
+      <div id="apSmartReceiptBody" class="smart-receipt-body"></div>
+      <button type="button" class="act-btn cy smart-receipt-scan" id="apSmartReceiptScan" onclick="startPayoutReceiptVerification()"><i class="fas fa-magnifying-glass"></i> دەستپێکردنی پشکنین</button>
+      <div class="smart-receipt-review" id="apSmartReceiptReview" hidden>
+        <label class="modal-lbl" for="apSmartReceiptReason">هۆکاری پشکنینی دەستی (پێویستە)</label>
+        <textarea class="minp mta" id="apSmartReceiptReason" maxlength="300" rows="2" placeholder="بە کورتی بنووسە چی پشکنیت کرد و بۆچی دەتوانرێت بەردەوام بیت"></textarea>
+        <button type="button" class="act-btn" id="apSmartReceiptReviewBtn" onclick="recordPayoutReceiptManualReview()">تۆمارکردنی پشکنینی دەستی</button>
+      </div>
+    </section>
     <div id="apError" class="balance-credit-error" role="alert"></div>
     <div class="act-grp" style="margin-top:14px">
       <button type="button" class="act-btn gr payout-approve-button" id="apConfirmBtn" onclick="confirmApproveOrder()"><i class="fas fa-check"></i> پەسەندکردن</button>
