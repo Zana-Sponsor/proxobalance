@@ -3553,6 +3553,9 @@ function kycBadgeHTML(status){
 function kycNameRelation(accountName, legalName){
   return window.KycName ? window.KycName.relation(accountName,legalName) : 'unknown';
 }
+function kycNormName(value){
+  return window.KycName ? window.KycName.normalize(value) : String(value??'').normalize('NFC').replace(/\s+/g,' ').trim().toLowerCase();
+}
 
 const KYC_EXCHANGE_BLOCKED_BADGE='<span class="badge banned" title="تا پەسەندکردنی ناسنامە ناتوانێت ئاڵوگۆڕی نوێ بکات">ئاڵوگۆڕ ڕاگیراوە</span>';
 function kycNameCompareHTML(it,extractedName=''){

@@ -5216,6 +5216,8 @@ const KYC_ERRORS = {
   KYC_EXPIRY_DATE_INVALID:'بەرواری بەسەرچوون دروست نییە',
   KYC_DOCUMENT_DATES_INVALID:'بەرواری بەسەرچوون دەبێت دوای بەرواری دەرچوون بێت',
   KYC_DRAFT_RATE_LIMIT:'زۆر هەوڵی خوێندنەوەی ناسنامەت داوە؛ تکایە دواتر هەوڵبدەوە',
+  KYC_DRAFT_EXISTS:'ئەم پڕۆسەی خوێندنەوەیە پێشتر بەکارهاتووە؛ تکایە وێنەکان دووبارە هەڵبژێرە',
+  KYC_DRAFT_INVALID:'جۆری ناسنامە دیاری بکە و دووبارە هەوڵبدەوە',
   KYC_NUMBER_INVALID:'ژمارەی بەڵگەنامە دەبێت 4 بۆ 30 پیت/ژمارەی ئینگلیزی بێت',
   KYC_FRONT_PATH_INVALID:'وێنەی ڕووی پێشەوە دروست نییە؛ دووبارە هەڵیبژێرە',
   KYC_BACK_PATH_INVALID:'وێنەی ڕووی دواوە دروست نییە؛ دووبارە هەڵیبژێرە',
@@ -5879,8 +5881,11 @@ async function kycMaybeReadIdentity(){
       return null;
     }catch(error){
       if(token===_kycOcrToken){
-        kycSetOcrStatus('error','نەتوانرا زانیارییەکان بخوێندرێنەوە؛ تکایە خانەکان بە دەست پڕبکەرەوە و وێنەکان دڵنیابکەرەوە.');
-        try{ void reportAppError(new Error('KYC_OCR_DRAFT_FAILED'),{operation:'kyc_ocr_draft',stage:'customer_ocr'}).catch(()=>{}); }catch(_){}
+        const rawCode=String(error?.message||'').match(/\bKYC_[A-Z0-9_]+\b/)?.[0]||'';
+        const knownCode=Object.prototype.hasOwnProperty.call(KYC_ERRORS,rawCode)?rawCode:'';
+        const statusMessage=knownCode?KYC_ERRORS[knownCode]:'نەتوانرا زانیارییەکان بخوێندرێنەوە؛ تکایە خانەکان بە دەست پڕبکەرەوە و وێنەکان دڵنیابکەرەوە.';
+        kycSetOcrStatus('error',statusMessage);
+        try{ void reportAppError(new Error('KYC_OCR_DRAFT_FAILED'+(knownCode?':'+knownCode:'')),{operation:'kyc_ocr_draft',stage:'customer_ocr',error_code:knownCode||'UNKNOWN'}).catch(()=>{}); }catch(_){}
       }
       return null;
     }finally{ if(token===_kycOcrToken) _kycOcrPromise=null; }
