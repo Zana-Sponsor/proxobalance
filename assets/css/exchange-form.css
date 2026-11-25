@@ -1,33 +1,22 @@
 /* ═════════════════════════════════════════════════════════════════
-   New exchange (#pageHome, route "/exchange") — v62, top toolbar v63,
-   no cards since v74, one hierarchy and one control height since v79
+   New exchange (#pageHome, route "/exchange") and its sheets.
+   Loaded last; light and dark use the app's palette, unchanged.
 
-   Built like a large app's form: few sizes, each with one job; every
-   control the same height and radius; one blue highlight. The colours
-   are the app's own, unchanged. Measured in a browser from the words'
-   own lines.
-
-   hierarchy (size / weight / colour), each level clearly apart
-     page title      16/700 ink          (the top bar)
-     section title   15/700 ink          زانیاری ناردن، وردەکاری مامەڵە …
-     content         14/500 ink          a wallet's name, figure values
-                     15/500 the number to pay into · 16/400 what is
-                     typed (a phone zooms in on anything smaller)
-     key figures     20/600 the amount · 18/700 blue what arrives
-     labels          12/500 grey         above every field
-     quiet text      12-13/400 grey      hints, figure names, the minimum
-   blue is kept for what the eye must find or can tap: what arrives,
-   copy, «بۆچی؟», the swap, focus
-
-   controls          48 high, radius 12, filled, no line (a blue line on
-                     focus): chooser, number to pay into, amount, phone,
-                     receipt, the answer's band, the button
-                     quick amounts 34, radius 10 · nothing else is a box:
-                     the minimum is words, copy is words in blue
-   spaces            8 a label to its field, a field to its quick amounts
-                     or hint · 14 a title to what it names · 16 a field
-                     to the next · 26 around every line, as around the
-                     swap's (the swap itself untouched)
+   One system, few sizes, each with one job
+     type      page title 16/700 · section title 15/700 · values 16/600 (what is typed 16/600,
+               the amount 26/700) · summary lines 13 label, 14/500 value · labels, hints 12/500
+               · chips, pills, copy 13 · key figure 18/700 blue · sheet title 18/500
+     sizes     three heights for three jobs
+                 48  choose or act: the wallet chooser, the send button, the sheets' buttons
+                 64  a value with its label inside: the number to pay into, the recipient's
+                     number, the receipt options, the picked receipt
+                 80  the amount: the one figure the eye looks for
+               radius 12 on the 48s, 14 on the 64s, 16 on the 80 and on sheets; pills 999
+               quick amounts 36 high · every tap target is 44 or has a 44 area around it
+     colour    blue only for what the eye must find or can tap: what arrives, copy, the swap,
+               focus, the one typed quick amount · one red for errors · no drop shadows:
+               a hairline divides, a soft well sits
+     spaces    see the tokens below the shared colours
 
      ─ top bar ──────────────────────────────  26
      زانیاری ناردن                 کەمترین 10,000
@@ -38,51 +27,48 @@
      زانیاری وەرگرتن
      ڕێگای وەرگرتن [ … ]   ژمارەی وەرگر [ … ]
      ───────────────────────────────────────
-     وردەکاری مامەڵە
-     دەینێریت ………………………… 10,000 IQD
-     کرێی خزمەتگوزاری ……………… 200 IQD
-     [ وەرگر وەریدەگرێت          9,000 IQD ]   the one blue band
-     دەخرێتە سەر باڵانسەکەت ……… 800 IQD · sentence · بۆچی؟
-     ───────────────────────────────────────
-     پسووڵەی پارەدان [ + وێنەی پسووڵە …  PNG ] hint
+     وردەکاری مامەڵە · پوختەی نرخ
+     پسووڵەی پارەدان [ کامێرا ] [ گەلەری ]
      [ ناردنی داواکاری ]
 
-   On wide screens the form is on the right and the figures, receipt and
-   button on the left, both columns starting at the same line. Loaded
-   last; light and dark use the app's palette.
+   Phones and tablets: one column (a tablet's column is centred, 560 wide). From 1024 the form is
+   on the right and the figures, receipt and button on the left, both columns starting at the
+   same line.
    ═════════════════════════════════════════════════════════════════ */
-html body #mainApp#mainApp#mainApp #pageHome {
-  --xf-card: #ffffff; --xf-line: #e8ecf3; --xf-rule: #e8ecf3;
-  /* the spaces, measured from words to words and from edge to edge (v77):
-       6   a label to its field; a hint under its field
-       8   a field to the buttons under it (quick amounts)
-       16  one field to the next; a title to what it names; a figure line to the next
-       26  a part to the line under it, and a line to the next title: the swap's own room
-           (6 above it + half its 40), so every line has the same room on both sides */
-  --xf-s-attach: 8px; --xf-s-tie: 8px; --xf-s-group: 16px; --xf-s-title: 14px;
-  --xf-title-size: 15px;
-  --xf-gap: 26px; --xf-after-line: 25px;   /* 25 under the line's own 1px: the words are 26 from where the line is drawn */
-  --xf-title-h: 24px;   /* a title's line: 14 × 1.6; the row is this high, whatever sits at its end */
+/* shared tokens: the form and every sheet read the same colours, in light and dark */
+html body :is(#pageHome, #confirmSheet, #roundingInfoSheet, #summaryInfoBackdrop, #receiptHelpSheet) {
+  --xf-card: #ffffff; --xf-line: #e8ecf3; --xf-rule: #eef2f6;
   --xf-field: #f2f5f9; --xf-field-line: transparent; --xf-field-focus: #ffffff;
-  --xf-dash: color-mix(in srgb, var(--xf-label) 32%, transparent);
+  --xf-well: #f2f5f9;   /* a recessed surface on a sheet: close, ghost button, summary head */
   --xf-ink: #0f172a; --xf-title: #1f2d44; --xf-text: #5f6f86; --xf-label: #64748b; --xf-ph: #94a3b8;
   --xf-accent: #0265ff; --xf-accent-soft: #eff4fe; --xf-accent-line: #d6e4fd; --xf-ring: rgba(2, 101, 255, .1);
   --xf-chip: #f1f5fa; --xf-chip-ink: #3a4962;
-  --xf-warn: #b45309;
+  --xf-warn: #b45309; --xf-danger: #c2414b; --xf-danger-soft: #fff5f5;
   --xf-skel: #e8ecf3; --xf-skel-hi: #f6f7f9;   /* the figures while the database answers */
   --xf-btn: #0265ff; --xf-btn-press: #0052d6;
   --xf-font: Rabar, Arial, sans-serif;
 }
-html[data-theme="dark"] body #mainApp#mainApp#mainApp #pageHome {
+html[data-theme="dark"] body :is(#pageHome, #confirmSheet, #roundingInfoSheet, #summaryInfoBackdrop, #receiptHelpSheet) {
   --xf-card: #131c2e; --xf-line: #25324a; --xf-rule: #1b2740;
   --xf-field: #131c2e; --xf-field-line: transparent; --xf-field-focus: #131c2e;
-  --xf-dash: color-mix(in srgb, var(--xf-label) 32%, transparent);
+  --xf-well: #0e1725;
   --xf-ink: #e8edf6; --xf-title: #e8edf6; --xf-text: #a3b1c7; --xf-label: #a3b1c7; --xf-ph: #7d8ba3;
   --xf-accent: #3b8cff; --xf-accent-soft: #10223d; --xf-accent-line: #264a73; --xf-ring: rgba(59, 140, 255, .14);
   --xf-chip: #1b2740; --xf-chip-ink: #c4cee0;
-  --xf-warn: #f7b955;
+  --xf-warn: #f7b955; --xf-danger: #f87171; --xf-danger-soft: #211a22;
   --xf-skel: #1b2740; --xf-skel-hi: #25324a;
   --xf-btn: #1c6cff; --xf-btn-press: #1559d6;
+}
+/* the form's spaces, measured from words to words and from edge to edge:
+     8   a label to its field; a hint, an error or the quick amounts under their field
+     14  a title to what it names
+     16  one field to the next
+     26  a part to the line under it, and a line to the next title: the swap's own room */
+html body #mainApp#mainApp#mainApp #pageHome {
+  --xf-s-attach: 8px; --xf-s-group: 16px; --xf-s-title: 14px;
+  --xf-title-size: 15px;
+  --xf-gap: 26px; --xf-after-line: 25px;   /* 25 under the line's own 1px: the words are 26 from where the line is drawn */
+  --xf-title-h: 24px;   /* a title's line: 15 × 1.6; the row is this high, whatever sits at its end */
 }
 
 /* ── no cards: the container and the steps lie on the page ── */
@@ -183,6 +169,12 @@ html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .wallet-row-line .cop
 }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .wallet-row-line .copy-btn .icn { width: 16px !important; height: 16px !important; }
 
+/* paying from the account balance: the box shows the balance (Kurdish text, no copy) */
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .wallet-row.is-internal .wallet-row-line .copy-btn { display: none !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .wallet-row.is-internal .wallet-row-line .wallet-value {
+  direction: rtl !important; unicode-bidi: plaintext; font-size: 16px !important; font-weight: 600 !important; letter-spacing: 0;
+}
+
 /* ── fields ── */
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .field { margin: var(--xf-s-group) 0 0 !important; padding: 0 !important; border: 0 !important; background: none !important; }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .field-label {
@@ -204,14 +196,14 @@ html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-input-wrap .input
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-input-wrap .input:is(:focus, :focus-visible) {
   outline: 0 !important; border-color: var(--xf-accent) !important; background: var(--xf-field-focus) !important; box-shadow: 0 0 0 4px var(--xf-ring) !important;
 }
-html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-input-wrap .input:is([aria-invalid="true"], .has-error) { border-color: #c2414b !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-input-wrap .input:is([aria-invalid="true"], .has-error) { border-color: var(--xf-danger) !important; }
 /* ── the figures you type (v89): each sits in a panel that holds its own label;
      the value under it, at the start; what belongs to the value at the end
      ╭───────────────────────────────────────╮
      │                           چەند دەنێری؟ │   label 12/500 grey, inside, 12 from the top
      │ (د.ع)                         250,000 │   the amount 26/700 ink; the currency a chip (13/700) at the end
      ╰───────────────────────────────────────╯   80 high, radius 16
-                     (100,000) (50,000) (10,000)   quick amounts: pills from the start, 32 high; the one typed is blue
+                     (100,000) (50,000) (10,000)   quick amounts: pills from the start, 36 high; the one typed is blue
      ╭───────────────────────────────────────╮
      │                            ژمارەی وەرگر │   label 12/500 inside, 11 from the top
      │ (✓)                       07501234567 │   16/600 digits a little apart; a green tick when the number is right
@@ -234,14 +226,14 @@ html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-panel .xc-input-w
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-panel .xc-input-wrap .input[dir="ltr"] { text-align: right !important; }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-panel .xc-input-wrap .input::placeholder { font-size: 16px; font-weight: 400; letter-spacing: .04em; }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-panel:focus-within > .field-label { color: var(--xf-accent) !important; }
-html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-panel:has(.input:is([aria-invalid="true"], .has-error)) > .field-label { color: #c2414b !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-panel:has(.input:is([aria-invalid="true"], .has-error)) > .field-label { color: var(--xf-danger) !important; }
 /* the sender's name: words, not digits */
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-panel.xc-locked .xc-input-wrap .input { letter-spacing: 0; }
-html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-panel.xc-locked > .field-label .xc-locked-tag { height: 18px; padding: 0 7px !important; font-size: 11px !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-panel.xc-locked > .field-label .xc-locked-tag { height: 18px; padding: 0 8px !important; }
 /* the recipient's number: room at the end for the tick */
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-panel #userPhone { padding-left: 48px !important; }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-in-ok {
-  position: absolute !important; top: 29px !important; left: 16px !important; right: auto !important;
+  position: absolute !important; top: 30px !important; left: 16px !important; right: auto !important;
   display: inline-flex !important; align-items: center !important; justify-content: center !important;
   width: 22px; height: 22px; margin: 0 !important; padding: 0 !important; border-radius: 999px !important;
   background: var(--tf-ok, #15803d) !important; color: var(--xf-card) !important;
@@ -250,15 +242,15 @@ html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-in-ok {
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-in-ok svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-input-wrap .input.ok ~ .xc-in-ok { opacity: 1; transform: none; }
 /* the amount: the line the eye looks for */
-html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-amount-field > .field-label { top: 12px !important; inset-inline: 18px !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-amount-field > .field-label { top: 12px !important; }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-amount-field .xc-input-wrap #amt {
-  height: 80px !important; min-height: 80px !important; padding: 30px 18px 10px 80px !important;
+  height: 80px !important; min-height: 80px !important; padding: 30px 16px 10px 76px !important;
   border-radius: 16px !important; font-size: 26px !important; font-weight: 700 !important; line-height: 38px !important;
   letter-spacing: -.01em; font-variant-numeric: tabular-nums;
 }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-amount-field .xc-input-wrap #amt::placeholder { font-size: 26px; font-weight: 700; letter-spacing: -.01em; }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-in-unit {
-  position: absolute !important; top: 34px !important; left: 12px !important; right: auto !important;
+  position: absolute !important; top: 35px !important; left: 16px !important; right: auto !important;
   display: inline-flex !important; align-items: center !important; height: 30px; margin: 0 !important; padding: 0 12px !important;
   border: 1px solid var(--xf-line) !important; border-radius: 999px !important; background: var(--xf-card) !important; box-shadow: none !important;
   color: var(--xf-chip-ink) !important; font-family: var(--xf-font) !important; font-size: 13px !important; font-weight: 700 !important; line-height: 1 !important;
@@ -271,10 +263,10 @@ html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .wallet-row-line .cop
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .wallet-row-line .copy-btn[style*="none"] { display: none !important; }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .quick-amounts {
   display: flex !important; flex-wrap: wrap !important; justify-content: flex-start !important; gap: 8px !important;
-  margin: 10px 0 0 !important; padding: 0 !important; direction: rtl;
+  margin: var(--xf-s-attach) 0 0 !important; padding: 0 !important; direction: rtl;
 }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .quick-amount-btn {
-  flex: 0 0 auto; width: auto !important; height: 32px !important; min-height: 32px !important; margin: 0 !important; padding: 0 12px !important; gap: 4px !important; align-items: center !important; justify-content: center !important;
+  flex: 0 0 auto; width: auto !important; height: 36px !important; min-height: 36px !important; margin: 0 !important; padding: 0 12px !important; gap: 4px !important; align-items: center !important; justify-content: center !important;
   border: 1px solid var(--xf-line) !important; border-radius: 999px !important; background: transparent !important; box-shadow: none !important;
   color: var(--xf-chip-ink) !important; font-family: var(--xf-font) !important; font-size: 13px !important; font-weight: 600 !important; line-height: 1 !important;
   letter-spacing: .01em; font-variant-numeric: tabular-nums; transition: background-color .15s ease, border-color .15s ease, color .15s ease;
@@ -284,48 +276,34 @@ html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .quick-amount-btn .qa
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .quick-amount-btn:is(.is-selected, [aria-pressed="true"], :active) {
   border-color: var(--xf-accent-line) !important; background: var(--xf-accent-soft) !important; color: var(--xf-accent) !important;
 }
-@media (prefers-reduced-motion: reduce) {
-  html body #mainApp#mainApp#mainApp #pageHome #exchangeCard :is(.xc-in-ok, .xc-in-unit, .quick-amount-btn, .xc-panel > .field-label) { transition: none !important; }
-}
 /* the sender's name comes from the profile: read-only, and says so */
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-locked .input { background: var(--xf-chip) !important; border-color: transparent !important; color: var(--xf-text) !important; }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-locked-tag {
   display: inline-flex !important; align-items: center !important; gap: 4px !important; height: 22px; margin: 0 !important; margin-inline-start: auto !important; padding: 0 8px !important;
   border: 0 !important; border-radius: 999px !important; background: var(--xf-chip) !important; color: var(--xf-label) !important;
-  font-size: 11.5px !important; font-weight: 400 !important; line-height: 1 !important;
+  font-size: 12px !important; font-weight: 400 !important; line-height: 1 !important;
 }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-locked-tag .icn { width: 12px !important; height: 12px !important; }
 /* an error with nothing to say takes no room (app.js empties it when it clears) */
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .field-error:empty { display: none !important; }
-/* Order validation uses the same white, red-accented card language as Proxo's error toast. */
+/* Simple inline errors: one soft red wash, a small mark and clear text—no raised card. */
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .field-error.show {
-  --order-error-bg: #fff; --order-error-line: #f3c7ca; --order-error-soft: #fdeaea;
-  --order-error-ink: #475569; --order-error-red: #dc2626;
-  position: static !important; display: flex !important; align-items: flex-start !important; gap: 10px !important; min-height: 0 !important;
-  margin: var(--xf-s-attach) 0 0 !important; padding: 10px 12px !important;
-  border: 1px solid var(--order-error-line) !important; border-inline-start: 3px solid var(--order-error-red) !important;
-  border-radius: 14px !important; background: var(--order-error-bg) !important;
-  box-shadow: 0 1px 2px rgba(20,35,60,.04), 0 12px 22px -18px rgba(150,30,40,.35) !important;
-  color: var(--order-error-ink) !important; font-family: var(--xf-font) !important; font-size: 13px !important; font-weight: 500 !important; line-height: 1.65 !important;
-  animation: order-error-in .18s cubic-bezier(.2,.8,.2,1) both;
+  position: static !important; display: flex !important; align-items: center !important; gap: 8px !important; min-height: 0 !important;
+  margin: var(--xf-s-attach) 0 0 !important; padding: 7px 9px !important;
+  border: 0 !important; border-inline-start: 2px solid var(--xf-danger) !important;
+  border-radius: 8px !important; background: var(--xf-danger-soft) !important; box-shadow: none !important;
+  color: var(--xf-title) !important; font-family: var(--xf-font) !important; font-size: 13px !important; font-weight: 500 !important; line-height: 1.55 !important;
 }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .field-error.show::before, html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .field-error.show::after { content: none !important; display: none !important; }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .field-error.show > .fe-ico {
-  flex: 0 0 30px !important; width: 30px !important; height: 30px !important; display: grid !important; place-items: center !important;
-  margin: 0 !important; border-radius: 50% !important; background: var(--order-error-soft) !important; color: var(--order-error-red) !important;
+  flex: 0 0 16px !important; width: 16px !important; height: 16px !important; display: grid !important; place-items: center !important;
+  margin: 0 !important; border-radius: 0 !important; background: transparent !important; color: var(--xf-danger) !important;
 }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .field-error.show > .fe-ico svg { width: 15px !important; height: 15px !important; }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .field-error.show > .fe-txt { flex: 1 1 auto; min-width: 0; color: inherit !important; unicode-bidi: plaintext; }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #grpProof .fe-group { display: flex; flex: 1 1 auto; min-width: 0; flex-direction: column; gap: 3px; }
-html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #grpProof .fe-group-title { color: var(--order-error-red); font-size: 13px; font-weight: 700; line-height: 1.45; }
-html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #grpProof .fe-group-list { display: grid; gap: 3px; margin: 0; padding-inline-start: 17px; color: var(--order-error-ink); }
-html[data-theme="dark"] body #mainApp#mainApp#mainApp #pageHome #exchangeCard .field-error.show {
-  --order-error-bg: #131c2e; --order-error-line: #563136; --order-error-soft: #321c21;
-  --order-error-ink: #e8edf6; --order-error-red: #f87171;
-}
-html[data-theme="dark"] body #mainApp#mainApp#mainApp #pageHome #exchangeCard .field-error.show .fe-group-title { color: #fca5a5; }
-@keyframes order-error-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-@media (prefers-reduced-motion: reduce) { html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .field-error.show { animation: none; } }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #grpProof .fe-group-title { color: var(--xf-danger); font-size: 13px; font-weight: 700; line-height: 1.45; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #grpProof .fe-group-list { display: grid; gap: 3px; margin: 0; padding-inline-start: 17px; color: var(--xf-title); }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-hint { margin: var(--xf-s-attach) 0 0 !important; padding: 0 2px !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: var(--xf-label) !important; font-size: 12px !important; line-height: 1.6 !important; }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-hint b { color: var(--xf-title) !important; font-weight: 600 !important; }
 
@@ -340,17 +318,17 @@ html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-hint b { color: v
 
    The total is what the recipient gets: sent − fee − returned. No sentence, hint or link sits
    in the section; a closed route or a too-small amount is said in the total's place. ── */
-html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-summary-head { margin-bottom: calc(var(--xf-s-title) - 6.8px) !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-summary-head { margin-bottom: calc(var(--xf-s-title) - 7px) !important; }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-sum-group { display: flex !important; flex-direction: column !important; margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-sum-row {
   display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 12px !important;
   min-height: 36px !important; margin: 0 !important; padding: 0 2px !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important;
 }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-sum-row .lbl {
-  display: inline-flex !important; align-items: center; gap: 6px; color: var(--xf-label) !important; font-size: 13px !important; font-weight: 400 !important; line-height: 1.6 !important;
+  display: inline-flex !important; align-items: center; gap: 6px; color: var(--xf-label) !important; font-size: 13px !important; font-weight: 400 !important; line-height: 22px !important;
 }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-sum-row .v {
-  color: var(--xf-ink) !important; font-size: 14px !important; font-weight: 500 !important; line-height: 1.6 !important; font-variant-numeric: tabular-nums; unicode-bidi: isolate;
+  color: var(--xf-ink) !important; font-size: 14px !important; font-weight: 500 !important; line-height: 22px !important; font-variant-numeric: tabular-nums; unicode-bidi: isolate;
 }
 /* the returned amount: an ordinary line, with the «!» after its name */
 html body #mainApp#mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown #bdRoundingRow .v { color: var(--xf-ink) !important; font-weight: 500 !important; }
@@ -383,7 +361,7 @@ html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-sum-
   color: var(--xf-ink) !important; font-size: 14px !important; font-weight: 600 !important;
 }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-sum-result > .xc-sum-row .v {
-  color: var(--xf-accent) !important; font-size: 18px !important; font-weight: 700 !important; line-height: 1.4 !important;
+  color: var(--xf-accent) !important; font-size: 18px !important; font-weight: 700 !important; line-height: 26px !important;
 }
 /* a closed route or an amount under the least: said in words, in the warning colour */
 html body #mainApp#mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown .xc-sum-result :is(.total-value, #payoutDisplay).warn-text {
@@ -401,9 +379,6 @@ html body #mainApp#mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown.
 }
 html body #mainApp#mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown.is-quoting :is(#payoutDisplay, #totalDisplay)::after { height: 16px; margin-top: -8px; border-radius: 8px; }
 @keyframes xf-quote-sweep { from { background-position: 0 0; } to { background-position: 100% 0; } }
-@media (prefers-reduced-motion: reduce) {
-  html body #mainApp#mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown.is-quoting :is(#bdFee, #roundingDisplay, #payoutDisplay, #totalDisplay)::after { animation: none; }
-}
 /* nothing else in the section: no hint, no sentence, no link */
 html body #mainApp#mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown :is(#bdTierRow, #bdTierHint, #payoutRoundingNote, #feeDisplay) { display: none !important; }
 
@@ -430,7 +405,7 @@ html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-receipt-opt:hover
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-receipt-opt:active { border-color: var(--xf-accent-line) !important; background: var(--xf-accent-soft) !important; }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-receipt:has(#fileInput:focus-visible) .xc-receipt-opt[for="fileInput"],
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-receipt:has(#fileInputCamera:focus-visible) .xc-receipt-opt[for="fileInputCamera"] { border-color: var(--xf-accent) !important; box-shadow: 0 0 0 4px var(--xf-ring) !important; }
-html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-receipt:has(#fileInput.has-error) :is(.xc-receipt-opt, .xc-receipt-picked) { border-color: #c2414b !important; }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-receipt:has(#fileInput.has-error) :is(.xc-receipt-opt, .xc-receipt-picked) { border-color: var(--xf-danger) !important; }
 @media (hover: hover) and (pointer: fine) {
   html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-receipt-opt.is-camera { display: none !important; }
   html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-receipt-opts:not([hidden]) { grid-template-columns: 1fr; }
@@ -448,17 +423,19 @@ html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-receipt-clear {
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-receipt-clear .pxi { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-receipt-clear:hover { background: var(--xf-chip) !important; color: var(--xf-ink) !important; }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-receipt-clear:focus-visible { outline: 2px solid var(--xf-accent); outline-offset: 2px; }
-@media (prefers-reduced-motion: reduce) { html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-receipt-opt { transition: none !important; } }
-/* the «!» beside the title: what a receipt is (v94); the title keeps to its words so the «!» sits by them */
+/* the «!» beside the title: what a receipt is; the title keeps to its words so the «!» sits by them */
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard #grpProof .xc-step-head h3 { flex: 0 1 auto !important; }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-help-btn {
-  flex: 0 0 auto; display: inline-grid !important; place-items: center; width: 32px; height: 32px; margin: 0 !important; margin-inline-start: -2px !important; padding: 0 !important;
+  position: relative; flex: 0 0 auto; display: inline-grid !important; place-items: center; width: 32px; height: 32px; margin: 0 !important; margin-inline-start: -2px !important; padding: 0 !important;
   border: 0 !important; border-radius: 999px !important; background: transparent !important; box-shadow: none !important; color: var(--xf-accent) !important; cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-help-btn::after { content: ""; position: absolute; inset: -6px; }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-help-btn .pxi { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-help-btn:hover, html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-help-btn:active { background: var(--xf-accent-soft) !important; }
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-help-btn:focus-visible { outline: 2px solid var(--xf-accent); outline-offset: 1px; }
+
+html body #mainApp#mainApp#mainApp #pageHome #exchangeCard :is(#submitBtn, .quick-amount-btn, .copy-btn):focus-visible { outline: 2px solid var(--xf-accent) !important; outline-offset: 2px; }
 
 /* ── send: the identity screen's button, and its bar under it while sending ── */
 html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .xc-submit-wrap {
@@ -491,15 +468,16 @@ html body #mainApp:has(#pageHome.active) #bottomNav.pxn { display: none !importa
    middle, nothing else. The site header (logo + bell) steps aside on phones as it does on
    every other inner screen; wide screens keep it, with the toolbar under it. ── */
 html body #mainApp:has(#pageHome.active) #siteHeader.pxh { display: none !important; }
-@media (min-width: 1024px) {
-  html body #mainApp:has(#pageHome.active) #siteHeader.pxh { display: block !important; }
-}
 html body #mainApp#mainApp#mainApp #pageHome.page { padding-top: 0 !important; padding-inline: 14px !important; }
 html body #mainApp#mainApp#mainApp #pageHome > .pfx-bar + * { margin-top: 0 !important; }
 
 /* ── wide screens: the form on the right; the figures, the receipt and the button on the left.
    The figures open their column, so they need no line above them. ── */
+@media (min-width: 640px) and (max-width: 1023.98px) {
+  html body #mainApp#mainApp#mainApp #pageHome #exchangeCard { width: 100%; max-width: 560px; margin-inline: auto !important; }
+}
 @media (min-width: 1024px) {
+  html body #mainApp:has(#pageHome.active) #siteHeader.pxh { display: block !important; }
   html body #mainApp#mainApp#mainApp #pageHome #exchangeCard {
     display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; grid-template-rows: auto auto 1fr !important; align-items: start !important;
     column-gap: 56px !important; row-gap: 0 !important;   /* the first row (the notice, the hidden trap field) is empty most of the time: no gap after it */
@@ -513,183 +491,109 @@ html body #mainApp#mainApp#mainApp #pageHome > .pfx-bar + * { margin-top: 0 !imp
   html body #mainApp#mainApp#mainApp #pageHome #exchangeCard > .xc-submit-wrap { grid-column: 2; grid-row: 3; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html body #mainApp#mainApp#mainApp #pageHome :is(.xc-progress .kv-progress-track span, #exchangeCard .input, #exchangeCard[aria-busy="true"] .xc-cols) { transition: none !important; }
-}
-
-/* ── the confirmation before sending (#confirmSheet): the amount and route first,
-   then what arrives, then who sends and who receives — each group a soft card ── */
-html body #confirmSheet {
-  --cf-sheet: #fff; --cf-ink: #0f172a; --cf-label: #64748b; --cf-field: #f8fafd; --cf-line: #e8ecf3; --cf-rule: #eef2f6;
-  --cf-accent: #0265ff; --cf-accent-soft: #eff4fe; --cf-accent-line: #d6e4fd;
-}
-html[data-theme="dark"] body #confirmSheet {
-  --cf-sheet: #131c2e; --cf-ink: #e8edf6; --cf-label: #a3b1c7; --cf-field: #0e1725; --cf-line: #25324a; --cf-rule: #1b2740;
-  --cf-accent: #3b8cff; --cf-accent-soft: #10223d; --cf-accent-line: #264a73;
-}
+/* ── the sheets: one family — 16 radius, 18 side inset, a hairline and no shadow, the title 18/500,
+   a 44 close, 48 buttons. The confirmation before sending (#confirmSheet): the amount and route
+   first, then what arrives, then who sends and who receives — each group a soft card ── */
 html body #confirmSheet > .sheet {
   width: 100%; max-width: 520px; max-height: min(88dvh, 760px); padding: 9px 0 max(10px, env(safe-area-inset-bottom));
-  overflow: hidden; border: 1px solid var(--cf-line); border-bottom: 0; border-radius: 24px 24px 0 0;
-  background: var(--cf-sheet); color: var(--cf-ink); box-shadow: 0 -14px 42px -24px rgba(15,23,42,.35);
+  overflow: hidden; border: 1px solid var(--xf-line); border-bottom: 0; border-radius: 16px 16px 0 0;
+  background: var(--xf-card); color: var(--xf-ink); box-shadow: none;
 }
-html body #confirmSheet .sheet-grabber { margin-bottom: 10px; background: var(--cf-line); }
+html body #confirmSheet .sheet-grabber { margin-bottom: 10px; background: var(--xf-line); }
 html body #confirmSheet .sheet-head { margin: 0 0 4px; padding: 0 18px 10px; border: 0; }
-html body #confirmSheet .sheet-head h3 { color: var(--cf-ink); font-size: 17px; font-weight: 700; }
-html body #confirmSheet .sheet-close { width: 38px; height: 38px; border: 1px solid var(--cf-line); border-radius: 12px; background: var(--cf-field); color: var(--cf-label); }
-html body #confirmSheet .sheet-body { padding: 8px 16px 14px; scrollbar-gutter: auto; }
+html body #confirmSheet .sheet-head h3 { color: var(--xf-ink); font-size: 18px; font-weight: 500; line-height: 1.5; }
+html body #confirmSheet .sheet-close { width: 44px; height: 44px; border: 1px solid var(--xf-line); border-radius: 14px; background: var(--xf-well); color: var(--xf-label); }
+html body #confirmSheet .sheet-body { padding: 8px 18px 14px; scrollbar-gutter: auto; }
 html body #confirmSheet #confirmSummary { display: flex !important; flex-direction: column !important; gap: 10px !important; margin: 0 !important; padding: 0 !important; background: none !important; border: 0 !important; }
 html body #confirmSheet .cf-head {
   display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 18px 14px;
-  border: 1px solid var(--cf-accent-line); border-radius: 18px; background: linear-gradient(145deg,var(--cf-accent-soft),var(--cf-field)); text-align: center;
+  border: 1px solid var(--xf-accent-line); border-radius: 16px; background: var(--xf-accent-soft); text-align: center;
 }
-html body #confirmSheet .cf-amount { color: var(--cf-ink); font-size: 28px; font-weight: 700; line-height: 1.25; font-variant-numeric: tabular-nums; }
+html body #confirmSheet .cf-amount { max-width: 100%; color: var(--xf-ink); font-size: 28px; font-weight: 700; line-height: 1.25; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
 html body #confirmSheet .cf-route { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; }
-html body #confirmSheet .cf-w { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border: 1px solid var(--cf-line); border-radius: 999px; background: var(--cf-sheet); color: var(--cf-ink); font-size: 13px; font-weight: 600; line-height: 1.5; }
+html body #confirmSheet .cf-w { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border: 1px solid var(--xf-line); border-radius: 999px; background: var(--xf-card); color: var(--xf-ink); font-size: 13px; font-weight: 600; line-height: 1.5; }
 html body #confirmSheet .cf-w .method-icon { width: 26px !important; height: 26px !important; flex: 0 0 26px; margin: 0 !important; border-radius: 8px !important; }
-html body #confirmSheet .cf-arrow { width: 28px; height: 28px; padding: 5px; border: 1px solid var(--cf-accent-line); border-radius: 50%; background: var(--cf-accent-soft); color: var(--cf-accent); stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-html body #confirmSheet .cf-rows { padding: 0 14px; border: 1px solid var(--cf-line); border-radius: 16px; background: var(--cf-sheet); box-shadow: 0 2px 8px rgba(15,23,42,.035); }
+html body #confirmSheet .cf-arrow { flex: 0 0 28px; width: 28px; height: 28px; padding: 5px; border: 1px solid var(--xf-accent-line); border-radius: 50%; background: var(--xf-accent-soft); color: var(--xf-accent); stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+html body #confirmSheet .cf-rows { padding: 0 14px; border: 1px solid var(--xf-line); border-radius: 16px; background: var(--xf-card); }
 html body #confirmSheet .cf-rows .confirm-row {
   display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 12px !important;
-  min-height: 48px; margin: 0 !important; padding: 10px 0 !important; border: 0 !important; border-top: 1px solid var(--cf-rule) !important;
+  min-height: 48px; margin: 0 !important; padding: 10px 0 !important; border: 0 !important; border-top: 1px solid var(--xf-rule) !important;
   border-radius: 0 !important; background: none !important; box-shadow: none !important;
 }
 html body #confirmSheet .cf-rows .confirm-row:first-child { border-top: 0 !important; }
-html body #confirmSheet .cf-rows .confirm-row.is-result { margin: 7px -7px !important; padding: 11px 10px !important; border: 1px solid var(--cf-accent-line) !important; border-radius: 12px !important; background: var(--cf-accent-soft) !important; }
-html body #confirmSheet .cf-rows .confirm-row-label { color: var(--cf-label) !important; font-size: 13.5px !important; font-weight: 400 !important; line-height: 1.6 !important; }
-html body #confirmSheet .cf-rows .confirm-row-value { color: var(--cf-ink) !important; font-size: 14px !important; font-weight: 500 !important; line-height: 1.6 !important; text-align: left; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
-html body #confirmSheet .cf-rows .confirm-row.is-result :is(.confirm-row-label, .confirm-row-value) { color: var(--cf-accent) !important; font-weight: 600 !important; }
+/* the result row is a band inside the card: 7 from the card's edge, so its corners are the card's 16 less 7 */
+html body #confirmSheet .cf-rows .confirm-row.is-result { margin: 7px -7px !important; padding: 11px 10px !important; border: 1px solid var(--xf-accent-line) !important; border-radius: 10px !important; background: var(--xf-accent-soft) !important; }
+html body #confirmSheet .cf-rows .confirm-row-label { color: var(--xf-label) !important; font-size: 13px !important; font-weight: 400 !important; line-height: 22px !important; }
+html body #confirmSheet .cf-rows .confirm-row-value { color: var(--xf-ink) !important; font-size: 14px !important; font-weight: 500 !important; line-height: 22px !important; text-align: left; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+html body #confirmSheet .cf-rows .confirm-row.is-result :is(.confirm-row-label, .confirm-row-value) { color: var(--xf-accent) !important; font-weight: 600 !important; }
 html body #confirmSheet .cf-rows .confirm-row.is-result .confirm-row-value { font-size: 16px !important; }
-html body #confirmSheet #confirmSummary > .payout-rounding-note { margin: -2px 4px 0 !important; padding: 0 !important; border: 0 !important; background: none !important; color: var(--cf-label) !important; font-size: 12px !important; line-height: 1.7 !important; }
-html body #confirmSheet .confirm-actions { flex: 0 0 auto; gap: 10px; margin: 0; padding: 12px 16px max(12px,env(safe-area-inset-bottom)); border-top: 1px solid var(--cf-line); background: var(--cf-sheet); }
-html body #confirmSheet .confirm-actions .btn { min-height: 48px; border-radius: 13px !important; font-size: 14px; font-weight: 650; }
-html body #confirmSheet .confirm-actions .btn-ghost { border: 1px solid var(--cf-line) !important; background: var(--cf-field) !important; color: var(--cf-ink) !important; }
-html body #confirmSheet .confirm-actions #confirmSendBtn { box-shadow: 0 8px 20px -12px rgba(2,101,255,.6) !important; }
-@media (min-width: 640px) {
-  html body #confirmSheet > .sheet { width: min(520px, calc(100vw - 32px)); max-height: min(86dvh, 760px); border: 1px solid var(--cf-line); border-radius: 22px; }
-  html body #confirmSheet .confirm-actions { padding-bottom: 12px; }
-}
+html body #confirmSheet #confirmSummary > .payout-rounding-note { margin: -2px 4px 0 !important; padding: 0 !important; border: 0 !important; background: none !important; color: var(--xf-label) !important; font-size: 12px !important; line-height: 1.7 !important; }
+html body #confirmSheet .confirm-actions { flex: 0 0 auto; gap: 10px; margin: 0; padding: 12px 18px max(12px, env(safe-area-inset-bottom)); border-top: 1px solid var(--xf-line); background: var(--xf-card); }
+html body #confirmSheet .confirm-actions .btn { min-height: 48px; border-radius: 12px !important; font-size: 15px; font-weight: 600; }
+html body #confirmSheet .confirm-actions .btn-ghost { border: 1px solid var(--xf-line) !important; background: var(--xf-well) !important; color: var(--xf-ink) !important; }
+html body :is(#confirmSheet, #roundingInfoSheet, #receiptHelpSheet) .sheet-close:focus-visible { outline: 2px solid var(--xf-accent) !important; outline-offset: 2px; }
 
-/* paying from the account balance: the box shows the balance (Kurdish text, no copy) */
-html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .wallet-row.is-internal .wallet-row-line .copy-btn { display: none !important; }
-html body #mainApp#mainApp#mainApp #pageHome #exchangeCard .wallet-row.is-internal .wallet-row-line .wallet-value {
-  direction: rtl !important; unicode-bidi: plaintext; font-size: 16px !important; font-weight: 600 !important; letter-spacing: 0;
-}
-
-/* ── «بڕی گەڕێندراو» (#roundingInfoSheet), and the summary's «بڕی گەڕاوە بۆ باڵانس» (#summaryInfoBackdrop):
-   a bottom sheet with the line's name, the close, and one paragraph — no box, card, list or button (v82)
+/* ── «بڕی گەڕێندراو» (#roundingInfoSheet), «پسووڵەی پارەدان چییە؟» (#receiptHelpSheet) and the
+   summary's «بڕی گەڕاوە بۆ باڵانس» (#summaryInfoBackdrop): a bottom sheet with a title, the close
+   and one paragraph — no box, card, list or button. The receipt sheet puts two example receipts
+   above its words (everything but the amount is hidden in them).
      ╭────────────────────────────────────╮
-     │ [×]                  بڕی گەڕێندراو │   title 18/500 ink, the exchange sheets' 44 close; no line under it
-     │                                    │   12
+     │ [×]                  بڕی گەڕێندراو │   title 18/500 ink, the 44 close; no line under it
+     │ ┌───────────────┐ ┌───────────────┐ │   receipt sheet only: two screenshots, 3:4, radius 12, 14 under
+     │ └───────────────┘ └───────────────┘ │
      │ بۆ وەرگر تەنها هەزارە تەواوەکان     │   one paragraph 15/400 grey, 1.9;
-     │ دەنێرین، چونکە … لەم داواکارییەدا   │   its amounts 600 ink
-     │ 58,000 د.ع … و 800 د.ع …            │
+     │ دەنێرین، چونکە …                    │   its amounts 600 ink
      ╰────────────────────────────────────╯   20 above, 28 under (and the phone's safe area) */
-html body :is(#roundingInfoSheet, #summaryInfoBackdrop) {
-  --ri-sheet: #ffffff; --ri-line: #e3e7f0;
-  --ri-ink: #0f172a; --ri-text: #5f6f86; --ri-accent: #0265ff;
-  --ri-close: #f6f7f9; --ri-close-ink: #64748b; --ri-close-line: transparent;
-}
-html[data-theme="dark"] body :is(#roundingInfoSheet, #summaryInfoBackdrop) {
-  --ri-sheet: #131c2e; --ri-line: #25324a;
-  --ri-ink: #e8edf6; --ri-text: #a3b1c7; --ri-accent: #3b8cff;
-  --ri-close: #0e1725; --ri-close-ink: #c4cee0; --ri-close-line: #25324a;
-}
-html body #roundingInfoSheet#roundingInfoSheet > .sheet {
+html body :is(#roundingInfoSheet, #receiptHelpSheet):not(#_x) > .sheet {
   padding: 20px 0 max(28px, calc(env(safe-area-inset-bottom) + 16px)) !important;
-  background: var(--ri-sheet) !important; color: var(--ri-ink) !important; font-family: Rabar, Arial, sans-serif;
-  border: 1px solid var(--ri-line) !important; border-bottom: 0 !important; border-radius: 16px 16px 0 0 !important; box-shadow: none !important;
+  background: var(--xf-card) !important; color: var(--xf-ink) !important; font-family: var(--xf-font);
+  border: 1px solid var(--xf-line) !important; border-bottom: 0 !important; border-radius: 16px 16px 0 0 !important; box-shadow: none !important;
 }
-html body #roundingInfoSheet#roundingInfoSheet .sheet-head {
+html body :is(#roundingInfoSheet, #receiptHelpSheet):not(#_x) .sheet-head {
   display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 12px !important;
   margin: 0 !important; padding: 0 18px !important; border: 0 !important; background: none !important;
 }
-html body #roundingInfoSheet#roundingInfoSheet .sheet-head h3 {
-  color: var(--ri-ink) !important; font-size: 18px !important; font-weight: 500 !important; line-height: 1.5 !important; margin: 0 !important;
+html body :is(#roundingInfoSheet, #receiptHelpSheet):not(#_x) .sheet-head h3 {
+  color: var(--xf-ink) !important; font-size: 18px !important; font-weight: 500 !important; line-height: 1.5 !important; margin: 0 !important;
 }
-html body #roundingInfoSheet#roundingInfoSheet .sheet-close {
+html body :is(#roundingInfoSheet, #receiptHelpSheet):not(#_x) .sheet-close {
   width: 44px !important; height: 44px !important; min-height: 44px !important; flex: 0 0 44px; border-radius: 14px !important;
-  border: 1px solid var(--ri-close-line) !important; background: var(--ri-close) !important; color: var(--ri-close-ink) !important;
+  border: 1px solid var(--xf-line) !important; background: var(--xf-well) !important; color: var(--xf-label) !important;
 }
-html body #roundingInfoSheet#roundingInfoSheet .sheet-close:focus-visible { outline: 2px solid var(--ri-accent) !important; outline-offset: 2px; }
 /* no scrollbar gutter: it is short, and the reserved strip only pushed the text off centre */
-html body #roundingInfoSheet#roundingInfoSheet .sheet-body { padding: 12px 18px 0 !important; overflow-y: auto; scrollbar-gutter: auto; }
-/* the paragraph: the sentences run on, one after another */
-html body :is(#roundingInfoSheet, #summaryInfoBackdrop) .ri-text {
-  margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important;
-  color: var(--ri-text) !important; font-family: Rabar, Arial, sans-serif; font-size: 15px !important; font-weight: 400 !important; line-height: 1.9 !important;
-  text-align: start; text-wrap: pretty;
-}
-html body :is(#roundingInfoSheet, #summaryInfoBackdrop) .ri-text b { color: var(--ri-ink); font-weight: 600; white-space: nowrap; unicode-bidi: isolate; }
-/* wide screens: the exchange's choosing sheets open as a window in the middle (app.css, ≥640px) —
-   round all four corners. The explanation stays a bottom sheet on every screen: it rises from the
-   bottom edge, 480px wide in the middle, like the summary's «گەڕاوە بۆ باڵانس». */
-@media (min-width: 640px) {
-  html body :is(#pickerSheet, #recipientSheet, #confirmSheet):not(#_x) > .sheet { border-radius: 16px !important; }
-  html body #roundingInfoSheet#roundingInfoSheet { align-items: flex-end !important; }
-  html body #roundingInfoSheet#roundingInfoSheet > .sheet {
-    max-width: 480px; opacity: 1; transform: translateY(100%); transition: transform .24s cubic-bezier(.2, .8, .2, 1);
-  }
-  html body #roundingInfoSheet#roundingInfoSheet.open > .sheet { transform: translateY(0); }
-}
-@media (prefers-reduced-motion: reduce) {
-  html body #roundingInfoSheet#roundingInfoSheet > .sheet { transition: none; }
-}
-
-/* ── «پسووڵەی پارەدان چییە؟» (#receiptHelpSheet, v94): the same sheet as «بڕی گەڕێندراو» — the title,
-   the close, one paragraph — with two example receipts above the words. In the examples everything
-   but the amount is hidden (names, numbers, the time).
-     ╭────────────────────────────────────╮
-     │ [×]           پسووڵەی پارەدان چییە؟ │   title 18/500 ink
-     │ ┌───────────────┐ ┌───────────────┐ │   two screenshots side by side, 3:4, radius 12, a hairline
-     │ │               │ │               │ │
-     │ └───────────────┘ └───────────────┘ │   14
-     │ کاتێک ڕێگای ناردن و وەرگرتن …       │   one paragraph 15/400 grey, 1.9
-     ╰────────────────────────────────────╯ */
-html body #receiptHelpSheet {
-  --ri-sheet: #ffffff; --ri-line: #e3e7f0;
-  --ri-ink: #0f172a; --ri-text: #5f6f86; --ri-accent: #0265ff;
-  --ri-close: #f6f7f9; --ri-close-ink: #64748b; --ri-close-line: transparent;
-}
-html[data-theme="dark"] body #receiptHelpSheet {
-  --ri-sheet: #131c2e; --ri-line: #25324a;
-  --ri-ink: #e8edf6; --ri-text: #a3b1c7; --ri-accent: #3b8cff;
-  --ri-close: #0e1725; --ri-close-ink: #c4cee0; --ri-close-line: #25324a;
-}
-html body #receiptHelpSheet#receiptHelpSheet > .sheet {
-  padding: 20px 0 max(28px, calc(env(safe-area-inset-bottom) + 16px)) !important;
-  background: var(--ri-sheet) !important; color: var(--ri-ink) !important; font-family: Rabar, Arial, sans-serif;
-  border: 1px solid var(--ri-line) !important; border-bottom: 0 !important; border-radius: 16px 16px 0 0 !important; box-shadow: none !important;
-}
-html body #receiptHelpSheet#receiptHelpSheet .sheet-head {
-  display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 12px !important;
-  margin: 0 !important; padding: 0 18px !important; border: 0 !important; background: none !important;
-}
-html body #receiptHelpSheet#receiptHelpSheet .sheet-head h3 {
-  color: var(--ri-ink) !important; font-size: 18px !important; font-weight: 500 !important; line-height: 1.5 !important; margin: 0 !important;
-}
-html body #receiptHelpSheet#receiptHelpSheet .sheet-close {
-  width: 44px !important; height: 44px !important; min-height: 44px !important; flex: 0 0 44px; border-radius: 14px !important;
-  border: 1px solid var(--ri-close-line) !important; background: var(--ri-close) !important; color: var(--ri-close-ink) !important;
-}
-html body #receiptHelpSheet#receiptHelpSheet .sheet-close:focus-visible { outline: 2px solid var(--ri-accent) !important; outline-offset: 2px; }
-html body #receiptHelpSheet#receiptHelpSheet .sheet-body { padding: 14px 18px 0 !important; overflow-y: auto; scrollbar-gutter: auto; }
+html body :is(#roundingInfoSheet, #receiptHelpSheet):not(#_x) .sheet-body { padding: 12px 18px 0 !important; overflow-y: auto; scrollbar-gutter: auto; }
+html body #receiptHelpSheet:not(#_x) .sheet-body { padding-top: 14px !important; }
 html body #receiptHelpSheet .rh-shots { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 0 14px; }
 html body #receiptHelpSheet .rh-shots img {
   display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; object-position: top center;
-  border: 1px solid var(--ri-line); border-radius: 12px; background: #ffffff;
+  border: 1px solid var(--xf-line); border-radius: 12px; background: #ffffff;
 }
-html body #receiptHelpSheet .ri-text {
+/* the paragraph: the sentences run on, one after another */
+html body :is(#roundingInfoSheet, #summaryInfoBackdrop, #receiptHelpSheet) .ri-text {
   margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important;
-  color: var(--ri-text) !important; font-family: Rabar, Arial, sans-serif; font-size: 15px !important; font-weight: 400 !important; line-height: 1.9 !important;
+  color: var(--xf-text) !important; font-family: var(--xf-font); font-size: 15px !important; font-weight: 400 !important; line-height: 1.9 !important;
   text-align: start; text-wrap: pretty;
 }
+html body :is(#roundingInfoSheet, #summaryInfoBackdrop, #receiptHelpSheet) .ri-text b { color: var(--xf-ink); font-weight: 600; white-space: nowrap; unicode-bidi: isolate; }
+
+/* wide screens: the choosing sheets and the confirmation open as a window in the middle (app.css, ≥640px) —
+   round all four corners. The two explanations stay bottom sheets on every screen: they rise from the
+   bottom edge, 480px wide in the middle, like the summary's «گەڕاوە بۆ باڵانس». */
 @media (min-width: 640px) {
-  html body #receiptHelpSheet#receiptHelpSheet { align-items: flex-end !important; }
-  html body #receiptHelpSheet#receiptHelpSheet > .sheet {
+  html body #confirmSheet > .sheet { width: min(520px, calc(100vw - 32px)); max-height: min(86dvh, 760px); border: 1px solid var(--xf-line); }
+  html body #confirmSheet .confirm-actions { padding-bottom: 12px; }
+  html body :is(#pickerSheet, #recipientSheet, #confirmSheet):not(#_x) > .sheet { border-radius: 16px !important; }
+  html body :is(#roundingInfoSheet, #receiptHelpSheet):not(#_x) { align-items: flex-end !important; }
+  html body :is(#roundingInfoSheet, #receiptHelpSheet):not(#_x) > .sheet {
     max-width: 480px; opacity: 1; transform: translateY(100%); transition: transform .24s cubic-bezier(.2, .8, .2, 1);
   }
-  html body #receiptHelpSheet#receiptHelpSheet.open > .sheet { transform: translateY(0); }
+  html body :is(#roundingInfoSheet, #receiptHelpSheet):not(#_x).open > .sheet { transform: translateY(0); }
 }
+
+/* ── reduced motion: one place for every transition and animation above ── */
 @media (prefers-reduced-motion: reduce) {
-  html body #receiptHelpSheet#receiptHelpSheet > .sheet { transition: none; }
+  html body #mainApp#mainApp#mainApp #pageHome #exchangeCard :is(.xc-in-ok, .xc-in-unit, .quick-amount-btn, .xc-panel > .field-label, .xc-receipt-opt) { transition: none !important; }
+  html body #mainApp#mainApp#mainApp #pageHome :is(.xc-progress .kv-progress-track span, #exchangeCard .input, #exchangeCard[aria-busy="true"] .xc-cols) { transition: none !important; }
+  html body #mainApp#mainApp#mainApp#mainApp #pageHome #exchangeCard #xcBreakdown.is-quoting :is(#bdFee, #roundingDisplay, #payoutDisplay, #totalDisplay)::after { animation: none; }
+  html body :is(#roundingInfoSheet, #receiptHelpSheet):not(#_x) > .sheet { transition: none; }
 }
