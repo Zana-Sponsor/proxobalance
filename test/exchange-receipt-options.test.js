@@ -22,7 +22,7 @@ test('two options, camera then gallery, and nothing else to read', ()=>{
   assert.match(proof, /<input type="file" id="fileInputCamera" class="file-input-native" accept="image\/\*" capture="environment" onchange="onCameraSelected\(this\)">/);
   assert.match(proof, /<label class="xc-receipt-opt is-camera" for="fileInputCamera"><svg[^>]*>[\s\S]*?<\/svg><span>کامێرا<\/span><\/label>\s*<label class="xc-receipt-opt" for="fileInput"><svg[^>]*>[\s\S]*?<\/svg><span>گەلەری<\/span><\/label>/);
   assert.match(proof, /<div class="xc-receipt-picked" id="receiptPicked" hidden>\s*<img id="receiptThumb" alt="">\s*<b>پسووڵە زیاد کرا<\/b>\s*<button type="button" class="xc-receipt-clear" onclick="clearReceipt\(\)" aria-label="لابردنی پسووڵە">/);
-  assert.match(proof, /<span class="field-error" id="fileInputError"><\/span>/);
+  assert.match(proof, /<div class="field-error" id="fileInputError"><\/div>/);
   // the old words are gone
   assert.doesNotMatch(proof, /JPG|PNG|WEBP|هەڵبژێرە|بەبێ بەڵگەی ناردن|xc-hint|file-picker/);
   assert.doesNotMatch(app, /filePickerName|filePickerMeta|label\[for="fileInput"\]\.file-picker|Gallery یان Files/);
@@ -80,6 +80,13 @@ test('the look: two 64-high tiles like the panels; on a computer only the galler
   assert.match(css, /\.xc-receipt-opt \{\n  display: flex !important;[^}]*height: 64px; min-height: 64px;[^}]*border: 1px solid var\(--xf-field-line\) !important; border-radius: 14px !important; background: var\(--xf-field\) !important;[^}]*font-size: 16px !important; font-weight: 600 !important;/);
   assert.match(css, /@media \(hover: hover\) and \(pointer: fine\) \{\n  [^\n]+\.xc-receipt-opt\.is-camera \{ display: none !important; \}\n  [^\n]+\.xc-receipt-opts:not\(\[hidden\]\) \{ grid-template-columns: 1fr; \}\n\}/);
   assert.ok(css.includes(`${P} .xc-receipt:has(#fileInput.has-error) :is(.xc-receipt-opt, .xc-receipt-picked) { border-color: #c2414b !important; }`));
+  assert.match(css, /#pageHome #exchangeCard \.field-error\.show > \.fe-ico/);
+  assert.match(css, /#grpProof \.fe-group-list/);
+  assert.match(css, /html\[data-theme="dark"\][\s\S]*?#pageHome #exchangeCard \.field-error\.show/);
+  assert.match(css, /#pageHome #exchangeCard \.field-error\.show[\s\S]*border-inline-start: 3px solid var\(--order-error-red\)/);
+  assert.match(css, /\.confirm-row\.is-result[\s\S]*background: var\(--cf-accent-soft\)/);
+  assert.match(css, /body #mainApp:has\(#pageHome\.active\) #bottomNav\.pxn \{ display: none !important/);
+  assert.match(css, /body\.has-nav:has\(#pageHome\.active\) \{ padding-bottom:/);
   assert.match(css, /\.xc-receipt-picked:not\(\[hidden\]\) \{\n  display: flex !important;[^}]*height: 64px;/);
   assert.ok(css.includes(`${P} .xc-receipt-picked img { flex: 0 0 44px; width: 44px; height: 44px; border-radius: 10px; object-fit: cover; background: var(--xf-chip); }`));
   // keyboard focus on a hidden input shows on its tile

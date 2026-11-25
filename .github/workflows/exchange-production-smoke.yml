@@ -22,7 +22,7 @@ jobs:
                grep -q 'site-pause.js?v=5' current-index.html &&
                grep -q 'banners.js?v=2' current-index.html &&
                grep -q 'profile-head.css?v=1' current-index.html &&
-               grep -q 'exchange-form.css?v=14' current-index.html &&
+               grep -q 'exchange-form.css?v=16' current-index.html &&
                grep -q 'auth-progress.css?v=1' current-index.html &&
                grep -q 'kyc-screen.css?v=6' current-index.html &&
                curl -fLsS --max-time 15 'https://www.proxobalance.app/exchange-admin' -o current-admin.html &&
